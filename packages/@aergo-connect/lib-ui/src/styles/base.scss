@@ -1,0 +1,25 @@
+@import './normalize.scss';
+@import './_fonts.scss';
+@import './_typography.scss';
+@import './_forms.scss';
+
+.content {
+  padding: 20px;
+}
+.footer-content {
+  padding: 10px 20px;
+}
+.icon-header {
+  margin: 15px 0;
+}
+
+.text-link {
+  color: #ff337f;
+}
+.text-link-alternative {
+  text-decoration: underline;
+}
+
+.dialog-header {
+  margin: 10px 0 20px;
+}

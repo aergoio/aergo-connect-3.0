@@ -1,0 +1,22 @@
+{
+  "name": "@aergo-connect/lib-ui",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "vue-cli-service lint",
+    "storybook": "start-storybook",
+    "build-storybook": "build-storybook -c .storybook"
+  },
+  "dependencies": {
+    "jdenticon": "^2.2.0",
+    "zxcvbn": "^4.4.2",
+    "@types/zxcvbn": "^4.4.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "*",
+    "@vue/cli-plugin-eslint": "*",
+    "@vue/cli-plugin-router": "*",
+    "@vue/cli-plugin-typescript": "*",
+    "@vue/cli-plugin-vuex": "*"
+  }
+}

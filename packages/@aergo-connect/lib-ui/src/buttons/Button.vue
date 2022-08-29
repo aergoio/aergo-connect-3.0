@@ -1,5 +1,10 @@
 <template>
-  <button class="button" :class="classes" :disabled="disabled" @click="handleClick">
+  <button
+    class="button"
+    :class="classes"
+    :disabled="disabled"
+    @click="handleClick"
+  >
     <template v-if="loading">
       <LoadingIndicator class="button-loading-indicator" />
     </template>
@@ -10,16 +15,16 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
-import { ButtonType, ButtonTypes, ButtonSize, ButtonSizes } from './types';
-import LoadingIndicator from '../icons/LoadingIndicator.vue';
-import { RawLocation } from 'vue-router';
+import Vue, { PropType } from "vue";
+import { ButtonType, ButtonTypes, ButtonSize, ButtonSizes } from "./types";
+import LoadingIndicator from "../icons/LoadingIndicator.vue";
+import { RawLocation } from "vue-router";
 
 /**
  * Either handle click event by `@click` or pass a router location into the `to` prop.
  */
 export default Vue.extend({
-  name: 'Button',
+  name: "Button",
   props: {
     type: {
       type: String as PropType<ButtonType>,
@@ -48,11 +53,11 @@ export default Vue.extend({
     if (this.loading) {
       // Animate into the loading state
       const $el = this.$el as HTMLElement;
-      $el.style.minWidth = $el.clientWidth + 'px';
-      $el.style.width = $el.clientWidth + 'px';
+      $el.style.minWidth = $el.clientWidth + "px";
+      $el.style.width = $el.clientWidth + "px";
       setTimeout(() => {
-        $el.style.minWidth = '50px';
-        $el.style.width = 'auto';
+        $el.style.minWidth = "50px";
+        $el.style.width = "auto";
       }, 300);
     }
   },
@@ -61,29 +66,35 @@ export default Vue.extend({
       return [
         `button-type-${this.type}`,
         `button-size-${this.size}`,
-        this.loading ? `button-loading` : '',
-        this.type.match(/^primary/) ? 'inverted-colors' : '',
+        this.loading ? `button-loading` : "",
+        this.type.match(/^primary/) ? "inverted-colors" : "",
       ];
     },
   },
   methods: {
     handleClick() {
-      if (typeof this.to !== 'undefined' && this.to && typeof this.$router !== 'undefined') {
+      if (
+        typeof this.to !== "undefined" &&
+        this.to &&
+        typeof this.$router !== "undefined"
+      ) {
         this.$router.push(this.to);
       } else {
-        this.$emit('click');
+        this.$emit("click");
       }
-    }
-  }
+    },
+  },
 });
 </script>
 
 <style lang="scss">
+@import "../styles/variables";
+
 .button {
   /* Typography */
   font-weight: 500;
-  font-size: (15/16)*1em;
-  
+  font-size: (15/16) * 1em;
+
   /* Sizing */
   box-sizing: border-box;
   min-height: 2em; /* 30px */
@@ -94,7 +105,7 @@ export default Vue.extend({
   outline: none;
   border: 0;
   border-radius: 3px;
-  box-shadow: inset 0 0 1px 0 rgba(0,0,0,0.6);
+  box-shadow: inset 0 0 1px 0 rgba(0, 0, 0, 0.6);
   background-color: transparent;
 
   /* Content alignment */
@@ -106,25 +117,25 @@ export default Vue.extend({
 
   /* Behavior */
   cursor: pointer;
-  transition: min-width .35s ease-in;
+  transition: min-width 0.35s ease-in;
 
   &[disabled] {
     cursor: not-allowed;
-    opacity: .75;
+    opacity: 0.75;
   }
 
   &.button-size-default {
     min-height: 4em; /* 60px */
     line-height: 3em;
-    padding: .5em 2.5em;
+    padding: 0.5em 2.5em;
   }
   &.button-type-primary {
-    background-color: #272727;
+    background-color: $Blue01;
     color: #fff;
 
     &[disabled] {
       cursor: not-allowed;
-      opacity: .3;
+      opacity: 0.3;
     }
   }
   &.button-type-secondary {
@@ -144,7 +155,7 @@ export default Vue.extend({
     min-height: 56px;
     width: 56px !important;
     &[disabled] {
-      opacity: .5;
+      opacity: 0.5;
     }
   }
 }

@@ -1,13 +1,15 @@
 const tuple = <T extends string[]>(...args: T) => args;
 
+
 export const ButtonTypes = tuple(
   "default",
   "primary",
+  "primary-outline",
   "secondary",
-  "danger",
+  "secondary-outline",
   "gradation",
-  "white",
-  "font-gradation"
+  "font-gradation",
+  "white"
 );
 export type ButtonType = typeof ButtonTypes[number];
 

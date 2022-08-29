@@ -93,7 +93,7 @@ export default Vue.extend({
 .button {
   /* Typography */
   font-weight: 500;
-  font-size: (15/16) * 1em;
+  font-size: (17/16) * 1em;
 
   /* Sizing */
   box-sizing: border-box;
@@ -105,8 +105,8 @@ export default Vue.extend({
   outline: none;
   border: 0;
   border-radius: 3px;
-  box-shadow: inset 0 0 1px 0 rgba(0, 0, 0, 0.6);
   background-color: transparent;
+  border-radius: 4px;
 
   /* Content alignment */
   display: flex;
@@ -134,10 +134,17 @@ export default Vue.extend({
     color: #fff;
 
     &[disabled] {
-      cursor: not-allowed;
+      // cursor: not-allowed;
+      background: $Grey02;
       opacity: 0.3;
     }
   }
+
+  &.button-type-primary-outline {
+    color: $Blue01;
+    outline: 2px solid $Blue01;
+  }
+
   &.button-type-secondary {
     background-color: $Pink01;
     color: #fff;
@@ -157,6 +164,29 @@ export default Vue.extend({
     background: $white;
     color: $gradation4;
     box-shadow: none;
+    background-color: $Pink01;
+    color: #fff;
+  }
+
+  &.button-type-secondary-outline {
+    color: $Pink01;
+    outline: 2px solid $Pink01;
+  }
+
+  &.button-type-gradation {
+    background: $gradation04;
+    color: #fff;
+  }
+  &.button-type-white {
+    background: $white;
+    color: #fff;
+  }
+  &.button-type-font-gradation {
+    background: $gradation04;
+    border: 1px solid #ecf8fd;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   &.button-type-icon,
   &.button-type-primary-icon {

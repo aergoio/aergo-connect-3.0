@@ -139,6 +139,23 @@ export default Vue.extend({
     }
   }
   &.button-type-secondary {
+    background-color: $Pink01;
+    color: #fff;
+    box-shadow: none;
+  }
+  &.button-type-gradation {
+    background: $gradation01;
+    color: #fff;
+    box-shadow: none;
+  }
+  &.button-type-white {
+    background: $white;
+    color: #fff;
+    box-shadow: none;
+  }
+  &.button-type-font-gradation {
+    background: $white;
+    color: $gradation4;
     box-shadow: none;
   }
   &.button-type-icon,

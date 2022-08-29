@@ -146,9 +146,24 @@ export default Vue.extend({
   }
 
   &.button-type-secondary {
-<<<<<<< Updated upstream
+    background-color: $Pink01;
+    color: #fff;
     box-shadow: none;
-=======
+  }
+  &.button-type-gradation {
+    background: $gradation01;
+    color: #fff;
+    box-shadow: none;
+  }
+  &.button-type-white {
+    background: $white;
+    color: #fff;
+    box-shadow: none;
+  }
+  &.button-type-font-gradation {
+    background: $white;
+    color: $gradation4;
+    box-shadow: none;
     background-color: $Pink01;
     color: #fff;
   }
@@ -172,7 +187,6 @@ export default Vue.extend({
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
->>>>>>> Stashed changes
   }
   &.button-type-icon,
   &.button-type-primary-icon {

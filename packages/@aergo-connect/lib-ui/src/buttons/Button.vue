@@ -162,7 +162,7 @@ export default Vue.extend({
   }
   &.button-type-font-gradation {
     background: $white;
-    color: $gradation4;
+    color: $gradation04;
     box-shadow: none;
     background-color: $Pink01;
     color: #fff;

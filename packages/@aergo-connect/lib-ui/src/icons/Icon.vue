@@ -54,7 +54,7 @@ export default Vue.extend({
 
 <style lang="scss">
 .icon {
-  line-height: 2;
+  line-height: 2.3;
   vertical-align: middle;
   position: relative;
   display: inline-block;

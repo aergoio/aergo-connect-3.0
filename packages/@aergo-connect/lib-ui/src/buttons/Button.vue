@@ -134,9 +134,15 @@ export default Vue.extend({
   &.button-size-large {
     width: 20.438em;
   }
+
   &.button-type-primary {
     background-color: $Blue01;
     color: #fff;
+
+    &[disabled] {
+      background: $Grey04;
+      opacity: 0.3;
+    }
   }
   &.button-type-primary:hover {
     background: $gradation04;

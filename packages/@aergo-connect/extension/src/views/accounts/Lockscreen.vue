@@ -46,6 +46,7 @@ export default class Lockscreen extends mixins() {
 
   async beforeMount(): Promise<void> {
     const isSetup = await this.$background.isSetup();
+    console.log("isSetup:" + isSetup)
     if (!isSetup) {
       this.$router.push({ name: 'welcome' });
     }

@@ -33,7 +33,7 @@ body {
 }
 
 #app {
-  max-width: 360px;
+  max-width: 375px;
   max-height: 100vh;
   height: 600px;
   margin: 0 auto;

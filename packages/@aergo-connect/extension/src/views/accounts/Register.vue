@@ -10,7 +10,8 @@
       <div class="content">
         <Appear :delay="0.6">
           <ButtonGroup vertical>
-            <Button type="gradation" :to="{ name: 'setup', params: { next: 'account-register' } }">Get Started</Button>
+            <Button type="primary" :to="{ name: 'setup', params: { next: 'account-create' } }">Create new wallet</Button>
+            <Button type="secondary" :to="{ name: 'setup', params: { next: 'account-import' } }">Import your wallet</Button>
           </ButtonGroup>
         </Appear>
       </div>

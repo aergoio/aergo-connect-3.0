@@ -5,6 +5,7 @@ import { loadPersistedRoute, allowedToExitLockscreen, persistRoute, updateTitle 
 import AccountsContainer from '../views/accounts/Container.vue';
 import Lockscreen from '../views/accounts/Lockscreen.vue';
 import Welcome from '../views/accounts/Welcome.vue';
+import Register from '../views/accounts/Register.vue';
 import Setup from '../views/accounts/Setup.vue';
 import Create from '../views/accounts/Create.vue';
 import Import from '../views/accounts/import/1-Network.vue';

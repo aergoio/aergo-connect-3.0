@@ -128,6 +128,7 @@ export default Vue.extend({
     min-height: 4em; /* 60px */
     width: 9.813em;
   }
+
   &.button-size-medium {
     width: 18.063em;
   }

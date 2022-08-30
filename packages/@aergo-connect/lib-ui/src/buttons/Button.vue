@@ -138,7 +138,9 @@ export default Vue.extend({
     background-color: $Blue01;
     color: #fff;
   }
-
+  &.button-type-primary:hover {
+    background: $gradation04;
+  }
   &.button-type-primary-outline {
     color: $Blue01;
     outline: 2px solid $Blue01;

@@ -97,9 +97,9 @@ export default Vue.extend({
 
   /* Sizing */
   box-sizing: border-box;
-  min-height: 2em; /* 30px */
-  line-height: 1.5em;
-  padding: 0.25em 1em;
+  min-height: 4em; /* 60px */
+  line-height: 3em;
+  padding: 0.5em 2.5em;
 
   /* Borders and background */
   outline: none;
@@ -124,22 +124,23 @@ export default Vue.extend({
     opacity: 0.75;
   }
 
-  &.button-size-default {
+  &.button-size-small {
     min-height: 4em; /* 60px */
-    line-height: 3em;
-    padding: 0.5em 2.5em;
+    width: 9.813em;
+  }
+  &.button-size-medium {
+    width: 18.063em;
+  }
+  &.button-size-large {
+    width: 20.438em;
   }
   &.button-type-primary {
     background-color: $Blue01;
     color: #fff;
-
-    &[disabled] {
-      // cursor: not-allowed;
-      background: $Grey02;
-      opacity: 0.3;
-    }
   }
-
+  &.button-type-primary:hover {
+    background: $gradation04;
+  }
   &.button-type-primary-outline {
     color: $Blue01;
     outline: 2px solid $Blue01;
@@ -155,17 +156,11 @@ export default Vue.extend({
     color: #fff;
     box-shadow: none;
   }
-  &.button-type-white {
-    background: $white;
-    color: #fff;
-    box-shadow: none;
-  }
   &.button-type-font-gradation {
     background: $white;
     color: $gradation04;
     box-shadow: none;
     background-color: $Pink01;
-    color: #fff;
   }
 
   &.button-type-secondary-outline {
@@ -175,10 +170,6 @@ export default Vue.extend({
 
   &.button-type-gradation {
     background: $gradation04;
-    color: #fff;
-  }
-  &.button-type-white {
-    background: $white;
     color: #fff;
   }
   &.button-type-font-gradation {
@@ -204,6 +195,13 @@ export default Vue.extend({
     &[disabled] {
       opacity: 0.5;
     }
+  }
+  &[disabled] {
+    // cursor: not-allowed;
+    background: $Grey02;
+    color: #fff;
+    outline-color: #fff;
+    opacity: 0.3;
   }
 }
 </style>

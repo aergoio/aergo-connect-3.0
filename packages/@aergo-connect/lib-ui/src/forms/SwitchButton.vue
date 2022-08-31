@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue";
-import { InputVariant, InputVariants } from "./types";
+import { InputVariant } from "./types";
 
 export default Vue.extend({
   name: "SwitchButton",

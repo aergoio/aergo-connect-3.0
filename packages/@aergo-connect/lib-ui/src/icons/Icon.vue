@@ -58,10 +58,11 @@ export default Vue.extend({
   vertical-align: middle;
   position: relative;
   display: inline-block;
+  cursor: pointer;
 
   svg {
     position: relative;
-    left: 10px;
+    // left: 10px;
     display: inline-block;
     vertical-align: middle;
   }

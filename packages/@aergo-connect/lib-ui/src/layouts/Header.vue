@@ -1,26 +1,125 @@
 <template>
-  <div class="header">
+  <div
+    class="header"
+    :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']"
+  >
+    <div class="button" :class="[buttonHide ? `button__hide` : ``]">
+      <Icon :name="`${button}`" />
+    </div>
+    <h3>{{ title }}</h3>
+    <div class="right__icon">
+      <Icon class="refresh" name="refresh" />
+      <button type="button" class="skip__btn">Skip</button>
+    </div>
     <slot></slot>
   </div>
 </template>
 
-
 <script lang="ts">
-import Vue from 'vue';
+import Vue from "vue";
+import Icon from "../icons/Icon.vue";
 
 export default Vue.extend({
+  components: { Icon },
+  props: {
+    button: {
+      type: String,
+      default: "",
+    },
+    buttonHide: {
+      type: Boolean,
+      default: false,
+    },
+    title: {
+      type: String,
+      default: "",
+    },
+    skip: {
+      type: Boolean,
+      default: false,
+    },
+    refresh: {
+      type: Boolean,
+      default: false,
+    },
+  },
 });
 </script>
 
 <style lang="scss">
+@import "../styles/variables";
+
 .header {
-  height: 68px;
+  position: relative;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  justify-content: space-between;
+  height: 50px;
+  background: #ffffff;
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
 
-  > * + * {
-    margin-left: 14px;
+  h3 {
+    margin: 0;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 20px;
+    color: $Grey07;
+    margin-left: 12px;
+  }
+
+  .button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+    &.button__hide {
+      visibility: hidden;
+    }
+  }
+
+  .right__icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    visibility: hidden;
+  }
+
+  &.refresh__on {
+    .right__icon {
+      visibility: visible;
+    }
+    .refresh {
+      display: inline;
+    }
+    .skip__btn {
+      display: none;
+    }
+  }
+
+  &.skip__on {
+    .refresh {
+      display: none;
+    }
+    .skip__btn {
+      display: inline;
+      visibility: visible;
+    }
+  }
+
+  .skip__btn {
+    all: unset;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 19px;
+    color: #9c9a9a;
+    cursor: pointer;
+    visibility: hidden;
   }
 }
 </style>

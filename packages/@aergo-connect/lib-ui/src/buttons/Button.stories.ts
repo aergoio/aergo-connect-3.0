@@ -6,7 +6,7 @@ import { ButtonTypes, ButtonSizes } from "./types";
 storiesOf("Buttons/Button", module).add("with options", () => ({
   components: { Button },
   template:
-    '<Button :size="size" :type="type" :loading="loading" :disabled="disabled">Continue</Button>',
+    '<Button :size="size" :type="type" :loading="loading" :disabled="disabled" :hover="hover">Continue</Button>',
   props: {
     type: {
       type: String,
@@ -23,6 +23,10 @@ storiesOf("Buttons/Button", module).add("with options", () => ({
     loading: {
       type: Boolean,
       default: boolean("Loading", false),
+    },
+    hover: {
+      type: Boolean,
+      default: boolean("Hover", false),
     },
   },
 }));

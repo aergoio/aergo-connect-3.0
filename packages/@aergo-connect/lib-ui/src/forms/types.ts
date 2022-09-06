@@ -1,6 +1,6 @@
 const tuple = <T extends string[]>(...args: T) => args;
 
-export const InputVariants = tuple("default", "primary", "secondary", "main");
+export const InputVariants = tuple("default", "primary", "secondary");
 export type InputVariant = typeof InputVariants[number];
 
 export const InputTypes = tuple("text", "password", "number", "file");

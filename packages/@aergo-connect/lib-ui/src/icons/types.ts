@@ -17,7 +17,6 @@ export const iconNames = tuple(
   "downarrow",
   "dropdown",
   "failed",
-  "hamburger",
   "link",
   "logo",
   "network-other",

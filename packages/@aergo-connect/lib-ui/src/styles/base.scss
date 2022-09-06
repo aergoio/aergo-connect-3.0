@@ -6,7 +6,10 @@
 @import "./mixin.scss";
 
 .content {
-  padding: 20px;
+}
+.content_layout {
+  padding-left: 24px;
+  padding-right: 24px;
 }
 .footer-content {
   padding: 10px 20px;

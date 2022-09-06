@@ -72,7 +72,7 @@ export default Vue.extend({
 .input-field {
   box-sizing: border-box;
   height: 48px;
-  width: 303px;
+  width: 327px;
   display: flex;
   align-items: center;
   margin-bottom: 1em;

@@ -19,4 +19,5 @@ export interface ButtonProps {
   size?: ButtonSize;
   loading?: boolean;
   disabled?: boolean;
+  hover?: boolean;
 }

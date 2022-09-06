@@ -35,6 +35,7 @@ export default Vue.extend({});
 
   > main {
     // flex: 1;
+    background: orange;
     overflow: hidden;
     -webkit-overflow-scrolling: touch;
   }

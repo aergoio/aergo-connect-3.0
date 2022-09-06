@@ -1,14 +1,23 @@
 <template>
-  <div class="button-group" :class="[horizontal ? 'button-group-horizontal' : vertical ? 'button-group-vertical' : '', ]">
+  <div
+    class="button-group"
+    :class="[
+      horizontal
+        ? 'button-group-horizontal'
+        : vertical
+        ? 'button-group-vertical'
+        : '',
+    ]"
+  >
     <slot></slot>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue from "vue";
 
 export default Vue.extend({
-  name: 'ButtonGroup',
+  name: "ButtonGroup",
   props: {
     horizontal: {
       type: Boolean,
@@ -26,12 +35,15 @@ export default Vue.extend({
 .button-group {
   display: flex;
   justify-content: flex-start;
-  
+
   &.button-group-vertical {
     flex-direction: column;
-    align-items: stretch;
+    justify-content: center;
+    align-items: center;
 
-    > * + * { margin-top: 10px; }
+    > * + * {
+      margin-top: 10px;
+    }
   }
 
   &.button-group-horizontal {
@@ -39,7 +51,9 @@ export default Vue.extend({
     > * {
       flex: 1;
     }
-    > * + * { margin-left: 10px; }
+    > * + * {
+      margin-left: 10px;
+    }
   }
 }
 </style>

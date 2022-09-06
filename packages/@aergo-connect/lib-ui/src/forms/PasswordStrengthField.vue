@@ -25,15 +25,6 @@
       v-if="value && passwordStrength.score >= 3"
       >Good <Icon name="checkmark-circle" :size="16"
     /></span>
-    <span class="password-advice" v-if="value && passwordStrength.score < 3">
-      <span v-if="passwordStrength.feedback.warning"
-        >{{ passwordStrength.feedback.warning }}.<br
-      /></span>
-      <span v-if="passwordStrength.feedback.suggestions.length"
-        >{{ passwordStrength.feedback.suggestions[0] }}<br
-      /></span>
-      You can use this passphrase, but it may be easily guessable.
-    </span>
   </div>
 </template>
 

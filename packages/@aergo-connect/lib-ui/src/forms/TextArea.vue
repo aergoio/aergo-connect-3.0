@@ -5,7 +5,8 @@
    </label>
  </template>
  
- <script lang="ts">import {
+ <script lang="ts">
+ import {
    InputStates,
    InputState,
  } from "./types";

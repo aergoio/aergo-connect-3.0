@@ -1,7 +1,7 @@
 import { storiesOf } from "@storybook/vue";
 import { boolean, select } from "@storybook/addon-knobs";
 import TextArea from "./TextArea.vue";
-import { InputVariants, InputTypes, InputStates } from "./types";
+import { InputStates } from "./types";
 
 storiesOf("Forms/Textarea", module).add("basic", () => ({
   components: { TextArea },

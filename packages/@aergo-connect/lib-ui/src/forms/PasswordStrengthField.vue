@@ -14,12 +14,14 @@
       @blur="handleBlur"
       @submit="handleEnter"
     >
-      <Icon
-        class="btn-reveal-password"
-        :name="revealPassword ? 'view-enabled' : 'view-disabled'"
-        :size="20"
-        @click.native="toggleReveal"
-      />
+      <div class="icon__wrapper" :class="state === `invalid` ? `invalid` : ``">
+        <Icon
+          class="btn-reveal-password"
+          :name="revealPassword ? 'view-enabled' : 'view-disabled'"
+          :size="20"
+          @click.native="toggleReveal"
+        />
+      </div>
     </TextField>
     <div class="password-strength" v-if="setting">
       <span
@@ -121,5 +123,12 @@ export default Vue.extend({
 .btn-reveal-password {
   margin-right: 10px;
   user-select: none;
+}
+
+.icon__wrapper {
+  &.invalid {
+    filter: invert(17%) sepia(86%) saturate(6083%) hue-rotate(319deg)
+      brightness(90%) contrast(99%);
+  }
 }
 </style>

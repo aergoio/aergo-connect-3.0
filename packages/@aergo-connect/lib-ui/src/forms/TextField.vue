@@ -50,6 +50,7 @@ export default Vue.extend({
     InputContainer,
     Icon,
   },
+
   props: {
     value: [String, Number],
     placeholder: String,
@@ -78,6 +79,7 @@ export default Vue.extend({
     },
     autoComplete: String,
   },
+
   computed: {
     classes(): string[] {
       return ["text-field", `type-${this.type}`];

@@ -79,12 +79,21 @@ export default Vue.extend({
   transition: box-shadow 0.1s;
 
   &.variant-default {
-    box-shadow: inset 0 0 0 2px $Grey05;
+    // box-shadow: inset 0 0 0 2px $Grey05;
+    // border-radius: 3px;
+    // background-image: linear-gradient(white, white);
+    border: 2px solid transparent;
     border-radius: 3px;
+    background-image: linear-gradient(white, white),
+      linear-gradient(to right, $Grey04, $Grey04);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
 
     &.is-focused {
       outline: none;
-      box-shadow: inset 0 0 0 2px $Grey07;
+      background-image: linear-gradient(white, white),
+        linear-gradient(to right, $Grey07, $Grey07);
+      // box-shadow: inset 0 0 0 2px $Grey07;
     }
 
     &.is-disabled {
@@ -154,6 +163,7 @@ export default Vue.extend({
   align-items: start;
   margin-bottom: 12px;
   word-wrap: break-word;
+  margin-top: 14px;
   .icon {
     margin-left: 2px;
     margin-right: 2px;

@@ -1,46 +1,47 @@
 {
-	"manifest_version": 2,
-	"name": "{{prop-loader?title!../package.json}}",
-	"version": "{{prop-loader?version!../package.json}}",
-	"version_name": "{{prop-loader?version_name!../package.json}}",
-	"description": "{{prop-loader?description!../package.json}}",
-	"author": "{{prop-loader?author!../package.json}}",
-	"homepage_url": "{{prop-loader?homepage!../package.json}}",
-	"minimum_chrome_version": "73",
+  "manifest_version": 2,
+  "name": "{{prop-loader?title!../package.json}}",
+  "version": "{{prop-loader?version!../package.json}}",
+  "version_name": "{{prop-loader?version_name!../package.json}}",
+  "description": "{{prop-loader?description!../package.json}}",
+  "author": "{{prop-loader?author!../package.json}}",
+  "homepage_url": "{{prop-loader?homepage!../package.json}}",
+  "minimum_chrome_version": "73",
 
-	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' http://localhost:8098; object-src 'self'",
 
-	"icons": {
-		"17": "{{./assets/img/icon-17.png}}",
-		"102": "{{./assets/img/icon-102.png}}"
-	},
-	
-	"background": {
-		"page": "background.html",
-		"persistent": true
-	},
+  "icons": {
+    "17": "{{./assets/img/icon-17.png}}",
+    "102": "{{./assets/img/icon-102.png}}"
+  },
 
-	"content_scripts": [
-		{
-			"matches": ["<all_urls>"],
-			"js": ["js/content-script.js"]
-		}
-	],
+  "background": {
+    "page": "background.html",
+    "persistent": true
+  },
 
-	"browser_action": {
-		"default_icon": {
-		  "17": "{{./assets/img/icon-17.png}}",
-		  "34": "{{./assets/img/icon-34.png}}"
-		},
-		"default_title": "Aergo Connect",
-		"default_popup": "popup.html"
-	},
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/content-script.js"]
+    }
+  ],
 
-	"permissions": [
-		"activeTab",
-		"unlimitedStorage",
-		"clipboardWrite",
-		"contextMenus",
-		"idle"
-	]
+  "browser_action": {
+    "default_icon": {
+      "17": "{{./assets/img/icon-17.png}}",
+      "34": "{{./assets/img/icon-34.png}}"
+    },
+    "default_title": "Aergo Connect",
+    "default_popup": "popup.html"
+  },
+
+  "permissions": [
+    "activeTab",
+    "unlimitedStorage",
+    "clipboardWrite",
+    "contextMenus",
+    "idle",
+    "system.display"
+  ]
 }

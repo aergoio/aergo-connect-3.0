@@ -18,3 +18,4 @@ export function jsonHighlight(json: string): string {
     return '<span class="' + cls + '">' + match + '</span>';
   });
 }
+

@@ -4,6 +4,8 @@
     :class="classes"
     :disabled="disabled"
     @click="handleClick"
+    :hover="hover"
+    :size="size"
   >
     <template v-if="loading">
       <LoadingIndicator class="button-loading-indicator" />
@@ -45,6 +47,10 @@ export default Vue.extend({
     to: {
       type: [String, Object] as PropType<RawLocation>,
     },
+    hover: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     LoadingIndicator,
@@ -68,6 +74,7 @@ export default Vue.extend({
         `button-size-${this.size}`,
         this.loading ? `button-loading` : "",
         this.type.match(/^primary/) ? "inverted-colors" : "",
+        this.hover ? `hover` : "",
       ];
     },
   },
@@ -97,9 +104,10 @@ export default Vue.extend({
 
   /* Sizing */
   box-sizing: border-box;
-  min-height: 4em; /* 60px */
+  min-height: 48px;
   line-height: 3em;
   padding: 0.5em 2.5em;
+  height: 48px;
 
   /* Borders and background */
   outline: none;
@@ -125,22 +133,28 @@ export default Vue.extend({
   }
 
   &.button-size-small {
-    min-height: 4em; /* 60px */
-    width: 9.813em;
+    width: 157px;
   }
   &.button-size-medium {
-    width: 18.063em;
+    width: 289px;
   }
   &.button-size-large {
-    width: 20.438em;
+    width: 327px;
   }
+
   &.button-type-primary {
     background-color: $Blue01;
     color: #fff;
+
+    &[disabled] {
+      background: $Grey04;
+      opacity: 0.3;
+    }
+    &.hover:hover {
+      background: $gradation04;
+    }
   }
-  &.button-type-primary:hover {
-    background: $gradation04;
-  }
+
   &.button-type-primary-outline {
     color: $Blue01;
     outline: 2px solid $Blue01;

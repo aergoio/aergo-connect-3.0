@@ -13,29 +13,29 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue from "vue";
 
 /**
  * A nestable scroll view, with optional header and footer.
  */
-export default Vue.extend({
-});
+export default Vue.extend({});
 </script>
 
 <style lang="scss">
 .scroll-view {
-  &, > main {
+  &,
+  > main {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
   }
-  
+
   display: flex;
   flex-direction: column;
 
   > main {
-    flex: 1;
-    overflow: auto;
+    // flex: 1;
+    overflow: hidden;
     -webkit-overflow-scrolling: touch;
   }
 }

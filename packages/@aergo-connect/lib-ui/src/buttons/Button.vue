@@ -107,6 +107,7 @@ export default Vue.extend({
   min-height: 48px;
   line-height: 3em;
   padding: 0.5em 2.5em;
+  height: 48px;
 
   /* Borders and background */
   outline: none;

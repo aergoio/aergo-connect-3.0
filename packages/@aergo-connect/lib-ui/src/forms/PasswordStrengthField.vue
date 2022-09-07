@@ -5,6 +5,8 @@
       :variant="variant"
       :value="value"
       :placeholder="placeholder"
+      :state="state"
+      :error="error"
       errorType="warning"
       autoComplete="no"
       :autofocus="autofocus"
@@ -19,7 +21,7 @@
         @click.native="toggleReveal"
       />
     </TextField>
-    <div class="password-strength">
+    <div class="password-strength" v-if="setting">
       <span
         class="input-error-text password-weak"
         v-if="value && passwordStrength.score < 3"
@@ -38,7 +40,7 @@
 import Vue, { PropType } from "vue";
 import Icon from "../icons/Icon.vue";
 import TextField from "./TextField.vue";
-import { InputVariant, InputVariants } from "./types";
+import { InputVariant, InputVariants, InputStates, InputState } from "./types";
 import zxcvbn, { ZXCVBNResult } from "zxcvbn";
 
 export default Vue.extend({
@@ -55,6 +57,18 @@ export default Vue.extend({
     },
     autofocus: Boolean,
     placeholder: String,
+    setting: {
+      type: Boolean,
+      default: false,
+    },
+    state: {
+      type: String as PropType<InputState>,
+      default: InputStates[0],
+    },
+    error: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {

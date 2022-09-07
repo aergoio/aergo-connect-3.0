@@ -159,9 +159,9 @@ export default Vue.extend({
     margin-right: 2px;
   }
   &.warning {
-    color: #ef8a26;
+    color: $Pink01;
     .adjustable-stroke {
-      stroke: #ef8a26;
+      color: $Pink01;
     }
   }
 }

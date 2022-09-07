@@ -5,6 +5,8 @@
       :variant="variant"
       :value="value"
       :placeholder="placeholder"
+      :state="state"
+      :error="error"
       errorType="warning"
       autoComplete="no"
       :autofocus="autofocus"
@@ -12,14 +14,16 @@
       @blur="handleBlur"
       @submit="handleEnter"
     >
-      <Icon
-        class="btn-reveal-password"
-        :name="revealPassword ? 'view-enabled' : 'view-disabled'"
-        :size="20"
-        @click.native="toggleReveal"
-      />
+      <div class="icon__wrapper" :class="state === `invalid` ? `invalid` : ``">
+        <Icon
+          class="btn-reveal-password"
+          :name="revealPassword ? 'view-enabled' : 'view-disabled'"
+          :size="20"
+          @click.native="toggleReveal"
+        />
+      </div>
     </TextField>
-    <div class="password-strength">
+    <div class="password-strength" v-if="setting">
       <span
         class="input-error-text password-weak"
         v-if="value && passwordStrength.score < 3"
@@ -38,7 +42,7 @@
 import Vue, { PropType } from "vue";
 import Icon from "../icons/Icon.vue";
 import TextField from "./TextField.vue";
-import { InputVariant, InputVariants } from "./types";
+import { InputVariant, InputVariants, InputStates, InputState } from "./types";
 import zxcvbn, { ZXCVBNResult } from "zxcvbn";
 
 export default Vue.extend({
@@ -55,6 +59,18 @@ export default Vue.extend({
     },
     autofocus: Boolean,
     placeholder: String,
+    setting: {
+      type: Boolean,
+      default: false,
+    },
+    state: {
+      type: String as PropType<InputState>,
+      default: InputStates[0],
+    },
+    error: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -107,5 +123,12 @@ export default Vue.extend({
 .btn-reveal-password {
   margin-right: 10px;
   user-select: none;
+}
+
+.icon__wrapper {
+  &.invalid {
+    filter: invert(17%) sepia(86%) saturate(6083%) hue-rotate(319deg)
+      brightness(90%) contrast(99%);
+  }
 }
 </style>

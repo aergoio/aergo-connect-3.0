@@ -14,10 +14,6 @@ storiesOf("Layouts/ConfirmModal", module).add("basic", () => ({
 `,
 
   props: {
-    name: {
-      type: String,
-      default: text("name", ""),
-    },
     title: {
       type: String,
       default: text("Title", ""),

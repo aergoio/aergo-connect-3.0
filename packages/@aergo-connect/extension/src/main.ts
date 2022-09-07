@@ -23,8 +23,7 @@ async function init(name: string) {
   const extensionPort = extension.runtime.connect({ name });
   const connectionStream = new PortStream(extensionPort);
   const background = await connectToBackground(connectionStream);
-  const manifest = extension.runtime.getManifest();
-  console.log(manifest);
+  // const manifest = extension.runtime.getManifest();
   Vue.use(Background, { background });
   Vue.use(IndexedDb);
 
@@ -44,7 +43,6 @@ async function init(name: string) {
   }).$mount("#app");
 
   // React to state updates from background
-  console.log(background);
   background.on("update", function(state) {
     console.log("update from bg", state);
     const isNonAuthPage =

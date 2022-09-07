@@ -5,7 +5,6 @@
     </RouteTransition>
   </div>
 </template>
-
 <script lang="ts">
 import Vue from "vue";
 import RouteTransition from "@aergo-connect/lib-ui/src/nav/RouteTransition.vue";
@@ -18,6 +17,7 @@ export default Vue.extend({
     // Upon App launch, get initial state for 'unlocked'
     const unlocked = await this.$background.isUnlocked();
     this.$store.commit("ui/setUnlocked", unlocked);
+    console.log(this.$router, "router!!!!!");
     const peformAuthCheck = !(
       this.$router.currentRoute.meta &&
       this.$router.currentRoute.meta.noAuthCheck

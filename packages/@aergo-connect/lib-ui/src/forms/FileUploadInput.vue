@@ -20,12 +20,7 @@
 import { InputStates, InputState } from "./types";
 import Vue, { PropType } from "vue";
 export default Vue.extend({
-  props: {
-    state: {
-      type: String as PropType<InputState>,
-      default: InputStates[0],
-    },
-  },
+  props: {},
   data() {
     return { files: null as FileList | null };
   },

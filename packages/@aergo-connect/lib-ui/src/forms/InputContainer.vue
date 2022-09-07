@@ -76,7 +76,6 @@ export default Vue.extend({
   width: 327px;
   display: flex;
   align-items: center;
-  margin-bottom: 1em;
   transition: box-shadow 0.1s;
 
   &.variant-default {

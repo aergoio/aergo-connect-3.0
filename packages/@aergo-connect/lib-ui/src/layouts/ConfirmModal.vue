@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper">
-    <Icon :name="`${name}`" :size="100" />
+    <Icon :name="`checkmark-circle`" :size="100" />
+    <!-- <Icon :name="`${name}`" :size="100" /> -->
     <h1>{{ title }}</h1>
     <Button :type="`${buttonType}`" size="medium">OK</Button>
   </div>
@@ -14,10 +15,6 @@ import Button from "../buttons/Button.vue";
 export default Vue.extend({
   components: { Icon, Button },
   props: {
-    name: {
-      type: String,
-      default: "",
-    },
     title: {
       type: String,
       default: "",

@@ -4,7 +4,6 @@
       :type="revealPassword ? 'text' : 'password'"
       :variant="variant"
       :value="value"
-      :error="passwordError"
       :placeholder="placeholder"
       errorType="warning"
       autoComplete="no"
@@ -20,11 +19,18 @@
         @click.native="toggleReveal"
       />
     </TextField>
-    <span
-      class="input-error-text password-good"
-      v-if="value && passwordStrength.score >= 3"
-      >Good <Icon name="checkmark-circle" :size="16"
-    /></span>
+    <div class="password-strength">
+      <span
+        class="input-error-text password-weak"
+        v-if="value && passwordStrength.score < 3"
+        >Strength : Weak
+      </span>
+      <span
+        class="input-error-text password-good"
+        v-if="value && passwordStrength.score >= 3"
+        >Strength : Good
+      </span>
+    </div>
   </div>
 </template>
 
@@ -83,13 +89,17 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+.password-strength {
+  margin-top: 10px;
+}
 .password-advice {
   color: #666;
-  font-size: (12/16) * 1rem;
+  font-size: (14/16) * 1rem;
+  display: flex;
 }
 .password-good {
-  color: #00c789;
-  font-size: (12/16) * 1rem;
+  color: #279ecc;
+  font-size: (14/16) * 1rem;
   .adjustable-stroke {
     stroke: #00c789;
   }

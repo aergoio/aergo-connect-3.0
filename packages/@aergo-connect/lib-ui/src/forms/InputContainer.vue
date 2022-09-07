@@ -14,6 +14,7 @@
   >
     <slot></slot>
     <LoadingIndicator v-if="state === 'loading'" />
+    <img src="" alt="" />
     <Icon name="checkmark" :size="24" v-if="state === 'valid'" />
   </div>
 </template>
@@ -146,16 +147,17 @@ export default Vue.extend({
   margin-bottom: 0.5em;
 }
 .input-error-text {
+  max-width: 327px;
+  height: 36px;
   font-size: (14/16) * 1rem;
   color: $Pink01;
-  font-weight: 500;
-  display: block;
+  display: flex;
+  align-items: start;
   margin-bottom: 12px;
-  margin-top: -7px;
-  word-break: break-word;
+  word-wrap: break-word;
   .icon {
-    vertical-align: text-bottom;
     margin-left: 2px;
+    margin-right: 2px;
   }
   &.warning {
     color: #ef8a26;

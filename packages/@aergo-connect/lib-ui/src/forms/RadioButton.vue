@@ -1,5 +1,5 @@
-<template>
-  <label class="container ">
+s<template>
+  <label class="container">
     <input type="checkbox" />
     <span class="checkmark"></span>
   </label>

@@ -8,15 +8,19 @@
     "build-storybook": "build-storybook -c .storybook"
   },
   "dependencies": {
+    "@types/zxcvbn": "^4.4.0",
     "jdenticon": "^2.2.0",
-    "zxcvbn": "^4.4.2",
-    "@types/zxcvbn": "^4.4.0"
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "*",
     "@vue/cli-plugin-eslint": "*",
     "@vue/cli-plugin-router": "*",
     "@vue/cli-plugin-typescript": "*",
-    "@vue/cli-plugin-vuex": "*"
+    "@vue/cli-plugin-vuex": "*",
+    "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-vue": "^9.4.0"
   }
 }

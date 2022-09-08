@@ -4,12 +4,11 @@ module.exports = {
 		node: true,
 	},
 	extends: [
-		'eslint:recommended',
 		'plugin:vue/essential',
 		'@vue/typescript/recommended',
+		'eslint:recommended',
 		'plugin:prettier/recommended',
 	],
-	plugins: ['prettier'],
 	parserOptions: {
 		ecmaVersion: 2020,
 	},
@@ -17,7 +16,7 @@ module.exports = {
 		'prettier/prettier': [
 			'error',
 			{
-				singleQuote: true,
+				singleQuote: false,
 				semi: true,
 				useTabs: true,
 				tabWidth: 2,
@@ -27,9 +26,7 @@ module.exports = {
 				arrowParens: 'avoid',
 			},
 		],
-		'no-console': 'off',
+		'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
 		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-		'@typescript-eslint/no-explicit-any': 'off',
-		'@typescript-eslint/ban-ts-ignore': 'off',
 	},
 };

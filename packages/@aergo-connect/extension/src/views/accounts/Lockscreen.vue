@@ -1,23 +1,16 @@
 <template>
   <ScrollView class="page">
-    <div class="content">
-      <div class="icon-header">
-        <Icon name="title-security" :size="36" />
+    <div class="lockscreen-contents">
+      <Icon name="aergoMainLogo" :size="150" />
+      <div class="password-input-wrapper">
+        <label class="input-label">Password</label>
+        <PasswordStrengthField
+          v-model="password"
+          :error="errors.password"
+          :state="errors.password ? `invalid` : `default`"
+        />
       </div>
-      <Heading>Your wallet is locked.</Heading>
-      <p>Please enter your wallet passphrase to continue.</p>
-      <TextField
-        variant="main"
-        type="password"
-        v-model="password"
-        :error="errors.password"
-        @submit="unlock"
-      />
-
       <Button @click="unlock" type="primary" size="large">Unlock</Button>
-      <!-- <div class="content">
-        <ContinueButton @click="unlock" :disabled="!canContinue" />
-      </div> -->
       <div class="password-text-wrapper">
         <span>
           Wallet won't unlock? You can DELETE your current wallet and setup a
@@ -64,7 +57,6 @@ export default class Lockscreen extends mixins() {
 
   async beforeMount(): Promise<void> {
     const isSetup = await this.$background.isSetup();
-    console.log("isSetup:" + isSetup);
     if (!isSetup) {
       this.$router.push({ name: "welcome" });
     }
@@ -85,7 +77,8 @@ export default class Lockscreen extends mixins() {
       }
       this.$router.push(nextPath);
     } catch (e) {
-      this.errors.password = `${e}`;
+      // this.errors.password = `${e}`;
+      this.errors.password = `Please check the seed phrase again.`;
     }
   }
 }

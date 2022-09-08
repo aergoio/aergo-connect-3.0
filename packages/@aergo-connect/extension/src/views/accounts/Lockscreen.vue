@@ -6,8 +6,13 @@
       </div>
       <Heading>Your wallet is locked.</Heading>
       <p>Please enter your wallet passphrase to continue.</p>
-      <TextField variant="main" type="password" v-model="password" :error="errors.password" @submit="unlock" />
-    </div>
+      <TextField
+        variant="main"
+        type="password"
+        v-model="password"
+        :error="errors.password"
+        @submit="unlock"
+      />
 
       <Button @click="unlock" type="primary" size="large">Unlock</Button>
       <!-- <div class="content">
@@ -59,12 +64,14 @@ export default class Lockscreen extends mixins() {
 
   async beforeMount(): Promise<void> {
     const isSetup = await this.$background.isSetup();
-    console.log("isSetup:" + isSetup)
+    console.log("isSetup:" + isSetup);
     if (!isSetup) {
-      this.$router.push({ name: 'welcome' });
+      this.$router.push({ name: "welcome" });
     }
   }
-
+  async mounted() {
+    console.log(this.$background);
+  }
   get canContinue(): boolean {
     return Boolean(this.password);
   }
@@ -77,7 +84,7 @@ export default class Lockscreen extends mixins() {
         nextPath = { name: "accounts-list" };
       }
       this.$router.push(nextPath);
-    } catch(e) {
+    } catch (e) {
       this.errors.password = `${e}`;
     }
   }
@@ -151,4 +158,3 @@ export default class Lockscreen extends mixins() {
   );
 }
 </style>
-

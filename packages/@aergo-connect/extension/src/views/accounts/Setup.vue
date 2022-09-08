@@ -112,9 +112,9 @@ export default class Setup extends mixins() {
     console.log(this.setting);
   }
   setPassword() {
-    console.log("setPassword");
-    console.log(this.password);
-    console.log(this.passwordRepeat);
+    if (this.passwordRepeat === this.password) {
+      this.setup();
+    }
   }
 
   async mounted(): Promise<void> {

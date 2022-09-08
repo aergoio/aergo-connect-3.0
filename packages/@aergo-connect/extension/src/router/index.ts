@@ -60,6 +60,7 @@ enum R {
   NoAuthCheck = 1 << 0,
   NoTracking = 1 << 1,
 }
+
 function withMeta(
   index: number | undefined,
   route: RouteConfig,
@@ -75,6 +76,7 @@ function withMeta(
     },
   };
 }
+
 const routes: RouteConfig[] = [
   { path: "/", redirect: "/accounts" },
   {
@@ -112,6 +114,13 @@ const routes: RouteConfig[] = [
         name: "balance-list",
         component: BalanceList,
       }), // 시연용
+      // register by 영근
+      withMeta(2, {
+        path: "register",
+        name: "Register",
+        component: Register,
+      }),
+      //
       withMeta(2, {
         path: "create",
         name: "account-create",

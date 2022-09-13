@@ -13,8 +13,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Icon from '../icons/Icon.vue';
+import Vue from "vue";
+import Icon from "../icons/Icon.vue";
 
 export default Vue.extend({
   components: { Icon },
@@ -49,7 +49,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import '../styles/variables';
+@import "../styles/variables";
 
 .header {
   position: relative;

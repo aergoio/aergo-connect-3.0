@@ -25,11 +25,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { Header, ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import { Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
+import Component, { mixins } from 'vue-class-component';
+import { PersistInputsMixin } from '../../store/ui';
 
 export default Vue.extend({
   components: {

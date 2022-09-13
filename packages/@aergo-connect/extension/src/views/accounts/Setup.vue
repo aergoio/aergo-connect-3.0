@@ -1,6 +1,6 @@
 <template>
   <ScrollView class="page">
-    <ConfirmModal v-if="modal" />
+    <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
     <div class="content">
       <section class="dialog-header">
         <div>

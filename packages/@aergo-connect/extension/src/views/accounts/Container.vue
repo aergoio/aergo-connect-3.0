@@ -7,9 +7,9 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { ScrollView } from "@aergo-connect/lib-ui/src/layouts";
-import RouteTransition from "@aergo-connect/lib-ui/src/nav/RouteTransition.vue";
+import Vue from 'vue';
+import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
+import RouteTransition from '@aergo-connect/lib-ui/src/nav/RouteTransition.vue';
 
 export default Vue.extend({
   components: {

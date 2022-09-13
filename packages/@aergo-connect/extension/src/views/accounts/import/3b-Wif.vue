@@ -7,11 +7,21 @@
       <Heading>Import Encrypted String</Heading>
       <p>Enter your encrypted private key and password.</p>
       <TextField label="Encrypted private key" v-model="encryptedKey" :error="errors.keystore" />
-      <TextField v-model="password" type="password" label="Encryption password" :error="errors.password" autoComplete="no" />  
+      <TextField
+        v-model="password"
+        type="password"
+        label="Encryption password"
+        :error="errors.password"
+        autoComplete="no"
+      />
     </div>
     <template #footer>
       <div class="content">
-        <ContinueButton @click="loadKeystore" :disabled="!canContinue || loading" :loading="loading" />
+        <ContinueButton
+          @click="loadKeystore"
+          :disabled="!canContinue || loading"
+          :loading="loading"
+        />
       </div>
     </template>
   </ScrollView>
@@ -44,11 +54,11 @@ export default class Keystore extends mixins(PersistInputsMixin) {
   persistFields = ['chainId']; // Data from 1-Network
   persistFieldsKey = 'account-create';
 
-  encryptedKey = "";
-  password = "";
+  encryptedKey = '';
+  password = '';
   errors = {
-    keystore: "",
-    password: "",
+    keystore: '',
+    password: '',
   };
   loading = false;
 
@@ -69,15 +79,14 @@ export default class Keystore extends mixins(PersistInputsMixin) {
         privateKey: Array.from(identity.privateKey),
         chainId: this.chainId,
       });
-      this.$router.push({ name: 'account-imported', params: {...accountSpec} });
-    } catch(e) {
+      this.$router.push({ name: 'account-imported', params: { ...accountSpec } });
+    } catch (e) {
       console.log(e);
       if (`${e}`.match(/invalid mac value/)) {
         this.errors.password = 'Invalid password';
       } else {
         this.errors.password = `${e}`;
       }
-      
     } finally {
       this.loading = false;
     }
@@ -85,6 +94,4 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

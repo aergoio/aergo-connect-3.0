@@ -2,10 +2,13 @@
   <ScrollView class="page">
     <div class="content">
       <section class="dialog-header">
-        <BackButton :to="{ name: 'accounts-list' }"/>
+        <BackButton :to="{ name: 'accounts-list' }" />
       </section>
       <Heading animated>Connect Hardware Wallet</Heading>
-      <p>Please select the network for which you want to import an account from a connected Ledger Nano S.</p>
+      <p>
+        Please select the network for which you want to import an account from a connected Ledger
+        Nano S.
+      </p>
       <SelectNetwork v-model="chainId" />
     </div>
     <template #footer>
@@ -45,6 +48,4 @@ export default class Import extends mixins(PersistInputsMixin) {
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

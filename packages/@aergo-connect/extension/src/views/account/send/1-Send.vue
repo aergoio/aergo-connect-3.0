@@ -4,14 +4,34 @@
       <Heading tag="h2" style="margin-top: 0">Send</Heading>
       <AddressField label="Recipient" v-model="txBody.to" :error="errors.to" />
       <div class="amount-unit">
-        <TextField label="Amount" type="number" variant="main" v-model="txBody.amount" :error="errors.amount" />
-        <SelectField variant="main" modal-sheet v-model="txBody.unit" :options="unitOptions" dropdownTitle="Unit" />
+        <TextField
+          label="Amount"
+          type="number"
+          variant="main"
+          v-model="txBody.amount"
+          :error="errors.amount"
+        />
+        <SelectField
+          variant="main"
+          modal-sheet
+          v-model="txBody.unit"
+          :options="unitOptions"
+          dropdownTitle="Unit"
+        />
       </div>
       <p>
-        <span class="text-link optional-fields-toggle" @click="showExtraFields=!showExtraFields">{{showExtraFields?'Hide':'Show'}} optional fields</span>
+        <span class="text-link optional-fields-toggle" @click="showExtraFields = !showExtraFields"
+          >{{ showExtraFields ? 'Hide' : 'Show' }} optional fields</span
+        >
       </p>
       <div v-if="showExtraFields">
-        <SelectField label="Type" modal-sheet v-model="txBody.type" :options="typeOptions" dropdownTitle="Type" />
+        <SelectField
+          label="Type"
+          modal-sheet
+          v-model="txBody.type"
+          :options="typeOptions"
+          dropdownTitle="Type"
+        />
         <TextField label="Data (payload)" v-model="txBody.payload" :error="errors.payload" />
         <p class="note">Enter any text (e.g. ascii, utf8, json).</p>
         <TextField label="Gas limit" type="number" v-model="txBody.limit" :error="errors.limit" />
@@ -23,8 +43,20 @@
       <Heading tag="h2" style="margin-top: 0">Send</Heading>
       <AddressField label="Recipient" v-model="txBody.to" :error="errors.to" />
       <div class="amount-unit">
-        <TextField label="Amount" type="number" variant="main" v-model="txBody.amount" :error="errors.amount" />
-        <SelectField variant="main" modal-sheet v-model="txBody.unit" :options="['ARG']" dropdownTitle="Unit" />
+        <TextField
+          label="Amount"
+          type="number"
+          variant="main"
+          v-model="txBody.amount"
+          :error="errors.amount"
+        />
+        <SelectField
+          variant="main"
+          modal-sheet
+          v-model="txBody.unit"
+          :options="['ARG']"
+          dropdownTitle="Unit"
+        />
       </div>
     </div>
     <template #footer>
@@ -51,7 +83,7 @@ import { typeToLabel } from '../../../utils/tx';
 
 const typeOptions: [number, string][] = [];
 export function keys<O>(o: O): (keyof O)[] {
-    return Object.keys(o) as (keyof O)[];
+  return Object.keys(o) as (keyof O)[];
 }
 /**
  * This functions takes an object,
@@ -61,12 +93,16 @@ export function keys<O>(o: O): (keyof O)[] {
 function keysFilteredReordered<O, E extends Partial<O>>(
   enumObj: O,
   orderFront: (keyof O)[],
-  exclude: (keyof E)[] = []
+  exclude: (keyof E)[] = [],
 ): Exclude<keyof O, keyof E>[] {
   const filtered = keys(enumObj).filter(a => exclude.indexOf(a) === -1);
-  return Array.from(new Set([...orderFront, ...filtered])) as Exclude<(keyof O), (keyof E)>[];
+  return Array.from(new Set([...orderFront, ...filtered])) as Exclude<keyof O, keyof E>[];
 }
-const orderedTypes = keysFilteredReordered(Tx.Type, ['TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE'], ['DEPLOY', 'REDEPLOY']);
+const orderedTypes = keysFilteredReordered(
+  Tx.Type,
+  ['TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE'],
+  ['DEPLOY', 'REDEPLOY'],
+);
 for (const key of orderedTypes) {
   typeOptions.push([Tx.Type[key], typeToLabel(key)]);
 }
@@ -126,7 +162,7 @@ export default class AccountSend extends mixins(PersistInputsMixin) {
 
   mounted() {
     if (this.isArg) {
-      this.txBody.unit = 'ARG'
+      this.txBody.unit = 'ARG';
     }
   }
 
@@ -151,7 +187,12 @@ export default class AccountSend extends mixins(PersistInputsMixin) {
     if (this.isArg) {
       this.txBody.type = Tx.Type.CALL;
       this.txBody.unit = 'aergo';
-      this.txBody.payload = '{"Name": "transfer", "Args": ["'+this.txBody.to+'", "'+this.txBody.amount+'000000000000000000", ""]}'
+      this.txBody.payload =
+        '{"Name": "transfer", "Args": ["' +
+        this.txBody.to +
+        '", "' +
+        this.txBody.amount +
+        '000000000000000000", ""]}';
     }
 
     if (this.txBody.payload) {
@@ -184,7 +225,7 @@ export default class AccountSend extends mixins(PersistInputsMixin) {
   }
 }
 .optional-fields-toggle {
-  font-size: .9em;
+  font-size: 0.9em;
   cursor: pointer;
 }
 </style>

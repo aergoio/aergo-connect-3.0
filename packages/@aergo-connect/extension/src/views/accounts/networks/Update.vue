@@ -4,14 +4,22 @@
       <template #header>
         <div class="account-list-header">
           <BackButton />
-          <Heading tag="h2">
-            {{chainIdReadonly ? 'Update' : 'Add' }} custom network
-          </Heading>
+          <Heading tag="h2"> {{ chainIdReadonly ? 'Update' : 'Add' }} custom network </Heading>
         </div>
       </template>
       <div class="content">
-        <TextField label="Chain ID" v-model="chainId" :state="chainIdValid ? 'valid' : 'initial'" :disabled="chainIdReadonly" />
-        <TextField label="Node URL (http://... or https://...)" v-model="nodeUrl" :state="nodeUrlTested ? 'valid' : nodeUrlValid && !nodeUrlError ? 'loading' : 'initial'" :error="nodeUrlError" />
+        <TextField
+          label="Chain ID"
+          v-model="chainId"
+          :state="chainIdValid ? 'valid' : 'initial'"
+          :disabled="chainIdReadonly"
+        />
+        <TextField
+          label="Node URL (http://... or https://...)"
+          v-model="nodeUrl"
+          :state="nodeUrlTested ? 'valid' : nodeUrlValid && !nodeUrlError ? 'loading' : 'initial'"
+          :error="nodeUrlError"
+        />
       </div>
       <template #footer>
         <div class="content">
@@ -45,15 +53,15 @@ import AergoClient, { GrpcWebProvider } from '@herajs/client';
   },
 })
 export default class NetworkUpdate extends Vue {
-  chainId = "";
+  chainId = '';
   chainIdReadonly = false;
-  nodeUrl = "";
+  nodeUrl = '';
   nodeTestTimeout: NodeJS.Timeout | null = null;
   nodeUrlTested = false;
   nodeUrlError = '';
 
   get chainIdValid() {
-    return this.chainId.length > 0 && this.chainId.match(/^[a-z0-9._-]+$/i)
+    return this.chainId.length > 0 && this.chainId.match(/^[a-z0-9._-]+$/i);
   }
   get nodeUrlValid() {
     const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;

@@ -48,7 +48,10 @@ const storeModule: Module<AccountsState, RootState> = {
     async updateAccount({ commit }, { address, chainId }: AccountSpec) {
       const vue = getVueInstance(this);
       vue.$background.setActiveAccount({ address, chainId });
-      const account = await vue.$background.syncAccountState({ address, chainId });
+      const account = await vue.$background.syncAccountState({
+        address,
+        chainId,
+      });
       commit('setAccounts', [account]);
     },
 
@@ -56,7 +59,10 @@ const storeModule: Module<AccountsState, RootState> = {
     async fetchAccountBalances({ commit }, { address, chainId }: AccountSpec) {
       const vue = getVueInstance(this);
       //vue.$background.setActiveAccount({ address, chainId });
-      const balances = await vue.$background.getAccountBalance({ address, chainId });
+      const balances = await vue.$background.getAccountBalance({
+        address,
+        chainId,
+      });
       commit('setAccountBalances', balances);
     },
   },

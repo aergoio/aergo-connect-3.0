@@ -5,17 +5,35 @@
       <Heading tag="h2">Export as Keystore</Heading>
       <div v-if="!keystore">
         <p>Choose a passphrase to encrypt your keystore file.</p>
-        <PasswordStrengthField variant="main" v-model="password" @submit="createKeystore" autofocus />
-        {{errors.password}}
+        <PasswordStrengthField
+          variant="main"
+          v-model="password"
+          @submit="createKeystore"
+          autofocus
+        />
+        {{ errors.password }}
       </div>
       <div v-else>
-        <p>Your encrypted keystore file is ready to download. A download should have been started automatically by your browser. If not, click the button below.</p>
+        <p>
+          Your encrypted keystore file is ready to download. A download should have been started
+          automatically by your browser. If not, click the button below.
+        </p>
       </div>
     </div>
     <template #footer>
       <ButtonGroup vertical class="content">
-        <Button v-if="!keystore" type="primary" @click="createKeystore" :loading="loading">Export</Button>
-        <a v-else class="button button-type-primary button-size-default inverted-colors" :href="encodedKeystoreUrl" target="_blank" :download="fileName" ref="downloadButton">Download</a>
+        <Button v-if="!keystore" type="primary" @click="createKeystore" :loading="loading"
+          >Export</Button
+        >
+        <a
+          v-else
+          class="button button-type-primary button-size-default inverted-colors"
+          :href="encodedKeystoreUrl"
+          target="_blank"
+          :download="fileName"
+          ref="downloadButton"
+          >Download</a
+        >
       </ButtonGroup>
     </template>
   </ScrollView>
@@ -25,7 +43,7 @@
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 import { BackButton, Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { TextField, PasswordStrengthField } from '@aergo-connect/lib-ui/src/forms';
@@ -42,13 +60,13 @@ import { TextField, PasswordStrengthField } from '@aergo-connect/lib-ui/src/form
   },
 })
 export default class AccountExportKeystore extends Vue {
-  password = "";
+  password = '';
   errors = {
-    password: "",
+    password: '',
   };
   loading = false;
 
-  keystore = "";
+  keystore = '';
 
   get encodedKeystoreUrl(): string {
     return 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.keystore);
@@ -85,5 +103,4 @@ export default class AccountExportKeystore extends Vue {
 }
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

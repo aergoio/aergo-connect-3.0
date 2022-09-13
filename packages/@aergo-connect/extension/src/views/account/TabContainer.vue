@@ -1,10 +1,16 @@
 <template>
   <div class="tab-container">
     <TabBar>
-      <router-link :to="{ name: 'account-details' }"><Icon name="tab-wallet" :size="32" /></router-link>
-      <router-link :to="{ name: 'account-send' }"><Icon name="tab-send" :size="32" /></router-link>
-      <router-link :to="{ name: 'account-sign' }" v-if="isSignMessageEnabled"><Icon name="tab-sign" :size="32" /></router-link>
-      <router-link :to="{ name: 'account-history' }"><Icon name="tab-history" :size="32" /></router-link>
+      <router-link :to="{ name: 'account-details' }"
+        ><Icon name="tab-wallet" :size="32"
+      /></router-link>
+      <router-link :to="{ name: 'account-send' }"><Icon name="tab-send" :size="32"/></router-link>
+      <router-link :to="{ name: 'account-sign' }" v-if="isSignMessageEnabled"
+        ><Icon name="tab-sign" :size="32"
+      /></router-link>
+      <router-link :to="{ name: 'account-history' }"
+        ><Icon name="tab-history" :size="32"
+      /></router-link>
     </TabBar>
     <RouteTransition defaultTransition="fade">
       <router-view></router-view>
@@ -18,7 +24,7 @@ import TabBar from '@aergo-connect/lib-ui/src/nav/TabBar.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 
 @Component({
   components: {

@@ -22,12 +22,7 @@
       <div class="content">
         <Appear :delay="0.6">
           <ButtonGroup vertical>
-            <Button
-              type="primary"
-              :to="{ name: 'setup', params: { next: 'account-register' } }"
-              hover="true"
-              >Get Started</Button
-            >
+            <Button type="primary" :to="{ name: 'setup' }" hover="true">Get Started</Button>
           </ButtonGroup>
         </Appear>
       </div>

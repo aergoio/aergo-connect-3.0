@@ -1,12 +1,13 @@
 <template>
-  <ScrollView class="page"> 
+  <ScrollView class="page">
     <div class="content">
       <div class="icon-header">
         <Icon name="title-trash" :size="36" />
       </div>
       <Heading>Remove account</Heading>
       <p>
-        This will remove access to this account in this wallet. Make sure you have a backup or don't need this account anymore.
+        This will remove access to this account in this wallet. Make sure you have a backup or don't
+        need this account anymore.
       </p>
     </div>
 
@@ -41,12 +42,14 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 export default class RequestAddress extends mixins() {
   async confirm() {
     // Better double check
-    const nativeCheck = confirm(`Are you really sure you want to remove the account ${this.$route.params.address} from this wallet?`);
+    const nativeCheck = confirm(
+      `Are you really sure you want to remove the account ${this.$route.params.address} from this wallet?`,
+    );
     if (!nativeCheck) return;
     await this.$background.removeAccount({
       chainId: this.$route.params.chainId,
       address: this.$route.params.address,
-    })
+    });
     this.$router.push({ name: 'accounts-list' });
   }
 }

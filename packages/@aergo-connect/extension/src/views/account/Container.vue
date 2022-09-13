@@ -1,7 +1,7 @@
 <template>
   <ScrollView class="page">
     <template #header>
-<!--      <AccountHeader back-route-name="balanceListRoute"></AccountHeader>-->
+      <!--      <AccountHeader back-route-name="balanceListRoute"></AccountHeader>-->
       <AccountHeader></AccountHeader>
     </template>
     <RouteTransition>
@@ -17,8 +17,8 @@ import AccountHeader from '../../components/AccountHeader.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
-import {Prop} from "vue-property-decorator";
+import Component from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
 
 @Component({
   components: {
@@ -29,9 +29,8 @@ import {Prop} from "vue-property-decorator";
   },
 })
 export default class AccountFrame extends Vue {
-  @Prop({type: String, default: 'balance-list'}) readonly balanceListRoute!: string;
+  @Prop({ type: String, default: 'balance-list' }) readonly balanceListRoute!: string;
 }
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

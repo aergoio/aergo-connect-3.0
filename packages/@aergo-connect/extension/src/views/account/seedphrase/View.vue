@@ -3,15 +3,16 @@
     <div class="content" style="padding-bottom: 0">
       <Heading>Recovery phrase</Heading>
       <p>
-        For a safe backup, write down this recovery phrase on paper.
-        You need to verify it in the next step.
+        For a safe backup, write down this recovery phrase on paper. You need to verify it in the
+        next step.
       </p>
       <p v-if="!seedPhrase" class="input-error-text">
-        The seed phrase is no longer available because you reloaded the page after creating the account.<br>
+        The seed phrase is no longer available because you reloaded the page after creating the
+        account.<br />
         Please go back and create a new account.
       </p>
       <div class="seed-phrase" v-if="seedPhrase">
-        <span class="word" v-for="word in seedPhraseWords" :key="word">{{word}}</span>
+        <span class="word" v-for="word in seedPhraseWords" :key="word">{{ word }}</span>
       </div>
     </div>
     <template #footer>
@@ -28,10 +29,10 @@ import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import { Identicon } from '@aergo-connect/lib-ui/src/content';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import InvertedColors from '@aergo-connect/lib-ui/src/theme/InvertedColors.vue'; 
+import InvertedColors from '@aergo-connect/lib-ui/src/theme/InvertedColors.vue';
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 
 @Component({
   components: {
@@ -60,7 +61,7 @@ export default class ViewSeedPhrase extends Vue {
 .seed-phrase {
   line-height: 50px;
   counter-reset: wordIndex;
-  font-size: (13/16)*1rem;
+  font-size: (13/16) * 1rem;
 
   .word {
     display: inline-block;
@@ -72,7 +73,7 @@ export default class ViewSeedPhrase extends Vue {
 
     &:before {
       counter-increment: wordIndex;
-      content: "" counter(wordIndex) ". ";
+      content: '' counter(wordIndex) '. ';
       color: #777;
     }
   }

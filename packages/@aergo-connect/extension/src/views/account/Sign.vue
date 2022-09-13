@@ -1,5 +1,5 @@
 <template>
-  <ScrollView class="page"> 
+  <ScrollView class="page">
     <template #header>
       <div class="content" style="padding-bottom: 0;">
         <Heading tag="h2">Sign message</Heading>
@@ -9,10 +9,10 @@
     <div class="content">
       <textarea class="user-sign-message" v-model="message"></textarea>
       <label class="prehash-check">
-        <input type="checkbox" v-model="isHashed">
+        <input type="checkbox" v-model="isHashed" />
         This is a message hash
       </label>
-      <p class="sign-message sign-message-result" v-if="signature">{{signature}}</p>
+      <p class="sign-message sign-message-result" v-if="signature">{{ signature }}</p>
     </div>
 
     <template #footer>
@@ -21,9 +21,13 @@
           <Button type="primary" @click="confirm">Confirm</Button>
         </ButtonGroup>
       </div>
-      <LoadingDialog :visible="statusDialogVisible" @close="statusDialogVisible=false" :state="dialogState">
-        <p v-if="dialogState !== 'error'">{{statusText}}</p>
-        <p v-else class="error">{{statusText}}</p>
+      <LoadingDialog
+        :visible="statusDialogVisible"
+        @close="statusDialogVisible = false"
+        :state="dialogState"
+      >
+        <p v-if="dialogState !== 'error'">{{ statusText }}</p>
+        <p v-else class="error">{{ statusText }}</p>
       </LoadingDialog>
     </template>
   </ScrollView>
@@ -106,7 +110,7 @@ export default class RequestSign extends mixins() {
     let displayAsHex = false;
     if (message.substr(0, 2) === '0x') {
       try {
-        buf = Buffer.from(message.substr(2), "hex");
+        buf = Buffer.from(message.substr(2), 'hex');
         displayAsHex = true;
       } catch (e) {
         throw new Error(`Failed to parse message: ${e}`);
@@ -114,10 +118,12 @@ export default class RequestSign extends mixins() {
     }
     if (this.account.data.type === 'ledger') {
       if (this.isHashed) {
-        throw new Error('The Ledger app does not support pre-hashed messages for security reasons. Please enter the original message instead.');
+        throw new Error(
+          'The Ledger app does not support pre-hashed messages for security reasons. Please enter the original message instead.',
+        );
       }
       this.signature = await timedAsync(this.signWithLedger(buf, displayAsHex));
-      return
+      return;
     }
     const { address, chainId } = this.accountSpec;
     const callData: {
@@ -156,14 +162,14 @@ export default class RequestSign extends mixins() {
   padding: 16px;
   width: 100%;
   box-sizing: border-box;
-  font-size: (14/16)*1rem;
+  font-size: (14/16) * 1rem;
 }
 .sign-message.sign-message-result {
   margin: 20px 0;
 }
 .prehash-check {
   display: block;
-  font-size: .85em;
+  font-size: 0.85em;
   margin: 10px 0;
   input {
     margin-right: 3px;

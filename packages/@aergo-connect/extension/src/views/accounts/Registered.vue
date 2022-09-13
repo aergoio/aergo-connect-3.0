@@ -1,37 +1,37 @@
 <template>
-	<ScrollView>
-		<img src="../../assets/img/dummy-logo.svg" alt="" />
-		<Heading class="big-title">Registered Account!</Heading>
+  <ScrollView>
+    <img src="../../assets/img/dummy-logo.svg" alt="" />
+    <Heading class="big-title">Registered Account!</Heading>
 
-		<div>
-			<span>Address</span>
-			<div>
-				<span>AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW</span>
-			</div>
-		</div>
+    <div>
+      <span>Address</span>
+      <div>
+        <span>AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW</span>
+      </div>
+    </div>
 
-		<div>
-			<div>
-				<span>Nickname</span>
-				<!-- <img src="@aergo-connect/lib-ui/src/icons/img/edit.svg" alt="" /> -->
-				<div>
-					<span>ACCOUNT 1</span>
-				</div>
-			</div>
-		</div>
-		<ButtonGroup vertical>
-			<Button
-				type="primary-outline"
-				size="large"
-				:to="{ name: 'setup', params: { next: 'account-import' } }"
-			>
-				Import
-			</Button>
-			<Button @click="create" type="primary" size="large">
-				Create
-			</Button>
-		</ButtonGroup>
-	</ScrollView>
+    <div>
+      <div>
+        <span>Nickname</span>
+        <!-- <img src="@aergo-connect/lib-ui/src/icons/img/edit.svg" alt="" /> -->
+        <div>
+          <span>ACCOUNT 1</span>
+        </div>
+      </div>
+    </div>
+    <ButtonGroup vertical>
+      <Button
+        type="primary-outline"
+        size="large"
+        :to="{ name: 'setup', params: { next: 'account-import' } }"
+      >
+        Import
+      </Button>
+      <Button @click="create" type="primary" size="large">
+        Create
+      </Button>
+    </ButtonGroup>
+  </ScrollView>
 </template>
 
 <scritp lang="ts">

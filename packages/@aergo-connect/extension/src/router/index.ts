@@ -6,6 +6,7 @@ import AccountsContainer from '../views/accounts/Container.vue';
 import Lockscreen from '../views/accounts/Lockscreen.vue';
 import Welcome from '../views/accounts/Welcome.vue';
 import Register from '../views/accounts/Register.vue';
+import Registered from '../views/accounts/Registered.vue';
 import Setup from '../views/accounts/Setup.vue';
 import Create from '../views/accounts/Create.vue';
 import Import from '../views/accounts/import/1-Network.vue';
@@ -92,11 +93,23 @@ const routes: RouteConfig[] = [
         R.NoAuthCheck | R.NoTracking,
       ),
 
+<<<<<<< Updated upstream
       withMeta(
         0,
         { path: '/register', name: 'register', component: Register },
         R.NoAuthCheck | R.NoTracking,
       ),
+=======
+			// register by 영근 need to be delete later
+			withMeta(1, { path: '/register', name: 'register', component: Register }),
+			withMeta(1, {
+				path: '/registered',
+				name: 'registered',
+				component: Registered,
+			}),
+
+			//
+>>>>>>> Stashed changes
 
       withMeta(1, {
         path: 'list',

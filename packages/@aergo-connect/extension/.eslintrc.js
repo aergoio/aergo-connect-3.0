@@ -26,6 +26,7 @@ module.exports = {
         bracketSpacing: true,
       },
     ],
+    'vue/multi-word-component-names': 'off',
     'no-console': 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     '@typescript-eslint/no-explicit-any': 'off',

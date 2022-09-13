@@ -50,6 +50,7 @@ import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import ConfirmModal from '@aergo-connect/lib-ui/src/layouts/ConfirmModal.vue';
 import Component, { mixins } from 'vue-class-component';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
+
 @Component({
   components: {
     ScrollView,
@@ -85,6 +86,7 @@ export default class Setup extends mixins() {
       this.modal = true;
     }
   }
+
   async mounted(): Promise<void> {
     const isSetup = await this.$background.isSetup();
     console.log(isSetup, 'isSetup');

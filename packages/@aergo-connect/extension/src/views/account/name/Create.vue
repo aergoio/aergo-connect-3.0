@@ -4,9 +4,9 @@
       <BackButton :to="{ name: 'account-details' }" />
       <Heading tag="h2">Register new name</Heading>
       <p>
-        Enter your new name for this account.<br>
-        We will then generate a transaction that you need to confirm in the next step
-        to register your name on the network.
+        Enter your new name for this account.<br />
+        We will then generate a transaction that you need to confirm in the next step to register
+        your name on the network.
       </p>
       <TextField v-model="name" variant="main" :error="errors.name" autoComplete="no" />
       <div class="note">Alpha-numeric, 12 characters</div>
@@ -23,7 +23,7 @@
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 import { BackButton, Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { TextField } from '@aergo-connect/lib-ui/src/forms';
@@ -42,9 +42,9 @@ import { timedAsync } from 'timed-async';
   },
 })
 export default class AccountNameCreate extends Vue {
-  name = "";
+  name = '';
   errors = {
-    name: "",
+    name: '',
   };
   loading = false;
 
@@ -82,8 +82,10 @@ export default class AccountNameCreate extends Vue {
         }
         throw new Error(`Name is already registered to account ${name.data.destination}`);
       }
-      const txBody = await timedAsync(this.$background.getCreateNameTransaction(this.accountSpec, this.name));
-      this.$store.dispatch('ui/setTxBody', txBody );
+      const txBody = await timedAsync(
+        this.$background.getCreateNameTransaction(this.accountSpec, this.name),
+      );
+      this.$store.dispatch('ui/setTxBody', txBody);
       this.$router.push({ name: 'account-send-confirm' });
     } catch (e) {
       this.errors.name = `${e}`;
@@ -95,5 +97,4 @@ export default class AccountNameCreate extends Vue {
 }
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

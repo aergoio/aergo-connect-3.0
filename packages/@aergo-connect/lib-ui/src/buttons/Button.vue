@@ -158,6 +158,7 @@ export default Vue.extend({
   &.button-type-primary-outline {
     color: $Blue01;
     outline: 2px solid $Blue01;
+    height: 46px;
   }
 
   &.button-type-secondary {
@@ -179,7 +180,8 @@ export default Vue.extend({
 
   &.button-type-secondary-outline {
     color: $Pink01;
-    outline: 2px solid $Pink01;
+    outline: 2px solid $Pink01;    
+    height: 46px;
   }
 
   &.button-type-gradation {

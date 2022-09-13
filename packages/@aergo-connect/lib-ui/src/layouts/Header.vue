@@ -1,21 +1,15 @@
 <template>
-	<div
-		class="header"
-		:class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']"
-	>
-		<div
-			class="header__button left"
-			:class="[buttonHide ? `button__hide` : ``]"
-		>
-			<Icon :name="`${button}`" />
-		</div>
-		<h3>{{ title }}</h3>
-		<div class="header__button right">
-			<Icon class="refresh" name="refresh" />
-			<a type="button" class="skip__btn">Skip</a>
-		</div>
-		<slot></slot>
-	</div>
+  <div class="header" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
+    <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]" @click="goBack">
+      <Icon :name="`${button}`" />
+    </div>
+    <h3>{{ title }}</h3>
+    <div class="header__button right">
+      <Icon class="refresh" name="refresh" />
+      <a type="button" class="skip__btn">Skip</a>
+    </div>
+    <slot></slot>
+  </div>
 </template>
 
 <script lang="ts">
@@ -23,29 +17,34 @@ import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 
 export default Vue.extend({
-	components: { Icon },
-	props: {
-		button: {
-			type: String,
-			default: '',
-		},
-		buttonHide: {
-			type: Boolean,
-			default: false,
-		},
-		title: {
-			type: String,
-			default: '',
-		},
-		skip: {
-			type: Boolean,
-			default: false,
-		},
-		refresh: {
-			type: Boolean,
-			default: false,
-		},
-	},
+  components: { Icon },
+  props: {
+    button: {
+      type: String,
+      default: '',
+    },
+    buttonHide: {
+      type: Boolean,
+      default: false,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    skip: {
+      type: Boolean,
+      default: false,
+    },
+    refresh: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    goBack() {
+      this.$router.go(-1);
+    },
+  },
 });
 </script>
 
@@ -53,77 +52,77 @@ export default Vue.extend({
 @import '../styles/variables';
 
 .header {
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 50px;
-	background: #ffffff;
-	box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
-	position: relative;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  background: #ffffff;
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
 
-	h3 {
-		margin: 0;
-		font-weight: 500;
-		font-size: 20px;
-		line-height: 20px;
-		color: $Grey07;
-		margin-left: 12px;
-	}
+  h3 {
+    margin: 0;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 20px;
+    color: $Grey07;
+    margin-left: 12px;
+  }
 
-	.header__button {
-		width: 30px;
-		height: 30px;
-		position: absolute;
-		top: 50%;
-		transform: translate(0%, -50%);
-		padding: 0px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+  .header__button {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0%, -50%);
+    padding: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    &.left {
+      left: 20px;
+      &.button__hide {
+        visibility: hidden;
+      }
+    }
 
-		&.left {
-			left: 20px;
-			&.button__hide {
-				visibility: hidden;
-			}
-		}
+    &.right {
+      right: 20px;
+    }
+  }
 
-		&.right {
-			right: 20px;
-		}
-	}
+  &.refresh__on {
+    .right__icon {
+      visibility: visible;
+    }
+    .refresh {
+      display: inline;
+    }
+    .skip__btn {
+      display: none;
+    }
+  }
 
-	&.refresh__on {
-		.right__icon {
-			visibility: visible;
-		}
-		.refresh {
-			display: inline;
-		}
-		.skip__btn {
-			display: none;
-		}
-	}
+  &.skip__on {
+    .refresh {
+      display: none;
+    }
+    .skip__btn {
+      display: inline;
+      visibility: visible;
+    }
+  }
 
-	&.skip__on {
-		.refresh {
-			display: none;
-		}
-		.skip__btn {
-			display: inline;
-			visibility: visible;
-		}
-	}
-
-	.skip__btn {
-		all: unset;
-		font-weight: 400;
-		font-size: 15px;
-		line-height: 19px;
-		color: #9c9a9a;
-		cursor: pointer;
-		visibility: hidden;
-	}
+  .skip__btn {
+    all: unset;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 19px;
+    color: #9c9a9a;
+    cursor: pointer;
+    visibility: hidden;
+  }
 }
 </style>

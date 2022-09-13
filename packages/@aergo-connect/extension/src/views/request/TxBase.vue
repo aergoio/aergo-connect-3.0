@@ -1,12 +1,15 @@
 <template>
-  <ScrollView class="page"> 
+  <ScrollView class="page">
     <template #header>
       <div class="content" style="padding-bottom: 0">
         <div class="icon-header">
           <Icon name="title-request" :size="36" />
         </div>
-        <Heading>{{title || 'Send transaction'}}</Heading>
-        <p v-if="request">The website at {{request.origin}} wants to {{actionVerb || 'send'}} a transaction using your account.</p>
+        <Heading>{{ title || 'Send transaction' }}</Heading>
+        <p v-if="request">
+          The website at {{ request.origin }} wants to {{ actionVerb || 'send' }} a transaction
+          using your account.
+        </p>
       </div>
     </template>
 
@@ -21,9 +24,13 @@
           <Button type="primary" @click="confirm">Confirm</Button>
         </ButtonGroup>
       </div>
-      <LoadingDialog :visible="statusDialogVisible" @close="statusDialogVisible=false" :state="dialogState">
-        <p v-if="dialogState !== 'error'">{{statusText}}</p>
-        <p v-else class="error">{{statusText}}</p>
+      <LoadingDialog
+        :visible="statusDialogVisible"
+        @close="statusDialogVisible = false"
+        :state="dialogState"
+      >
+        <p v-if="dialogState !== 'error'">{{ statusText }}</p>
+        <p v-else class="error">{{ statusText }}</p>
       </LoadingDialog>
     </template>
   </ScrollView>
@@ -74,9 +81,9 @@ export default class TxBase extends mixins(RequestMixin) {
     if (!this.request) return Buffer.from([]);
     const txData = this.request.data;
     if (txData.payload_json) {
-        return Buffer.from(JSON.stringify(txData.payload_json));
+      return Buffer.from(JSON.stringify(txData.payload_json));
     }
-    return Buffer.from(txData.payload, 'base64')
+    return Buffer.from(txData.payload, 'base64');
   }
   get payloadDisplay() {
     if (!this.request) return '';
@@ -147,14 +154,16 @@ export default class TxBase extends mixins(RequestMixin) {
       }
     } else {
       this.setStatus('loading', 'Sending to network...');
-      const result = await timedAsync(this.$background.sendTransaction(txBody, this.$route.params.chainId));
+      const result = await timedAsync(
+        this.$background.sendTransaction(txBody, this.$route.params.chainId),
+      );
       if ('tx' in result) {
         return {
           hash: result.tx.hash,
         };
       }
     }
-   
+
     // This shouldn't happen normally
     throw new Error('Result is missing transaction information.');
   }

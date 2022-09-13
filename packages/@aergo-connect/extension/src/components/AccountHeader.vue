@@ -4,10 +4,17 @@
       <BackButton :to="{ name: backRouteName }" />
       <HeaderLogo :iconName="isPublicChain ? 'logo' : 'network-other'" />
       <div class="account-identifier">
-        <Elide class="address" :text="$route.params.address" mode="middle-fixed-tail" expect-ellipsis />
+        <Elide
+          class="address"
+          :text="$route.params.address"
+          mode="middle-fixed-tail"
+          expect-ellipsis
+        />
         <Elide class="network" :text="$route.params.chainId" mode="head" />
       </div>
-      <Button @click="gotoExplorer" type="icon" class="scan-button" v-if="explorerUrl"><Icon name="link" :size="36" /></Button>
+      <Button @click="gotoExplorer" type="icon" class="scan-button" v-if="explorerUrl"
+        ><Icon name="link" :size="36"
+      /></Button>
     </Header>
   </InvertedColors>
 </template>
@@ -18,7 +25,7 @@ import { Header } from '@aergo-connect/lib-ui/src/layouts';
 import HeaderLogo from '@aergo-connect/lib-ui/src/icons/HeaderLogo.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import { BackButton, Button } from '@aergo-connect/lib-ui/src/buttons';
-import InvertedColors from '@aergo-connect/lib-ui/src/theme/InvertedColors.vue'; 
+import InvertedColors from '@aergo-connect/lib-ui/src/theme/InvertedColors.vue';
 import { Elide } from '@aergo-connect/lib-ui/src/content';
 import { getExplorerUrl } from '../utils/chain-urls';
 import { isPublicChainId } from '../config';
@@ -45,7 +52,7 @@ export default Vue.extend({
     },
     isPublicChain(): boolean {
       return isPublicChainId(this.$route.params.chainId);
-    }
+    },
   },
   methods: {
     gotoExplorer(): void {
@@ -67,11 +74,11 @@ export default Vue.extend({
   .account-identifier {
     flex: 1;
     overflow: hidden;
-    
+
     display: flex;
     flex-direction: column;
-  
-    font-size: (13/16)*1rem;
+
+    font-size: (13/16) * 1rem;
     line-height: 1.3;
     transform: translateY(1px);
 

@@ -5,23 +5,37 @@
         <span class="chain-id-icon">
           <Icon :name="isPublicChainId(chainId) ? 'logo' : 'network-other'" :size="36" />
         </span>
-        <span class="chain-id">{{chainId}}</span>
+        <span class="chain-id">{{ chainId }}</span>
       </div>
       <ul>
-        <li v-for="account in accounts" :key="account.key" class="account-item-li" @click.capture="$emit('select', account)">
+        <li
+          v-for="account in accounts"
+          :key="account.key"
+          class="account-item-li"
+          @click.capture="$emit('select', account)"
+        >
           <router-link :to="{ name: balanceListRoute, params: account.data.spec }">
-            <div class="account-item" :class="activeAccount && activeAccount.key === account.key ? 'active' : ''">
+            <div
+              class="account-item"
+              :class="activeAccount && activeAccount.key === account.key ? 'active' : ''"
+            >
               <span>
                 <Identicon :text="account.data.spec.address" class="circle" />
-                <span v-if="account.data.type === 'ledger'" class="account-label account-label-usb"><Icon name="usb" :size="17" /></span>
+                <span v-if="account.data.type === 'ledger'" class="account-label account-label-usb"
+                  ><Icon name="usb" :size="17"
+                /></span>
                 <span v-else-if="isNew(account)" class="account-label account-label-new">new</span>
               </span>
 
               <span class="account-address-balance">
-                <span class="account-address">{{account.data.spec.address}}</span>
+                <span class="account-address">{{ account.data.spec.address }}</span>
                 <span class="balance-actions">
                   <FormattedToken class="account-balance" :value="account.data.balance" />
-                  <router-link class="delete-button" :to="{name:'account-remove', params: account.data.spec }"><Icon name="trash" :size="10" /></router-link>
+                  <router-link
+                    class="delete-button"
+                    :to="{ name: 'account-remove', params: account.data.spec }"
+                    ><Icon name="trash" :size="10"
+                  /></router-link>
                 </span>
               </span>
             </div>
@@ -51,16 +65,18 @@ import { isPublicChainId } from '../../config';
   },
 })
 export default class AccountList extends Vue {
-  @Prop({type: Array, required: true}) readonly accounts!: Account[];
-  @Prop({type: Boolean, default: true}) readonly groupByChain!: boolean;
-  @Prop({type: Boolean, default: true}) readonly highlightNew!: boolean;
-  @Prop({type: String, default: 'account-details'}) readonly accountRoute!: string;
-  @Prop({type: String, default: 'balance-list'}) readonly balanceListRoute!: string;
-  @Prop({type: Boolean, default: false}) readonly canDelete!: boolean;
+  @Prop({ type: Array, required: true }) readonly accounts!: Account[];
+  @Prop({ type: Boolean, default: true }) readonly groupByChain!: boolean;
+  @Prop({ type: Boolean, default: true }) readonly highlightNew!: boolean;
+  @Prop({ type: String, default: 'account-details' }) readonly accountRoute!: string;
+  @Prop({ type: String, default: 'balance-list' }) readonly balanceListRoute!: string;
+  @Prop({ type: Boolean, default: false }) readonly canDelete!: boolean;
   activeAccount: any = null;
 
   async mounted() {
+    const temp = await this.$background.getActiveAccount();
     this.activeAccount = await this.$background.getActiveAccount();
+    console.log(temp);
     // Scroll the active account into view
     setTimeout(() => {
       const element = this.$el.querySelectorAll('.active')[0];
@@ -80,16 +96,22 @@ export default class AccountList extends Vue {
     // Order by address A-Z
     accounts.sort((a, b) => a.data.spec?.address?.localeCompare(b.data.spec?.address));
     // Order by balance, reversed
-    accounts.sort((a, b) => !a.data ? 0 : - (new Amount(a.data.balance)).compare((new Amount(b.data.balance))));
+    accounts.sort((a, b) =>
+      !a.data ? 0 : -new Amount(a.data.balance).compare(new Amount(b.data.balance)),
+    );
     // Order by chainID A-Z. This does not affect the groupBy, it just orders the groups alphabetically (e.g. aergo.io < testnet.aergo.io)
-    accounts.sort((a, b) => !a.data ? 0 : a.data.spec?.chainId?.localeCompare(b.data.spec.chainId) );
+    accounts.sort((a, b) =>
+      !a.data ? 0 : a.data.spec?.chainId?.localeCompare(b.data.spec.chainId),
+    );
     // Order the most recent accounts first, but only if they are new
     if (this.highlightNew) {
       accounts.sort((a, b) => {
         // Use 0 for non-new accounts to not affect order, otherwise the added timestamp
-        const addedA = this.isNew(a) && typeof a.data.added === 'string' ? + new Date(a.data.added) : 0;
-        const addedB = this.isNew(b) && typeof b.data.added === 'string' ? + new Date(b.data.added) : 0;
-        return - (addedA - addedB);
+        const addedA =
+          this.isNew(a) && typeof a.data.added === 'string' ? +new Date(a.data.added) : 0;
+        const addedB =
+          this.isNew(b) && typeof b.data.added === 'string' ? +new Date(b.data.added) : 0;
+        return -(addedA - addedB);
       });
     }
     return accounts;
@@ -107,23 +129,25 @@ export default class AccountList extends Vue {
 
   isNew(account: Account) {
     if (!this.highlightNew) return false;
-    const MaxAge = 1000*60*5; // 5 min
-    const added = typeof account.data.added === 'string' ? + new Date(account.data.added) : 0;
-    return (+ new Date() - added) < MaxAge;
+    const MaxAge = 1000 * 60 * 5; // 5 min
+    const added = typeof account.data.added === 'string' ? +new Date(account.data.added) : 0;
+    return +new Date() - added < MaxAge;
   }
 }
 </script>
 
 <style lang="scss">
-.account-list, .account-list ul {
+.account-list,
+.account-list ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 .account-list {
-  font-size: (13/16)*1rem;
+  font-size: (13/16) * 1rem;
 
-  .chain-id, .account-address {
+  .chain-id,
+  .account-address {
     font-weight: 500;
   }
   .chainid-group {
@@ -137,7 +161,8 @@ export default class AccountList extends Vue {
   li + li .chainid-group {
     border-top: 1px solid #f0f0f0;
   }
-  .chainid-group, .account-item {
+  .chainid-group,
+  .account-item {
     padding: 16px 20px;
   }
   .account-item {
@@ -146,7 +171,7 @@ export default class AccountList extends Vue {
 
     &.active {
       border: 1px solid rgba(#ff4f9f, 1);
-      animation: activeFaceOut .4s 2 forwards ease-in-out;
+      animation: activeFaceOut 0.4s 2 forwards ease-in-out;
     }
   }
   .account-address-balance {
@@ -156,7 +181,7 @@ export default class AccountList extends Vue {
     border-bottom: 1px solid #f0f0f0;
     padding: 3px 0 10px;
     margin-left: 14px;
-    font-size: (12/16)*1rem;
+    font-size: (12/16) * 1rem;
   }
   .account-item-li:last-child .account-address-balance {
     border-bottom: 0;
@@ -204,12 +229,12 @@ export default class AccountList extends Vue {
   }
   .account-label-new {
     background-color: #ff4f9f;
-    font-size: (8/16)*1rem;
+    font-size: (8/16) * 1rem;
     text-transform: uppercase;
     color: #fff;
   }
   .account-label-usb {
-    background-color: #6F6F6F;
+    background-color: #6f6f6f;
     .icon {
       line-height: 10px;
       height: 10px;

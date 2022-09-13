@@ -1,20 +1,20 @@
 <template>
   <div class="account-list-view">
     <ScrollView>
-      <template #header>
+      <!-- <template #header>
         <div class="account-list-header">
           <Heading tag="h2">
             Accounts
             <Button @click="addAccountDialogVisible = true" type="icon"><Icon name="add" :size="24" /></Button>
           </Heading>
         </div>
-      </template>
+      </template> -->
       <div class="account-list-wrap">
         <AccountList :accounts="accounts" :canDelete="true" />
       </div>
     </ScrollView>
 
-    <AddAccountDialog :visible="addAccountDialogVisible" @close="addAccountDialogVisible=false" />
+    <AddAccountDialog :visible="addAccountDialogVisible" @close="addAccountDialogVisible = false" />
   </div>
 </template>
 
@@ -48,7 +48,12 @@ export default class AccountsList extends Vue {
     }
     return [];
   }
-
+  async beforeMount() {
+    const isSetup = await this.$background.isSetup();
+    if (this.$store.state.accounts.keys.length === 0 && isSetup) {
+      this.$router.push({ name: 'register' });
+    }
+  }
   mounted() {
     this.$store.dispatch('accounts/fetchAccounts');
   }

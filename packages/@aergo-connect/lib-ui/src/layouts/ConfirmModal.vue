@@ -8,27 +8,27 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Icon from "../icons/Icon.vue";
-import Button from "../buttons/Button.vue";
+import Vue from 'vue';
+import Icon from '../icons/Icon.vue';
+import Button from '../buttons/Button.vue';
 
 export default Vue.extend({
   components: { Icon, Button },
   props: {
     title: {
       type: String,
-      default: "",
+      default: '',
     },
     buttonType: {
       type: String,
-      default: "gradation",
+      default: 'gradation',
     },
   },
 });
 </script>
 
 <style lang="scss">
-@import "../styles/mixin.scss";
+@import '../styles/mixin.scss';
 
 .wrapper {
   max-width: 317px;

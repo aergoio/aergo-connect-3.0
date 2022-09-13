@@ -13,8 +13,7 @@
       <Button @click="unlock" type="primary" size="large">Unlock</Button>
       <div class="password-text-wrapper">
         <span>
-          Wallet won't unlock? You can DELETE your current wallet and setup a
-          new one.
+          Wallet won't unlock? You can DELETE your current wallet and setup a new one.
         </span>
         <a href="#">Reset Wallet</a>
       </div>
@@ -23,18 +22,14 @@
 </template>
 
 <script lang="ts">
-import Component, { mixins } from "vue-class-component";
-import { ScrollView } from "@aergo-connect/lib-ui/src/layouts";
-import {
-  Button,
-  ButtonGroup,
-  ContinueButton,
-} from "@aergo-connect/lib-ui/src/buttons";
-import { Icon } from "@aergo-connect/lib-ui/src/icons";
-import Heading from "@aergo-connect/lib-ui/src/content/Heading.vue";
-import Appear from "@aergo-connect/lib-ui/src/animations/Appear.vue";
-import { TextField } from "@aergo-connect/lib-ui/src/forms";
-import PasswordStrengthField from "@aergo-connect/lib-ui/src/forms/PasswordStrengthField.vue";
+import Component, { mixins } from 'vue-class-component';
+import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
+import { Button, ButtonGroup, ContinueButton } from '@aergo-connect/lib-ui/src/buttons';
+import { Icon } from '@aergo-connect/lib-ui/src/icons';
+import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
+import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
+import { TextField } from '@aergo-connect/lib-ui/src/forms';
+import PasswordStrengthField from '@aergo-connect/lib-ui/src/forms/PasswordStrengthField.vue';
 
 @Component({
   components: {
@@ -50,15 +45,16 @@ import PasswordStrengthField from "@aergo-connect/lib-ui/src/forms/PasswordStren
   },
 })
 export default class Lockscreen extends mixins() {
-  password = "";
+  password = '';
   errors = {
-    password: "",
+    password: '',
   };
 
   async beforeMount(): Promise<void> {
-    const isSetup = await this.$background.isSetup();
-    if (!isSetup) {
-      this.$router.push({ name: "welcome" });
+    const isUnlocked = await this.$background.isUnlocked();
+    console.log(isUnlocked, 'isUnlocked');
+    if (!isUnlocked) {
+      this.$router.push({ name: 'welcome' });
     }
   }
   async mounted() {
@@ -72,8 +68,9 @@ export default class Lockscreen extends mixins() {
     try {
       await this.$background.unlock({ password: this.password });
       let nextPath = this.$store.state.ui.route.currentPath;
-      if (!nextPath || nextPath === "/" || nextPath === "/locked") {
-        nextPath = { name: "accounts-list" };
+      console.log(nextPath, 'nextPath');
+      if (!nextPath || nextPath === '/' || nextPath === '/locked') {
+        nextPath = { name: 'accounts-list' };
       }
       this.$router.push(nextPath);
     } catch (e) {
@@ -143,11 +140,6 @@ export default class Lockscreen extends mixins() {
   }
 }
 #app.page-lockscreen {
-  background: linear-gradient(
-    0deg,
-    #ffffff -10.1%,
-    #ecf8fd 58.85%,
-    #fff1f9 139.14%
-  );
+  background: linear-gradient(0deg, #ffffff -10.1%, #ecf8fd 58.85%, #fff1f9 139.14%);
 }
 </style>

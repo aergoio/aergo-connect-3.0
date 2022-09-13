@@ -29,7 +29,7 @@ const storeModule: Module<AccountsState, RootState> = {
     // Save keys extra for reactivity as the `accounts` object is not observable in the beginning.
     keys: [],
     lastSeedPhrase: '',
-    balances:{}
+    balances: {},
   },
   getters: {
     getAccount: state => (accountSpec: AccountSpec): Account | undefined => {
@@ -56,14 +56,14 @@ const storeModule: Module<AccountsState, RootState> = {
     async fetchAccountBalances({ commit }, { address, chainId }: AccountSpec) {
       const vue = getVueInstance(this);
       //vue.$background.setActiveAccount({ address, chainId });
-      const balances = await vue.$background.getAccountBalance({ address, chainId })
+      const balances = await vue.$background.getAccountBalance({ address, chainId });
       commit('setAccountBalances', balances);
     },
   },
   mutations: {
     setAccountBalances(state, balances: any) {
-      console.log("setAccountBalances")
-      console.log(balances)
+      console.log('setAccountBalances');
+      console.log(balances);
       state.balances = balances;
     },
 
@@ -84,7 +84,7 @@ const storeModule: Module<AccountsState, RootState> = {
     setSeedPhrase(state, phrase: string) {
       state.lastSeedPhrase = phrase;
     },
-  }
+  },
 };
 
 export default storeModule;

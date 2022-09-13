@@ -1,14 +1,14 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
 const IDLE_TIMEOUT = 60 * 1000;
 
 class AppState extends EventEmitter {
   private idleTimeout?: NodeJS.Timeout;
-  public state = "";
+  public state = '';
 
   constructor() {
     super();
-    this.set("initial");
+    this.set('initial');
   }
 
   /**
@@ -18,25 +18,25 @@ class AppState extends EventEmitter {
    * @param {string} nextState
    */
   set(nextState: string): void {
-    if (nextState != "inactive") {
+    if (nextState != 'inactive') {
       if (this.idleTimeout) {
         clearTimeout(this.idleTimeout);
       }
     }
-    if (this.state != nextState && nextState == "inactive") {
+    if (this.state != nextState && nextState == 'inactive') {
       if (this.idleTimeout) {
         clearTimeout(this.idleTimeout);
       }
       this.idleTimeout = setTimeout(() => {
-        console.log("idle timeout !! <- 60s");
-        this.set("idle");
+        console.log('idle timeout !! <- 60s');
+        this.set('idle');
       }, IDLE_TIMEOUT);
     }
     if (this.state != nextState) {
       console.log(`[state] ${this.state} -> ${nextState}`);
     }
     this.state = nextState;
-    this.emit("change", nextState);
+    this.emit('change', nextState);
     this.emit(nextState);
   }
 }

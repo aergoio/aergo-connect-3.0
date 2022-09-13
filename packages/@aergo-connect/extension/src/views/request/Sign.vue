@@ -1,24 +1,26 @@
 <template>
-  <ScrollView class="page"> 
+  <ScrollView class="page">
     <template #header>
       <div class="content" style="padding-bottom: 0">
         <div class="icon-header">
           <Icon name="title-request" :size="36" />
         </div>
         <Heading>Sign message</Heading>
-        <p v-if="request">The website at {{request.origin}} wants to sign a message using your account.</p>
+        <p v-if="request">
+          The website at {{ request.origin }} wants to sign a message using your account.
+        </p>
       </div>
     </template>
 
     <p class="unsupported-error" v-if="ledgerSignHashUnsupported">
-      For security reasons, signing hashes is not supported on the Ledger app.
-      Use a browser-stored account or request support from the Dapp developer.<br>
-      Advice for developer: change the API call to pass the original message as `message`
-      instead of a precomputed `hash`.
+      For security reasons, signing hashes is not supported on the Ledger app. Use a browser-stored
+      account or request support from the Dapp developer.<br />
+      Advice for developer: change the API call to pass the original message as `message` instead of
+      a precomputed `hash`.
     </p>
 
     <div class="sign-message" v-if="request && !ledgerSignHashUnsupported">
-      {{msgToSign}}
+      {{ msgToSign }}
     </div>
 
     <template #footer>
@@ -28,9 +30,13 @@
           <Button type="primary" @click="confirm">Confirm</Button>
         </ButtonGroup>
       </div>
-      <LoadingDialog :visible="statusDialogVisible" @close="statusDialogVisible=false" :state="dialogState">
-        <p v-if="dialogState !== 'error'">{{statusText}}</p>
-        <p v-else class="error">{{statusText}}</p>
+      <LoadingDialog
+        :visible="statusDialogVisible"
+        @close="statusDialogVisible = false"
+        :state="dialogState"
+      >
+        <p v-if="dialogState !== 'error'">{{ statusText }}</p>
+        <p v-else class="error">{{ statusText }}</p>
       </LoadingDialog>
     </template>
   </ScrollView>
@@ -117,7 +123,7 @@ export default class RequestSign extends mixins(RequestMixin) {
     let displayAsHex = false;
     if (message.substr(0, 2) === '0x') {
       try {
-        buf = Buffer.from(message.substr(2), "hex");
+        buf = Buffer.from(message.substr(2), 'hex');
         displayAsHex = true;
       } catch (e) {
         throw new Error(`Failed to parse message: ${e}`);
@@ -159,13 +165,13 @@ export default class RequestSign extends mixins(RequestMixin) {
   background-color: #f0f0f0;
   padding: 16px;
   margin: 0 20px;
-  font-size: (14/16)*1rem;
+  font-size: (14/16) * 1rem;
   word-wrap: break-word;
   line-height: 1.3;
 }
 .unsupported-error {
   margin: 0 20px;
   color: red;
-  font-size: .85em;
+  font-size: 0.85em;
 }
 </style>

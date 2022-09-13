@@ -4,12 +4,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 
 @Component
-export default class RequestContainer extends Vue {
-}
+export default class RequestContainer extends Vue {}
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

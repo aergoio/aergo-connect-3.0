@@ -1,20 +1,20 @@
 <template>
-	<ScrollView class="page">
-		<div class="content">
-			<Heading>Settings</Heading>
-			<p class="settings-group">Accounts</p>
-			<div class="settings-list">
-				<SwitchButton
-					v-model="features.enableHardwareWallet"
-					label="Enable experimental hardware wallet support"
-				/>
-				<SwitchButton
-					v-model="features.enableSignMessage"
-					label="Enable sign custom message support"
-				/>
-			</div>
-		</div>
-	</ScrollView>
+  <ScrollView class="page">
+    <div class="content">
+      <Heading>Settings</Heading>
+      <p class="settings-group">Accounts</p>
+      <div class="settings-list">
+        <SwitchButton
+          v-model="features.enableHardwareWallet"
+          label="Enable experimental hardware wallet support"
+        />
+        <SwitchButton
+          v-model="features.enableSignMessage"
+          label="Enable sign custom message support"
+        />
+      </div>
+    </div>
+  </ScrollView>
 </template>
 
 <script lang="ts">
@@ -26,30 +26,30 @@ import { PersistInputsMixin } from '../../store/ui';
 import Component, { mixins } from 'vue-class-component';
 
 @Component({
-	components: {
-		ScrollView,
-		Heading,
-		SwitchButton,
-	},
+  components: {
+    ScrollView,
+    Heading,
+    SwitchButton,
+  },
 })
 export default class Import extends mixins(PersistInputsMixin) {
-	features = {
-		enableHardwareWallet: false,
-		enableSignMessage: false,
-	};
-	persistFields = ['features'];
-	persistFieldsKey = 'settings';
+  features = {
+    enableHardwareWallet: false,
+    enableSignMessage: false,
+  };
+  persistFields = ['features'];
+  persistFieldsKey = 'settings';
 }
 </script>
 
 <style lang="scss">
 .settings-group {
-	font-size: (13/16) * 1rem;
-	font-weight: 500;
-	color: #666;
-	margin-bottom: 0.5em;
+  font-size: (13/16) * 1rem;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 0.5em;
 }
 .settings-list .switch-button {
-	margin-bottom: 0.5em;
+  margin-bottom: 0.5em;
 }
 </style>

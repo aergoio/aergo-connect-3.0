@@ -44,7 +44,7 @@ const storeModule: Module<RequestState, RootState> = {
     setRequest(state, request: {}) {
       state.currentRequest = request;
     },
-  }
+  },
 };
 
 export default storeModule;

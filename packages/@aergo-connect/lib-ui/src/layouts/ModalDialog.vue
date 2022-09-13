@@ -4,9 +4,7 @@
       <div class="modal-dialog">
         <Heading tag="h2" class="modal-title" v-if="title">
           {{ title }}
-          <Button @click="$emit('close')" type="icon"
-            ><Icon name="close" :size="24"
-          /></Button>
+          <Button @click="$emit('close')" type="icon"><Icon name="close" :size="24"/></Button>
         </Heading>
         <slot></slot>
       </div>
@@ -16,10 +14,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Button from "../buttons/Button.vue";
-import Icon from "../icons/Icon.vue";
-import Heading from "../content/Heading.vue";
+import Vue from 'vue';
+import Button from '../buttons/Button.vue';
+import Icon from '../icons/Icon.vue';
+import Heading from '../content/Heading.vue';
 
 export default Vue.extend({
   components: {
@@ -35,15 +33,15 @@ export default Vue.extend({
     title: String,
   },
   mounted() {
-    window.addEventListener("keydown", this.handleKeypress);
+    window.addEventListener('keydown', this.handleKeypress);
   },
   destroyed() {
-    window.removeEventListener("keydown", this.handleKeypress);
+    window.removeEventListener('keydown', this.handleKeypress);
   },
   methods: {
     handleKeypress(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        this.$emit("close");
+      if (e.key === 'Escape') {
+        this.$emit('close');
       }
     },
   },

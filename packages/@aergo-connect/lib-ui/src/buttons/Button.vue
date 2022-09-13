@@ -17,16 +17,16 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
-import { ButtonType, ButtonTypes, ButtonSize, ButtonSizes } from "./types";
-import LoadingIndicator from "../icons/LoadingIndicator.vue";
-import { RawLocation } from "vue-router";
+import Vue, { PropType } from 'vue';
+import { ButtonType, ButtonTypes, ButtonSize, ButtonSizes } from './types';
+import LoadingIndicator from '../icons/LoadingIndicator.vue';
+import { RawLocation } from 'vue-router';
 
 /**
  * Either handle click event by `@click` or pass a router location into the `to` prop.
  */
 export default Vue.extend({
-  name: "Button",
+  name: 'Button',
   props: {
     type: {
       type: String as PropType<ButtonType>,
@@ -59,11 +59,11 @@ export default Vue.extend({
     if (this.loading) {
       // Animate into the loading state
       const $el = this.$el as HTMLElement;
-      $el.style.minWidth = $el.clientWidth + "px";
-      $el.style.width = $el.clientWidth + "px";
+      $el.style.minWidth = $el.clientWidth + 'px';
+      $el.style.width = $el.clientWidth + 'px';
       setTimeout(() => {
-        $el.style.minWidth = "50px";
-        $el.style.width = "auto";
+        $el.style.minWidth = '50px';
+        $el.style.width = 'auto';
       }, 300);
     }
   },
@@ -72,22 +72,18 @@ export default Vue.extend({
       return [
         `button-type-${this.type}`,
         `button-size-${this.size}`,
-        this.loading ? `button-loading` : "",
-        this.type.match(/^primary/) ? "inverted-colors" : "",
-        this.hover ? `hover` : "",
+        this.loading ? `button-loading` : '',
+        this.type.match(/^primary/) ? 'inverted-colors' : '',
+        this.hover ? `hover` : '',
       ];
     },
   },
   methods: {
     handleClick() {
-      if (
-        typeof this.to !== "undefined" &&
-        this.to &&
-        typeof this.$router !== "undefined"
-      ) {
+      if (typeof this.to !== 'undefined' && this.to && typeof this.$router !== 'undefined') {
         this.$router.push(this.to);
       } else {
-        this.$emit("click");
+        this.$emit('click');
       }
     },
   },
@@ -95,43 +91,37 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import "../styles/variables";
+@import '../styles/variables';
 
 .button {
   /* Typography */
   font-weight: 500;
   font-size: (17/16) * 1em;
-
   /* Sizing */
   box-sizing: border-box;
   min-height: 48px;
   line-height: 3em;
   padding: 0.5em 2.5em;
   height: 48px;
-
   /* Borders and background */
   outline: none;
   border: 0;
   border-radius: 3px;
   background-color: transparent;
   border-radius: 4px;
-
   /* Content alignment */
   display: flex;
   text-decoration: none;
   text-align: center;
   align-items: center;
   justify-content: space-around;
-
   /* Behavior */
   cursor: pointer;
   transition: min-width 0.35s ease-in;
-
   &[disabled] {
     cursor: not-allowed;
     opacity: 0.75;
   }
-
   &.button-size-small {
     width: 157px;
   }
@@ -141,11 +131,9 @@ export default Vue.extend({
   &.button-size-large {
     width: 327px;
   }
-
   &.button-type-primary {
     background-color: $Blue01;
     color: #fff;
-
     &[disabled] {
       background: $Grey04;
       opacity: 0.3;
@@ -154,13 +142,11 @@ export default Vue.extend({
       background: $gradation04;
     }
   }
-
   &.button-type-primary-outline {
     color: $Blue01;
     outline: 2px solid $Blue01;
     height: 46px;
   }
-
   &.button-type-secondary {
     background-color: $Pink01;
     color: #fff;
@@ -177,13 +163,11 @@ export default Vue.extend({
     box-shadow: none;
     background-color: $Pink01;
   }
-
   &.button-type-secondary-outline {
     color: $Pink01;
-    outline: 2px solid $Pink01;    
+    outline: 2px solid $Pink01;
     height: 46px;
   }
-
   &.button-type-gradation {
     background: $gradation04;
     color: #fff;

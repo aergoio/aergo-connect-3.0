@@ -1,7 +1,7 @@
 <template>
   <ScrollView class="page">
     <Appear>
-      <Header :skip="true" title="Register Account" />
+      <Header button="back" title="Register Account" />
       <div class="register-contents">
         <Heading class="big-title">Register an Account</Heading>
         <span class="pre-header">Import on existing accounts or create a new one.</span>
@@ -11,9 +11,9 @@
         <Appear :delay="0.6">
           <ButtonGroup vertical>
             <Button
-              type="primary-outline"
+              type="primary"
               size="large"
-              :to="{ name: 'setup', params: { next: 'account-import' } }"
+              :to="{ name: 'account-import-format', params: { next: 'account-import-format' } }"
             >
               Import
             </Button>

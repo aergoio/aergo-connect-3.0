@@ -1,10 +1,10 @@
 <template>
-  <div class="header" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
+  <div class="header">
     <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]" @click="goBack">
       <Icon :name="`${button}`" />
     </div>
     <h3>{{ title }}</h3>
-    <div class="header__button right">
+    <div class="header__button right" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
       <Icon class="refresh" name="refresh" />
       <a type="button" class="skip__btn">Skip</a>
     </div>
@@ -13,8 +13,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Icon from "../icons/Icon.vue";
+import Vue from 'vue';
+import Icon from '../icons/Icon.vue';
 
 export default Vue.extend({
   components: { Icon },
@@ -49,7 +49,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import "../styles/variables";
+@import '../styles/variables';
 
 .header {
   position: relative;
@@ -89,29 +89,33 @@ export default Vue.extend({
     }
 
     &.right {
+      top: 60%;
       right: 20px;
-    }
-  }
-
-  &.refresh__on {
-    .right__icon {
-      visibility: visible;
-    }
-    .refresh {
-      display: inline;
-    }
-    .skip__btn {
       display: none;
-    }
-  }
 
-  &.skip__on {
-    .refresh {
-      display: none;
-    }
-    .skip__btn {
-      display: inline;
-      visibility: visible;
+      &.skip__on {
+        display: inline;
+        .refresh {
+          display: none;
+        }
+        .skip__btn {
+          visibility: visible;
+        }
+      }
+
+      &.refresh__on {
+        display: inline;
+        right: 10px;
+        .right__icon {
+          visibility: visible;
+        }
+        .refresh {
+          display: inline;
+        }
+        .skip__btn {
+          display: none;
+        }
+      }
     }
   }
 

@@ -49,9 +49,8 @@ export default class AccountsList extends Vue {
     return [];
   }
   async beforeMount() {
-    const isSetup = await this.$background.isSetup();
-    if (this.$store.state.accounts.keys.length === 0 && isSetup) {
-      this.$router.push({ name: 'register' });
+    if (this.$store.state.accounts.keys.length === 0) {
+      console.log('등록해주세요 연결 모달');
     }
   }
   mounted() {

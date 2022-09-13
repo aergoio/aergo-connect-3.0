@@ -3,20 +3,25 @@
     <template #header>
       <div class="content">
         <section class="dialog-header">
-          <BackButton :to="{ name: 'account-connect-hw' }"/>
+          <BackButton :to="{ name: 'account-connect-hw' }" />
         </section>
         <Heading animated>Select Account</Heading>
         <p style="margin-bottom: 0">
-          <span v-if="!accounts.length">To view accounts stored on your Ledger device, activate the Aergo app on your device and click Connect.</span>
+          <span v-if="!accounts.length"
+            >To view accounts stored on your Ledger device, activate the Aergo app on your device
+            and click Connect.</span
+          >
           <span v-else>Select one account from your device.</span>
         </p>
       </div>
     </template>
 
     <div class="ledger-account-list-wrap">
-      <AccountList v-if="accounts.length"
+      <AccountList
+        v-if="accounts.length"
         :accounts="accounts"
-        :groupByChain="false" :highlightNew="false"
+        :groupByChain="false"
+        :highlightNew="false"
         accountRoute="account-imported"
         @select="selectAccount"
       />
@@ -28,9 +33,14 @@
           <Button type="primary" @click="connect">Connect Ledger</Button>
         </ButtonGroup>
       </div>
-      <LoadingDialog :visible="connectDialogVisible" @close="connectDialogVisible=false" title="Ledger" :state="dialogState">
-        <p v-if="dialogState !== 'error'">{{connectStatus}}</p>
-        <p v-else class="error">{{error}}</p>
+      <LoadingDialog
+        :visible="connectDialogVisible"
+        @close="connectDialogVisible = false"
+        title="Ledger"
+        :state="dialogState"
+      >
+        <p v-if="dialogState !== 'error'">{{ connectStatus }}</p>
+        <p v-else class="error">{{ error }}</p>
       </LoadingDialog>
     </template>
   </ScrollView>
@@ -108,21 +118,26 @@ export default class Import extends mixins(PersistInputsMixin) {
     const accounts: Account[] = [];
     const statePromises = [];
     for (let i = from; i < to; i++) {
-      const path = 'm/44\'/441\'/0\'/0/' + i;
+      const path = "m/44'/441'/0'/0/" + i;
       const address = await app.getWalletAddress(path);
       const spec = {
         address: `${address}`,
         chainId: this.chainId,
       };
-      const account = new Account(serializeAccountSpec(spec), Account.getDefaultData({
-        spec,
-        type: 'ledger',
-        derivationPath: path,
-      }));
+      const account = new Account(
+        serializeAccountSpec(spec),
+        Account.getDefaultData({
+          spec,
+          type: 'ledger',
+          derivationPath: path,
+        }),
+      );
       accounts.push(account);
-      statePromises.push(this.$background.getAccountState(spec).then(state => {
-        account.data.balance = `${state.balance}`;
-      }));
+      statePromises.push(
+        this.$background.getAccountState(spec).then(state => {
+          account.data.balance = `${state.balance}`;
+        }),
+      );
     }
     // Wait for remaining state promises to resolve
     await Promise.all(statePromises);
@@ -147,7 +162,7 @@ export default class Import extends mixins(PersistInputsMixin) {
     margin-bottom: 15px;
   }
   p {
-    font-size: (13/16)*1rem;
+    font-size: (13/16) * 1rem;
     max-width: 260px;
   }
   p.error {

@@ -24,10 +24,10 @@ import { Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import { SuccessIcon } from '@aergo-connect/lib-ui/src/icons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import InvertedColors from '@aergo-connect/lib-ui/src/theme/InvertedColors.vue'; 
+import InvertedColors from '@aergo-connect/lib-ui/src/theme/InvertedColors.vue';
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 
 @Component({
   components: {
@@ -39,8 +39,7 @@ import Component from 'vue-class-component'
     SuccessIcon,
   },
 })
-export default class AccountImported extends Vue {
-}
+export default class AccountImported extends Vue {}
 </script>
 
 <style lang="scss">

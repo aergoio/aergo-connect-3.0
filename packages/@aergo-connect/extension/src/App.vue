@@ -16,14 +16,19 @@ export default Vue.extend({
   async mounted() {
     // Upon App launch, get initial state for 'unlocked'
     const unlocked = await this.$background.isUnlocked();
+    const isSetup = await this.$background.isSetup();
+    console.log(isSetup, 'isSetup');
     this.$store.commit('ui/setUnlocked', unlocked);
 
     const peformAuthCheck = !(
       this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck
     );
 
-    if (!unlocked && peformAuthCheck) {
+    if (!unlocked && peformAuthCheck && isSetup) {
       this.$router.push({ name: 'lockscreen' });
+    }
+    if (!isSetup) {
+      this.$router.push({ name: 'welcome' });
     }
   },
 });

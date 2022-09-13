@@ -28,6 +28,7 @@
               : true
           "
           @click="handleModal"
+          @keyup.enter="handleModal()"
           >Set Password</Button
         >
       </div>
@@ -70,26 +71,23 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 export default class Setup extends mixins() {
   password = '';
   passwordRepeat = '';
-  // step: "initial" | "repeat" = "initial";
   setting = true;
   modal = false;
 
   next() {
-    // this.$router.push({ name: 'register' });
+    this.modal = true;
   }
   goBack() {
     this.$router.push({ name: 'welcome' });
   }
   handleModal() {
     if (this.passwordRepeat === this.password) {
-      // this.setup();
-      this.modal = true;
+      this.setup();
     }
   }
 
   async mounted(): Promise<void> {
     const isSetup = await this.$background.isSetup();
-    console.log(isSetup, 'isSetup');
     if (isSetup) {
       this.next();
     }

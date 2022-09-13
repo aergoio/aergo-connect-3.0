@@ -6,11 +6,14 @@
       <div v-if="!wif">
         <p>Choose a passphrase to encrypt your keystore file.</p>
         <PasswordStrengthField variant="main" v-model="password" @submit="createWif" autofocus />
-        {{errors.password}}
+        {{ errors.password }}
       </div>
       <div v-else>
-        <p>This string contains your private key, encrypted using your chosen passphrase. Please save it in a secure location.</p>
-        <div class="wif-output">{{wif}}</div>
+        <p>
+          This string contains your private key, encrypted using your chosen passphrase. Please save
+          it in a secure location.
+        </p>
+        <div class="wif-output">{{ wif }}</div>
       </div>
     </div>
     <template #footer>
@@ -25,7 +28,7 @@
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 import { BackButton, Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { TextField, PasswordStrengthField } from '@aergo-connect/lib-ui/src/forms';
@@ -42,13 +45,13 @@ import { TextField, PasswordStrengthField } from '@aergo-connect/lib-ui/src/form
   },
 })
 export default class AccountExportWif extends Vue {
-  password = "";
+  password = '';
   errors = {
-    password: "",
+    password: '',
   };
   loading = false;
 
-  wif = "";
+  wif = '';
 
   async createWif() {
     if (!this.password) {

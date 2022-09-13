@@ -3,11 +3,14 @@
     <InvertedColors class="account-created-content">
       <div class="content">
         <Heading class="semi-big-title" animated>Success!</Heading>
-        <p>Your new account has been created.<br>If you will store significant value in this account, please make a backup now.</p>
+        <p>
+          Your new account has been created.<br />If you will store significant value in this
+          account, please make a backup now.
+        </p>
         <div class="new-account-box">
           <Identicon :text="$route.params.address" />
           <div class="new-account-address">
-            <span>{{$route.params.address}}</span>
+            <span>{{ $route.params.address }}</span>
             <ClipboardButton :value="$route.params.address" />
           </div>
         </div>
@@ -16,7 +19,9 @@
     <template #footer>
       <div class="footer-content">
         <ButtonGroup vertical>
-          <Button type="secondary" :to="{ name: 'account-seedphrase-view' }">Backup Recovery Phrase</Button>
+          <Button type="secondary" :to="{ name: 'account-seedphrase-view' }"
+            >Backup Recovery Phrase</Button
+          >
         </ButtonGroup>
       </div>
     </template>
@@ -29,10 +34,10 @@ import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import { Identicon } from '@aergo-connect/lib-ui/src/content';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import InvertedColors from '@aergo-connect/lib-ui/src/theme/InvertedColors.vue'; 
+import InvertedColors from '@aergo-connect/lib-ui/src/theme/InvertedColors.vue';
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 
 @Component({
   components: {
@@ -46,8 +51,7 @@ import Component from 'vue-class-component'
     ClipboardButton,
   },
 })
-export default class AccountCreated extends Vue {
-}
+export default class AccountCreated extends Vue {}
 </script>
 
 <style lang="scss">
@@ -74,7 +78,7 @@ export default class AccountCreated extends Vue {
     display: flex;
     align-items: center;
 
-    font-size: (13/16)*1rem;
+    font-size: (13/16) * 1rem;
     padding-top: 24px;
     margin-top: 20px;
     border-top: 1px solid #1b1b1b;

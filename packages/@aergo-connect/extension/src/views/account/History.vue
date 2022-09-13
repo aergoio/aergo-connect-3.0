@@ -2,23 +2,28 @@
   <ScrollView class="page tx-history-page">
     <template #header>
       <Heading tag="h2">Transaction History</Heading>
-      <TransactionFilter :value="filter" :options="filterOptions" @select="setFilter"/>
+      <TransactionFilter :value="filter" :options="filterOptions" @select="setFilter" />
     </template>
-    <HistoryList :transactions="filteredTransactions" :address="address" :state="state" :arg="isFromARG"/>
+    <HistoryList
+      :transactions="filteredTransactions"
+      :address="address"
+      :state="state"
+      :arg="isFromARG"
+    />
   </ScrollView>
 </template>
 
 <script lang="ts">
-import {ScrollView} from '@aergo-connect/lib-ui/src/layouts';
+import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import HistoryList from '../../components/account/HistoryList.vue';
 import TransactionFilter from '../../components/account/TransactionFilter.vue';
-import {capitalizeFirstLetter} from '../../utils/strings';
+import { capitalizeFirstLetter } from '../../utils/strings';
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
-import {Transaction} from '@herajs/wallet';
-import {timedAsync} from 'timed-async/index.js';
+import Component from 'vue-class-component';
+import { Transaction } from '@herajs/wallet';
+import { timedAsync } from 'timed-async/index.js';
 
 const tuple = <T extends string[]>(...args: T) => args;
 const filterOptions = tuple('all', 'received', 'sent');
@@ -43,10 +48,14 @@ export default class AccountHistory extends Vue {
 
   get filteredTransactions() {
     if (this.filter === 'received') {
-      return this.transactions.filter((tx) => tx.data.to === this.address && tx.data.from !== this.address);
+      return this.transactions.filter(
+        tx => tx.data.to === this.address && tx.data.from !== this.address,
+      );
     }
     if (this.filter === 'sent') {
-      return this.transactions.filter((tx) => tx.data.from === this.address && tx.data.to !== this.address);
+      return this.transactions.filter(
+        tx => tx.data.from === this.address && tx.data.to !== this.address,
+      );
     }
     return this.transactions;
   }
@@ -67,22 +76,27 @@ export default class AccountHistory extends Vue {
   }
 
   get balanceOfGem() {
-    return this.balances?.objects
+    return this.balances?.objects;
   }
 
   async reload() {
     if (!this.transactions.length) this.state = 'loading';
     try {
-      console.log('reload!!')
+      console.log('reload!!');
       this.transactions = await timedAsync(
-          this.isFromARG ? this.$background.getTokenTransfers({
-            address: this.$route.params.address,
-            chainId: this.$route.params.chainId
-          }, this.$route.params.contract) : this.$background.getAccountTx({
-            address: this.$route.params.address,
-            chainId: this.$route.params.chainId
-          }),
-          {fastTime: 1000} as any,
+        this.isFromARG
+          ? this.$background.getTokenTransfers(
+              {
+                address: this.$route.params.address,
+                chainId: this.$route.params.chainId,
+              },
+              this.$route.params.contract,
+            )
+          : this.$background.getAccountTx({
+              address: this.$route.params.address,
+              chainId: this.$route.params.chainId,
+            }),
+        { fastTime: 1000 } as any,
       );
       console.log(this.transactions);
       this.state = 'loaded';
@@ -94,13 +108,13 @@ export default class AccountHistory extends Vue {
   }
 
   get accountSpec() {
-    return {address: this.$route.params.address, chainId: this.$route.params.chainId};
+    return { address: this.$route.params.address, chainId: this.$route.params.chainId };
   }
 
   mounted() {
     this.reload();
     // Clear Send dialog's persisted input
-    this.$store.commit('ui/clearInput', {key: 'send'});
+    this.$store.commit('ui/clearInput', { key: 'send' });
   }
 }
 </script>

@@ -10,11 +10,15 @@
       <div class="content">
         <Appear :delay="0.6">
           <ButtonGroup vertical>
+<<<<<<< Updated upstream
             <Button
               type="primary"
               size="large"
               :to="{ name: 'account-import-format', params: { next: 'account-import-format' } }"
             >
+=======
+            <Button type="primary-outline" size="large" :to="{ name: 'account-import' }">
+>>>>>>> Stashed changes
               Import
             </Button>
             <Button @click="create" type="primary" size="large">
@@ -24,7 +28,7 @@
               type="primary"
               :disabled="true"
               size="large"
-              :to="{ name: 'setup', params: { next: 'account-import' } }"
+              :to="{ name: 'accounts', params: { next: 'account-import' } }"
             >
               Connect Ledger
             </Button>
@@ -87,24 +91,19 @@ export default class Create extends mixins(PersistInputsMixin) {
     ['aergo.io', 'Mainnet'],
     ['testnet.aergo.io', 'Testnet'],
   ];
-
   async create() {
-    // const {
-    // 	account,
-    // 	mnemonic,
-    // } = await this.$background.createAccountWithMnemonic({
-    // 	chainId: this.chainId,
-    // });
-    // console.log(account, mnemonic);
-    console.log('cretae clicked');
-    // this.$store.commit('accounts/setSeedPhrase', mnemonic);
-    // this.$router.push({
-    // 	name: 'account-created',
-    // 	params: {
-    // 		chainId: account.chainId,
-    // 		address: account.address,
-    // 	},
-    // });
+    const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
+      chainId: this.chainId,
+    });
+    console.log(account, mnemonic);
+    this.$store.commit('accounts/setSeedPhrase', mnemonic);
+    this.$router.push({
+      name: 'account-create',
+      params: {
+        chainId: account.chainId,
+        address: account.address,
+      },
+    });
   }
 }
 </script>

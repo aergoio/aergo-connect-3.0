@@ -50,13 +50,6 @@ export default class Lockscreen extends mixins() {
     password: '',
   };
 
-  async beforeMount(): Promise<void> {
-    const isUnlocked = await this.$background.isUnlocked();
-    console.log(isUnlocked, 'isUnlocked');
-    if (!isUnlocked) {
-      this.$router.push({ name: 'welcome' });
-    }
-  }
   async mounted() {
     console.log(this.$background);
   }

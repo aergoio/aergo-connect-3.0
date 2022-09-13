@@ -6,13 +6,15 @@
         Enter the words below to make sure you've stored your recovery phrase correctly.
       </p>
       <p v-if="!seedPhrase" class="input-error-text">
-        The seed phrase is no longer available because you reloaded the page after creating the account.<br>
+        The seed phrase is no longer available because you reloaded the page after creating the
+        account.<br />
         Please go back and create a new account.
       </p>
       <div v-if="seedPhrase">
         <TextField
-          v-for="(wordIndex, index) in verifyWordIndices" :key="index"
-          :label="`${nth(wordIndex+1)} word`"
+          v-for="(wordIndex, index) in verifyWordIndices"
+          :key="index"
+          :label="`${nth(wordIndex + 1)} word`"
           v-model="words[index]"
           :state="words[index].trim() === seedPhraseWords[wordIndex].trim() ? 'valid' : 'default'"
         />
@@ -36,12 +38,12 @@ import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import { Identicon } from '@aergo-connect/lib-ui/src/content';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import InvertedColors from '@aergo-connect/lib-ui/src/theme/InvertedColors.vue'; 
+import InvertedColors from '@aergo-connect/lib-ui/src/theme/InvertedColors.vue';
 
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
-const nth = (n: number): string => ["st","nd","rd"][((n+90)%100-10)%10-1]||"th";
+const nth = (n: number): string => ['st', 'nd', 'rd'][((((n + 90) % 100) - 10) % 10) - 1] || 'th';
 
 @Component({
   components: {
@@ -82,7 +84,9 @@ export default class ViewSeedPhrase extends Vue {
     if (!this.seedPhrase) {
       return false;
     }
-    return this.verifyWordIndices.every((wordIndex, index) => this.words[index].trim() === this.seedPhraseWords[wordIndex].trim());
+    return this.verifyWordIndices.every(
+      (wordIndex, index) => this.words[index].trim() === this.seedPhraseWords[wordIndex].trim(),
+    );
   }
 
   nth(n: number) {

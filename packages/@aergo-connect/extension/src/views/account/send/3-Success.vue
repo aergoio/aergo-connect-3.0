@@ -5,15 +5,23 @@
         <template #header>
           <div class="success-header">
             <SuccessIcon />
-            <Heading >Transaction sent!</Heading>
+            <Heading>Transaction sent!</Heading>
           </div>
         </template>
         <div style="padding-left: 20px">
-          <TxConfirm :txBody="processedTxData" :keys="['hash', 'recipient', 'amount', 'fee']" v-if="txData" />
+          <TxConfirm
+            :txBody="processedTxData"
+            :keys="['hash', 'recipient', 'amount', 'fee']"
+            v-if="txData"
+          />
         </div>
         <div class="updated-balance-wrap" v-if="txData && !isArg">
           <div class="updated-balance-label">Updated balance</div>
-          <div class="updated-balance"><span v-if="account && account.data"><FormattedToken :value="account.data.balance" /></span><span v-else>...</span></div>
+          <div class="updated-balance">
+            <span v-if="account && account.data"
+              ><FormattedToken :value="account.data.balance"/></span
+            ><span v-else>...</span>
+          </div>
         </div>
       </ScrollView>
 
@@ -66,7 +74,7 @@ export default class AccountSendConfirm extends mixins() {
     return {
       ...this.txData,
       ...this.txReceipt,
-    }
+    };
   }
 
   get isArg(): boolean {
@@ -76,13 +84,17 @@ export default class AccountSendConfirm extends mixins() {
   mounted() {
     this.$store.dispatch('accounts/updateAccount', this.accountSpec);
     this.$store.commit('ui/clearInput', { key: 'send' });
-    this.$background.getTransactionReceipt(this.$route.params.chainId, this.$route.params.hash).then(result => {
-      this.txReceipt = result;
-    });
-    this.$background.getTransaction(this.$route.params.chainId, this.$route.params.hash).then(result => {
-      this.txData = result.tx;
-      this.txData.payload = Buffer.from(Object.values(this.txData.payload)).toString();
-    })
+    this.$background
+      .getTransactionReceipt(this.$route.params.chainId, this.$route.params.hash)
+      .then(result => {
+        this.txReceipt = result;
+      });
+    this.$background
+      .getTransaction(this.$route.params.chainId, this.$route.params.hash)
+      .then(result => {
+        this.txData = result.tx;
+        this.txData.payload = Buffer.from(Object.values(this.txData.payload)).toString();
+      });
   }
 }
 </script>
@@ -102,7 +114,7 @@ export default class AccountSendConfirm extends mixins() {
   align-items: center;
   .section-heading {
     font-weight: 600;
-    margin-top: .3em;
+    margin-top: 0.3em;
     margin-bottom: 0;
   }
 }
@@ -110,19 +122,18 @@ export default class AccountSendConfirm extends mixins() {
   margin: 0 20px 40px 40px;
   .updated-balance-label {
     color: #fff;
-    font-size: (13/16)*1rem;
+    font-size: (13/16) * 1rem;
     font-weight: 500;
-    margin-bottom: .5em;
+    margin-bottom: 0.5em;
   }
   .updated-balance {
     background-color: #fff;
     color: #000;
     font-weight: 500;
-    font-size: (20/16)*1rem;
+    font-size: (20/16) * 1rem;
     line-height: 60px;
     padding: 0 15px;
     text-align: right;
-
   }
 }
 </style>

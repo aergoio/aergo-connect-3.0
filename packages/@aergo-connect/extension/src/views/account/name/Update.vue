@@ -4,9 +4,10 @@
       <BackButton :to="{ name: 'account-details' }" />
       <Heading tag="h2">Update a name</Heading>
       <p>
-        Enter the new destination/owner address of <strong>{{$route.params.name}}</strong>.<br>
-        We will then generate a transaction that you need to confirm in the next step
-        to register the change on the network.
+        Enter the new destination/owner address of <strong>{{ $route.params.name }}</strong
+        >.<br />
+        We will then generate a transaction that you need to confirm in the next step to register
+        the change on the network.
       </p>
       <AddressField v-model="destination" :error="errors.destination" autoComplete="no" />
     </div>
@@ -22,7 +23,7 @@
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 import { BackButton, Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { AddressField } from '@aergo-connect/lib-ui/src/forms';
@@ -41,9 +42,9 @@ import { timedAsync } from 'timed-async';
   },
 })
 export default class AccountNameUpdate extends Vue {
-  destination = "";
+  destination = '';
   errors = {
-    destination: "",
+    destination: '',
   };
   loading = false;
 
@@ -62,16 +63,23 @@ export default class AccountNameUpdate extends Vue {
       if (address.equal(this.$route.params.address)) {
         throw new Error('cannot be same as current');
       }
-      const txBody = await timedAsync(this.$background.getUpdateNameTransaction({
-        address: this.$route.params.address,
-        chainId: this.$route.params.chainId,
-      }, this.$route.params.name, `${address}`));
+      const txBody = await timedAsync(
+        this.$background.getUpdateNameTransaction(
+          {
+            address: this.$route.params.address,
+            chainId: this.$route.params.chainId,
+          },
+          this.$route.params.name,
+          `${address}`,
+        ),
+      );
       this.$store.dispatch('ui/setTxBody', txBody);
       this.$router.push({ name: 'account-send-confirm' });
     } catch (e) {
       let msg = `${e}`;
       if (msg.match(/Invalid checksum/)) msg = 'Invalid checksum';
-      if (this.destination && this.destination[0] !== 'A') msg = 'Not a valid address (should start with letter A)';
+      if (this.destination && this.destination[0] !== 'A')
+        msg = 'Not a valid address (should start with letter A)';
       this.errors.destination = msg;
       console.error(e);
     } finally {
@@ -81,5 +89,4 @@ export default class AccountNameUpdate extends Vue {
 }
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

@@ -2,7 +2,13 @@
   <ScrollView class="page">
     <div class="content">
       <section class="dialog-header">
-        <BackButton :to="$store.state.ui.route.previousPath !== '/accounts/import/format' ? $store.state.ui.route.previousPath : '/accounts'" />
+        <BackButton
+          :to="
+            $store.state.ui.route.previousPath !== '/accounts/import/format'
+              ? $store.state.ui.route.previousPath
+              : '/accounts'
+          "
+        />
       </section>
       <Heading animated>Import Account</Heading>
       <p>Please select the network for which you want to import the account.</p>
@@ -45,6 +51,4 @@ export default class Import extends mixins(PersistInputsMixin) {
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

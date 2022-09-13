@@ -15,9 +15,14 @@
           <Button type="primary" @click="confirm">Confirm</Button>
         </ButtonGroup>
       </div>
-      <LoadingDialog :visible="statusDialogVisible" @close="statusDialogVisible=false" :title="statusDialogTitle" :state="dialogState">
-        <p v-if="dialogState !== 'error'">{{statusText}}</p>
-        <p v-else class="error">{{statusText}}</p>
+      <LoadingDialog
+        :visible="statusDialogVisible"
+        @close="statusDialogVisible = false"
+        :title="statusDialogTitle"
+        :state="dialogState"
+      >
+        <p v-if="dialogState !== 'error'">{{ statusText }}</p>
+        <p v-else class="error">{{ statusText }}</p>
       </LoadingDialog>
     </template>
   </ScrollView>
@@ -141,7 +146,7 @@ export default class AccountSendConfirm extends mixins(PersistInputsMixin) {
       from: this.$route.params.address,
     };
 
-    if(this.isArg) {
+    if (this.isArg) {
       txBody.to = this.contractAddress;
       txBody.amount = 0;
     }
@@ -150,10 +155,10 @@ export default class AccountSendConfirm extends mixins(PersistInputsMixin) {
       const hash = await timedAsync(this.sendTransaction(txBody), { fastTime: 1000 });
       this.setStatus('success', 'Done');
       setTimeout(() => {
-        this.$router.push({ name: 'account-send-success', params: { hash }});
+        this.$router.push({ name: 'account-send-success', params: { hash } });
       }, 1000);
-    } catch(e) {
-      const errorMsg = `${e}`.replace("UNDEFINED_ERROR:", "");
+    } catch (e) {
+      const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
       this.setStatus('error', errorMsg);
     }
   }

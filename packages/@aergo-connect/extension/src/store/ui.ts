@@ -38,14 +38,14 @@ const storeModule: Module<UiState, RootState> = {
       settings: defaultSettings,
     },
     unlocked: false,
-    idleTimeout : 20,
+    idleTimeout: 20,
   },
   getters: {
     getSetting: state => (keyPath: string): Json => {
       function getKey<T extends {}>(obj: T, keyPath: string): Json {
         const [key, rest] = keyPath.split('.', 2);
         if (!rest) {
-          return obj[key as keyof T] as unknown as Json;
+          return (obj[key as keyof T] as unknown) as Json;
         }
         return getKey(obj[key as keyof T], rest);
       }
@@ -75,7 +75,7 @@ const storeModule: Module<UiState, RootState> = {
     },
     setIdleTimeout(state, time) {
       state.idleTimeout = time;
-    }
+    },
   },
   actions: {
     setTxBody({ commit }, txBody) {
@@ -85,13 +85,13 @@ const storeModule: Module<UiState, RootState> = {
         value: txBody,
       });
     },
-  }
+  },
 };
 
 export default storeModule;
 
 import Vue from 'vue';
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 import { debounce } from 'lodash';
 
 /**
@@ -115,7 +115,7 @@ export class PersistInputsMixin extends Vue {
       if (typeof persistedValue === 'object') {
         // Copy the object to get rid of observers on it
         // @ts-ignore
-        this.$set(this, field, {...persistedValue});
+        this.$set(this, field, { ...persistedValue });
       } else if (typeof persistedValue !== 'undefined') {
         this.$set(this, field, persistedValue);
       }

@@ -26,7 +26,7 @@
         </span>
       </span>
       <span @click="openConnectHardwareWalletTab" v-if="isHardwareWalletEnabled">
-        <span >
+        <span>
           <Icon name="account-connect" :size="36" />
           Connect Hardware Wallet
         </span>
@@ -61,7 +61,7 @@ export default class AddAccountDialog extends Vue {
   openConnectHardwareWalletTab() {
     const name = (this.$root as any).name;
     if (name === 'popup') {
-      extension.tabs.create({url: "index.html#/accounts/connect-hw"});
+      extension.tabs.create({ url: 'index.html#/accounts/connect-hw' });
     } else {
       this.$router.push({ name: 'account-connect-hw' });
     }

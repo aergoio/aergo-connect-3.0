@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from 'vue';
 export default Vue.extend({
   props: {
     disabled: {
@@ -17,7 +17,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import "../styles/variables";
+@import '../styles/variables';
 
 .checkbox {
   display: inline-block;

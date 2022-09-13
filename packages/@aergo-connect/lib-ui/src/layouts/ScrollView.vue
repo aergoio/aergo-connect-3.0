@@ -1,8 +1,8 @@
 <template>
   <section class="scroll-view">
-    <header v-if="$slots.header">
+    <!-- <header v-if="$slots.header">
       <slot name="header"></slot>
-    </header>
+    </header> -->
     <main>
       <slot></slot>
     </main>
@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from 'vue';
 
 /**
  * A nestable scroll view, with optional header and footer.

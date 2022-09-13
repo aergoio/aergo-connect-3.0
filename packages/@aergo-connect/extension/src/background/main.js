@@ -1,4 +1,4 @@
-import "regenerator-runtime/runtime";
+import 'regenerator-runtime/runtime';
 
 require('../manifest.json');
 
@@ -30,15 +30,15 @@ async function setupController() {
         controller.uiState.popupOpen = false;
         console.log('Closed connection with', processName);
         controller.state.set('inactive');
-      })
+      });
     }
   }
   extension.runtime.onConnect.addListener(connectRemote);
 
   // Setup idle detection
   // extension.idle.setDetectionInterval(15);
-  extension.idle.onStateChanged.addListener((newState) => {
-    console.log("idle onStateChanged : " + newState)
+  extension.idle.onStateChanged.addListener(newState => {
+    console.log('idle onStateChanged : ' + newState);
     if (newState === 'idle' || newState === 'locked') {
       controller.lock();
     }
@@ -55,22 +55,22 @@ if (!extension.runtime.id) {
 
   extension.contextMenus.removeAll();
   extension.contextMenus.create({
-    title: "Open full page",
-    contexts: ["browser_action"],
+    title: 'Open full page',
+    contexts: ['browser_action'],
     onclick: function() {
-      extension.tabs.create({url: "index.html"});
-    }
+      extension.tabs.create({ url: 'index.html' });
+    },
   });
   extension.contextMenus.create({
-    title: "Settings",
-    contexts: ["browser_action"],
+    title: 'Settings',
+    contexts: ['browser_action'],
     onclick: function() {
-      extension.tabs.create({url: "index.html#/settings"});
-    }
+      extension.tabs.create({ url: 'index.html#/settings' });
+    },
   });
 
   // In dev, open a new tab for easier debugging
   if (process.env.NODE_ENV === 'development') {
-    extension.tabs.create({url: "index.html"});
+    extension.tabs.create({ url: 'index.html' });
   }
 }

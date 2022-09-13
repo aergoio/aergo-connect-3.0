@@ -1,15 +1,12 @@
 <template>
-  <div
-    class="header"
-    :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']"
-  >
-    <div class="button" :class="[buttonHide ? `button__hide` : ``]">
+  <div class="header" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
+    <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]" @click="goBack">
       <Icon :name="`${button}`" />
     </div>
     <h3>{{ title }}</h3>
-    <div class="right__icon">
+    <div class="header__button right">
       <Icon class="refresh" name="refresh" />
-      <button type="button" class="skip__btn">Skip</button>
+      <a type="button" class="skip__btn">Skip</a>
     </div>
     <slot></slot>
   </div>
@@ -24,7 +21,7 @@ export default Vue.extend({
   props: {
     button: {
       type: String,
-      default: "",
+      default: '',
     },
     buttonHide: {
       type: Boolean,
@@ -32,7 +29,7 @@ export default Vue.extend({
     },
     title: {
       type: String,
-      default: "",
+      default: '',
     },
     skip: {
       type: Boolean,
@@ -41,6 +38,11 @@ export default Vue.extend({
     refresh: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    goBack() {
+      this.$router.go(-1);
     },
   },
 });
@@ -53,7 +55,7 @@ export default Vue.extend({
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   height: 50px;
   background: #ffffff;
   box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
@@ -68,26 +70,27 @@ export default Vue.extend({
     margin-left: 12px;
   }
 
-  .button {
+  .header__button {
     width: 30px;
     height: 30px;
-    padding: 0;
+    position: absolute;
+    top: 50%;
+    transform: translate(0%, -50%);
+    padding: 0px;
     display: flex;
     justify-content: center;
-    align-content: center;
-
-    &.button__hide {
-      visibility: hidden;
+    align-items: center;
+    cursor: pointer;
+    &.left {
+      left: 20px;
+      &.button__hide {
+        visibility: hidden;
+      }
     }
-  }
 
-  .right__icon {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    visibility: hidden;
+    &.right {
+      right: 20px;
+    }
   }
 
   &.refresh__on {

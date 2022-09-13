@@ -4,12 +4,11 @@
       <section class="dialog-header">
         <BackButton />
       </section>
-      <Heading>{{$route.name || $route.path}}</Heading>
+      <Heading>{{ $route.name || $route.path }}</Heading>
       <router-view></router-view>
     </div>
   </ScrollView>
 </template>
-
 
 <script lang="ts">
 import Vue from 'vue';

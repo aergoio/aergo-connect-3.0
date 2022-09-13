@@ -36,12 +36,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { ScrollView } from "@aergo-connect/lib-ui/src/layouts";
-import { Button, ButtonGroup } from "@aergo-connect/lib-ui/src/buttons";
-import Heading from "@aergo-connect/lib-ui/src/content/Heading.vue";
-import Appear from "@aergo-connect/lib-ui/src/animations/Appear.vue";
-import Icon from "@aergo-connect/lib-ui/src/icons/Icon.vue";
+import Vue from 'vue';
+import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
+import { Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
+import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
+import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
+import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 
 export default Vue.extend({
   components: {
@@ -73,7 +73,7 @@ export default Vue.extend({
     margin-top: 20px;
     justify-content: center;
     align-items: center;
-    font-family: "Outfit";
+    font-family: 'Outfit';
     .welcome-message-1 {
       font-weight: 400;
       font-size: 1em;
@@ -81,18 +81,13 @@ export default Vue.extend({
   }
 
   .welcome-message-2 {
-    font-family: "Outfit";
+    font-family: 'Outfit';
     margin-top: 20px;
     font-weight: 500;
     font-size: 1em;
   }
 }
 #app.page-welcome {
-  background: linear-gradient(
-    0deg,
-    #ffffff -10.1%,
-    #ecf8fd 58.85%,
-    #fff1f9 139.14%
-  );
+  background: linear-gradient(0deg, #ffffff -10.1%, #ecf8fd 58.85%, #fff1f9 139.14%);
 }
 </style>

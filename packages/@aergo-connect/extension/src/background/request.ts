@@ -2,19 +2,19 @@
  * Handle external requests
  */
 
-const Actions = ["ACTIVE_ACCOUNT", "SIGN", "SIGN_TX", "SEND_TX"] as const;
+const Actions = ['ACTIVE_ACCOUNT', 'SIGN', 'SIGN_TX', 'SEND_TX'] as const;
 type Action = typeof Actions[number];
 const ActionsToEventName: Record<Action, string> = {
-  ACTIVE_ACCOUNT: "AERGO_ACTIVE_ACCOUNT",
-  SIGN: "AERGO_SIGN_RESULT",
-  SIGN_TX: "AERGO_SIGN_TX_RESULT",
-  SEND_TX: "AERGO_SEND_TX_RESULT",
+  ACTIVE_ACCOUNT: 'AERGO_ACTIVE_ACCOUNT',
+  SIGN: 'AERGO_SIGN_RESULT',
+  SIGN_TX: 'AERGO_SIGN_TX_RESULT',
+  SEND_TX: 'AERGO_SEND_TX_RESULT',
 };
 
 enum MsgType {
-  Request = "AERGO_REQUEST",
-  Response = "AERGO_RESPONSE",
-  Cancel = "AERGO_CANCEL",
+  Request = 'AERGO_REQUEST',
+  Response = 'AERGO_RESPONSE',
+  Cancel = 'AERGO_CANCEL',
 }
 
 interface Message {
@@ -56,7 +56,7 @@ export class ExternalRequest {
     if (msg.type !== MsgType.Request) {
       throw new Error(`invalid message type ${msg.type}`);
     }
-    const action = msg.action || "";
+    const action = msg.action || '';
     if (Actions.indexOf(action) === -1) {
       throw new Error(`invalid message action type ${action}`);
     }

@@ -1,11 +1,14 @@
 <template>
-  <ScrollView class="page"> 
+  <ScrollView class="page">
     <div class="content">
       <div class="icon-header">
         <Icon name="title-request" :size="36" />
       </div>
       <Heading style="white-space: nowrap">Access public address</Heading>
-      <p v-if="request">The website at {{request.origin}} wants to receive your active account's public address and chain ID.</p>
+      <p v-if="request">
+        The website at {{ request.origin }} wants to receive your active account's public address
+        and chain ID.
+      </p>
     </div>
 
     <template #footer>
@@ -15,9 +18,13 @@
           <Button type="primary" @click="confirm">Confirm</Button>
         </ButtonGroup>
       </div>
-      <LoadingDialog :visible="statusDialogVisible" @close="statusDialogVisible=false" :state="dialogState">
-        <p v-if="dialogState !== 'error'">{{statusText}}</p>
-        <p v-else class="error">{{statusText}}</p>
+      <LoadingDialog
+        :visible="statusDialogVisible"
+        @close="statusDialogVisible = false"
+        :state="dialogState"
+      >
+        <p v-if="dialogState !== 'error'">{{ statusText }}</p>
+        <p v-else class="error">{{ statusText }}</p>
       </LoadingDialog>
     </template>
   </ScrollView>

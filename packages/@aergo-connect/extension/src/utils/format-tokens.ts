@@ -17,7 +17,7 @@ function moveDecimalPoint(str: string, digits: number): string {
     str = str.padEnd(digits + idx + 1, '0');
   }
   if (digits < -idx) {
-    str = str.padStart(str.length-idx-digits, '0');
+    str = str.padStart(str.length - idx - digits, '0');
   }
 
   // remove decimal point and reinsert at new location
@@ -35,5 +35,5 @@ function moveDecimalPoint(str: string, digits: number): string {
 }
 
 export function formatTokenAmount(amount: string, unit: string, decimals: number) {
-  return `${moveDecimalPoint(amount, -decimals)}${unit? ` ${unit}` : ''}`;
+  return `${moveDecimalPoint(amount, -decimals)}${unit ? ` ${unit}` : ''}`;
 }

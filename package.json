@@ -51,6 +51,7 @@
     "build": "cd packages/@aergo-connect/extension && yarn build",
     "build-dev": "cd packages/@aergo-connect/extension && yarn build-dev",
     "serve-extension": "cd packages/@aergo-connect/extension && yarn serve",
-    "serve-storybook": "cd packages/@aergo-connect/lib-ui && yarn storybook"
+    "serve-storybook": "cd packages/@aergo-connect/lib-ui && yarn storybook",
+    "devtools": "vue-devtools"
   }
 }

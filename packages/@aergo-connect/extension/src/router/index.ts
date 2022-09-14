@@ -100,11 +100,6 @@ const routes: RouteConfig[] = [
 
       // register by 영근 need to be delete later
       withMeta(1, { path: '/register', name: 'register', component: Register }),
-      withMeta(1, {
-        path: '/registered',
-        name: 'registered',
-        component: Registered,
-      }),
       //
 
       withMeta(1, {

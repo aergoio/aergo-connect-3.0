@@ -98,6 +98,10 @@ const routes: RouteConfig[] = [
         R.NoAuthCheck | R.NoTracking,
       ),
 
+      // register by 영근 need to be delete later
+      withMeta(1, { path: '/register', name: 'register', component: Register }),
+      //
+
       withMeta(1, {
         path: 'list',
         name: 'accounts-list',

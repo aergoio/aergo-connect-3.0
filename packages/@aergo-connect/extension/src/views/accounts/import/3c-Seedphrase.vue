@@ -1,14 +1,5 @@
 <template>
   <ScrollView class="page">
-    <!-- <template #header>
-      <div class="content" style="padding-bottom: 0">
-        <section class="dialog-header">
-          <BackButton :to="{ name: 'account-import-format' }" />
-        </section>
-        <Heading>Import Mnemonic Seedphrase</Heading>
-        <div>Enter your mnemonic seed phrase.</div>
-      </div>
-    </template> -->
     <Header button="back" title="Mnemonic Seed Phrase" />
     <div class="foramt-content">
       <span class="preheaer">Please select the import format.</span>
@@ -21,23 +12,7 @@
           :state="seedPhrase.length >= 1 && seedPhraseValid ? 'valid' : 'invalid'"
           placeholder="Seed phrase is a set of twelve words. Add one space between each word. "
         />
-        <!-- <p class="note" v-if="!errors.seedPhrase">Words separated by space</p> -->
-        <!-- <TextField
-        :value="derivationPath + '0'"
-        label="Derivation path"
-        disabled
-        :error="errors.derivationPath"
-      /> -->
       </div>
-      <!-- <template #footer>
-      <div class="content">
-        <ContinueButton
-          @click="loadKeystore"
-          :disabled="!canContinue || loading"
-          :loading="loading"
-        />
-      </div>
-    </template> -->
     </div>
   </ScrollView>
 </template>

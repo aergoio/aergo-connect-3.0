@@ -66,6 +66,7 @@ export default class AccountExportWif extends Vue {
         password: this.password,
         format: 'wif',
       });
+      console.log(result);
       this.wif = result.privateKey;
     } catch (e) {
       this.errors.password = `${e}`;

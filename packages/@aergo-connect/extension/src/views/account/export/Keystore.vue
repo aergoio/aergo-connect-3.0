@@ -1,10 +1,15 @@
 <template>
   <ScrollView class="page">
+    <Header button="back" title="Keystore FIle" />
+    <ConfirmModal
+      v-if="modal"
+      title="Your private key has been saved in account.txt!"
+      to="accounts-list"
+    />
     <div class="content" style="padding-bottom: 0">
-      <BackButton :to="{ name: 'account-details' }" />
-      <Heading tag="h2">Export as Keystore</Heading>
-      <div v-if="!keystore">
+      <div>
         <p>Choose a passphrase to encrypt your keystore file.</p>
+        <p>Passphrase</p>
         <PasswordStrengthField
           variant="main"
           v-model="password"
@@ -13,17 +18,19 @@
         />
         {{ errors.password }}
       </div>
-      <div v-else>
-        <p>
-          Your encrypted keystore file is ready to download. A download should have been started
-          automatically by your browser. If not, click the button below.
-        </p>
+      <div>
+        <WarningInBox
+          error="Never disclose this passphrase and keyfile. Anyone with your private key can fully control
+          your account."
+        />
       </div>
+      <p>Keyfile Name</p>
+      <p>{{ account }}.txt</p>
     </div>
     <template #footer>
       <ButtonGroup vertical class="content">
         <Button v-if="!keystore" type="primary" @click="createKeystore" :loading="loading"
-          >Export</Button
+          >Save</Button
         >
         <a
           v-else
@@ -32,7 +39,7 @@
           target="_blank"
           :download="fileName"
           ref="downloadButton"
-          >Download</a
+          >Save</a
         >
       </ButtonGroup>
     </template>
@@ -47,9 +54,14 @@ import Component from 'vue-class-component';
 import { BackButton, Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { TextField, PasswordStrengthField } from '@aergo-connect/lib-ui/src/forms';
+import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
+import { WarningInBox } from '@aergo-connect/lib-ui/src/items';
+import ConfirmModal from '@aergo-connect/lib-ui/src/layouts/ConfirmModal.vue';
 
 @Component({
   components: {
+    ConfirmModal,
+    Header,
     ScrollView,
     BackButton,
     Button,
@@ -57,6 +69,7 @@ import { TextField, PasswordStrengthField } from '@aergo-connect/lib-ui/src/form
     Heading,
     TextField,
     PasswordStrengthField,
+    WarningInBox,
   },
 })
 export default class AccountExportKeystore extends Vue {
@@ -65,8 +78,9 @@ export default class AccountExportKeystore extends Vue {
     password: '',
   };
   loading = false;
-
+  account = 'account';
   keystore = '';
+  modal = false;
 
   get encodedKeystoreUrl(): string {
     return 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.keystore);
@@ -92,6 +106,7 @@ export default class AccountExportKeystore extends Vue {
       this.keystore = result.privateKey;
       setTimeout(() => {
         (this.$refs.downloadButton as HTMLElement).click();
+        this.modal = true;
       }, 150);
     } catch (e) {
       this.errors.password = `${e}`;

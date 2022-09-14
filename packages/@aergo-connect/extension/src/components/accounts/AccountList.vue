@@ -75,8 +75,8 @@ export default class AccountList extends Vue {
 
   async mounted() {
     const temp = await this.$background.getActiveAccount();
+    console.log(temp, 'activeAccount');
     this.activeAccount = await this.$background.getActiveAccount();
-    console.log(temp);
     // Scroll the active account into view
     setTimeout(() => {
       const element = this.$el.querySelectorAll('.active')[0];

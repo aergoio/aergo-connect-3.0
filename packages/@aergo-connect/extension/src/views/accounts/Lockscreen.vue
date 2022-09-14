@@ -8,9 +8,10 @@
           v-model="password"
           :error="errors.password"
           :state="errors.password ? `invalid` : `default`"
+          @submit="unlock"
         />
       </div>
-      <Button @click="unlock" type="primary" size="large">Unlock</Button>
+      <Button @click="unlock" type="primary" size="large" @keyup.enter="unlock">Unlock</Button>
       <div class="password-text-wrapper">
         <span>
           Wallet won't unlock? You can DELETE your current wallet and setup a new one.

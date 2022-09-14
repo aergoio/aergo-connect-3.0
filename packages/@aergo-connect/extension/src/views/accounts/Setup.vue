@@ -80,7 +80,7 @@ export default class Setup extends mixins() {
   goBack() {
     this.$router.push({ name: 'welcome' });
   }
-  handleModal() {
+  async handleModal() {
     if (this.passwordRepeat === this.password) {
       this.setup();
     }

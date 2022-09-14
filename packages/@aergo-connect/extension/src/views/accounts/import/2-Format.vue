@@ -58,16 +58,6 @@ export default class Import extends mixins() {}
   flex-direction: column;
   height: 100%;
 
-  .preheaer {
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 25px;
-    letter-spacing: -0.333333px;
-    color: #231f20;
-    margin-top: 32px;
-    margin-bottom: 62px;
-  }
-
   .buttons {
     margin-bottom: 32px;
     button {

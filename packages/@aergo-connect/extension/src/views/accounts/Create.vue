@@ -1,6 +1,6 @@
 <template>
   <ScrollView>
-    <img src="../../assets/img/dummy-logo.svg" alt="" />
+    <Identicon :text="address" class="circle" />
     <Heading class="big-title">Registered Account!</Heading>
 
     <div>
@@ -21,15 +21,11 @@
       </div>
     </div>
     <ButtonGroup vertical>
-      <Button
-        type="primary-outline"
-        size="large"
-        :to="{ name: 'setup', params: { next: 'account-import' } }"
-      >
-        Import
+      <Button type="primary-outline" size="large" :to="{ name: 'account-backup' }">
+        Backup Private Key
       </Button>
-      <Button @click="create" type="primary" size="large">
-        Create
+      <Button :to="{ name: 'accounts-list' }" type="primary" size="large">
+        Home
       </Button>
     </ButtonGroup>
   </ScrollView>
@@ -42,9 +38,10 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Component, { mixins } from 'vue-class-component';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import { isPublicChainId } from '../../config';
-
+import { Identicon } from '@aergo-connect/lib-ui/src/content';
 @Component({
   components: {
+    Identicon,
     ScrollView,
     Heading,
     ButtonGroup,
@@ -55,11 +52,12 @@ import { isPublicChainId } from '../../config';
 export default class Create extends mixins() {
   address = '';
   chainId = '';
-  chainIdUrl = '';
+  mnemonic = '';
   async beforeMount() {
     const { address, chainId } = await this.$route.params;
     this.address = address;
     this.chainId = chainId;
+    console.log(this.$store);
     console.log(isPublicChainId(chainId), 'hellow world');
   }
 }

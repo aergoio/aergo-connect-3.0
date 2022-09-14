@@ -6,15 +6,14 @@ import AccountsContainer from '../views/accounts/Container.vue';
 import Lockscreen from '../views/accounts/Lockscreen.vue';
 import Welcome from '../views/accounts/Welcome.vue';
 import Register from '../views/accounts/Register.vue';
-import Registered from '../views/accounts/Create.vue';
 import Setup from '../views/accounts/Setup.vue';
 import Create from '../views/accounts/Create.vue';
-// import Create from '../../../../../private/Create.vue';
 import Import from '../views/accounts/import/1-Network.vue';
 import ImportFormat from '../views/accounts/import/2-Format.vue';
 import ImportKeystore from '../views/accounts/import/3a-Keystore.vue';
 import ImportWif from '../views/accounts/import/3b-Wif.vue';
 import ImportSeedphrase from '../views/accounts/import/3c-Seedphrase.vue';
+
 import ConnectHw from '../views/accounts/connect-hw/1-Network.vue';
 import ConnectHwAccounts from '../views/accounts/connect-hw/2-Accounts.vue';
 import AccountsList from '../views/accounts/List.vue';
@@ -22,6 +21,11 @@ import BalanceList from '../views/accounts/balance/List.vue';
 import Settings from '../views/accounts/Settings.vue';
 import NetworksList from '../views/accounts/networks/List.vue';
 import NetworksUpdate from '../views/accounts/networks/Update.vue';
+
+import BackupPrivateKey from '../views/account/export/BackupPrivateKey.vue';
+import MnemonicSeedPhrase from '../views/account/export/MnemonicSeedPhrase.vue';
+import EncryptedPrivateKey from '../views/account/export/EncryptedPrivateKey.vue';
+import Keystore from '../views/account/export/Keystore.vue';
 
 import AccountContainer from '../views/account/Container.vue';
 import AccountCreated from '../views/account/Created.vue';
@@ -100,7 +104,7 @@ const routes: RouteConfig[] = [
 
       withMeta(1, {
         path: 'list',
-        name: 'accounts-  ',
+        name: 'accounts-list',
         component: AccountsList,
       }),
 
@@ -111,15 +115,40 @@ const routes: RouteConfig[] = [
       }), // 시연용
 
       withMeta(2, {
-        path: 'create',
+        path: '/account/:chainId/:address/create',
         name: 'account-create',
         component: Create,
       }),
       withMeta(2, {
-        path: 'import',
+        path: '/account/:chainId/:address/import',
         name: 'account-import',
         component: Import,
       }),
+
+      withMeta(2, {
+        path: '/account/:chainId/:address/backup ',
+        name: 'account-backup',
+        component: BackupPrivateKey,
+      }),
+
+      withMeta(3, {
+        path: '/account/:chainId/:address/backup/mnemonic ',
+        name: 'account-backup-mnemonic',
+        component: MnemonicSeedPhrase,
+      }),
+
+      withMeta(3, {
+        path: '/account/:chainId/:address/backup/encrypted ',
+        name: 'account-backup-encrypted',
+        component: EncryptedPrivateKey,
+      }),
+
+      withMeta(3, {
+        path: '/account/:chainId/:address/backup/keystore ',
+        name: 'account-backup-keystore',
+        component: Keystore,
+      }),
+
       withMeta(3, {
         path: 'import/format',
         name: 'account-import-format',

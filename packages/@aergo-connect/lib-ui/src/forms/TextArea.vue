@@ -1,6 +1,6 @@
 <template>
   <div class="inputContainer" :class="[`state-${state}`]">
-       <textarea class="textarea"></textarea>
+       <textarea class="textarea" :placeholder="placeholder"></textarea>
      </div>
    </label>
  </template>
@@ -16,7 +16,11 @@
      state: {
        type: String as PropType<InputState>,
        default: InputStates[0],
-     },
+     }, 
+     placeholder: {
+      type: String,
+      default: ""
+     }
    },
    computed: {},
    methods: {},
@@ -66,11 +70,19 @@
    outline: none;
    resize: none;
    background-color: transparent;
- 
+   padding: 10px;
    font-weight: 500;
    font-size: 16px;
    line-height: 25px;
    letter-spacing: -0.333333px;
+
+   &::placeholder {
+    color: blue;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -0.333333px;
+    color: #9C9A9A;
+    }
  }
  
  </style>

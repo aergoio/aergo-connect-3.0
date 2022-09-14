@@ -10,15 +10,11 @@
       <div class="content">
         <Appear :delay="0.6">
           <ButtonGroup vertical>
-<<<<<<< Updated upstream
             <Button
               type="primary"
               size="large"
               :to="{ name: 'account-import-format', params: { next: 'account-import-format' } }"
             >
-=======
-            <Button type="primary-outline" size="large" :to="{ name: 'account-import' }">
->>>>>>> Stashed changes
               Import
             </Button>
             <Button @click="create" type="primary" size="large">

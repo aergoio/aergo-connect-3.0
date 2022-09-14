@@ -1,7 +1,7 @@
 <template>
   <ScrollView class="page">
-    <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
-    <div class="content">
+    <div class="setup-content">
+      <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
       <section class="dialog-header">
         <div>
           <Header button="back" title="Set Password" />
@@ -105,6 +105,11 @@ export default class Setup extends mixins() {
 </script>
 
 <style lang="scss">
+.setup-content {
+  position: relative;
+  height: 100%;
+}
+
 .content_checkbox {
   display: flex;
   justify-content: center;

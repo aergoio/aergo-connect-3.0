@@ -1,9 +1,9 @@
-@import "./normalize.scss";
-@import "./_fonts.scss";
-@import "./_typography.scss";
-@import "./_forms.scss";
-@import "./variables.scss";
-@import "./mixin.scss";
+@import './normalize.scss';
+@import './_fonts.scss';
+@import './_typography.scss';
+@import './_forms.scss';
+@import './variables.scss';
+@import './mixin.scss';
 
 .content {
 }
@@ -27,4 +27,14 @@
 
 .dialog-header {
   margin: 10px 0 20px;
+}
+
+.preheaer {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 25px;
+  letter-spacing: -0.333333px;
+  color: #231f20;
+  margin-top: 32px;
+  margin-bottom: 62px;
 }

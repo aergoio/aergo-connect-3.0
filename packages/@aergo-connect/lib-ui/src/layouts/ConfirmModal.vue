@@ -38,11 +38,9 @@ export default Vue.extend({
 
 .confirmModal-backdrop {
   background-color: rgba(0, 0, 0, 0.3);
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: absolute;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   z-index: 10;
   display: flex;
   justify-content: center;
@@ -58,12 +56,11 @@ export default Vue.extend({
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, -50%);
     display: flex;
     justify-content: space-between;
-
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     h1 {
       text-align: center;
       word-wrap: break-word;

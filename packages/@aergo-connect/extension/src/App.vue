@@ -38,7 +38,6 @@ export default Vue.extend({
 body {
   margin: 0;
   font-size: 100%;
-  font-family: 'Outfit';
 }
 
 #app {
@@ -49,6 +48,7 @@ body {
   background-color: #fff;
   position: relative;
   overflow: hidden;
+  font-family: 'Outfit';
 }
 
 body.fullpage {

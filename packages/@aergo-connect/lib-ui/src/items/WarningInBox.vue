@@ -39,7 +39,7 @@ export default Vue.extend({
     font-size: 14px;
     line-height: 18px;
     color: #e4097d;
-    width: 277px;
+    // width: 277px;
     margin: 0;
   }
 }

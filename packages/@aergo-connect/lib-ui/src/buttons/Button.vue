@@ -114,10 +114,15 @@ export default Vue.extend({
   text-decoration: none;
   text-align: center;
   align-items: center;
-  justify-content: space-around;
+  // justify-content: space-around;
+  justify-content: center;
   /* Behavior */
   cursor: pointer;
   transition: min-width 0.35s ease-in;
+
+  img {
+    margin-right: 13px;
+  }
   &[disabled] {
     cursor: not-allowed;
     opacity: 0.75;

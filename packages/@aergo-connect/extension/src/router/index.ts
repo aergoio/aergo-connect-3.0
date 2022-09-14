@@ -26,6 +26,7 @@ import BackupPrivateKey from '../views/account/export/BackupPrivateKey.vue';
 import MnemonicSeedPhrase from '../views/account/export/MnemonicSeedPhrase.vue';
 import EncryptedPrivateKey from '../views/account/export/EncryptedPrivateKey.vue';
 import Keystore from '../views/account/export/Keystore.vue';
+import ExportWif from '../views/account/export/Wif.vue';
 
 import AccountContainer from '../views/account/Container.vue';
 import AccountCreated from '../views/account/Created.vue';
@@ -100,6 +101,7 @@ const routes: RouteConfig[] = [
 
       // register by 영근 need to be delete later
       withMeta(1, { path: '/register', name: 'register', component: Register }),
+
       //
 
       withMeta(1, {
@@ -140,7 +142,7 @@ const routes: RouteConfig[] = [
       withMeta(3, {
         path: '/account/:chainId/:address/backup/encrypted ',
         name: 'account-backup-encrypted',
-        component: EncryptedPrivateKey,
+        component: ExportWif,
       }),
 
       withMeta(3, {
@@ -284,7 +286,7 @@ const routes: RouteConfig[] = [
       {
         path: 'imported',
         name: 'account-imported',
-        component: AccountImported,
+        component: Create,
       },
       { path: 'remove', name: 'account-remove', component: AccountRemove },
     ],

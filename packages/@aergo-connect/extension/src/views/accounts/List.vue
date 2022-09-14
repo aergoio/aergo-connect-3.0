@@ -50,7 +50,8 @@ export default class AccountsList extends Vue {
   }
   async beforeMount() {
     if (this.$store.state.accounts.keys.length === 0) {
-      console.log('등록해주세요 연결 모달');
+      console.log('nothing in wallet, register plz');
+      this.$router.push({ name: 'register' });
     }
   }
   mounted() {

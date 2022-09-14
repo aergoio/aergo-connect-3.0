@@ -2,9 +2,9 @@
   <ScrollView class="page">
     <Header button="back" title="Mnemonic Seed Phrase" />
     <div class="foramt-content">
-      <span class="preheaer">Please select the import format.</span>
+      <span class="preheaer">Enter your Mnemonic Seed Phrase.</span>
       <div class="content" style="padding-bottom: 0">
-        <TextArea
+        <TextField
           label="Seed phrase"
           v-model="seedPhrase"
           :error="errors.seedPhrase"
@@ -13,6 +13,13 @@
           placeholder="Seed phrase is a set of twelve words. Add one space between each word. "
         />
       </div>
+      <Button
+        type="primary"
+        @click="loadKeystore"
+        :disabled="!canContinue || loading"
+        :loading="loading"
+        >Import</Button
+      >
     </div>
   </ScrollView>
 </template>
@@ -88,7 +95,6 @@ export default class Keystore extends mixins(PersistInputsMixin) {
       }
     }, 250);
   }
-
   async loadKeystore(): Promise<void> {
     if (!this.canContinue) return;
     this.loading = true;
@@ -102,6 +108,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
         privateKey: Array.from(identity.privateKey),
         chainId: this.chainId,
       });
+      console.log(accountSpec, 'accountSpec');
       this.$router.push({ name: 'account-imported', params: { ...accountSpec } });
     } catch (e) {
       console.log(e);

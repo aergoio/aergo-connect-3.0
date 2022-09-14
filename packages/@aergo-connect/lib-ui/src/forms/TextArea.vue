@@ -1,6 +1,9 @@
 <template>
   <div class="inputContainer" :class="[`state-${state}`]">
-       <textarea class="textarea" :placeholder="placeholder"></textarea>
+       <input class="textarea" :placeholder="placeholder" @input="handleInput"
+          @change="handleFileInput"
+          @blur="handleBlur"
+          @keyup.enter="handleEnter"></input>
      </div>
    </label>
  </template>
@@ -23,7 +26,26 @@
      }
    },
    computed: {},
-   methods: {},
+   methods: {handleInput(event: InputEvent): void {
+      this.$emit("input", (event.target as HTMLFormElement).value);
+    },
+    handleBlur(event: FocusEvent): void {
+      this.$emit("blur", (event.target as HTMLFormElement).value);
+    },
+    handleEnter(event: KeyboardEvent): void {
+      this.$emit("submit", (event.target as HTMLFormElement).value);
+    },
+    handleFileInput(): void {
+      const $elem = this.$refs.inputElement as HTMLInputElement;
+      if (!$elem || !$elem.files || $elem.files.length === 0) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target) {
+          this.$emit("file", e.target.result);
+        }
+      };
+      reader.readAsText($elem.files[0]);
+    },},
  });
  </script>
  

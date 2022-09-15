@@ -26,10 +26,12 @@
           error="Never disclose this seed phrase. Anyone with your private key can fully control your account."
         />
       </div>
+    </div>
+    <template #footer>
       <Button type="gradation" size="large" :to="{ name: 'account-backup' }">
         OK
       </Button>
-    </div>
+    </template>
   </ScrollView>
 </template>
 
@@ -112,5 +114,11 @@ export default Vue.extend({
       color: #454344;
     }
   }
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
 }
 </style>

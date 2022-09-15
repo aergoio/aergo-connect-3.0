@@ -68,6 +68,7 @@ export default Vue.extend({
   },
 
   async beforeMount() {
+    this.mnemonic = this.$store.state.accounts.lastSeedPhrase;
     return;
   },
 });

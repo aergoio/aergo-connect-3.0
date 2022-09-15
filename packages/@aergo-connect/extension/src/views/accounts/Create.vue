@@ -37,7 +37,6 @@ import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Component, { mixins } from 'vue-class-component';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
-import { isPublicChainId } from '../../config';
 import { Identicon } from '@aergo-connect/lib-ui/src/content';
 @Component({
   components: {
@@ -57,8 +56,6 @@ export default class Create extends mixins() {
     const { address, chainId } = await this.$route.params;
     this.address = address;
     this.chainId = chainId;
-    console.log(this.$store);
-    console.log(isPublicChainId(chainId), 'hellow world');
   }
 }
 </script>

@@ -1,10 +1,10 @@
-import { storiesOf } from "@storybook/vue";
-import ConfirmModal from "./ConfirmModal.vue";
-import { Button } from "../buttons";
-import { ButtonGroup } from "../buttons";
-import { text } from "@storybook/addon-knobs";
+import { storiesOf } from '@storybook/vue';
+import ConfirmModal from './ConfirmModal.vue';
+import { Button } from '../buttons';
+import { ButtonGroup } from '../buttons';
+import { text } from '@storybook/addon-knobs';
 
-storiesOf("Layouts/ConfirmModal", module).add("basic", () => ({
+storiesOf('Layouts/ConfirmModal', module).add('basic', () => ({
   components: { ConfirmModal, Button, ButtonGroup },
 
   template: `
@@ -16,7 +16,7 @@ storiesOf("Layouts/ConfirmModal", module).add("basic", () => ({
   props: {
     title: {
       type: String,
-      default: text("Title", ""),
+      default: text('Title', ''),
     },
   },
 }));

@@ -1,47 +1,72 @@
 <template>
   <ScrollView class="page">
-    <div class="content" style="padding-bottom: 0">
-      <BackButton :to="{ name: 'account-details' }" />
-      <Heading tag="h2">Export as Encrypted String</Heading>
-      <div v-if="!wif">
-        <p>Choose a passphrase to encrypt your keystore file.</p>
-        <PasswordStrengthField variant="main" v-model="password" @submit="createWif" autofocus />
+    <Header button="back" title="Encrypted Private Key" />
+    <div class="export-wif-content" style="padding-bottom: 0">
+      <div class="password-field" v-if="!wif">
+        <p class="export-wif-note">Choose a passphrase to encrypt your private key string.</p>
+        <span>Passphrase</span>
+        <PasswordStrengthField variant="default" v-model="password" @submit="createWif" autofocus />
         {{ errors.password }}
       </div>
-      <div v-else>
-        <p>
-          This string contains your private key, encrypted using your chosen passphrase. Please save
-          it in a secure location.
-        </p>
-        <div class="wif-output">{{ wif }}</div>
+      <div class="export-wif-content after-encrpted" v-else>
+        <div class="phrase-wrapper">
+          <p class="mnemonic">
+            {{ wif }}
+          </p>
+          <Button
+            @click="copyToClipBoard()"
+            :type="copy === 'Copy' ? 'primary-outline' : 'primary'"
+            size="medium"
+          >
+            <img v-if="copy === 'Copy'" src="@aergo-connect/lib-ui/src/icons/img/copy.svg" />
+            <img v-if="copy === 'Copied'" src="@aergo-connect/lib-ui/src/icons/img/copied.svg" />
+            {{ copy }}
+          </Button>
+        </div>
+        <div class="WarningInBox-wrapper">
+          <WarningInBox
+            error="Never disclose this string and passphrase. Anyone with your private key can fully control your account."
+          />
+        </div>
       </div>
     </div>
+
     <template #footer>
-      <ButtonGroup vertical class="content">
-        <Button v-if="!wif" type="primary" @click="createWif" :loading="loading">Export</Button>
-      </ButtonGroup>
+      <Button
+        v-if="!wif"
+        type="primary"
+        size="large"
+        :disabled="isBtnDisabled"
+        @click="createWif"
+        :loading="loading"
+      >
+        Show
+      </Button>
+      <div v-else>
+        <Button type="gradation" size="large" :to="{ name: 'account-backup' }">
+          OK
+        </Button>
+      </div>
     </template>
   </ScrollView>
 </template>
 
 <script lang="ts">
-import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
-
+import { Header, ScrollView } from '@aergo-connect/lib-ui/src/layouts';
+import { WarningInBox } from '@aergo-connect/lib-ui/src/items';
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { BackButton, Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
-import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
+import { Button } from '@aergo-connect/lib-ui/src/buttons';
 import { TextField, PasswordStrengthField } from '@aergo-connect/lib-ui/src/forms';
 
 @Component({
   components: {
     ScrollView,
-    BackButton,
     Button,
-    ButtonGroup,
-    Heading,
     TextField,
     PasswordStrengthField,
+    Header,
+    WarningInBox,
   },
 })
 export default class AccountExportWif extends Vue {
@@ -50,8 +75,22 @@ export default class AccountExportWif extends Vue {
     password: '',
   };
   loading = false;
-
   wif = '';
+  isBtnDisabled = true;
+  copy = 'Copy';
+  imageName = '../../../assets/img/copy.svg';
+
+  updated() {
+    if (this.password.length >= 1) {
+      this.isBtnDisabled = false;
+    }
+  }
+
+  copyToClipBoard() {
+    navigator.clipboard.writeText(this.wif);
+    this.copy = 'Copied';
+    this.imageName = '@aergo-connect/lib-ui/src/icons/img/copy.svg';
+  }
 
   async createWif() {
     if (!this.password) {
@@ -78,10 +117,56 @@ export default class AccountExportWif extends Vue {
 </script>
 
 <style lang="scss">
-.wif-output {
-  border: 1px solid #ccc;
-  padding: 10px;
-  line-height: 1.3;
-  word-break: break-all;
+.export-wif-content {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+
+  &.after-encrpted {
+    align-items: center;
+    .phrase-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 327px;
+      height: 184px;
+      background: #ffffff;
+      border: 1px solid #ecf8fd;
+      box-shadow: 0px 4px 13px rgba(111, 142, 154, 0.3);
+      border-radius: 4px;
+      padding-bottom: 16px;
+      margin: 34px 0px 16px 0px;
+      .mnemonic {
+        margin-top: 20px;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 25px;
+        text-align: center;
+        letter-spacing: -0.333333px;
+        width: 260px;
+        color: #454344;
+        word-break: break-all;
+        margin-bottom: 14px;
+      }
+    }
+  }
+  .export-wif-note {
+    width: 327px;
+    margin: 32px 0px 74px 0px;
+  }
+  .password-field {
+    display: flex;
+    flex-direction: column;
+    margin-left: 24px;
+    span {
+      margin-bottom: 4px;
+    }
+  }
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
 }
 </style>

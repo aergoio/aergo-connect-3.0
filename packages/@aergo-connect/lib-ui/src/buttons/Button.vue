@@ -62,8 +62,8 @@ export default Vue.extend({
       $el.style.minWidth = $el.clientWidth + 'px';
       $el.style.width = $el.clientWidth + 'px';
       setTimeout(() => {
-        $el.style.minWidth = '50px';
-        $el.style.width = 'auto';
+        // $el.style.minWidth = '50px';
+        // $el.style.width = 'auto';
       }, 300);
     }
   },

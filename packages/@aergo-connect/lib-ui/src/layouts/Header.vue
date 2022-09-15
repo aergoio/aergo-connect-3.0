@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]" @click="goBack">
-      <Icon :name="`${button}`" />
+      <Icon :name="`${button}`" :to="to" />
     </div>
     <h3>{{ title }}</h3>
     <div class="header__button right" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
@@ -13,11 +13,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import Icon from '../icons/Icon.vue';
+import { RawLocation } from 'vue-router';
 
 export default Vue.extend({
   components: { Icon },
+
   props: {
     button: {
       type: String,
@@ -39,10 +41,18 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    to: {
+      type: [String, Object] as PropType<RawLocation>,
+    },
   },
   methods: {
     goBack() {
-      this.$router.go(-1);
+      if (typeof this.to !== 'undefined' && this.to && typeof this.$router !== 'undefined') {
+        this.$router.push(this.to);
+      } else {
+        console.log('no to so else is invoked');
+        this.$router.go(-1);
+      }
     },
   },
 });

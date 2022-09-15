@@ -1,27 +1,39 @@
 <template>
   <ScrollView class="page">
-    <div class="content">
-      <section class="dialog-header">
-        <BackButton :to="{ name: 'account-import-format' }" />
-      </section>
-      <Heading>Import Keystore</Heading>
-      <p>Enter your keystore file and password.</p>
-      <TextField label="Keystore file" type="file" @file="setKeystore" :error="errors.keystore" />
-      <TextField
-        v-model="password"
-        type="password"
-        label="Keystore passphrase"
-        :error="errors.password"
-        autoComplete="no"
-      />
+    <Header button="back" title="Keystore File" />
+    <div class="import-keystore-content">
+      <h3 class="import-keystore-note">Enter your keystore file and password.</h3>
+      <div class="import-keystore-fileInput">
+        <FileUploadInput
+          label="Keystore file"
+          type="file"
+          @file="setKeystore"
+          :error="errors.keystore"
+        />
+      </div>
+      <div class="import-keystore-passwordInput">
+        <PasswordStrengthField
+          v-model="password"
+          type="password"
+          label="Keystore passphrase"
+          autoComplete="no"
+        />
+      </div>
+      <div v-if="errors.password" class="import-wif-error">
+        <WarningInBox :error="errors.password" />
+      </div>
     </div>
     <template #footer>
       <div class="content">
-        <ContinueButton
+        <Button
+          size="large"
           @click="loadKeystore"
+          type="primary"
           :disabled="!canContinue || loading"
           :loading="loading"
-        />
+        >
+          Import
+        </Button>
       </div>
     </template>
   </ScrollView>
@@ -29,14 +41,15 @@
 
 <script lang="ts">
 import { BackButton, ContinueButton, Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
-import { TextField } from '@aergo-connect/lib-ui/src/forms';
-import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
+import { TextField, FileUploadInput, PasswordStrengthField } from '@aergo-connect/lib-ui/src/forms';
+import { ScrollView, Header } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { PersistInputsMixin } from '../../../store/ui';
 
 import Component, { mixins } from 'vue-class-component';
 import { identityFromKeystore } from '@herajs/crypto';
 import { waitFor } from '@herajs/common';
+import { WarningInBox } from '@aergo-connect/lib-ui/src/items';
 
 @Component({
   components: {
@@ -47,6 +60,10 @@ import { waitFor } from '@herajs/common';
     Button,
     ButtonGroup,
     TextField,
+    FileUploadInput,
+    WarningInBox,
+    Header,
+    PasswordStrengthField,
   },
 })
 export default class Keystore extends mixins(PersistInputsMixin) {
@@ -74,6 +91,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
       this.errors.keystore = 'Invalid file: failed to parse as JSON';
     }
   }
+
   async loadKeystore(): Promise<void> {
     if (!this.canContinue) return;
     this.loading = true;
@@ -88,7 +106,8 @@ export default class Keystore extends mixins(PersistInputsMixin) {
     } catch (e) {
       console.log(e);
       if (`${e}`.match(/invalid mac value/)) {
-        this.errors.password = 'Invalid password';
+        this.errors.password = 'Please check the information you entered again.';
+        // this.errors.password = 'Invalid password';
       } else {
         this.errors.password = `${e}`;
       }
@@ -99,4 +118,22 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.import-keystore-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .import-keystore-note {
+    width: 327px;
+    margin-bottom: 49px;
+  }
+
+  .import-keystore-fileInput {
+    margin-bottom: 32px;
+  }
+  .import-keystore-passwordInput {
+    margin-bottom: 22px;
+  }
+}
+</style>

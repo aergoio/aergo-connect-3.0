@@ -1,41 +1,66 @@
 <template>
-  <div class="file__upload__input__container">
-    <div class="file__upload__input">
-      <span v-if="!files" class="fileName">No files selected</span>
-      <span v-else class="fileName uploaded">{{ files[0].name }}</span>
-      <input @change="fileSelected" type="file" id="file_upload" />
-      <div>
-        <img v-if="!files" src="" alt="" />
-        <img v-else src="../icons/img/checkmark.svg" alt="" />
-        <label class="upload__btn" for="file_upload">
-          <span v-if="!files">Select file</span>
-          <span v-else>Reselect file</span>
-        </label>
+  <section>
+    <span class="input-label" v-if="label">{{ label }}</span>
+    <div class="file__upload__input__container">
+      <div class="file__upload__input">
+        <span v-if="!files" class="fileName">No files selected</span>
+        <span v-else class="fileName uploaded">{{ files.name }}</span>
+        <input
+          @change="handleFileInput"
+          type="file"
+          ref="inputElement"
+          id="file_upload"
+          accept=".txt"
+        />
+        <div>
+          <img v-if="!files" src="" alt="" />
+          <img v-else src="../icons/img/checkmark.svg" alt="" />
+          <label class="upload__btn" for="file_upload">
+            <span v-if="!files">Select file</span>
+            <span v-else>Reselect file</span>
+          </label>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script lang="ts">
-import { InputStates, InputState } from "./types";
-import Vue, { PropType } from "vue";
+import { InputStates, InputState } from './types';
+import Vue, { PropType } from 'vue';
 export default Vue.extend({
-  props: {},
+  props: {
+    error: String,
+    label: String,
+  },
   data() {
-    return { files: null as FileList | null };
+    return { files: null as File | null };
   },
   computed: {},
   methods: {
-    fileSelected(e: React.ChangeEvent<HTMLInputElement>): void {
-      this.files = e.target.files;
-      console.log("this.file", this.files);
+    // fileSelected(e: React.ChangeEvent<HTMLInputElement>): void {
+    //   this.files = e.target.files;
+    //   console.log('this.file', this.files);
+    // },
+    handleFileInput(): void {
+      const $elem = this.$refs.inputElement as HTMLInputElement;
+      console.log('file up');
+      if (!$elem || !$elem.files || $elem.files.length === 0) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        if (e.target) {
+          this.$emit('file', e.target.result);
+        }
+      };
+      this.files = $elem.files[0];
+      reader.readAsText($elem.files[0]);
     },
   },
 });
 </script>
 
 <style lang="scss">
-@import "../styles/variables";
+@import '../styles/variables';
 .file__upload__input__container {
   box-sizing: border-box;
   width: 327px;
@@ -43,8 +68,7 @@ export default Vue.extend({
   display: flex;
   align-items: center;
   border: 2px solid transparent;
-  background-image: linear-gradient(white, white),
-    linear-gradient(to right, #686767, #686767);
+  background-image: linear-gradient(white, white), linear-gradient(to right, #686767, #686767);
   background-origin: border-box;
   background-clip: content-box, border-box;
   border-radius: 4px;
@@ -66,6 +90,11 @@ export default Vue.extend({
       &.uploaded {
         text-decoration-line: underline;
         color: #454344;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100px;
+        height: 20px;
       }
     }
 

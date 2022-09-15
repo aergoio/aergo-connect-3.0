@@ -60,10 +60,11 @@ export default class AddAccountDialog extends Vue {
     margin-bottom: 30px;
 
     &:first-child {
-      margin-top: 73px;
+      margin-top: 61px;
     }
 
     p {
+      margin: 0;
       margin-top: 12px;
       width: 327px;
       font-weight: 400;

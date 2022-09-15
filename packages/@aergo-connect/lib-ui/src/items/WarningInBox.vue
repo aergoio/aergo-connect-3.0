@@ -28,9 +28,11 @@ export default Vue.extend({
   display: flex;
   align-items: center;
   width: 327px;
-  height: 60px;
+  min-height: 60px;
   background: $Pink03;
   border-radius: 4px;
+  padding: 16px;
+  box-sizing: border-box;
   img {
     margin: 0px 10px;
   }

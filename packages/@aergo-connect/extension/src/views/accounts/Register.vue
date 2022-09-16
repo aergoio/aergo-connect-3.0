@@ -1,35 +1,33 @@
 <template>
   <ScrollView class="page">
-    <Appear>
+    <Appear :delay="0.3">
       <Header button="back" title="Register Account" />
       <div class="register-contents">
         <Heading class="big-title">Register an Account</Heading>
         <span class="pre-header">Import on existing accounts or create a new one.</span>
         <img src="@/assets/img/logo-circle.svg" alt="logo" width="120px" />
       </div>
-      <div class="content">
-        <Appear :delay="0.6">
-          <ButtonGroup vertical>
-            <Button
-              type="primary"
-              size="large"
-              :to="{ name: 'account-import-format', params: { next: 'account-import-format' } }"
-            >
-              Import
-            </Button>
-            <Button @click="create" type="primary" size="large">
-              Create
-            </Button>
-            <Button
-              type="primary"
-              :disabled="true"
-              size="large"
-              :to="{ name: 'accounts', params: { next: 'account-import' } }"
-            >
-              Connect Ledger
-            </Button>
-          </ButtonGroup>
-        </Appear>
+      <div>
+        <ButtonGroup vertical>
+          <Button
+            type="primary"
+            size="large"
+            :to="{ name: 'account-import-format', params: { next: 'account-import-format' } }"
+          >
+            Import
+          </Button>
+          <Button @click="create" type="primary" size="large">
+            Create
+          </Button>
+          <Button
+            type="primary"
+            :disabled="true"
+            size="large"
+            :to="{ name: 'accounts', params: { next: 'account-import' } }"
+          >
+            Connect Ledger
+          </Button>
+        </ButtonGroup>
       </div>
     </Appear>
 

@@ -7,29 +7,29 @@
       to="accounts-list"
     />
     <div class="content" style="padding-bottom: 0">
-      <div>
-        <p>Choose a passphrase to encrypt your keystore file.</p>
-        <p>Passphrase</p>
-        <PasswordStrengthField
-          variant="main"
-          v-model="password"
-          @submit="createKeystore"
-          autofocus
-        />
-        {{ errors.password }}
-      </div>
-      <div>
+      <p class="text">Choose a passphrase to encrypt your keystore file.</p>
+      <p class="title">Passphrase</p>
+      <PasswordStrengthField v-model="password" @submit="createKeystore" autofocus />
+      {{ errors.password }}
+      <div class="warningbox_wrapper">
         <WarningInBox
           error="Never disclose this passphrase and keyfile. Anyone with your private key can fully control
-          your account."
+            your account."
         />
       </div>
-      <p>Keyfile Name</p>
-      <p>{{ account }}.txt</p>
+      <p class="title">Keyfile Name</p>
+      <div class="keystorefile_wrapper">
+        <p class="text">{{ account }}.txt</p>
+      </div>
     </div>
     <template #footer>
-      <ButtonGroup vertical class="content">
-        <Button v-if="!keystore" type="primary" @click="createKeystore" :loading="loading"
+      <ButtonGroup vertical>
+        <Button
+          v-if="!keystore"
+          type="primary"
+          @click="createKeystore"
+          :loading="loading"
+          size="large"
           >Save</Button
         >
         <a
@@ -118,4 +118,55 @@ export default class AccountExportKeystore extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.content {
+  margin-left: 24px;
+  .text {
+    margin: 32px 24px 36px 0;
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: -0.333333px;
+    color: #686767;
+  }
+  .title {
+    color: #454344;
+    margin: 0 0 10px 0;
+  }
+  .warningbox_wrapper {
+    margin: 16px 0 34px 0;
+  }
+  .keystorefile_wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #f0f0f0;
+    opacity: 0.7;
+    border-radius: 4px;
+    width: 327px;
+    height: 48px;
+    .text {
+      margin-left: 12px;
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 20px;
+      letter-spacing: -0.333333px;
+      text-decoration-line: underline;
+      color: #454344;
+    }
+  }
+  .button {
+    .button-size-default {
+      box-sizing: border-box;
+      min-height: 48px;
+      line-height: 3em;
+      padding: 0.5em 2.5em;
+      height: 48px;
+    }
+  }
+}
+</style>

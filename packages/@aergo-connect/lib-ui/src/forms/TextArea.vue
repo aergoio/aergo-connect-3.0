@@ -1,9 +1,10 @@
 <template>
   <div class="inputContainer" :class="[`state-${state}`]">
-       <input class="textarea" :placeholder="placeholder" @input="handleInput"
+       <textarea class="textarea" :placeholder="placeholder" @input="handleInput"
           @change="handleFileInput"
           @blur="handleBlur"
-          @keyup.enter="handleEnter"></input>
+          @keyup.enter="handleEnter">
+        </textarea>
      </div>
    </label>
  </template>
@@ -92,6 +93,7 @@
    outline: none;
    resize: none;
    background-color: transparent;
+   
    padding: 10px;
    font-weight: 500;
    font-size: 16px;

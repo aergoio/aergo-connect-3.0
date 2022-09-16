@@ -121,10 +121,4 @@ export default class Keystore extends mixins(PersistInputsMixin) {
     margin-top: 14px;
   }
 }
-
-footer {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 40px;
-}
 </style>

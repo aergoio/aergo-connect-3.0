@@ -8,7 +8,7 @@
   "homepage_url": "{{prop-loader?homepage!../package.json}}",
   "minimum_chrome_version": "73",
 
-  "content_security_policy": "script-src 'self' 'unsafe-eval' http://localhost:8098; object-src 'self'",
+  "content_security_policy": "script-src 'self' http://localhost:8098 'unsafe-inline' 'unsafe-eval' object-src 'self'",
 
   "icons": {
     "17": "{{./assets/img/icon-17.png}}",

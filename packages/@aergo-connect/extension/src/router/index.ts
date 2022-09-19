@@ -95,7 +95,7 @@ const routes: RouteConfig[] = [
       withMeta(0, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
       withMeta(
         1,
-        { path: '/setup/:next', name: 'setup', component: Setup },
+        { path: '/setup', name: 'setup', component: Setup },
         R.NoAuthCheck | R.NoTracking,
       ),
 
@@ -124,25 +124,25 @@ const routes: RouteConfig[] = [
         component: Import,
       }),
 
-      withMeta(2, {
+      withMeta(3, {
         path: '/account/:chainId/:address/backup ',
         name: 'account-backup',
         component: BackupPrivateKey,
       }),
 
-      withMeta(3, {
+      withMeta(4, {
         path: '/account/:chainId/:address/backup/mnemonic ',
         name: 'account-backup-mnemonic',
         component: MnemonicSeedPhrase,
       }),
 
-      withMeta(3, {
+      withMeta(4, {
         path: '/account/:chainId/:address/backup/encrypted ',
         name: 'account-backup-encrypted',
         component: ExportWif,
       }),
 
-      withMeta(3, {
+      withMeta(4, {
         path: '/account/:chainId/:address/backup/keystore ',
         name: 'account-backup-keystore',
         component: Keystore,

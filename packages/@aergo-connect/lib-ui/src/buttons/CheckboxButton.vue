@@ -1,18 +1,22 @@
 <template>
-  <input type="checkbox" class="checkbox" :disabled="disabled" />
+  <input type="checkbox" class="checkbox" :checked="checked" @click="checkboxFunc" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 export default Vue.extend({
   props: {
-    disabled: {
+    checked: {
       type: Boolean,
       default: false,
     },
   },
   computed: {},
-  methods: {},
+  methods: {
+    checkboxFunc() {
+      this.$emit('check', !this.checked);
+    },
+  },
 });
 </script>
 

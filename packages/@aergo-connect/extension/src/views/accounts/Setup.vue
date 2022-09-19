@@ -15,24 +15,30 @@
         <PasswordStrengthField variant="default" v-model="password" autofocus :setting="setting" />
         <h3>Confirm Password</h3>
         <PasswordStrengthField variant="default" v-model="passwordRepeat" :setting="setting" />
-        <div class="content_checkbox">
-          <CheckboxButton />
-          <div class="text">I understand that this wallet cannot recover this password for me.</div>
-        </div>
+      </div>
+      <div class="content_checkbox">
+        <CheckboxButton :checked="checked" @check="checkFunc" />
+        <div class="text">I understand that this wallet cannot recover this password for me.</div>
+      </div>
+    </div>
+    <template #footer>
+      <div v-if="!modal" class="footer">
         <Button
           type="primary"
           size="large"
           :disabled="
-            password === passwordRepeat && password.length > 0 && passwordRepeat.length > 0
+            checked &&
+            password === passwordRepeat &&
+            password.length > 0 &&
+            passwordRepeat.length > 0
               ? false
               : true
           "
           @click="handleModal"
-          @keyup.enter="handleModal()"
           >Set Password</Button
         >
       </div>
-    </div>
+    </template>
   </ScrollView>
 </template>
 
@@ -73,12 +79,16 @@ export default class Setup extends mixins() {
   passwordRepeat = '';
   setting = true;
   modal = false;
+  checked = false;
 
   next() {
     this.modal = true;
   }
   goBack() {
     this.$router.push({ name: 'welcome' });
+  }
+  checkFunc(chcked: boolean) {
+    this.checked = chcked;
   }
   async handleModal() {
     if (this.passwordRepeat === this.password) {
@@ -114,10 +124,17 @@ export default class Setup extends mixins() {
   display: flex;
   justify-content: center;
   align-items: center;
+  /* margin-top: 80px; */
   .text {
-    font: 'Outfit';
-    font-weight: 400;
-    line-height: '20.16px';
+    margin-left: 11px;
+    width: 292px;
+    height: 40px;
+    font-family: 'Outfit';
+    font-style: normal;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: -0.333333px;
+    color: #686767;
   }
 }
 </style>

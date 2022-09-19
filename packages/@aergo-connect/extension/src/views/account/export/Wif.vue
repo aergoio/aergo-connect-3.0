@@ -1,6 +1,6 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" title="Encrypted Private Key" />
+    <Header button="back" title="Encrypted Private Key" :to="{ name: 'account-backup' }" />
     <div class="export-wif-content" style="padding-bottom: 0">
       <div class="password-field" v-if="!wif">
         <p class="export-wif-note">Choose a passphrase to encrypt your private key string.</p>

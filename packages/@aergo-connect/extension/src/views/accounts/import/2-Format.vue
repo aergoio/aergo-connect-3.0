@@ -1,6 +1,6 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" title="Import Account" />
+    <Header button="back" title="Import Account" :to="{ name: 'register' }" />
     <div class="foramt-content">
       <!-- <section class="dialog-header">
         <BackButton :to="{ name: 'account-import' }" />

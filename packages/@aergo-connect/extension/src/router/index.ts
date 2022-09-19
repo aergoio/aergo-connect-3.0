@@ -8,6 +8,7 @@ import Welcome from '../views/accounts/Welcome.vue';
 import Register from '../views/accounts/Register.vue';
 import Setup from '../views/accounts/Setup.vue';
 import Create from '../views/accounts/Create.vue';
+import Home from '../views/accounts/Home.vue';
 import Import from '../views/accounts/import/1-Network.vue';
 import ImportFormat from '../views/accounts/import/2-Format.vue';
 import ImportKeystore from '../views/accounts/import/3a-Keystore.vue';
@@ -104,7 +105,7 @@ const routes: RouteConfig[] = [
       withMeta(1, {
         path: 'list',
         name: 'accounts-list',
-        component: AccountsList,
+        component: Home,
       }),
 
       withMeta(2, {
@@ -117,11 +118,6 @@ const routes: RouteConfig[] = [
         path: '/account/:chainId/:address/create',
         name: 'account-create',
         component: Create,
-      }),
-      withMeta(2, {
-        path: '/account/:chainId/:address/import',
-        name: 'account-import',
-        component: Import,
       }),
 
       withMeta(3, {
@@ -148,22 +144,22 @@ const routes: RouteConfig[] = [
         component: Keystore,
       }),
 
-      withMeta(3, {
+      withMeta(2, {
         path: 'import/format',
-        name: 'account-import-format',
+        name: 'account-import',
         component: ImportFormat,
       }),
-      withMeta(4, {
+      withMeta(3, {
         path: 'import/keystore',
         name: 'account-import-keystore',
         component: ImportKeystore,
       }),
-      withMeta(4, {
+      withMeta(3, {
         path: 'import/wif',
         name: 'account-import-wif',
         component: ImportWif,
       }),
-      withMeta(4, {
+      withMeta(3, {
         path: 'import/seedphrase',
         name: 'account-import-seedphrase',
         component: ImportSeedphrase,

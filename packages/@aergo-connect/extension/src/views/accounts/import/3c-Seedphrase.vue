@@ -1,6 +1,6 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" title="Mnemonic Seed Phrase" />
+    <Header button="back" title="Mnemonic Seed Phrase" :to="{ name: 'account-import' }" />
     <div class="foramt-content">
       <span class="preheaer">Enter your Mnemonic Seed Phrase.</span>
       <div class="import-seedphrase-content" style="padding-bottom: 0">

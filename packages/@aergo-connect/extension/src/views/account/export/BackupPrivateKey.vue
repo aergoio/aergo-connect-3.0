@@ -1,6 +1,6 @@
 <template>
   <div :visible="visible" title="Export Account" @close="$emit('close')">
-    <Header button="back" title="Backup Private Key" />
+    <Header button="back" title="Backup Private Key" :to="{ name: 'account-create' }" />
     <section class="exportAccountDialog-contents">
       <div class="btn-p-wrapper">
         <Button

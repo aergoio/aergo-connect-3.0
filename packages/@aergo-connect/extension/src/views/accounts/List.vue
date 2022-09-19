@@ -51,7 +51,7 @@ export default class AccountsList extends Vue {
   async beforeMount() {
     if (this.$store.state.accounts.keys.length === 0) {
       console.log('nothing in wallet, register plz');
-      this.$router.push({ name: 'register' });
+      this.$router.push({ name: 'register', params: { next: 'register' } });
     }
   }
   mounted() {

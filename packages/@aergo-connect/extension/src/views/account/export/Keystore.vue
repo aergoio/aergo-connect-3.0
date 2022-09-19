@@ -1,10 +1,10 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" title="Keystore FIle" />
+    <Header button="back" title="Keystore FIle" :to="{ name: 'account-backup' }" />
     <ConfirmModal
       v-if="modal"
       title="Your private key has been saved in account.txt!"
-      to="accounts-list"
+      to="account-backup"
     />
     <div class="content" style="padding-bottom: 0">
       <p class="text">Choose a passphrase to encrypt your keystore file.</p>
@@ -32,15 +32,11 @@
           size="large"
           >Save</Button
         >
-        <a
-          v-else
-          class="button button-type-primary button-size-default inverted-colors"
-          :href="encodedKeystoreUrl"
-          target="_blank"
-          :download="fileName"
-          ref="downloadButton"
-          >Save</a
-        >
+        <Button v-else type="primary" size="large">
+          <a :href="encodedKeystoreUrl" target="_blank" :download="fileName" ref="downloadButton"
+            >Save</a
+          >
+        </Button>
       </ButtonGroup>
     </template>
   </ScrollView>
@@ -159,14 +155,12 @@ export default class AccountExportKeystore extends Vue {
       color: #454344;
     }
   }
-  .button {
-    .button-size-default {
-      box-sizing: border-box;
-      min-height: 48px;
-      line-height: 3em;
-      padding: 0.5em 2.5em;
-      height: 48px;
-    }
+  .button-size-default {
+    box-sizing: border-box;
+    min-height: 48px;
+    line-height: 3em;
+    padding: 0.5em 2.5em;
+    height: 48px;
   }
 }
 </style>

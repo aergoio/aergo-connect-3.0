@@ -17,7 +17,18 @@
             >
               Import
             </Button>
-            <Button @click="create" type="primary" size="large">
+            <Button
+              type="primary"
+              size="large"
+              :to="{
+                name: 'account-create',
+                params: {
+                  next: 'account-create',
+                  chainId: chainId,
+                  address: address,
+                },
+              }"
+            >
               Create
             </Button>
             <Button
@@ -81,25 +92,22 @@ import { PersistInputsMixin } from '../../store/ui';
   },
 })
 export default class Create extends mixins(PersistInputsMixin) {
-  chainId = 'aergo.io';
+  // chainId = 'aergo.io';
   persistFields = ['chainId'];
   options = [
     ['aergo.io', 'Mainnet'],
     ['testnet.aergo.io', 'Testnet'],
   ];
-  async create() {
+  chainId = '';
+  address = '';
+  async beforeMount() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: this.chainId,
     });
     console.log(account, mnemonic);
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
-    this.$router.push({
-      name: 'account-create',
-      params: {
-        chainId: account.chainId,
-        address: account.address,
-      },
-    });
+    this.chainId = account.chainId;
+    this.address = account.address;
   }
 }
 </script>

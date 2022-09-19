@@ -3,19 +3,31 @@
     <Header button="back" title="Backup Private Key" />
     <section class="exportAccountDialog-contents">
       <div class="btn-p-wrapper">
-        <Button type="gradation" size="large" :to="{ name: 'account-backup-mnemonic' }">
+        <Button
+          type="gradation"
+          size="large"
+          :to="{ name: 'account-backup-mnemonic', params: { next: 'account-backup-mnemonic' } }"
+        >
           Mnemonic Seed Phrase
         </Button>
         <p>Show mnemonic seed phrase of the private key for the current selected account.</p>
       </div>
       <div class="btn-p-wrapper">
-        <Button type="gradation" size="large" :to="{ name: 'account-backup-encrypted' }">
+        <Button
+          type="gradation"
+          size="large"
+          :to="{ name: 'account-backup-encrypted', params: { next: 'account-backup-encrypted' } }"
+        >
           Encrypted Private Key
         </Button>
         <p>Show the encrypted private key for the current selected account.</p>
       </div>
       <div class="btn-p-wrapper">
-        <Button type="gradation" size="large" :to="{ name: 'account-backup-keystore' }">
+        <Button
+          type="gradation"
+          size="large"
+          :to="{ name: 'account-backup-keystore', params: { next: 'account-backup-keystore' } }"
+        >
           Keystore File
         </Button>
         <p>Save private key to a file for the current selected account.</p>

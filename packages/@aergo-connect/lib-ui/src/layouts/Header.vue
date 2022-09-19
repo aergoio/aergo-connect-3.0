@@ -48,10 +48,14 @@ export default Vue.extend({
   methods: {
     goBack() {
       if (typeof this.to !== 'undefined' && this.to && typeof this.$router !== 'undefined') {
-        this.$router.push(this.to);
+        this.$router.push({ name: this.to, params: this.$router.history.current.params });
       } else {
-        console.log('no to so else is invoked');
-        this.$router.go(-1);
+        console.log(this.$router);
+        console.log(this.$store.state.ui.route.previousPath);
+        this.$router.push({
+          path: this.$store.state.ui.route.previousPath,
+          params: this.$router.history.current.params,
+        });
       }
     },
   },

@@ -24,7 +24,7 @@
       </div>
     </div>
     <template #footer>
-      <div class="content">
+      <div>
         <Button
           size="large"
           @click="loadKeystore"

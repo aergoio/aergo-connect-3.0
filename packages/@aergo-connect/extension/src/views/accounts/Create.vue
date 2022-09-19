@@ -52,11 +52,6 @@ export default class Create extends mixins() {
   address = '';
   chainId = '';
   mnemonic = '';
-  async beforeMount() {
-    const { address, chainId } = await this.$route.params;
-    this.address = address;
-    this.chainId = chainId;
-  }
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <ScrollView class="page">
-    <Appear>
+    <Appear :delay="0.3">
       <Header button="back" title="Register Account" />
       <div class="register-contents">
         <Heading class="big-title">Register an Account</Heading>

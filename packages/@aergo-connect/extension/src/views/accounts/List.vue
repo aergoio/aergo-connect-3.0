@@ -1,5 +1,5 @@
 <template>
-  <ScrollView>
+  <div class="side-nav-backdrop">
     <div class="side-nav-wrap">
       <section class="side-nav-accounts">
         <img class="side-nav-logo" src="@aergo-connect/lib-ui/src/icons/img/nav-logo.svg" />
@@ -32,7 +32,7 @@
         </div>
       </section>
     </div>
-  </ScrollView>
+  </div>
 
   <!-- <AddAccountDialog :visible="addAccountDialogVisible" @close="addAccountDialogVisible = false" /> -->
 </template>
@@ -88,11 +88,11 @@ export default class AccountsList extends Vue {
 </script>
 
 <style lang="scss">
-.account-list-header {
-  border-bottom: 1px solid #f2f2f2;
-  padding: 0 20px;
-}
 .side-nav-wrap {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
   height: 546px;
   box-sizing: border-box;
   width: 270px;

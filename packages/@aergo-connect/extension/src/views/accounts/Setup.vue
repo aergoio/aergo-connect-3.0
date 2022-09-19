@@ -1,7 +1,9 @@
 <template>
   <ScrollView class="page">
     <div class="setup-content">
-      <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
+      <AppearVue :delay="0.6">
+        <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
+      </AppearVue>
       <section class="dialog-header">
         <div>
           <Header button="back" title="Set Password" />
@@ -53,7 +55,7 @@ import {
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { TextField, PasswordStrengthField } from '@aergo-connect/lib-ui/src/forms';
-import { Icon } from '@aergo-connect/lib-ui/src/icons';
+import AppearVue from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import ConfirmModal from '@aergo-connect/lib-ui/src/layouts/ConfirmModal.vue';
 import Component, { mixins } from 'vue-class-component';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
@@ -71,7 +73,7 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
     BackButton,
     Button,
     Header,
-    Icon,
+    AppearVue,
   },
 })
 export default class Setup extends mixins() {
@@ -87,8 +89,8 @@ export default class Setup extends mixins() {
   goBack() {
     this.$router.push({ name: 'welcome' });
   }
-  checkFunc(chcked: boolean) {
-    this.checked = chcked;
+  checkFunc(checked: boolean) {
+    this.checked = checked;
   }
   async handleModal() {
     if (this.passwordRepeat === this.password) {

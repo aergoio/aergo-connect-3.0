@@ -1,6 +1,6 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" title="Encrypted Private Key" />
+    <Header button="back" title="Encrypted Private Key" :to="{ name: 'account-import' }" />
     <div class="import-wif-content">
       <p class="import-wif-note">Enter your encrypted private key and password.</p>
       <div class="import-wif-textField">

@@ -1,6 +1,6 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" title="Keystore File" />
+    <Header button="back" title="Keystore File" :to="{ name: 'account-import' }" />
     <div class="import-keystore-content">
       <h3 class="import-keystore-note">Enter your keystore file and password.</h3>
       <div class="import-keystore-fileInput">

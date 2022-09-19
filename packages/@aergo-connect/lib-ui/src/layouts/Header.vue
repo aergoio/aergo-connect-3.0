@@ -1,9 +1,12 @@
 <template>
   <div class="header">
-    <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]" @click="goBack">
-      <Icon :name="`${button}`" :to="to" />
+    <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]">
+      <Button :to="to" @click="hamburgerClick">
+        <Icon :name="`${button}`" />
+      </Button>
     </div>
-    <h3>{{ title }}</h3>
+    <h3 v-if="title">{{ title }}</h3>
+
     <div class="header__button right" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
       <Icon class="refresh" name="refresh" />
       <a type="button" class="skip__btn">Skip</a>
@@ -16,9 +19,10 @@
 import Vue, { PropType } from 'vue';
 import Icon from '../icons/Icon.vue';
 import { RawLocation } from 'vue-router';
-
+import Button from '../buttons/Button.vue';
+import { emit } from 'process';
 export default Vue.extend({
-  components: { Icon },
+  components: { Icon, Button },
 
   props: {
     button: {
@@ -46,17 +50,8 @@ export default Vue.extend({
     },
   },
   methods: {
-    goBack() {
-      if (typeof this.to !== 'undefined' && this.to && typeof this.$router !== 'undefined') {
-        this.$router.push({ name: this.to, params: this.$router.history.current.params });
-      } else {
-        console.log(this.$router);
-        console.log(this.$store.state.ui.route.previousPath);
-        this.$router.push({
-          path: this.$store.state.ui.route.previousPath,
-          params: this.$router.history.current.params,
-        });
-      }
+    hamburgerClick() {
+      this.$emit('hamburgerClick');
     },
   },
 });

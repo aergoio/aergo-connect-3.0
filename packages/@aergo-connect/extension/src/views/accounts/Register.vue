@@ -1,7 +1,7 @@
 <template>
   <ScrollView class="page">
-    <Appear :delay="0.3">
-      <Header button="back" title="Register Account" />
+    <Appear>
+      <Header button="back" title="Register Account" :to="{ name: 'home' }" />
       <div class="register-contents">
         <Heading class="big-title">Register an Account</Heading>
         <span class="pre-header">Import on existing accounts or create a new one.</span>
@@ -13,22 +13,11 @@
             <Button
               type="primary"
               size="large"
-              :to="{ name: 'account-import-format', params: { next: 'account-import-format' } }"
+              :to="{ name: 'account-import', params: { next: 'account-import' } }"
             >
               Import
             </Button>
-            <Button
-              type="primary"
-              size="large"
-              :to="{
-                name: 'account-create',
-                params: {
-                  next: 'account-create',
-                  chainId: chainId,
-                  address: address,
-                },
-              }"
-            >
+            <Button type="primary" size="large" @click="handleCreate">
               Create
             </Button>
             <Button
@@ -92,22 +81,24 @@ import { PersistInputsMixin } from '../../store/ui';
   },
 })
 export default class Create extends mixins(PersistInputsMixin) {
-  // chainId = 'aergo.io';
+  chainId = 'aergo.io';
   persistFields = ['chainId'];
   options = [
     ['aergo.io', 'Mainnet'],
     ['testnet.aergo.io', 'Testnet'],
   ];
-  chainId = '';
+  // chainId = '';
   address = '';
-  async beforeMount() {
+  async handleCreate() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: this.chainId,
     });
     console.log(account, mnemonic);
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
-    this.chainId = account.chainId;
-    this.address = account.address;
+    this.$router.push({
+      name: 'account-create',
+      params: { next: 'account-create', chainId: account.chainId, address: account.address },
+    });
   }
 }
 </script>

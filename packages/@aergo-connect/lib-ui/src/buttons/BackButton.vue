@@ -5,10 +5,10 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
-import Button from "./Button.vue";
-import { RawLocation } from "vue-router";
-import Icon from "../icons/Icon.vue";
+import Vue, { PropType } from 'vue';
+import Button from './Button.vue';
+import { RawLocation } from 'vue-router';
+import Icon from '../icons/Icon.vue';
 
 export default Vue.extend({
   components: {
@@ -25,17 +25,17 @@ export default Vue.extend({
   },
   methods: {
     handleClick() {
-      if (typeof this.onClick === "function") {
+      if (typeof this.onClick === 'function') {
         this.onClick();
         return;
       }
       // Default action, can be overridden with custom route by passing `to`
-      if (typeof this.$router !== "undefined") {
+      if (typeof this.$router !== 'undefined') {
         this.$router.go(-1);
         /*if (this.$store.state.ui.route.previousPath) {
           this.$router.push(this.$store.state.ui.route.previousPath);
         } else {
-          this.$router.push({ name: 'accounts-list' });
+          this.$router.push({ name: 'home' });
         }*/
       }
     },

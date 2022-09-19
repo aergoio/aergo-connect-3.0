@@ -1,21 +1,40 @@
 <template>
-  <div class="account-list-view">
-    <ScrollView>
-      <!-- <template #header>
-        <div class="account-list-header">
-          <Heading tag="h2">
-            Accounts
-            <Button @click="addAccountDialogVisible = true" type="icon"><Icon name="add" :size="24" /></Button>
-          </Heading>
+  <ScrollView>
+    <div class="side-nav-wrap">
+      <section class="side-nav-accounts">
+        <img class="side-nav-logo" src="@aergo-connect/lib-ui/src/icons/img/nav-logo.svg" />
+        <div class="accounts-dropDown" @click="handleAccountsDropDown">
+          <span>Accounts</span>
+          <img
+            v-if="isAccountsListOpened"
+            src="@aergo-connect/lib-ui/src/icons/img/arrow-down.svg"
+          />
+          <img v-else src="@aergo-connect/lib-ui/src/icons/img/arrow-up.svg" />
         </div>
-      </template> -->
-      <div class="account-list-wrap">
-        <AccountList :accounts="accounts" :canDelete="true" />
-      </div>
-    </ScrollView>
+        <AccountList
+          :accounts="accounts"
+          :canDelete="true"
+          :isAccountsListOpened="isAccountsListOpened"
+        />
+        <SideNavButton img="add" title="Add Account" />
+        <SideNavButton img="delete" title="Remove Account" />
+      </section>
+      <section class="nav-footer">
+        <div>
+          <SideNavButton img="sign-message" title="Sign Message" />
+          <SideNavButton img="security" title="Security" />
+          <SideNavButton img="lock" title="Lock" />
+        </div>
+        <div class="side-nav-version">
+          <span>Version</span>
+          <span>2.0</span>
+          <img src="@aergo-connect/lib-ui/src/icons/img/arrow-right.svg" />
+        </div>
+      </section>
+    </div>
+  </ScrollView>
 
-    <AddAccountDialog :visible="addAccountDialogVisible" @close="addAccountDialogVisible = false" />
-  </div>
+  <!-- <AddAccountDialog :visible="addAccountDialogVisible" @close="addAccountDialogVisible = false" /> -->
 </template>
 
 <script lang="ts">
@@ -25,6 +44,7 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import AddAccountDialog from '../../components/accounts/AddAccountDialog.vue';
 import AccountList from '../../components/accounts/AccountList.vue';
 import { Button } from '@aergo-connect/lib-ui/src/buttons';
+import { SideNavButton } from '@aergo-connect/lib-ui/src/buttons';
 
 import Vue from 'vue';
 import Component from 'vue-class-component';
@@ -38,10 +58,17 @@ import { Account } from '@herajs/wallet';
     Icon,
     AddAccountDialog,
     AccountList,
+    SideNavButton,
   },
 })
 export default class AccountsList extends Vue {
-  addAccountDialogVisible = false;
+  // addAccountDialogVisible = false;
+  isAccountsListOpened = true;
+
+  handleAccountsDropDown() {
+    this.isAccountsListOpened = !this.isAccountsListOpened;
+  }
+
   get accounts(): Account[] {
     if (this.$store.state.accounts.keys.length) {
       return Object.values(this.$store.state.accounts.accounts);
@@ -61,17 +88,55 @@ export default class AccountsList extends Vue {
 </script>
 
 <style lang="scss">
-.account-list-view {
-  height: 100%;
-  box-sizing: border-box;
-}
 .account-list-header {
   border-bottom: 1px solid #f2f2f2;
   padding: 0 20px;
 }
-.account-list-wrap {
-  border-radius: 2px;
-  box-shadow: 0 12px 20px 0 rgba(34, 34, 34, 0.08);
-  margin: 20px 20px 25px 20px;
+.side-nav-wrap {
+  height: 546px;
+  box-sizing: border-box;
+  width: 270px;
+  background: #ffffff;
+  box-shadow: 3px 0px 18px rgb(0 0 0 / 15%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0;
+  padding-left: 16px;
+
+  .side-nav-logo {
+    margin-left: 14px;
+  }
+
+  .accounts-dropDown {
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 20px 12px 6px;
+    cursor: pointer;
+  }
+
+  .side-nav-accounts {
+    margin-top: 26px;
+  }
+
+  .nav-footer {
+    .side-nav-version {
+      margin-left: 10px;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 18px;
+      letter-spacing: -0.333333px;
+      color: #9c9a9a;
+      display: flex;
+      padding: 18px 0 33px 0;
+      cursor: pointer;
+      span {
+        &:nth-child(2) {
+          margin: 0px 24px 0 110px;
+          color: #279ecc;
+        }
+      }
+    }
+  }
 }
 </style>

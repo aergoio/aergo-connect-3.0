@@ -17,11 +17,11 @@ export default Vue.extend({
   props: {
     img: {
       type: String,
-      default: 'security',
+      default: '',
     },
     title: {
       type: String,
-      default: 'test',
+      default: '',
     },
     to: {
       type: [String, Object] as PropType<RawLocation>,
@@ -39,11 +39,7 @@ export default Vue.extend({
   align-items: center;
   height: 44px;
   cursor: pointer;
-  transition: 0.3s;
   max-width: 233px;
-  svg {
-    transition: 0.3s;
-  }
   &:hover {
     background: #f6f6f6;
     border-radius: 4px;

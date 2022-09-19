@@ -2,7 +2,7 @@
   <div class="account__item">
     <div class="name__wrapper">
       <div class="identicon-wrapper">
-        <Identicon :text="address" />
+        <Identicon :text="address" :list="true" />
       </div>
       <span class="name" for="account__name">ACCOUNT1</span>
     </div>
@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import Vue from 'vue';
 import { Identicon } from '@aergo-connect/lib-ui/src/content';
 
 export default Vue.extend({
@@ -29,7 +29,11 @@ export default Vue.extend({
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    formatAddress() {
+      this.address = 'formatted';
+    },
+  },
   methods: {},
 });
 </script>
@@ -43,6 +47,7 @@ export default Vue.extend({
   width: 233px;
   padding: 8px 10px 8px 10px;
   align-items: center;
+
   cursor: pointer;
   &.active {
     background: #eff5f7;
@@ -64,17 +69,21 @@ export default Vue.extend({
       margin-right: 8px;
       border: 1px solid #d8d8d8;
       border-radius: 4px;
+      .identicon {
+        width: 20px;
+        height: 20px;
+      }
     }
   }
 
   .address__wrapper {
-    width: 67px;
-    height: 19px;
     background: #dae8ee;
     border-radius: 25px;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 2px 8px;
+
     .address {
       font-weight: 300;
       font-size: 12px;

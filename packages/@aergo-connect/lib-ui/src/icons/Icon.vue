@@ -6,15 +6,12 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType, FunctionalComponentOptions } from "vue";
-import { IconName } from "./types";
+import Vue, { PropType, FunctionalComponentOptions } from 'vue';
+import { IconName } from './types';
 
-function namedRequireAll(
-  context: __WebpackModuleApi.RequireContext,
-  namePrefix = ""
-) {
+function namedRequireAll(context: __WebpackModuleApi.RequireContext, namePrefix = '') {
   const icons = {} as Record<string, FunctionalComponentOptions>;
-  context.keys().forEach((key) => {
+  context.keys().forEach(key => {
     const matched = key.match(/\/(.*?)\./i);
     if (matched && matched.length > 1) {
       const name = matched[1];
@@ -25,15 +22,11 @@ function namedRequireAll(
 }
 
 // Load all svg icons at compile time
-const iconsContext = require.context(
-  "!!babel-loader!vue-svg-loader!./img",
-  true,
-  /\.svg$/i
-);
-const icons = namedRequireAll(iconsContext, "icon-");
+const iconsContext = require.context('!!babel-loader!vue-svg-loader!./img', true, /\.svg$/i);
+const icons = namedRequireAll(iconsContext, 'icon-');
 
 export default Vue.extend({
-  name: "Icon",
+  name: 'Icon',
   props: {
     name: {
       type: String as PropType<IconName>,

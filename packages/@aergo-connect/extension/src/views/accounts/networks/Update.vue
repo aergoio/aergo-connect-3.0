@@ -126,9 +126,4 @@ export default class NetworkUpdate extends Vue {
   border-bottom: 1px solid #f2f2f2;
   padding: 0 20px;
 }
-.account-list-wrap {
-  border-radius: 2px;
-  box-shadow: 0 12px 20px 0 rgba(34, 34, 34, 0.08);
-  margin: 20px 20px 25px 20px;
-}
 </style>

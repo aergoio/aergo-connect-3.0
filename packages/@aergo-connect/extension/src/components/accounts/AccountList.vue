@@ -1,5 +1,27 @@
 <template>
+  <ul class="nav-account-list">
+    <li
+      v-for="account in slicedAccounts()"
+      :key="account.key"
+      class="nav-account-item"
+      @click.capture="$emit('select', account)"
+    >
+      <router-link :to="{ name: balanceListRoute, params: account.data.spec }">
+        <div :class="activeAccount && activeAccount.key === account.key ? 'active' : ''">
+          <AccountItem
+            :address="
+              `${account.data.spec.address.slice(0, 3)}...${account.data.spec.address.slice(-3)}`
+            "
+          />
+        </div>
+      </router-link>
+    </li>
+  </ul>
+</template>
+
+<!-- <template>
   <ul class="account-list">
+    <h1>test</h1>
     <li v-for="[chainId, accounts] in accountsByChainId" :key="chainId">
       <div class="chainid-group" v-if="groupByChain">
         <span class="chain-id-icon">
@@ -44,7 +66,7 @@
       </ul>
     </li>
   </ul>
-</template>
+</template> -->
 
 <script lang="ts">
 import Vue from 'vue';
@@ -56,12 +78,14 @@ import { groupBy } from '../../utils/group-by';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import { FormattedToken, Identicon } from '@aergo-connect/lib-ui/src/content';
 import { isPublicChainId } from '../../config';
+import AccountItem from '@aergo-connect/lib-ui/src/items/AccountItem.vue';
 
 @Component({
   components: {
     Icon,
     Identicon,
     FormattedToken,
+    AccountItem,
   },
 })
 export default class AccountList extends Vue {
@@ -71,6 +95,7 @@ export default class AccountList extends Vue {
   @Prop({ type: String, default: 'account-details' }) readonly accountRoute!: string;
   @Prop({ type: String, default: 'balance-list' }) readonly balanceListRoute!: string;
   @Prop({ type: Boolean, default: false }) readonly canDelete!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly isAccountsListOpened!: boolean;
   activeAccount: any = null;
 
   async mounted() {
@@ -89,6 +114,14 @@ export default class AccountList extends Vue {
         element.scrollIntoView({ block: 'center' });
       }
     }, 50);
+  }
+
+  slicedAccounts() {
+    if (this.isAccountsListOpened) {
+      const slicedAccounts = this.accounts.slice(0, 1);
+      return slicedAccounts;
+    }
+    return this.accounts;
   }
 
   get sortedAccounts() {
@@ -136,6 +169,14 @@ export default class AccountList extends Vue {
 }
 </script>
 
+<style lang="scss">
+.nav-account-list {
+  max-height: 160px;
+  overflow-y: scroll;
+}
+</style>
+
+<!-- 
 <style lang="scss">
 .account-list,
 .account-list ul {
@@ -254,4 +295,4 @@ export default class AccountList extends Vue {
     border-color: rgba(#ff4f9f, 0.3);
   }
 }
-</style>
+</style> -->

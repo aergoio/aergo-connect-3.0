@@ -18,13 +18,13 @@
         <h3>Confirm Password</h3>
         <PasswordStrengthField variant="default" v-model="passwordRepeat" :setting="setting" />
       </div>
-      <div class="content_checkbox">
-        <CheckboxButton :checked="checked" @check="checkFunc" />
-        <div class="text">I understand that this wallet cannot recover this password for me.</div>
-      </div>
     </div>
     <template #footer>
       <div v-if="!modal" class="footer">
+        <div class="content_checkbox">
+          <CheckboxButton :checked="checked" @check="checkFunc" />
+          <div class="text">I understand that this wallet cannot recover this password for me.</div>
+        </div>
         <Button
           type="primary"
           size="large"
@@ -126,7 +126,7 @@ export default class Setup extends mixins() {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* margin-top: 80px; */
+  margin-bottom: 28px;
   .text {
     margin-left: 11px;
     width: 292px;

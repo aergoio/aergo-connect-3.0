@@ -15,25 +15,11 @@
       @blur="handleBlur"
       @submit="handleEnter"
     >
-      <div class="icon__wrapper" :class="state === `invalid` ? `invalid` : ``">
-        <Icon
-          class="btn-reveal-password"
-          :name="revealPassword ? 'view-enabled' : 'view-disabled'"
-          :size="20"
-          @click.native="toggleReveal"
-        />
+      <div v-if="value">
+        <Icon v-if="value === initPassword" name="checkmark-circle" class="match-password" :size="20" style="margin-right:10px" />
+        <Icon v-else name="dropdown" :size="20" class="match-password" />
       </div>
     </TextField>
-    <div v-if="setting" class="password-strength">
-      <span class="input-error-text password-weak" v-if="value && passwordStrength.score < 3"
-        >Strength : Week
-      </span>
-      <span class="input-error-text password-good" v-else-if="value && passwordStrength.score >= 3"
-        >Strength : Good
-      </span>
-      <span v-else class="input-error-text password-good"> </span>
-    </div>
-    </div>
   </div>
 </template>
 
@@ -103,23 +89,8 @@ export default Vue.extend({
 });
 </script>
 
-<style lang="scss">
-.password-strength {
-  margin-top: 10px;
-}
-.password-advice {
-  color: #666;
-  font-size: (14/16) * 1rem;
-  display: flex;
-}
-.password-good {
-  color: #279ecc;
-  font-size: (14/16) * 1rem;
-  .adjustable-stroke {
-    stroke: #00c789;
-  }
-}
-.btn-reveal-password {
+<style scss>
+.match-password {
   margin-right: 10px;
   user-select: none;
 }

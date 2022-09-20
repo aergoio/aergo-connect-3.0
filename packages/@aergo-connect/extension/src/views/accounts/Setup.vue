@@ -11,12 +11,16 @@
       </section>
       <div class="content_layout">
         <p>
-          This password will unlock your wallet only on this device.
+          This passphrase will be used to secure all your accounts.
         </p>
-        <h3>New Password</h3>
-        <PasswordStrengthField variant="default" v-model="password" autofocus :setting="setting" />
-        <h3>Confirm Password</h3>
-        <PasswordStrengthField variant="default" v-model="passwordRepeat" :setting="setting" />
+        <div>
+          <h4>New Password</h4>
+          <PasswordStrengthField variant="default" v-model="password" autofocus :setting="setting" />
+        </div>
+        <div>
+          <h4>Confirm Password</h4>
+          <PasswordRepeatField variant="default" v-model="passwordRepeat" :initPassword="password" :setting="setting" />
+        </div>
       </div>
     </div>
     <template #footer>
@@ -54,7 +58,7 @@ import {
 } from '@aergo-connect/lib-ui/src/buttons';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import { TextField, PasswordStrengthField } from '@aergo-connect/lib-ui/src/forms';
+import { TextField, PasswordStrengthField, PasswordRepeatField } from '@aergo-connect/lib-ui/src/forms';
 import AppearVue from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import ConfirmModal from '@aergo-connect/lib-ui/src/layouts/ConfirmModal.vue';
 import Component, { mixins } from 'vue-class-component';
@@ -65,6 +69,7 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
     ScrollView,
     Heading,
     PasswordStrengthField,
+    PasswordRepeatField,
     TextField,
     ContinueButton,
     CheckboxButton,

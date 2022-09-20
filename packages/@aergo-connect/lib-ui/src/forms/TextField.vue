@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
+import Vue, { PropType } from 'vue';
 import {
   InputVariant,
   InputVariants,
@@ -41,9 +41,9 @@ import {
   InputTypes,
   InputStates,
   InputState,
-} from "./types";
-import InputContainer from "./InputContainer.vue";
-import Icon from "../icons/Icon.vue";
+} from './types';
+import InputContainer from './InputContainer.vue';
+import Icon from '../icons/Icon.vue';
 
 export default Vue.extend({
   components: {
@@ -71,18 +71,18 @@ export default Vue.extend({
     },
     error: {
       type: String,
-      default: "",
+      default: '',
     },
     errorType: {
-      type: String as PropType<"error" | "warning">,
-      default: "error",
+      type: String as PropType<'error' | 'warning'>,
+      default: 'error',
     },
     autoComplete: String,
   },
 
   computed: {
     classes(): string[] {
-      return ["text-field", `type-${this.type}`];
+      return ['text-field', `type-${this.type}`];
     },
   },
   mounted() {
@@ -92,21 +92,21 @@ export default Vue.extend({
   },
   methods: {
     handleInput(event: InputEvent): void {
-      this.$emit("input", (event.target as HTMLFormElement).value);
+      this.$emit('input', (event.target as HTMLFormElement).value);
     },
     handleBlur(event: FocusEvent): void {
-      this.$emit("blur", (event.target as HTMLFormElement).value);
+      this.$emit('blur', (event.target as HTMLFormElement).value);
     },
     handleEnter(event: KeyboardEvent): void {
-      this.$emit("submit", (event.target as HTMLFormElement).value);
+      this.$emit('submit', (event.target as HTMLFormElement).value);
     },
     handleFileInput(): void {
       const $elem = this.$refs.inputElement as HTMLInputElement;
       if (!$elem || !$elem.files || $elem.files.length === 0) return;
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         if (e.target) {
-          this.$emit("file", e.target.result);
+          this.$emit('file', e.target.result);
         }
       };
       reader.readAsText($elem.files[0]);

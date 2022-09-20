@@ -105,7 +105,7 @@ export default Vue.extend({
 
 <style lang="scss">
 .password-strength {
-  margin-top: 10px;
+  margin-top: 0px;
 }
 .password-advice {
   color: #666;

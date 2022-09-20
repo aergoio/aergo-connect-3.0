@@ -9,7 +9,7 @@
           <Header button="back" title="Set Password" />
         </div>
       </section>
-      <div class="content_layout">
+      <div class="content_layout" >
         <p>
           This passphrase will be used to secure all your accounts.
         </p>
@@ -19,6 +19,7 @@
             variant="default"
             v-model="password"
             autofocus
+            @keyup.enter="$event.target.parentElement.nextSibling.children[1].focus()"
             :setting="setting"
           />
         </div>
@@ -95,6 +96,8 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
     AppearVue,
   },
 })
+
+
 export default class Setup extends mixins() {
   password = '';
   passwordRepeat = '';

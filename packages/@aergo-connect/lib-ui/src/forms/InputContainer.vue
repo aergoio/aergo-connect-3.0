@@ -77,6 +77,7 @@ export default Vue.extend({
   width: 327px;
   align-items: center;
   transition: box-shadow 0.1s;
+  margin-top: 10px;
 
   &.variant-default {
     // box-shadow: inset 0 0 0 2px $Grey05;
@@ -152,13 +153,13 @@ export default Vue.extend({
 .input-error-text {
   max-width: 327px;
   height: 36px;
-  font-size: (14/16) * 1rem;
+  font-size: 14px;
   color: $Pink01;
   display: flex;
   align-items: flex-start;
   margin-bottom: 12px;
   word-wrap: break-word;
-  margin-top: 14px;
+  margin-top: 8px;
   .icon {
     margin-left: 2px;
     margin-right: 2px;

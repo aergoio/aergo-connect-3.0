@@ -1,7 +1,7 @@
 <template>
   <ScrollView class="page">
     <Appear>
-      <Header button="back" title="Register Account" :to="{ name: 'home' }" />
+      <Header button="back" title="Register Account" :to="{ name: 'accounts-list' }" />
       <div class="register-contents">
         <Heading class="big-title">Register an Account</Heading>
         <span class="pre-header">Import on existing accounts or create a new one.</span>

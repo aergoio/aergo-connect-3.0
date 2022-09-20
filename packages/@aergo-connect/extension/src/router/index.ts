@@ -9,6 +9,7 @@ import Register from '../views/accounts/Register.vue';
 import Setup from '../views/accounts/Setup.vue';
 import Create from '../views/accounts/Create.vue';
 import Home from '../views/accounts/Home.vue';
+
 import Import from '../views/accounts/import/1-Network.vue';
 import ImportFormat from '../views/accounts/import/2-Format.vue';
 import ImportKeystore from '../views/accounts/import/3a-Keystore.vue';
@@ -100,7 +101,7 @@ const routes: RouteConfig[] = [
         R.NoAuthCheck | R.NoTracking,
       ),
 
-      withMeta(1, { path: '/register', name: 'register', component: Register }),
+      withMeta(1, { path: '/accounts/register', name: 'register', component: Register }),
 
       withMeta(1, {
         path: 'list',

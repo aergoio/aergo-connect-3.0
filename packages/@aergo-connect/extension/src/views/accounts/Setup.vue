@@ -14,12 +14,22 @@
           This passphrase will be used to secure all your accounts.
         </p>
         <div>
-          <h4>New Password</h4>
-          <PasswordStrengthField variant="default" v-model="password" autofocus :setting="setting" />
+          <span class="password_title">New Password</span>
+          <PasswordStrengthField
+            variant="default"
+            v-model="password"
+            autofocus
+            :setting="setting"
+          />
         </div>
         <div>
-          <h4>Confirm Password</h4>
-          <PasswordRepeatField variant="default" v-model="passwordRepeat" :initPassword="password" :setting="setting" />
+          <span class="password_title">Confirm Password</span>
+          <PasswordRepeatField
+            variant="default"
+            v-model="passwordRepeat"
+            :initPassword="password"
+            :setting="setting"
+          />
         </div>
       </div>
     </div>
@@ -58,7 +68,11 @@ import {
 } from '@aergo-connect/lib-ui/src/buttons';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import { TextField, PasswordStrengthField, PasswordRepeatField } from '@aergo-connect/lib-ui/src/forms';
+import {
+  TextField,
+  PasswordStrengthField,
+  PasswordRepeatField,
+} from '@aergo-connect/lib-ui/src/forms';
 import AppearVue from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import ConfirmModal from '@aergo-connect/lib-ui/src/layouts/ConfirmModal.vue';
 import Component, { mixins } from 'vue-class-component';
@@ -126,7 +140,16 @@ export default class Setup extends mixins() {
   position: relative;
   height: 100%;
 }
-
+.password_title {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: -0.333333px;
+  color: #454344;
+  margin-bottom: 10px;
+}
 .content_checkbox {
   display: flex;
   justify-content: center;

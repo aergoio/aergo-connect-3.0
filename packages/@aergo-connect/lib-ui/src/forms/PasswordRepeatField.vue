@@ -16,8 +16,14 @@
       @submit="handleEnter"
     >
       <div v-if="value">
-        <Icon v-if="value === initPassword" name="checkmark-circle" class="match-password" :size="20" style="margin-right:10px" />
-        <Icon v-else name="dropdown" :size="20" class="match-password" />
+        <Icon
+          v-if="value === initPassword"
+          name="check"
+          class="match-password"
+          :size="20"
+          style="margin-right:10px"
+        />
+        <Icon v-else name="x" :size="20" class="match-password" />
       </div>
     </TextField>
   </div>

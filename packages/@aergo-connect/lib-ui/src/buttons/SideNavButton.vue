@@ -1,5 +1,5 @@
 <template>
-  <div class="nav__button">
+  <div class="nav__button" @click="navigate">
     <div class="nav-button-icon">
       <Icon :name="`${img}`" />
     </div>
@@ -11,9 +11,10 @@
 import Vue, { PropType } from 'vue';
 import Icon from '../icons/Icon.vue';
 import { RawLocation } from 'vue-router';
+import Button from './Button.vue';
 
 export default Vue.extend({
-  components: { Icon },
+  components: { Icon, Button },
   props: {
     img: {
       type: String,
@@ -28,7 +29,15 @@ export default Vue.extend({
     },
   },
   computed: {},
-  methods: {},
+  methods: {
+    navigate() {
+      if (this.to) {
+        this.$router.push(this.to);
+      } else {
+        this.$emit('click');
+      }
+    },
+  },
 });
 </script>
 

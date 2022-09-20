@@ -20,7 +20,6 @@ import Vue, { PropType } from 'vue';
 import Icon from '../icons/Icon.vue';
 import { RawLocation } from 'vue-router';
 import Button from '../buttons/Button.vue';
-import { emit } from 'process';
 export default Vue.extend({
   components: { Icon, Button },
 
@@ -51,6 +50,7 @@ export default Vue.extend({
   },
   methods: {
     hamburgerClick() {
+      console.log('hamburger!!!!!!!!!');
       this.$emit('hamburgerClick');
     },
   },
@@ -65,7 +65,7 @@ export default Vue.extend({
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 50px;
+  height: 54px;
   background: #ffffff;
   box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
   position: relative;

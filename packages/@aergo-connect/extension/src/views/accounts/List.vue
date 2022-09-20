@@ -15,9 +15,10 @@
           :accounts="accounts"
           :canDelete="true"
           :isAccountsListOpened="isAccountsListOpened"
+          @select="handleSelect"
         />
-        <SideNavButton img="add" title="Add Account" />
-        <SideNavButton img="delete" title="Remove Account" />
+        <SideNavButton img="add" title="Add Account" to="register" />
+        <SideNavButton img="delete" title="Remove Account" @click="handleRemoveModal" />
       </section>
       <section class="nav-footer">
         <div>
@@ -45,7 +46,7 @@ import AddAccountDialog from '../../components/accounts/AddAccountDialog.vue';
 import AccountList from '../../components/accounts/AccountList.vue';
 import { Button } from '@aergo-connect/lib-ui/src/buttons';
 import { SideNavButton } from '@aergo-connect/lib-ui/src/buttons';
-
+import RemoveModal from '../account/RemoveModal.vue';
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Account } from '@herajs/wallet';
@@ -59,81 +60,107 @@ import { Account } from '@herajs/wallet';
     AddAccountDialog,
     AccountList,
     SideNavButton,
+    RemoveModal,
   },
 })
 export default class AccountsList extends Vue {
   // addAccountDialogVisible = false;
   isAccountsListOpened = true;
-
+  removeModal = false;
   handleAccountsDropDown() {
     this.isAccountsListOpened = !this.isAccountsListOpened;
   }
+  handleRemoveModal() {
+    this.removeModal = !this.removeModal;
+  }
 
+  // get account(): Account {
+  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
+  // }
+  // get accountSpec() {
+  //   return {
+  //     address: this.accounts[0]?.data.spec.address,
+  //     chainId: this.accounts[0]?.data.spec.chainId,
+  //   };
+  // }
+  handleSelect(account: Account) {
+    const accountSpec = { address: account.data.spec.address, chainId: account.data.spec.chainId };
+    this.$store.dispatch('accounts/updateAccount', accountSpec);
+  }
   get accounts(): Account[] {
     if (this.$store.state.accounts.keys.length) {
       return Object.values(this.$store.state.accounts.accounts);
     }
     return [];
   }
-  async beforeMount() {
-    if (this.$store.state.accounts.keys.length === 0) {
-      console.log('nothing in wallet, register plz');
-      this.$router.push({ name: 'register', params: { next: 'register' } });
-    }
-  }
+
   mounted() {
     this.$store.dispatch('accounts/fetchAccounts');
+
+    // if (this.$store.state.accounts.keys.length === 0) {
+    //   console.log('nothing in wallet, register plz');
+    //   this.$router.push({ name: 'register', params: { next: 'register' } });
+    // }
   }
 }
 </script>
 
 <style lang="scss">
-.side-nav-wrap {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-
-  height: 546px;
-  box-sizing: border-box;
-  width: 270px;
-  background: #ffffff;
-  box-shadow: 3px 0px 18px rgb(0 0 0 / 15%);
+.side-nav-backdrop {
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+  z-index: 10;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin: 0;
-  padding-left: 16px;
+  justify-content: center;
+  align-items: center;
+  .side-nav-wrap {
+    position: absolute;
+    left: 0;
+    bottom: 0;
 
-  .side-nav-logo {
-    margin-left: 14px;
-  }
-
-  .accounts-dropDown {
+    height: 546px;
+    box-sizing: border-box;
+    width: 270px;
+    background: #ffffff;
+    box-shadow: 3px 0px 18px rgb(0 0 0 / 15%);
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    margin: 12px 20px 12px 6px;
-    cursor: pointer;
-  }
+    margin: 0;
+    padding-left: 16px;
 
-  .side-nav-accounts {
-    margin-top: 26px;
-  }
+    .side-nav-logo {
+      margin-left: 14px;
+    }
 
-  .nav-footer {
-    .side-nav-version {
-      margin-left: 10px;
-      font-weight: 300;
-      font-size: 14px;
-      line-height: 18px;
-      letter-spacing: -0.333333px;
-      color: #9c9a9a;
+    .accounts-dropDown {
       display: flex;
-      padding: 18px 0 33px 0;
+      justify-content: space-between;
+      margin: 12px 20px 12px 6px;
       cursor: pointer;
-      span {
-        &:nth-child(2) {
-          margin: 0px 24px 0 110px;
-          color: #279ecc;
+    }
+
+    .side-nav-accounts {
+      margin-top: 26px;
+    }
+
+    .nav-footer {
+      .side-nav-version {
+        margin-left: 10px;
+        font-weight: 300;
+        font-size: 14px;
+        line-height: 18px;
+        letter-spacing: -0.333333px;
+        color: #9c9a9a;
+        display: flex;
+        padding: 18px 0 33px 0;
+        cursor: pointer;
+        span {
+          &:nth-child(2) {
+            margin: 0px 24px 0 110px;
+            color: #279ecc;
+          }
         }
       }
     }

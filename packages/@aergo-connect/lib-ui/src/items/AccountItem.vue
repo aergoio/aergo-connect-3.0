@@ -4,7 +4,7 @@
       <div class="identicon-wrapper">
         <Identicon :text="address" :list="true" />
       </div>
-      <span class="name" for="account__name">ACCOUNT1</span>
+      <span class="name" for="account__name">{{ nickname }}</span>
     </div>
     <div class="address__wrapper">
       <span class="address">{{ address }}</span>
@@ -24,6 +24,10 @@ export default Vue.extend({
     address: {
       type: String,
       default: '',
+    },
+    nickname: {
+      type: String,
+      default: 'ACCOUNT1',
     },
   },
   data() {

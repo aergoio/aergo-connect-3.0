@@ -49,5 +49,12 @@ export const iconNames = tuple(
   'usb',
   'view-disabled',
   'view-enabled',
+  'warning',
+  'edit',
+  'x',
+  'check',
+  'send',
+  'plus',
+  'next_grey',
 );
 export type IconName = typeof iconNames[number];

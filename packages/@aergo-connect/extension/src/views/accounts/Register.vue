@@ -7,17 +7,23 @@
         <span class="pre-header">Import on existing accounts or create a new one.</span>
         <img src="@/assets/img/logo-circle.svg" alt="logo" width="120px" />
       </div>
-      <div class="content">
+      <div>
         <Appear :delay="0.6">
           <ButtonGroup vertical>
             <Button
               type="primary"
               size="large"
+              hover=true 
               :to="{ name: 'account-import', params: { next: 'account-import' } }"
             >
               Import
             </Button>
-            <Button type="primary" size="large" @click="handleCreate">
+            <Button 
+              type="primary" 
+              size="large" 
+              hover=true 
+              @click="handleCreate"
+             >
               Create
             </Button>
             <Button

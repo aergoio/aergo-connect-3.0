@@ -2,11 +2,11 @@
   <ScrollView class="page">
     <div class="setup-content">
       <AppearVue :delay="0.6">
-        <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
+         <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
       </AppearVue>
       <section class="dialog-header">
         <div>
-          <Header button="back" title="Set Password" />
+          <Header button="back" to="welcome" title="Set Password" />
         </div>
       </section>
       <div class="content_layout" >
@@ -19,11 +19,9 @@
             variant="default"
             v-model="password"
             autofocus
-            @keyup.enter="$event.target.parentElement.nextSibling.children[1].focus()"
             :setting="setting"
+            @keyup.enter="$event.target.nextSibling.focus()"
           />
-        </div>
-        <div>
           <span class="password_title">Confirm Password</span>
           <PasswordRepeatField
             variant="default"
@@ -43,6 +41,7 @@
         <Button
           type="primary"
           size="large"
+          hover=true
           :disabled="
             checked &&
             password === passwordRepeat &&
@@ -108,9 +107,7 @@ export default class Setup extends mixins() {
   next() {
     this.modal = true;
   }
-  goBack() {
-    this.$router.push({ name: 'welcome' });
-  }
+
   checkFunc(checked: boolean) {
     this.checked = checked;
   }

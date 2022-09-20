@@ -19,10 +19,15 @@
     </div>
 
     <template #footer>
-      <div class="content">
+      <div>
         <Appear :delay="0.6">
           <ButtonGroup vertical>
-            <Button type="primary" :to="{ name: 'setup' }" hover="true">Get Started</Button>
+            <Button 
+		type="primary" 
+                size="large"
+		:to="{ name: 'setup' }" 
+		hover=true
+            >Get Started</Button>
           </ButtonGroup>
         </Appear>
       </div>
@@ -59,7 +64,6 @@ export default Vue.extend({
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-right: 30px;
   margin-top: 20px;
 
   .welcome-message-1-group {

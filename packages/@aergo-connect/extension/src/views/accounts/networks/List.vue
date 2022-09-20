@@ -68,6 +68,7 @@ import { ChainConfig, isPublicChainId } from '../../../config';
     Icon,
   },
 })
+
 export default class AccountsList extends Vue {
   networks: ChainConfig[] = [];
   created() {

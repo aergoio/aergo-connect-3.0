@@ -3,9 +3,9 @@
     class="button"
     :class="classes"
     :disabled="disabled"
-    @click="handleClick"
     :hover="hover"
     :size="size"
+    @click="handleClick"
   >
     <template v-if="loading">
       <LoadingIndicator class="button-loading-indicator" />
@@ -100,7 +100,7 @@ export default Vue.extend({
   font-size: (17/16) * 1em;
   /* Sizing */
   box-sizing: border-box;
-  min-height: 48px;
+  min-height: 30px;
   line-height: 3em;
   padding: 0.5em 2.5em;
   height: 48px;
@@ -133,9 +133,19 @@ export default Vue.extend({
   }
   &.button-size-medium {
     width: 289px;
+    height: 44px;
+  }
+  &.button-size-medium-outline {
+    width: 285px;
+    height: 40px;
   }
   &.button-size-large {
     width: 327px;
+    height: 48px;
+  }
+  &.button-size-large-outline {
+    width: 323px;
+    height: 44px;
   }
   &.button-type-primary {
     background-color: $Blue01;
@@ -151,7 +161,6 @@ export default Vue.extend({
   &.button-type-primary-outline {
     color: $Blue01;
     outline: 2px solid $Blue01;
-    height: 46px;
   }
   &.button-type-secondary {
     background-color: $Pink01;
@@ -172,7 +181,6 @@ export default Vue.extend({
   &.button-type-secondary-outline {
     color: $Pink01;
     outline: 2px solid $Pink01;
-    height: 46px;
   }
   &.button-type-gradation {
     background: $gradation04;

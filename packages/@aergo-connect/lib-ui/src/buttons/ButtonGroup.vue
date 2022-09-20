@@ -42,7 +42,7 @@ export default Vue.extend({
     align-items: center;
 
     > * + * {
-      margin-top: 10px;
+      margin-top: 15px;
     }
   }
 

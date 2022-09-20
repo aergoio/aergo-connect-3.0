@@ -29,11 +29,7 @@ export default Vue.extend({
   data() {
     return {};
   },
-  computed: {
-    formatAddress() {
-      this.address = 'formatted';
-    },
-  },
+  computed: {},
   methods: {},
 });
 </script>

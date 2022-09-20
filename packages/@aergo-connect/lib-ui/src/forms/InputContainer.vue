@@ -20,10 +20,10 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
-import { InputVariant, InputVariants, InputStates, InputState } from "./types";
-import LoadingIndicator from "../icons/LoadingIndicator.vue";
-import Icon from "../icons/Icon.vue";
+import Vue, { PropType } from 'vue';
+import { InputVariant, InputVariants, InputStates, InputState } from './types';
+import LoadingIndicator from '../icons/LoadingIndicator.vue';
+import Icon from '../icons/Icon.vue';
 
 export default Vue.extend({
   components: {
@@ -45,7 +45,7 @@ export default Vue.extend({
     },
     error: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   data() {
@@ -58,9 +58,9 @@ export default Vue.extend({
       return [
         `variant-${this.variant}`,
         `state-${this.state}`,
-        this.disabled ? "is-disabled" : "",
-        this.error ? "has-error" : "",
-        this.focused ? "is-focused" : "",
+        this.disabled ? 'is-disabled' : '',
+        this.error ? 'has-error' : '',
+        this.focused ? 'is-focused' : '',
       ];
     },
   },
@@ -68,13 +68,13 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import "../styles/variables";
+@import '../styles/variables';
 
 .input-field {
+  display: flex;
   box-sizing: border-box;
   height: 48px;
   width: 327px;
-  display: flex;
   align-items: center;
   transition: box-shadow 0.1s;
 
@@ -84,15 +84,13 @@ export default Vue.extend({
     // background-image: linear-gradient(white, white);
     border: 2px solid transparent;
     border-radius: 3px;
-    background-image: linear-gradient(white, white),
-      linear-gradient(to right, $Grey04, $Grey04);
+    background-image: linear-gradient(white, white), linear-gradient(to right, $Grey04, $Grey04);
     background-origin: border-box;
     background-clip: content-box, border-box;
 
     &.is-focused {
       outline: none;
-      background-image: linear-gradient(white, white),
-        linear-gradient(to right, $Grey07, $Grey07);
+      background-image: linear-gradient(white, white), linear-gradient(to right, $Grey07, $Grey07);
       // box-shadow: inset 0 0 0 2px $Grey07;
     }
 
@@ -110,8 +108,7 @@ export default Vue.extend({
   &.variant-secondary {
     border: 2px solid transparent;
     border-radius: 3px;
-    background-image: linear-gradient(white, white),
-      linear-gradient(to right, #9a449c, #e30a7d);
+    background-image: linear-gradient(white, white), linear-gradient(to right, #9a449c, #e30a7d);
     background-origin: border-box;
     background-clip: content-box, border-box;
   }
@@ -124,8 +121,7 @@ export default Vue.extend({
       box-shadow: none;
       border: 2px solid transparent;
       border-radius: 4px;
-      background-image: linear-gradient(white, white),
-        linear-gradient(to right, #9a449c, #e30a7d);
+      background-image: linear-gradient(white, white), linear-gradient(to right, #9a449c, #e30a7d);
       background-origin: border-box;
       background-clip: content-box, border-box;
     }
@@ -134,8 +130,7 @@ export default Vue.extend({
       box-shadow: none;
       border: 2px solid transparent;
       border-radius: 4px;
-      background-image: linear-gradient(white, white),
-        linear-gradient(to right, #279ecc, #a13e99);
+      background-image: linear-gradient(white, white), linear-gradient(to right, #279ecc, #a13e99);
       background-origin: border-box;
       background-clip: content-box, border-box;
     }
@@ -160,7 +155,7 @@ export default Vue.extend({
   font-size: (14/16) * 1rem;
   color: $Pink01;
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   margin-bottom: 12px;
   word-wrap: break-word;
   margin-top: 14px;

@@ -6,15 +6,13 @@
       class="nav-account-item"
       @click.capture="$emit('select', account)"
     >
-      <router-link :to="{ name: balanceListRoute, params: account.data.spec }">
-        <div :class="activeAccount && activeAccount.key === account.key ? 'active' : ''">
-          <AccountItem
-            :address="
-              `${account.data.spec.address.slice(0, 3)}...${account.data.spec.address.slice(-3)}`
-            "
-          />
-        </div>
-      </router-link>
+      <div :class="activeAccount && activeAccount.key === account.key ? 'active' : ''">
+        <AccountItem
+          :address="
+            `${account.data.spec.address.slice(0, 3)}...${account.data.spec.address.slice(-3)}`
+          "
+        />
+      </div>
     </li>
   </ul>
 </template>

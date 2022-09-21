@@ -32,6 +32,7 @@ export default Vue.extend({
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 15px;
 }
 @keyframes heading-appear {
   0% {

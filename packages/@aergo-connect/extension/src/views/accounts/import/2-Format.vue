@@ -1,22 +1,40 @@
 <template>
   <ScrollView class="page">
     <Header button="back" title="Import Account" :to="{ name: 'register' }" />
-    <div class="foramt-content">
+    <div class="format-content">
       <!-- <section class="dialog-header">
         <BackButton :to="{ name: 'account-import' }" />
       </section> -->
       <!-- <Heading>Import Format</Heading> -->
       <span class="preheaer">Please select the import format.</span>
       <p class="buttons">
-        <Button type="gradation" size="large" :to="{ name: 'account-import-seedphrase' }"
-          >Mnemonic Seedphrase</Button
+
+        <Button 
+          type="primary-outline" 
+          size="large-outline" 
+          hover=true
+          :to="{ name: 'account-import-seedphrase' }"
         >
-        <Button type="gradation" size="large" :to="{ name: 'account-import-wif' }"
-          >Encrypted Private Key</Button
+          Mnemonic Seedphrase
+        </Button >
+
+        <Button 
+          type="primary-outline" 
+          size="large-outline" 
+          hover=true
+          :to="{ name: 'account-import-wif' }"
         >
-        <Button type="gradation" size="large" :to="{ name: 'account-import-keystore' }"
-          >Keystore File</Button
+          Encrypted Private Key
+        </Button >
+
+        <Button 
+          type="primary-outline" 
+          size="large-outline" 
+          hover=true
+          :to="{ name: 'account-import-keystore' }"
         >
+          Keystore File
+        </Button>
       </p>
       <p class="note">
         <span>Keystore File</span> is the recommended format. Use it when you saved your key as an
@@ -51,17 +69,21 @@ export default class Import extends mixins() {}
 </script>
 
 <style lang="scss">
-.foramt-content {
+.format-content {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  height: 100%;
+
+  .phrases {
+    margin-top: 32px;
+    margin-bottom: 30px;
+  }
 
   .buttons {
     margin-bottom: 32px;
     button {
-      margin-bottom: 28px;
+      margin-bottom: 30px;
     }
   }
 

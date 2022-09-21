@@ -161,6 +161,10 @@ export default Vue.extend({
   &.button-type-primary-outline {
     color: $Blue01;
     outline: 2px solid $Blue01;
+    &.hover:hover {
+      color: $Grey01;
+      background: $gradation04;
+    }
   }
   &.button-type-secondary {
     background-color: $Pink01;

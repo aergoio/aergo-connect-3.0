@@ -7,13 +7,13 @@
         <span>resgistered on this wallet. Would you like to add an Account?</span>
       </div>
       <ButtonGroup vertical class="buttonGroup-position">
-        <ButtonVue type="secondary" size="medium" hover="true" :to="{ name: 'register' }">
+        <ButtonVue type="secondary" size="medium" hover :to="{ name: 'register' }">
           Add Account
         </ButtonVue>
         <ButtonVue
           type="secondary-outline"
-          hover="true"
-          size="medium-outline"
+          hover
+          size="medium-outline
           @click="handleCancel"
         >
           Cancel

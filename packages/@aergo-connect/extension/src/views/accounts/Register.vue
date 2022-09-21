@@ -111,7 +111,7 @@ export default class Create extends mixins(PersistInputsMixin) {
   justify-content: center;
   align-items: center;
   margin-top: 32px;
-  margin-bottom: 84px;
+  margin-bottom: 70px;
   .pre-header {
     font-size: 16px;
     line-height: 20px;

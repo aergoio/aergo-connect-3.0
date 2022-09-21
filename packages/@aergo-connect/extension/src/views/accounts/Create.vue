@@ -1,23 +1,34 @@
 <template>
   <ScrollView>
-    <div class="content">
+    <div class="registered_content">
       <Identicon :text="address" class="circle" />
       <Heading class="big-title">Registered Account!</Heading>
-      <span>Address</span>
 
+      <span class="sub-title"> Address</span>
       <div class="address">
         <span class="address_hash">{{ address }}</span>
       </div>
-      <span class="nickname">Nickname</span>
 
+      <span class="sub-title">Nickname</span>
       <div class="user_nickname">
         <span class="user_nickname_text">ACCOUNT 1</span>
       </div>
-      <ButtonGroup vertical>
-        <Button type="primary-outline" size="large" :to="{ name: 'account-backup' }">
+
+      <ButtonGroup vertical class="buttonGroup-position">
+        <Button 
+          type="primary-outline" 
+          size="large-outline" 
+          :hover="true"
+          :to="{ name: 'account-backup' }"
+        >
           Backup Private Key
         </Button>
-        <Button :to="{ name: 'accounts-list' }" type="primary" size="large">
+        <Button 
+          type="primary" 
+          size="large"
+          :hover="true"
+          :to="{ name: 'accounts-list' }" 
+        >
           Home
         </Button>
       </ButtonGroup>
@@ -55,7 +66,7 @@ export default class Create extends mixins() {
 </script>
 
 <style lang="scss">
-.content {
+.registered_content {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -64,10 +75,6 @@ export default class Create extends mixins() {
     margin-top: 56px;
     width: 59px;
     height: 59px;
-  }
-  .big-title {
-    margin-top: 15px;
-    margin-bottom: 30px;
   }
   .address {
     display: flex;
@@ -91,7 +98,7 @@ export default class Create extends mixins() {
       color: #279ecc;
     }
   }
-  .nickname {
+  .sub-title {
     margin-top: 22px;
     margin-bottom: 7px;
   }
@@ -117,5 +124,9 @@ export default class Create extends mixins() {
       color: #686767;
     }
   }
+}
+.buttonGroup-position {
+  position: absolute;
+  top: 448px;
 }
 </style>

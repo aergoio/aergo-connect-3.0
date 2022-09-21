@@ -46,11 +46,14 @@ import AddAccountDialog from '../../components/accounts/AddAccountDialog.vue';
 import AccountList from '../../components/accounts/AccountList.vue';
 import { Button } from '@aergo-connect/lib-ui/src/buttons';
 import { SideNavButton } from '@aergo-connect/lib-ui/src/buttons';
-import RemoveModal from '../account/RemoveModal.vue';
 import Vue from 'vue';
-import Component from 'vue-class-component';
+import Component, { mixins } from 'vue-class-component';
 import { Account } from '@herajs/wallet';
-
+const AccountsListProps = Vue.extend({
+  props: {
+    removeAccountModal: Boolean,
+  },
+});
 @Component({
   components: {
     ScrollView,
@@ -60,18 +63,17 @@ import { Account } from '@herajs/wallet';
     AddAccountDialog,
     AccountList,
     SideNavButton,
-    RemoveModal,
   },
 })
-export default class AccountsList extends Vue {
+export default class AccountsList extends mixins(AccountsListProps) {
   // addAccountDialogVisible = false;
   isAccountsListOpened = true;
-  removeModal = false;
+
   handleAccountsDropDown() {
     this.isAccountsListOpened = !this.isAccountsListOpened;
   }
   handleRemoveModal() {
-    this.removeModal = !this.removeModal;
+    this.$emit('removeModalClick');
   }
 
   // get account(): Account {

@@ -7,8 +7,12 @@
         <span>resgistered on this wallet. Would you like to add an Account?</span>
       </div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover=true :to="{ name: 'register' }">Add Account</ButtonVue>
-        <ButtonVue type="secondary-outline" hover=true size="medium-outline" @click="handleCancel">Cancel</ButtonVue>
+        <ButtonVue type="secondary" size="medium" hover="true" :to="{ name: 'register' }"
+          >Add Account</ButtonVue
+        >
+        <ButtonVue type="secondary-outline" hover="true" size="medium-outline" @click="handleCancel"
+          >Cancel</ButtonVue
+        >
       </ButtonGroup>
     </div>
   </div>
@@ -23,7 +27,7 @@ export default Vue.extend({
   components: { Icon, ButtonGroup, ButtonVue },
   methods: {
     handleCancel() {
-      this.$emit('click');
+      this.$emit('cancel', 'noAccountModal');
     },
   },
 });
@@ -31,11 +35,13 @@ export default Vue.extend({
 
 <style lang="scss">
 .noAccount_backdrop {
+  position: absolute;
   width: 375px;
   height: 600px;
   left: 0px;
   top: 0px;
   background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
   .noAccount_modal_wrapper {
     width: 317px;
     height: 400px;

@@ -1,8 +1,9 @@
 <template>
   <ScrollView class="page">
     <Header button="hamburger" title="AERGO Mainnet" refresh @hamburgerClick="hamburgerClick" />
-    <List v-if="hamburgerModal" />
-    <NoAccount v-if="noAccountModal" @click="handleCancel" />
+    <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
+    <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
+    <List v-if="hamburgerModal" removeAccountModal @removeModalClick="handleRemoveModalClick" />
     <div class="home_content">
       <div class="account_info_wrapper">
         <Identicon :text="address" class="account_info_img" />
@@ -72,9 +73,9 @@ import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { Account } from '@herajs/wallet';
 import { Watch } from 'vue-property-decorator';
-import NoAccount from './NoAccount.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
-
+import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
+import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
 @Component({
   components: {
     ScrollView,
@@ -84,21 +85,32 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
     Button,
     Identicon,
     Heading,
-    NoAccount,
     Icon,
+    NoAccountModal,
+    RemoveAccountModal,
   },
 })
 export default class Home extends mixins() {
   hamburgerModal = false;
   noAccountModal = false;
+  removeAccountModal = false;
   address = '';
 
   @Watch('address')
   hamburgerClick() {
     this.hamburgerModal = !this.hamburgerModal;
   }
-  handleCancel() {
-    this.noAccountModal = false;
+  handleCancel(modalEvent: string) {
+    if (modalEvent === 'noAccountModal') {
+      this.noAccountModal = false;
+    }
+    if (modalEvent === 'removeAccountModal') {
+      this.removeAccountModal = false;
+    }
+  }
+  handleRemoveModalClick() {
+    this.hamburgerModal = false;
+    this.removeAccountModal = true;
   }
   get accounts(): Account[] {
     if (this.$store.state.accounts.keys.length) {

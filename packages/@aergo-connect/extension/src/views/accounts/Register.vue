@@ -13,17 +13,12 @@
             <Button
               type="primary"
               size="large"
-              hover=true 
+              hover="true"
               :to="{ name: 'account-import', params: { next: 'account-import' } }"
             >
               Import
             </Button>
-            <Button 
-              type="primary" 
-              size="large" 
-              hover=true 
-              @click="handleCreate"
-             >
+            <Button type="primary" size="large" hover="true" @click="handleCreate">
               Create
             </Button>
             <Button

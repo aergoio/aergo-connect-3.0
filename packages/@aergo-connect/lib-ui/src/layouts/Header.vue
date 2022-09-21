@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]">
-      <Button :to="to">
+      <Button :to="to" @click="hamburgerClick">
         <Icon :name="`${button}`" />
       </Button>
     </div>
@@ -49,10 +49,10 @@ export default Vue.extend({
     },
   },
   methods: {
-    goBack() {
-      console.log(this.to);
-//      this.$emit('hamburgerClick');
-//      this.$router.push({ name: this.to });
+    hamburgerClick() {
+      this.$emit('hamburgerClick');
+      // console.log(this.to);
+      //      this.$router.push({ name: this.to });
     },
   },
 });

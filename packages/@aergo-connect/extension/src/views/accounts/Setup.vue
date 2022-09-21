@@ -2,14 +2,14 @@
   <ScrollView class="page">
     <div class="setup-content">
       <AppearVue :delay="0.6">
-         <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
+        <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
       </AppearVue>
       <section class="dialog-header">
         <div>
           <Header button="back" to="welcome" title="Set Password" />
         </div>
       </section>
-      <div class="content_layout" >
+      <div class="content_layout">
         <p>
           This passphrase will be used to secure all your accounts.
         </p>
@@ -41,7 +41,7 @@
         <Button
           type="primary"
           size="large"
-          hover=true
+          hover
           :disabled="
             checked &&
             password === passwordRepeat &&
@@ -95,8 +95,6 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
     AppearVue,
   },
 })
-
-
 export default class Setup extends mixins() {
   password = '';
   passwordRepeat = '';

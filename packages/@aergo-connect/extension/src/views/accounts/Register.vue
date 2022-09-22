@@ -82,19 +82,25 @@ import { PersistInputsMixin } from '../../store/ui';
   },
 })
 export default class Create extends mixins(PersistInputsMixin) {
+
+
+  // todo: chainid 관련 내용 제거
+  // persistFields = ['chainId'];
+  // options = [
+ //    ['aergo.io', 'Mainnet'],
+ //    ['testnet.aergo.io', 'Testnet'],
+ //  ];
+ //  address = '';
+
   chainId = 'aergo.io';
-  persistFields = ['chainId'];
-  options = [
-    ['aergo.io', 'Mainnet'],
-    ['testnet.aergo.io', 'Testnet'],
-  ];
-  // chainId = '';
-  address = '';
+
   async handleCreate() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: this.chainId,
     });
+
     console.log(account, mnemonic);
+
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
     this.$router.push({
       name: 'account-create',

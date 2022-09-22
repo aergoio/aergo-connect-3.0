@@ -101,10 +101,14 @@ export default class Create extends mixins(PersistInputsMixin) {
 
     console.log(account, mnemonic);
 
+    const nickName = "Account1"
+    account.nick = nickName
+
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
+
     this.$router.push({
       name: 'account-create',
-      params: { next: 'account-create', chainId: account.chainId, address: account.address },
+      params: { next: 'account-create', chainId: account.chainId, address: account.address, nick: account.nick },
     });
   }
 }

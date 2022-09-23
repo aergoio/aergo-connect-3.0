@@ -82,15 +82,13 @@ import { PersistInputsMixin } from '../../store/ui';
   },
 })
 export default class Create extends mixins(PersistInputsMixin) {
-
-
   // todo: chainid 관련 내용 제거
   // persistFields = ['chainId'];
   // options = [
- //    ['aergo.io', 'Mainnet'],
- //    ['testnet.aergo.io', 'Testnet'],
- //  ];
- //  address = '';
+  //    ['aergo.io', 'Mainnet'],
+  //    ['testnet.aergo.io', 'Testnet'],
+  //  ];
+  //  address = '';
 
   chainId = 'aergo.io';
 
@@ -103,16 +101,21 @@ export default class Create extends mixins(PersistInputsMixin) {
 
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
 
-//    const nameObj = await this.$background.addName(account,nickName) ;
-//    console.log("ADD", nameObj.data.spec.name) ;
-//    const names = this.$background.getNames(account) ;
-//    console.log("GET", names);
+    //    const nameObj = await this.$background.addName(account,nickName) ;
+    //    console.log("ADD", nameObj.data.spec.name) ;
+    //    const names = this.$background.getNames(account) ;
+    //    console.log("GET", names);
 
-    var key = account.address.substr(0,5) + "_nick"
+    const key = account.address.substr(0, 5) + '_nick';
 
     this.$router.push({
       name: 'account-create',
-      params: { next: 'account-create', chainId: account.chainId, address: account.address, nick:key },
+      params: {
+        next: 'account-create',
+        chainId: account.chainId,
+        address: account.address,
+        nick: key,
+      },
     });
   }
 }

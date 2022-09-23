@@ -10,11 +10,11 @@
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
             <span class="account_info_nickname_text">ACCOUNT1</span>
-            <Icon class="account_info_nickname_button" name="edit" :size="50" />
+            <Icon class="account_info_nickname_button" :name="`edit`" :size="50" />
           </div>
           <div class="account_info_address_wrapper">
             <span class="account_info_address_text">{{ address }}</span>
-            <Icon class="account_info_address_button" name="next" :size="50" />
+            <Icon class="account_info_address_button" :name="`next`" :size="50" />
           </div>
         </div>
       </div>
@@ -29,19 +29,19 @@
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon name="next_grey" />
+            <Icon :name="`next_grey`" />
           </li>
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon name="next_grey" />
+            <Icon :name="`next_grey`" />
           </li>
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon name="next_grey" />
+            <Icon :name="`next_grey`" />
           </li>
         </ul>
         <button class="token_list_button">
@@ -53,8 +53,8 @@
 
       <div class="content_footer">
         <ButtonGroup>
-          <Button type="font-gradation" size="small"><Icon name="send" />send</Button>
-          <Button type="font-gradation" size="small"><Icon name="send" />receive</Button>
+          <Button type="font-gradation" size="small"><Icon :name="`send`" />send</Button>
+          <Button type="font-gradation" size="small"><Icon :name="`send`" />receive</Button>
         </ButtonGroup>
       </div>
     </div>
@@ -97,6 +97,9 @@ export default class Home extends mixins() {
   address = '';
 
   @Watch('address')
+  public exampleMethod(value: string) {
+    console.log(value);
+  }
   hamburgerClick() {
     this.hamburgerModal = !this.hamburgerModal;
   }
@@ -124,7 +127,6 @@ export default class Home extends mixins() {
   get accountSpec() {
     return { address: this.$route.params.address, chainId: this.$route.params.chainId };
   }
-
   mounted() {
     if (this.account) {
       this.noAccountModal = false;

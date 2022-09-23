@@ -2,7 +2,7 @@
   <div class="removeModal_backdrop">
     <div class="removeModal_wrapper">
       <div class="icon-header">
-        <Icon name="title-trash" :size="36" />
+        <Icon :name="`title-trash`" :size="36" />
       </div>
       <Heading>Remove account</Heading>
       <p>

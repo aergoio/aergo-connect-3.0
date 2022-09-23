@@ -57,6 +57,7 @@ class BackgroundController extends EventEmitter {
       // Load custom defined chains
       try {
         const customChains = await this.wallet.datastore.getIndex('settings').get('customChains');
+        console.log(this.wallet.datastore);
         if (customChains && customChains.data) {
           for (const chainId of Object.keys(customChains.data)) {
             // @ts-ignore

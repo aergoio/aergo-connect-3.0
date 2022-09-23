@@ -38,6 +38,9 @@ const storeModule: Module<AccountsState, RootState> = {
       if (state.keys.indexOf(key) === -1) return undefined;
       return state.accounts[key];
     },
+    getAccounts: state => () => {
+      return state.accounts;
+    },
   },
   actions: {
     async fetchAccounts({ commit }) {

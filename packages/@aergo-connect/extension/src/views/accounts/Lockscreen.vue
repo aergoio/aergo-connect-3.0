@@ -1,7 +1,7 @@
 <template>
   <ScrollView class="page">
     <div class="lockscreen-contents">
-      <Icon name="aergoMainLogo" :size="150" />
+      <Icon :name="`aergoMainLogo`" :size="150" />
       <div class="password-input-wrapper">
         <label class="input-label">Password</label>
         <PasswordStrengthField

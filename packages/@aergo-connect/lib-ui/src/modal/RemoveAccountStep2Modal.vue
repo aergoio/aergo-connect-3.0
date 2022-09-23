@@ -1,17 +1,19 @@
 <template>
-  <div class="removeAccount_backdrop">
+  <div className="removeAccount_backdrop">
     <div class="removeAccount_modal_wrapper">
-      <Icon name="warning" :size="100" />
-      <div class="removeAccount_title">Remove the current account?</div>
-      <div class="removeAccount_text">
-        This will remove access to this account in this wallet. Make sure you have a backup or do
-        not need this account anymore.
-      </div>
+      <Icon :name="`warning2`" />
+      <div class="removeAccount_title">Type 'delete' to confirm deleting this account.</div>
+      <input type="text" v-model="value" />
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover="true" :to="{ name: 'register' }"
+        <ButtonVue
+          type="secondary"
+          size="medium"
+          hover
+          :disabled="!disabled"
+          @click="handleDeleteAccount"
           >Confirm</ButtonVue
         >
-        <ButtonVue type="secondary-outline" hover="true" size="medium-outline" @click="handleCancel"
+        <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
           >Cancel</ButtonVue
         >
       </ButtonGroup>
@@ -26,9 +28,33 @@ import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import ButtonVue from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 export default Vue.extend({
   components: { Icon, ButtonGroup, ButtonVue },
+  data() {
+    return {
+      value: '',
+      disabled: false,
+    };
+  },
+  watch: {
+    value() {
+      if (this.value === 'delete') {
+        this.disabled = true;
+      }
+    },
+  },
   methods: {
     handleCancel() {
-      this.$emit('click');
+      this.$emit('click', 'removeAccountModal');
+    },
+    async handleDeleteAccount() {
+      const nativeCheck = confirm(
+        `Are you really sure you want to remove the account ${this.$route.params.address} from this wallet?`,
+      );
+      if (!nativeCheck) return;
+      await this.$background.removeAccount({
+        chainId: this.$route.params.chainId,
+        address: this.$route.params.address,
+      });
+      this.$router.push({ name: 'accounts-list' });
     },
   },
 });
@@ -56,6 +82,11 @@ export default Vue.extend({
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    .icon_size {
+      border: solid;
+      width: 31px;
+      height: 28.36px;
+    }
     .removeAccount_title {
       width: 255px;
       font-family: 'Outfit';

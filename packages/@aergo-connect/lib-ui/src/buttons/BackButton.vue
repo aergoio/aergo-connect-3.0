@@ -1,6 +1,6 @@
 <template>
   <Button @click="handleClick" :to="to" type="icon" class="back-button">
-    <Icon name="back" :size="36" />
+    <Icon :name="`back`" :size="36" />
   </Button>
 </template>
 

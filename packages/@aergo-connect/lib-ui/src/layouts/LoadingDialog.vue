@@ -3,9 +3,15 @@
     <div class="content loading-dialog-content">
       <LoadingIndicator v-if="state === 'loading'" :size="56" />
       <SuccessIcon v-if="state === 'success'" :size="56" />
-      <Icon name="failed" v-if="state === 'error'" :size="56" />
+      <Icon :name="`failed`" v-if="state === 'error'" :size="56" />
       <div class="message"><slot></slot></div>
-      <Icon name="downarrow" class="dialog-error-close-btn" v-if="state === 'error'" :size="24" @click.native="$emit('close')" />
+      <Icon
+        :name="`downarrow`"
+        class="dialog-error-close-btn"
+        v-if="state === 'error'"
+        :size="24"
+        @click.native="$emit('close')"
+      />
     </div>
   </ModalDialog>
 </template>
@@ -38,13 +44,13 @@ export default class LoadingDialog extends Vue {
   padding: 40px 20px;
   .message {
     margin-top: 20px;
-    font-size: (13/16)*1rem;
+    font-size: (13/16) * 1rem;
     color: #222222;
     p {
       margin-bottom: 0;
     }
     .error {
-      color: #EE4648;
+      color: #ee4648;
     }
   }
   .dialog-error-close-btn {

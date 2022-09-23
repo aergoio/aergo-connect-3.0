@@ -13,7 +13,7 @@
             <Button
               type="primary"
               size="large"
-              hover="true"
+              hover
               :to="{ name: 'account-import', params: { next: 'account-import' } }"
             >
               Import
@@ -23,7 +23,7 @@
             </Button>
             <Button
               type="primary"
-              :disabled="true"
+              disabled
               size="large"
               :to="{ name: 'accounts', params: { next: 'account-import' } }"
             >

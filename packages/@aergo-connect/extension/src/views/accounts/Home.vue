@@ -6,7 +6,7 @@
     <List v-if="hamburgerModal" removeAccountModal @removeModalClick="handleRemoveModalClick" />
     <div class="home_content">
       <div class="account_info_wrapper">
-        <Identicon :text="format()" class="account_info_img" />
+        <Identicon :text="address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
             <span class="account_info_nickname_text">ACCOUNT1</span>
@@ -97,16 +97,20 @@ export default class Home extends mixins() {
   address = '';
   account = {} as Account;
 
+  // get accounts(): Account[] {
+  //   if (this.$store.state.accounts.keys.length) {
+  //     return Object.values(this.$store.state.accounts.accounts);
+  //   }
+  //   return [];
+  // }
+  // get getStoreAccount(): Account {
+  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
+  // }
+  // get accountSpec() {
+  //   return { address: this.$route.params.address, chainId: this.$route.params.chainId };
+  // }
   // @Watch('account')
-  async getAccounts() {
-    const accountsData = await this.$background.getAccounts();
-    this.account = accountsData[0];
-    if (accountsData.length !== 0) {
-      this.noAccountModal = false;
-    } else {
-      this.noAccountModal = true;
-    }
-  }
+
   hamburgerClick() {
     this.hamburgerModal = !this.hamburgerModal;
   }
@@ -122,40 +126,39 @@ export default class Home extends mixins() {
     this.hamburgerModal = false;
     this.removeAccountModal = true;
   }
-  // get accounts(): Account[] {
-  //   if (this.$store.state.accounts.keys.length) {
-  //     return Object.values(this.$store.state.accounts.accounts);
-  //   }
-  //   return [];
-  // }
-  // get account(): Account {
-  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  // }
-  // get accountSpec() {
-  //   return { address: this.$route.params.address, chainId: this.$route.params.chainId };
-  // }
+
+  created() {
+    setTimeout(() => {
+      this.$router.push({
+        name: 'accounts-list-address',
+        params: {
+          address: this.account?.data?.spec.address,
+          chainId: this.account?.data?.spec.chainId,
+        },
+      });
+    }, 100);
+  }
   beforeMount() {
     this.getAccounts();
   }
   mounted() {
-    if (!this.account?.data?.spec.address) {
-      setTimeout(() => {
-        this.$router.push({
-          name: 'accounts-list-address',
-          params: {
-            address: this.account?.data?.spec.address,
-            chainId: this.account?.data?.spec.chainId,
-          },
-        });
-      }, 100);
+    console.log(this.account);
+    this.format();
+  }
+  async getAccounts() {
+    const accountsData = await this.$background.getAccounts();
+    this.account = accountsData[0];
+    if (accountsData.length !== 0) {
+      this.noAccountModal = false;
+    } else {
+      this.noAccountModal = true;
     }
   }
-
   format() {
     if (this.account?.data?.spec.address) {
-      return `${this.account?.data?.spec.address}`;
+      this.address = `${this.account?.data?.spec.address}`;
     } else {
-      return 'emptyIcon';
+      this.address = 'emptyIcon';
     }
   }
 }

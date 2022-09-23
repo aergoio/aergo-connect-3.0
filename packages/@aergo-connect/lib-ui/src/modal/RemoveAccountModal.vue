@@ -1,21 +1,20 @@
 <template>
   <div class="removeAccount_backdrop">
-    <div class="removeAccount_modal_wrapper">
-      <Icon name="warning" :size="100" />
+    <div class="removeAccount_modal_wrapper" v-if="!isNext">
+      <Icon :name="`warning`" :size="100" />
       <div class="removeAccount_title">Remove the current account?</div>
       <div class="removeAccount_text">
         This will remove access to this account in this wallet. Make sure you have a backup or do
         not need this account anymore.
       </div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover="true" :to="{ name: 'register' }"
-          >Confirm</ButtonVue
-        >
-        <ButtonVue type="secondary-outline" hover="true" size="medium-outline" @click="handleCancel"
+        <ButtonVue type="secondary" size="medium" hover @click="handleGoNext">Confirm</ButtonVue>
+        <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
           >Cancel</ButtonVue
         >
       </ButtonGroup>
     </div>
+    <RemoveAccountStep2Modal v-if="isNext" @click="handleCancel" />
   </div>
 </template>
 
@@ -24,11 +23,21 @@ import Vue from 'vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import ButtonVue from '@aergo-connect/lib-ui/src/buttons/Button.vue';
+import RemoveAccountStep2Modal from './RemoveAccountStep2Modal.vue';
 export default Vue.extend({
-  components: { Icon, ButtonGroup, ButtonVue },
+  components: { Icon, ButtonGroup, ButtonVue, RemoveAccountStep2Modal },
+  data() {
+    return {
+      isNext: false,
+    };
+  },
   methods: {
     handleCancel() {
       this.$emit('cancel', 'removeAccountModal');
+    },
+    handleGoNext() {
+      console.log('next');
+      this.isNext = true;
     },
   },
 });

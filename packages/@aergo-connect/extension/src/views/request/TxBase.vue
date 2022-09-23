@@ -3,7 +3,7 @@
     <template #header>
       <div class="content" style="padding-bottom: 0">
         <div class="icon-header">
-          <Icon name="title-request" :size="36" />
+          <Icon :name="`title-request`" :size="36" />
         </div>
         <Heading>{{ title || 'Send transaction' }}</Heading>
         <p v-if="request">

@@ -1,35 +1,27 @@
 <template>
   <ScrollView class="page">
+    <AppearVue :delay="0.6">
+      <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
+    </AppearVue>
+    <Header button="back" to="welcome" title="Set Password" />
     <div class="setup-content">
-      <AppearVue :delay="0.6">
-        <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
-      </AppearVue>
-      <section class="dialog-header">
-        <div>
-          <Header button="back" to="welcome" title="Set Password" />
-        </div>
-      </section>
-      <div class="content_layout">
-        <p>
-          This passphrase will be used to secure all your accounts.
-        </p>
-        <div>
-          <span class="password_title">New Password</span>
-          <PasswordStrengthField
-            variant="default"
-            v-model="password"
-            autofocus
-            :setting="setting"
-            @keyup.enter="$event.target.nextSibling.focus()"
-          />
-          <span class="password_title">Confirm Password</span>
-          <PasswordRepeatField
-            variant="default"
-            v-model="passwordRepeat"
-            :initPassword="password"
-            :setting="setting"
-          />
-        </div>
+      <p class="phrases"> This passphrase will be used to secure all your accounts.  </p>
+      <div>
+        <span class="password_title">New Password</span>
+        <PasswordStrengthField
+          variant="default"
+          v-model="password"
+          autofocus
+          :setting="setting"
+          @keyup.enter="$event.target.nextSibling.focus()"
+        />
+        <span class="password_title">Confirm Password</span>
+        <PasswordRepeatField
+          variant="default"
+          v-model="passwordRepeat"
+          :initPassword="password"
+          :setting="setting"
+        />
       </div>
     </div>
     <template #footer>
@@ -135,19 +127,28 @@ export default class Setup extends mixins() {
 
 <style lang="scss">
 .setup-content {
-  position: relative;
-  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+
+  .phrases {
+    margin-left: 24px;
+    margin-top: 32px;
+    margin-bottom: 30px;
+  }
+  .password_title {
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: -0.333333px;
+    color: #454344;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
 }
-.password_title {
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 20px;
-  letter-spacing: -0.333333px;
-  color: #454344;
-  margin-bottom: 10px;
-}
+
 .content_checkbox {
   display: flex;
   justify-content: center;

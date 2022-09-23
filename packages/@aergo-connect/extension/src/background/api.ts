@@ -52,6 +52,7 @@ export class Api {
 
   async setup({ password }: any) {
     await this.controller.setupAndUnlock(password);
+    console.log(this.controller.wallet);
     return true;
   }
 

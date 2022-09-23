@@ -15,7 +15,7 @@
     <slot></slot>
     <LoadingIndicator v-if="state === 'loading'" />
     <img src="" alt="" />
-    <Icon name="checkmark" :size="24" v-if="state === 'valid'" />
+    <Icon :name="`checkmark`" :size="24" v-if="state === 'valid'" />
   </div>
 </template>
 

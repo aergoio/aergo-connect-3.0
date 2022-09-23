@@ -13,7 +13,7 @@
             <Button
               type="primary"
               size="large"
-              hover="true"
+              hover
               :to="{ name: 'account-import', params: { next: 'account-import' } }"
             >
               Import
@@ -23,7 +23,7 @@
             </Button>
             <Button
               type="primary"
-              :disabled="true"
+              disabled
               size="large"
               :to="{ name: 'accounts', params: { next: 'account-import' } }"
             >
@@ -82,23 +82,40 @@ import { PersistInputsMixin } from '../../store/ui';
   },
 })
 export default class Create extends mixins(PersistInputsMixin) {
+  // todo: chainid 관련 내용 제거
+  // persistFields = ['chainId'];
+  // options = [
+  //    ['aergo.io', 'Mainnet'],
+  //    ['testnet.aergo.io', 'Testnet'],
+  //  ];
+  //  address = '';
+
   chainId = 'aergo.io';
-  persistFields = ['chainId'];
-  options = [
-    ['aergo.io', 'Mainnet'],
-    ['testnet.aergo.io', 'Testnet'],
-  ];
-  // chainId = '';
-  address = '';
+
   async handleCreate() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: this.chainId,
     });
-    console.log(account, mnemonic);
+
+    console.log(account);
+
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
+
+    //    const nameObj = await this.$background.addName(account,nickName) ;
+    //    console.log("ADD", nameObj.data.spec.name) ;
+    //    const names = this.$background.getNames(account) ;
+    //    console.log("GET", names);
+
+    const key = account.address.substr(0, 5) + '_nick';
+
     this.$router.push({
       name: 'account-create',
-      params: { next: 'account-create', chainId: account.chainId, address: account.address },
+      params: {
+        next: 'account-create',
+        chainId: account.chainId,
+        address: account.address,
+        nick: key,
+      },
     });
   }
 }

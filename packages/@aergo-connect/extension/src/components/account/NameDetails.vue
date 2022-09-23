@@ -8,7 +8,7 @@
             <span class="name-count" v-if="state === 'loaded'">{{ names.length }}</span>
           </span>
           <router-link :to="{ name: 'account-name-create' }" class="add-btn"
-            ><Icon name="add-name" :size="24"
+            ><Icon :name="`add-name`" :size="24"
           /></router-link>
         </div>
       </template>

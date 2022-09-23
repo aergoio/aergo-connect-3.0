@@ -1,16 +1,16 @@
 <template>
   <div class="noAccount_backdrop">
     <div class="noAccount_modal_wrapper">
-      <Icon name="warning" :size="100" />
+      <Icon :name="`warning`" :size="100" />
       <div class="noAccount_text">
         <span class="highlight">No Accounts </span>
         <span>resgistered on this wallet. Would you like to add an Account?</span>
       </div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover="true" :to="{ name: 'register' }"
+        <ButtonVue type="secondary" size="medium" hover :to="{ name: 'register' }"
           >Add Account</ButtonVue
         >
-        <ButtonVue type="secondary-outline" hover="true" size="medium-outline" @click="handleCancel"
+        <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
           >Cancel</ButtonVue
         >
       </ButtonGroup>

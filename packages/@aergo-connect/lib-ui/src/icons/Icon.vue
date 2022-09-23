@@ -1,6 +1,6 @@
 <template>
-  <div class="icon" :class="[`icon--${name}`]" :style="{ width: size + 'px' }">
-    <component :is="`icon-${name}`" :width="`${size}px`" />
+  <div class="icon" :class="[`icon--${name}`]">
+    <component :is="`icon-${name}`" />
     <div v-if="badge" class="badge">{{ badgeText }}</div>
   </div>
 </template>
@@ -55,7 +55,6 @@ export default Vue.extend({
 
   svg {
     position: relative;
-    // left: 10px;
     display: inline-block;
     vertical-align: middle;
   }

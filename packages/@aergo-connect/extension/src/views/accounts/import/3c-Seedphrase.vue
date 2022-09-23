@@ -1,35 +1,33 @@
 <template>
   <ScrollView class="page">
     <Header button="back" title="Mnemonic Seed Phrase" :to="{ name: 'account-import' }" />
-    <div class="foramt-content">
-      <span class="preheaer">Enter your Mnemonic Seed Phrase.</span>
-      <div class="import-seedphrase-content" style="padding-bottom: 0">
-        <p class="import-seedphrase-preheader">Seed Phrase</p>
-        <TextArea
-          v-model="seedPhrase"
-          placeholder="Seed phrase is a set of twelve words. Add one space between each word."
-          :state="
-            seedPhrase.length <= 0
-              ? ''
-              : errors.seedPhrase.length <= 0 && errors.derivationPath.length <= 0
-              ? 'valid'
-              : 'invalid'
-          "
-        />
-        <div
-          class="import-seedphrase-validation invalid"
-          v-if="(seedPhrase && errors.seedPhrase) || (seedPhrase && errors.derivationPath)"
-        >
-          <img src="@aergo-connect/lib-ui/src/icons/img/danger.svg" width="16px" />
-          <span>{{ errors.seedPhrase || errors.derivationPath }}</span>
-        </div>
-        <div
-          class="import-seedphrase-validation valid"
-          v-if="seedPhraseValid && !errors.seedPhrase && !errors.derivationPath"
-        >
-          <img src="@aergo-connect/lib-ui/src/icons/img/checkmark-circle.svg" width="16px" />
-          <span>Phrase verification completed.</span>
-        </div>
+    <div class="import-seedphrase-content">
+      <span class="preheader">Enter your Mnemonic Seed Phrase.</span>
+      <p class="import-seedphrase-preheader">Seed Phrase</p>
+      <TextArea
+        v-model="seedPhrase"
+        placeholder="Seed phrase is a set of twelve words. Add one space between each word."
+        :state="
+          seedPhrase.length <= 0
+            ? ''
+            : errors.seedPhrase.length <= 0 && errors.derivationPath.length <= 0
+            ? 'valid'
+            : 'invalid'
+        "
+      />
+      <div
+        class="import-seedphrase-validation invalid"
+        v-if="(seedPhrase && errors.seedPhrase) || (seedPhrase && errors.derivationPath)"
+      >
+        <img src="@aergo-connect/lib-ui/src/icons/img/danger.svg" width="16px" />
+        <span>{{ errors.seedPhrase || errors.derivationPath }}</span>
+      </div>
+      <div
+        class="import-seedphrase-validation valid"
+        v-if="seedPhraseValid && !errors.seedPhrase && !errors.derivationPath"
+      >
+        <img src="@aergo-connect/lib-ui/src/icons/img/checkmark-circle.svg" width="16px" />
+        <span>Phrase verification completed.</span>
       </div>
     </div>
     <template #footer>
@@ -158,7 +156,13 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 </script>
 
 <style lang="scss">
+
 .import-seedphrase-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+
   .inputContainer {
     margin: 0px;
   }

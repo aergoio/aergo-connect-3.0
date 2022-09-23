@@ -2,11 +2,7 @@
   <ScrollView class="page">
     <Header button="back" title="Import Account" :to="{ name: 'register' }" />
     <div class="format-content">
-      <!-- <section class="dialog-header">
-        <BackButton :to="{ name: 'account-import' }" />
-      </section> -->
-      <!-- <Heading>Import Format</Heading> -->
-      <span class="preheaer">Please select the import format.</span>
+      <span class="preheader">Please select the import format.</span>
       <p class="buttons">
 
         <Button 
@@ -74,11 +70,6 @@ export default class Import extends mixins() {}
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-
-  .phrases {
-    margin-top: 32px;
-    margin-bottom: 30px;
-  }
 
   .buttons {
     margin-bottom: 32px;

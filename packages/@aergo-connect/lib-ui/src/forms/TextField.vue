@@ -25,7 +25,7 @@
         <slot></slot>
       </InputContainer>
       <div class="input-error-text" :class="errorType" v-if="error">
-        <Icon name="danger" :size="16" />
+        <Icon :name="`danger`" :size="16" />
         <span>{{ error }}</span>
       </div>
     </label>

@@ -20,14 +20,17 @@ function getRequestId() {
 }
 
 async function init(name: string) {
+
   const extensionPort = extension.runtime.connect({ name });
   const connectionStream = new PortStream(extensionPort);
   const background = await connectToBackground(connectionStream);
   // const manifest = extension.runtime.getManifest();
+
   Vue.use(Background, { background });
   Vue.use(IndexedDb);
 
   const requestId = getRequestId();
+
   if (requestId) {
     router.beforeEach(enforceRequest);
     store.commit('request/setRequestId', requestId);

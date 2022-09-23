@@ -9,7 +9,7 @@
       <AccountBalance :account="account" :tokenPriceInfo="tokenPriceInfo" :arg="isArg" />
 
       <Button v-if="canExport" @click="exportAccountDialogVisible = true" type="icon"
-        ><Icon name="account-export" :size="36"
+        ><Icon :name="`account-export`" :size="36"
       /></Button>
 
       <span class="display-on-ledger" @click="displayOnLedger">
@@ -17,7 +17,7 @@
         <span
           v-if="account && account.data && account.data.type === 'ledger'"
           class="account-label account-label-usb"
-          ><Icon name="usb" :size="17"
+          ><Icon :name="`usb`" :size="17"
         /></span>
       </span>
     </div>

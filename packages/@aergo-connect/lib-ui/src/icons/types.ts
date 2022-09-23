@@ -50,6 +50,7 @@ export const iconNames = tuple(
   'view-disabled',
   'view-enabled',
   'warning',
+  'warning2',
   'edit',
   'x',
   'check',

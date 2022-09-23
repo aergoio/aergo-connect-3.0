@@ -17,7 +17,9 @@ export default Vue.extend({
     // Upon App launch, get initial state for 'unlocked'
     const unlocked = await this.$background.isUnlocked();
     const isSetup = await this.$background.isSetup();
+    const getAccounts = await this.$background.getAccounts();
     console.log(isSetup, 'isSetup');
+    console.log(getAccounts, 'getAccounts');
     this.$store.commit('ui/setUnlocked', unlocked);
 
     const peformAuthCheck = !(
@@ -29,6 +31,17 @@ export default Vue.extend({
     }
     if (!isSetup) {
       this.$router.push({ name: 'welcome' });
+    }
+    if (getAccounts.length > 0) {
+      console.log('here');
+      console.log(getAccounts);
+      this.$router.push({
+        name: 'accounts-list',
+        params: {
+          address: getAccounts[0].data.spec.address,
+          chainId: getAccounts[0].data.spec.chainId,
+        },
+      });
     }
   },
 });

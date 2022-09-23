@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Icon from "../icons/Icon.vue";
-import copy from "copy-to-clipboard";
+import Vue from 'vue';
+import Icon from '../icons/Icon.vue';
+import copy from 'copy-to-clipboard';
 
 export default Vue.extend({
   components: {
@@ -41,7 +41,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import "../styles/variables";
+@import '../styles/variables';
 .copy-button {
   display: inline-block;
   border-radius: 100%;

@@ -2,7 +2,7 @@
   <ScrollView class="page">
     <div class="content">
       <div class="icon-header">
-        <Icon name="title-trash" :size="36" />
+        <Icon :name="`title-trash`" :size="36" />
       </div>
       <Heading>Remove account</Heading>
       <p>

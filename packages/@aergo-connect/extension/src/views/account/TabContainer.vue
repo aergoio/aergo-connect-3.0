@@ -2,14 +2,14 @@
   <div class="tab-container">
     <TabBar>
       <router-link :to="{ name: 'account-details' }"
-        ><Icon name="tab-wallet" :size="32"
+        ><Icon :name="`tab-wallet`" :size="32"
       /></router-link>
       <router-link :to="{ name: 'account-send' }"><Icon name="tab-send" :size="32"/></router-link>
       <router-link :to="{ name: 'account-sign' }" v-if="isSignMessageEnabled"
-        ><Icon name="tab-sign" :size="32"
+        ><Icon :name="`tab-sign`" :size="32"
       /></router-link>
       <router-link :to="{ name: 'account-history' }"
-        ><Icon name="tab-history" :size="32"
+        ><Icon :name="`tab-history`" :size="32"
       /></router-link>
     </TabBar>
     <RouteTransition defaultTransition="fade">

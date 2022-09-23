@@ -5,7 +5,7 @@
     </AppearVue>
     <Header button="back" to="welcome" title="Set Password" />
     <div class="setup-content">
-      <p class="phrases"> This passphrase will be used to secure all your accounts.  </p>
+      <p class="phrases">This passphrase will be used to secure all your accounts.</p>
       <div>
         <span class="password_title">New Password</span>
         <PasswordStrengthField
@@ -27,7 +27,7 @@
     <template #footer>
       <div v-if="!modal" class="footer">
         <div class="content_checkbox">
-          <CheckboxButton :checked="checked" @check="checkFunc" />
+          <CheckboxButton :checked="checked" @check="checkFunc" @enterKeyup="handleModal" />
           <div class="text">I understand that this wallet cannot recover this password for me.</div>
         </div>
         <Button

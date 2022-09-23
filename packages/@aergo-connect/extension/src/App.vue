@@ -18,7 +18,6 @@ export default Vue.extend({
     const unlocked = await this.$background.isUnlocked();
     const isSetup = await this.$background.isSetup();
     const getAccounts = await this.$background.getAccounts();
-    console.log(isSetup, 'isSetup');
     console.log(getAccounts, 'getAccounts');
     this.$store.commit('ui/setUnlocked', unlocked);
 
@@ -33,8 +32,6 @@ export default Vue.extend({
       this.$router.push({ name: 'welcome' });
     }
     if (getAccounts.length > 0) {
-      console.log('here');
-      console.log(getAccounts);
       this.$router.push({
         name: 'accounts-list',
         params: {

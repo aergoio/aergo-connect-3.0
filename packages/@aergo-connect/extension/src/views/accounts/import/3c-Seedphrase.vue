@@ -1,20 +1,22 @@
 <template>
   <ScrollView class="page">
     <Header button="back" title="Mnemonic Seed Phrase" :to="{ name: 'account-import' }" />
-    <div class="import-seedphrase-content">
-      <span class="preheader">Enter your Mnemonic Seed Phrase.</span>
-      <p class="import-seedphrase-preheader">Seed Phrase</p>
-      <TextArea
-        v-model="seedPhrase"
-        placeholder="Seed phrase is a set of twelve words. Add one space between each word."
-        :state="
-          seedPhrase.length <= 0
-            ? ''
-            : errors.seedPhrase.length <= 0 && errors.derivationPath.length <= 0
-            ? 'valid'
-            : 'invalid'
-        "
-      />
+    <div class="simple-content">
+      <span class="simple-preheader">Enter your Mnemonic Seed Phrase.</span>
+      <div class="simple-center">
+        <div class="import-seedphrase-preheader">Seed Phrase</div>
+        <TextArea
+          v-model="seedPhrase"
+          placeholder="Seed phrase is a set of twelve words. Add one space between each word."
+          :state="
+            seedPhrase.length <= 0
+              ? ''
+              : errors.seedPhrase.length <= 0 && errors.derivationPath.length <= 0
+              ? 'valid'
+              : 'invalid'
+          "
+        />
+      </div>
       <div
         class="import-seedphrase-validation invalid"
         v-if="(seedPhrase && errors.seedPhrase) || (seedPhrase && errors.derivationPath)"
@@ -133,18 +135,29 @@ export default class Keystore extends mixins(PersistInputsMixin) {
       this.errors.seedPhrase = 'Please check the seed phrase again.';
       return;
     }
+
     await waitFor(150);
+
     this.loading = true;
     try {
       const opts = { hdpath: this.derivationPath };
       const privateKey = await privateKeyFromMnemonic(this.seedPhrase, opts);
       const identity = identityFromPrivateKey(privateKey);
+
       const accountSpec = await this.$background.importAccount({
         privateKey: Array.from(identity.privateKey),
         chainId: this.chainId,
       });
+
       console.log(accountSpec, 'accountSpec');
-      this.$router.push({ name: 'account-imported', params: { ...accountSpec } });
+
+      var key = accountSpec.address.substr(0,5) + "_nick"
+
+      this.$router.push({ 
+          name: 'account-imported', 
+          params: { chainId: accountSpec.chainId, address: accountSpec.address, nick: key, ...accountSpec }, 
+      });
+
     } catch (e) {
       console.log(e);
       this.errors.derivationPath = `${e}`;
@@ -157,43 +170,35 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 
 <style lang="scss">
 
-.import-seedphrase-content {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-direction: column;
-
-  .inputContainer {
-    margin: 0px;
-  }
-  .import-seedphrase-preheader {
+.import-seedphrase-preheader {
+    display: flex;
+    flex-direction: column;
     font-weight: 400;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 18px;
     letter-spacing: -0.333333px;
     color: #454344;
+    margin-top: 30px;
     margin-bottom: 10px;
-  }
+}
 
-  .import-seedphrase-validation {
+.import-seedphrase-validation {
     display: flex;
-    align-items: center;
     font-weight: 300;
-    font-size: 14px;
+    font-size: 18px;
     line-height: 18px;
     display: flex;
-    align-items: center;
     letter-spacing: -0.333333px;
-    margin-top: 10px;
-    &.invalid {
-      color: #e4097d;
-    }
-    &.valid {
-      color: #279ecc;
-    }
-    img {
-      margin-right: 6px;
-    }
+    margin-top: 20px;
+  &.invalid {
+    color: #e4097d;
+  }
+  &.valid {
+    color: #279ecc;
+  }
+  img {
+    margin-right: 6px;
   }
 }
+
 </style>

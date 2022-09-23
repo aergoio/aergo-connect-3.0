@@ -99,16 +99,20 @@ export default class Create extends mixins(PersistInputsMixin) {
       chainId: this.chainId,
     });
 
-    console.log(account, mnemonic);
-
-    const nickName = "Account1"
-    account.nick = nickName
+    console.log(account);
 
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
 
+//    const nameObj = await this.$background.addName(account,nickName) ;
+//    console.log("ADD", nameObj.data.spec.name) ;
+//    const names = this.$background.getNames(account) ;
+//    console.log("GET", names);
+
+    var key = account.address.substr(0,5) + "_nick"
+
     this.$router.push({
       name: 'account-create',
-      params: { next: 'account-create', chainId: account.chainId, address: account.address, nick: account.nick },
+      params: { next: 'account-create', chainId: account.chainId, address: account.address, nick:key },
     });
   }
 }

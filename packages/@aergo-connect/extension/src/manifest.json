@@ -42,6 +42,7 @@
     "clipboardWrite",
     "contextMenus",
     "idle",
+    "storage",
     "system.display"
   ]
 }

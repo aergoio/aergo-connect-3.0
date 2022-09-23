@@ -5,7 +5,6 @@ import Vue from 'vue';
 export interface RequestState {
   currentRequestId: string;
   currentRequest: {} | null;
-  account_meta: {} ;
 }
 
 function getVueInstance(instance: any): Vue {
@@ -18,7 +17,6 @@ const storeModule: Module<RequestState, RootState> = {
   state: {
     currentRequestId: '',
     currentRequest: null,
-    account_meta: {}
   },
   actions: {
     async getRequest({ commit, state }, requestId?: string) {

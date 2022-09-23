@@ -10,16 +10,18 @@
       </div>
 
       <span class="sub-title">Nickname</span>
-      <div class="user_nickname">
-        <span class="user_nickname_text">ACCOUNT 1</span>
-      </div>
+      <input 
+        class="user_nickname_text"
+        autofocus=true
+        v-model="nick"
+      />
 
       <ButtonGroup vertical class="buttonGroup-position">
         <Button 
           type="primary-outline" 
           size="large-outline" 
           :hover="true"
-          :to="{ name: 'account-backup' }"
+          @click="goBackup"
         >
           Backup Private Key
         </Button>
@@ -27,7 +29,7 @@
           type="primary" 
           size="large"
           :hover="true"
-          :to="{ name: 'accounts-list' }" 
+          @click="goHome"
         >
           Home
         </Button>
@@ -56,12 +58,54 @@ import { Identicon } from '@aergo-connect/lib-ui/src/content';
 export default class Create extends mixins() {
   address = '';
   chainId = '';
-  mnemonic = '';
+  nick = '';
+
   async beforeMount() {
-    const { address, chainId } = await this.$route.params;
+    const { address, chainId, nick } = await this.$route.params;
     this.address = address;
     this.chainId = chainId;
+    this.nick = nick ;
   }
+
+  async goBackup() {
+ 
+    var key = this.address.substr(0,5) + "_nick"
+    chrome.storage.local.set({[key]: this.nick});
+
+    // test
+    chrome.storage.local.get([key], (result) => {
+        console.log("GET", result[key]);
+    });
+
+    this.$router.push({ 
+      name: 'account-backup',
+      params: { nick:this.nick }
+    });
+  }
+
+  async goHome() {
+ 
+    var key = this.address.substr(0,5) + "_nick"
+    chrome.storage.local.set({[key]: this.nick});
+
+    // test
+    chrome.storage.local.get([key], (result) => {
+        console.log("GET", result[key]);
+    });
+
+    this.$router.push({ 
+      name: 'accounts-list',
+      params: { nick:this.nick }
+    });
+  }
+
+
+
+}
+</script>
+
+
+
 }
 </script>
 

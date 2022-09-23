@@ -21,9 +21,6 @@ export const allowedToExitLockscreen: NavigationGuard = (to, from, next) => {
  * or whenever selecting an account during permission request
  */
 export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
-  console.log(from.fullPath, 'from');
-  console.log(from.name, 'from-name');
-  console.log(to.fullPath, 'to');
   const isStartTransition = from.fullPath === '/' && from.name === null && to.name === 'home';
   if (isStartTransition) {
     const persistedPath = store.state.ui.route.currentPath;

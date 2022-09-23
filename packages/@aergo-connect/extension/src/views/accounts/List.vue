@@ -95,14 +95,8 @@ export default class AccountsList extends mixins(AccountsListProps) {
     }
     return [];
   }
-
   mounted() {
     this.$store.dispatch('accounts/fetchAccounts');
-
-    // if (this.$store.state.accounts.keys.length === 0) {
-    //   console.log('nothing in wallet, register plz');
-    //   this.$router.push({ name: 'register', params: { next: 'register' } });
-    // }
   }
 }
 </script>

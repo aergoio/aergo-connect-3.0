@@ -101,11 +101,17 @@ const routes: RouteConfig[] = [
         R.NoAuthCheck | R.NoTracking,
       ),
 
-      withMeta(1, { path: '/accounts/register', name: 'register', component: Register }),
+      withMeta(1, { path: '/register', name: 'register', component: Register }),
 
       withMeta(1, {
         path: 'list',
         name: 'accounts-list',
+        component: Home,
+      }),
+
+      withMeta(1, {
+        path: 'list/:chainId/:address',
+        name: 'accounts-list-address',
         component: Home,
       }),
 

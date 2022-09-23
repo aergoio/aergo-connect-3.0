@@ -6,7 +6,7 @@
     <List v-if="hamburgerModal" removeAccountModal @removeModalClick="handleRemoveModalClick" />
     <div class="home_content">
       <div class="account_info_wrapper">
-        <Identicon :text="address" class="account_info_img" />
+        <Identicon :text="format()" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
             <span class="account_info_nickname_text">ACCOUNT1</span>
@@ -92,13 +92,20 @@ import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountMod
 })
 export default class Home extends mixins() {
   hamburgerModal = false;
-  noAccountModal = false;
+  noAccountModal = true;
   removeAccountModal = false;
   address = '';
+  account = {} as Account;
 
-  @Watch('address')
-  public exampleMethod(value: string) {
-    console.log(value);
+  // @Watch('account')
+  async getAccounts() {
+    const accountsData = await this.$background.getAccounts();
+    this.account = accountsData[0];
+    if (accountsData.length !== 0) {
+      this.noAccountModal = false;
+    } else {
+      this.noAccountModal = true;
+    }
   }
   hamburgerClick() {
     this.hamburgerModal = !this.hamburgerModal;
@@ -115,23 +122,40 @@ export default class Home extends mixins() {
     this.hamburgerModal = false;
     this.removeAccountModal = true;
   }
-  get accounts(): Account[] {
-    if (this.$store.state.accounts.keys.length) {
-      return Object.values(this.$store.state.accounts.accounts);
-    }
-    return [];
-  }
-  get account(): Account {
-    return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  }
-  get accountSpec() {
-    return { address: this.$route.params.address, chainId: this.$route.params.chainId };
+  // get accounts(): Account[] {
+  //   if (this.$store.state.accounts.keys.length) {
+  //     return Object.values(this.$store.state.accounts.accounts);
+  //   }
+  //   return [];
+  // }
+  // get account(): Account {
+  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
+  // }
+  // get accountSpec() {
+  //   return { address: this.$route.params.address, chainId: this.$route.params.chainId };
+  // }
+  beforeMount() {
+    this.getAccounts();
   }
   mounted() {
-    if (this.account) {
-      this.noAccountModal = false;
+    if (!this.account?.data?.spec.address) {
+      setTimeout(() => {
+        this.$router.push({
+          name: 'accounts-list-address',
+          params: {
+            address: this.account?.data?.spec.address,
+            chainId: this.account?.data?.spec.chainId,
+          },
+        });
+      }, 100);
+    }
+  }
+
+  format() {
+    if (this.account?.data?.spec.address) {
+      return `${this.account?.data?.spec.address}`;
     } else {
-      this.noAccountModal = true;
+      return 'emptyIcon';
     }
   }
 }

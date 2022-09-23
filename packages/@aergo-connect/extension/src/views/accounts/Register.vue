@@ -97,8 +97,6 @@ export default class Create extends mixins(PersistInputsMixin) {
       chainId: this.chainId,
     });
 
-    console.log(account);
-
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
 
     //    const nameObj = await this.$background.addName(account,nickName) ;

@@ -54,7 +54,7 @@ export default Vue.extend({
         chainId: this.$route.params.chainId,
         address: this.$route.params.address,
       });
-      this.$router.push({ name: 'accounts-list' });
+      this.$router.push({ name: 'accounts-list-address' });
     },
   },
 });

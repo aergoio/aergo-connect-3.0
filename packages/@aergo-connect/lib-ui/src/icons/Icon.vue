@@ -30,7 +30,6 @@ export default Vue.extend({
   props: {
     name: {
       type: String as PropType<IconName>,
-      required: true,
     },
     size: {
       type: Number,

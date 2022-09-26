@@ -7,7 +7,7 @@
       <span class="name" for="account__name">{{ nickname }}</span>
     </div>
     <div class="address__wrapper">
-      <span class="address">{{ address }}</span>
+      <span class="address">{{ `${address.slice(0, 3)}...${address.slice(-3)}` }}</span>
     </div>
   </div>
 </template>
@@ -35,6 +35,7 @@ export default Vue.extend({
   },
   computed: {},
   methods: {},
+  mounted() {},
 });
 </script>
 

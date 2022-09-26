@@ -39,73 +39,62 @@
 </template>
 
 <script lang="ts">
-import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
-import { Icon } from '@aergo-connect/lib-ui/src/icons';
-import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import AddAccountDialog from '../../components/accounts/AddAccountDialog.vue';
 import AccountList from '../../components/accounts/AccountList.vue';
-import { Button } from '@aergo-connect/lib-ui/src/buttons';
 import { SideNavButton } from '@aergo-connect/lib-ui/src/buttons';
 import Vue from 'vue';
-import Component, { mixins } from 'vue-class-component';
 import { Account } from '@herajs/wallet';
-const AccountsListProps = Vue.extend({
-  props: {
-    removeAccountModal: Boolean,
+
+export default Vue.extend({
+  components: { AccountList, SideNavButton },
+  data() {
+    return {
+      isAccountsListOpened: true,
+    };
+  },
+  props: {},
+  computed: {
+    accounts(): Account[] {
+      if (this.$store.state.accounts.keys.length) {
+        return Object.values(this.$store.state.accounts.accounts);
+      }
+      return [];
+    },
+    // accountSpec() {
+    //   return {
+    //     address: this.accounts[0]?.data.spec.address,
+    //     chainId: this.accounts[0]?.data.spec.chainId,
+    //   };
+    // },
+    // account(): Account {
+    //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
+    // },
+  },
+  methods: {
+    handleAccountsDropDown() {
+      this.isAccountsListOpened = !this.isAccountsListOpened;
+    },
+    handleRemoveModal() {
+      this.$emit('removeModalClick');
+    },
+    handleSelect(account: Account) {
+      const accountSpec = {
+        address: account.data.spec.address,
+        chainId: account.data.spec.chainId,
+      };
+      this.$store.dispatch('accounts/updateAccount', accountSpec);
+      this.$emit('select', account);
+      this.$router.push({
+        name: 'accounts-list-address',
+        params: {
+          ...accountSpec,
+        },
+      });
+    },
+  },
+  mounted() {
+    this.$store.dispatch('accounts/fetchAccounts');
   },
 });
-@Component({
-  components: {
-    ScrollView,
-    Heading,
-    Button,
-    Icon,
-    AddAccountDialog,
-    AccountList,
-    SideNavButton,
-  },
-})
-export default class AccountsList extends mixins(AccountsListProps) {
-  // addAccountDialogVisible = false;
-  isAccountsListOpened = true;
-
-  handleAccountsDropDown() {
-    this.isAccountsListOpened = !this.isAccountsListOpened;
-  }
-  handleRemoveModal() {
-    this.$emit('removeModalClick');
-  }
-
-  get account(): Account {
-    return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  }
-  get accountSpec() {
-    return {
-      address: this.accounts[0]?.data.spec.address,
-      chainId: this.accounts[0]?.data.spec.chainId,
-    };
-  }
-  handleSelect(account: Account) {
-    const accountSpec = { address: account.data.spec.address, chainId: account.data.spec.chainId };
-    this.$store.dispatch('accounts/updateAccount', accountSpec);
-    this.$router.push({
-      name: 'accounts-list-address',
-      params: {
-        ...accountSpec,
-      },
-    });
-  }
-  get accounts(): Account[] {
-    if (this.$store.state.accounts.keys.length) {
-      return Object.values(this.$store.state.accounts.accounts);
-    }
-    return [];
-  }
-  mounted() {
-    console.log(this.accounts, 'hello');
-    this.$store.dispatch('accounts/fetchAccounts');
-  }
-}
 </script>
 
 <style lang="scss">

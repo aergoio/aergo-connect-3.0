@@ -3,31 +3,31 @@
     <div class="dialog-options" @click.capture="$emit('close')">
       <router-link :to="{ name: 'account-create' }">
         <span>
-          <Icon name="account-create" :size="36" />
+          <Icon :name="`account-create`" :size="36" />
           Create Account
         </span>
       </router-link>
       <router-link :to="{ name: 'account-import' }">
         <span>
-          <Icon name="account-import" :size="36" />
+          <Icon :name="`account-import`" :size="36" />
           Import Account
         </span>
       </router-link>
       <span @click="onChangeIdleTimeout(20)">
         <span>
-          <Icon name="account-import" :size="36" />
+          <Icon :name="`account-import`" :size="36" />
           Idle Timeout Setting(20s) test
         </span>
       </span>
       <span @click="onChangeIdleTimeout(60)">
         <span>
-          <Icon name="account-import" :size="36" />
+          <Icon :name="`account-import`" :size="36" />
           Idle Timeout Setting(60s) test
         </span>
       </span>
       <span @click="openConnectHardwareWalletTab" v-if="isHardwareWalletEnabled">
         <span>
-          <Icon name="account-connect" :size="36" />
+          <Icon :name="`account-connect`" :size="36" />
           Connect Hardware Wallet
         </span>
       </span>

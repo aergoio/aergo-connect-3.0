@@ -12,7 +12,7 @@
       <span class="sub-title">Nickname</span>
       <input 
         class="user_nickname_text"
-        autofocus=true
+        autofocus
         v-model="nick"
       />
 
@@ -69,7 +69,7 @@ export default class Create extends mixins() {
 
   async goBackup() {
  
-    var key = this.address.substr(0,5) + "_nick"
+    const key = this.address.substr(0,5) + "_nick"
     chrome.storage.local.set({[key]: this.nick});
 
     // test
@@ -85,7 +85,7 @@ export default class Create extends mixins() {
 
   async goHome() {
  
-    var key = this.address.substr(0,5) + "_nick"
+    const key = this.address.substr(0,5) + "_nick"
     chrome.storage.local.set({[key]: this.nick});
 
     // test

@@ -7,7 +7,7 @@
           <Heading tag="h2">
             Custom networks
             <Button :to="{ name: 'networks-create' }" type="icon"
-              ><Icon name="add" :size="24"
+              ><Icon :name="`add`" :size="24"
             /></Button>
           </Heading>
         </div>
@@ -35,7 +35,7 @@
               <span class="network-actions">
                 <span class="node-url">{{ network.nodeUrl }}</span>
                 <span class="delete-button" @click.prevent.stop="removeNetwork(network.chainId)"
-                  ><Icon name="trash" :size="10"
+                  ><Icon :name="`trash`" :size="10"
                 /></span>
               </span>
             </div>
@@ -68,7 +68,6 @@ import { ChainConfig, isPublicChainId } from '../../../config';
     Icon,
   },
 })
-
 export default class AccountsList extends Vue {
   networks: ChainConfig[] = [];
   created() {

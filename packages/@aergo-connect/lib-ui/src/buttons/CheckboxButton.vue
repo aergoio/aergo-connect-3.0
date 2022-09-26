@@ -1,5 +1,11 @@
 <template>
-  <input type="checkbox" class="checkbox" :checked="checked" @click="checkboxFunc" />
+  <input
+    type="checkbox"
+    class="checkbox"
+    :checked="checked"
+    @click="checkboxFunc"
+    @keyup.enter="enterKeyup"
+  />
 </template>
 
 <script lang="ts">
@@ -15,6 +21,9 @@ export default Vue.extend({
   methods: {
     checkboxFunc() {
       this.$emit('check', !this.checked);
+    },
+    enterKeyup() {
+      this.$emit('enterKeyup');
     },
   },
 });

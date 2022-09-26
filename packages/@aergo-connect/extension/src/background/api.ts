@@ -52,6 +52,7 @@ export class Api {
 
   async setup({ password }: any) {
     await this.controller.setupAndUnlock(password);
+    console.log(this.controller.wallet);
     return true;
   }
 
@@ -114,7 +115,6 @@ export class Api {
 
   async getAccounts() {
     const accounts = await this.controller.wallet.accountManager.getAccounts();
-    console.log(accounts);
     for (const account of accounts) {
       this.controller.trackAccount(account);
     }

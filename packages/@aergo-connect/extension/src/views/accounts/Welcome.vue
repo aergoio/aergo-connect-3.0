@@ -4,7 +4,7 @@
       <Appear>
         <Heading class="big-title">Welcome to</Heading>
         <div class="aergoMainLogo">
-          <Icon name="aergoMainLogo" :size="150" />
+          <Icon :name="`aergoMainLogo`" :size="150" />
           <div class="welcome-message-1-group">
             <span class="welcome-message-1">
               AERGO Connect is the official wallet of
@@ -22,9 +22,7 @@
       <div>
         <Appear :delay="0.6">
           <ButtonGroup vertical>
-            <Button type="primary" size="large" :to="{ name: 'setup' }" hover="true"
-              >Get Started</Button
-            >
+            <Button type="primary" size="large" :to="{ name: 'setup' }" hover>Get Started</Button>
           </ButtonGroup>
         </Appear>
       </div>

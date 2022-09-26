@@ -1,24 +1,48 @@
 <template>
-  <div class="select-container" :class="{'use-modal-sheet': modalSheet, 'use-dropdown': !modalSheet}">
+  <div
+    class="select-container"
+    :class="{ 'use-modal-sheet': modalSheet, 'use-dropdown': !modalSheet }"
+  >
     <label>
-      <span class="input-label" v-if="label">{{label}}</span>
-      <InputContainer :disabled="disabled" :variant="variant" :state="state" :error="error" :class="classes"
-        @cancel="close" @pointerNext="selectNext" @pointerPrevious="selectPrevious" @accept="handleAccept" @blur="handleBlur">
+      <span class="input-label" v-if="label">{{ label }}</span>
+      <InputContainer
+        :disabled="disabled"
+        :variant="variant"
+        :state="state"
+        :error="error"
+        :class="classes"
+        @cancel="close"
+        @pointerNext="selectNext"
+        @pointerPrevious="selectPrevious"
+        @accept="handleAccept"
+        @blur="handleBlur"
+      >
         <input type="text" class="focus-target" ref="focusTarget" />
-        <span class="current-value" @click="openIfClosed">{{valueLabel}}</span>
-      
+        <span class="current-value" @click="openIfClosed">{{ valueLabel }}</span>
+
         <div class="toggle-button" v-show="state !== 'loading'" @click="toggle">
-          <Icon name="dropdown" :size="36" />
+          <Icon :name="`dropdown`" :size="36" />
         </div>
-        
-        <component :is="modalSheet ? 'ModalDialog' : 'div'" class="dropdown" :visible="optionsVisible" :title="dropdownTitle">
+
+        <component
+          :is="modalSheet ? 'ModalDialog' : 'div'"
+          class="dropdown"
+          :visible="optionsVisible"
+          :title="dropdownTitle"
+        >
           <div class="dialog-options" v-if="optionsVisible">
-            <div v-for="(option, index) in optionDict" :key="option.value" class="dialog-option" @mousedown="selectOption(option.value, index)" :class="{focused: index === focusedOptionIndex}">
+            <div
+              v-for="(option, index) in optionDict"
+              :key="option.value"
+              class="dialog-option"
+              @mousedown="selectOption(option.value, index)"
+              :class="{ focused: index === focusedOptionIndex }"
+            >
               <span>
-                <Icon class="label-icon" :name="option.icon" :size="36" v-if="option.icon" />
-                {{option.label}}
+                <Icon class="label-icon" :name="`option.icon`" :size="36" v-if="option.icon" />
+                {{ option.label }}
               </span>
-              <Icon name="checkmark-circle" :size="20" v-if="index === selectedOptionIndex" />
+              <Icon :name="`checkmark-circle`" :size="20" v-if="index === selectedOptionIndex" />
             </div>
           </div>
         </component>
@@ -30,9 +54,14 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import {
-  InputVariant, InputVariants,
-  InputStates, InputState,
-  SelectOption, OptionDict, isSelectOptionWithLabel, isSelectOptionObject,
+  InputVariant,
+  InputVariants,
+  InputStates,
+  InputState,
+  SelectOption,
+  OptionDict,
+  isSelectOptionWithLabel,
+  isSelectOptionObject,
 } from './types';
 import InputContainer from './InputContainer.vue';
 import Icon from '../icons/Icon.vue';
@@ -79,21 +108,20 @@ export default Vue.extend({
   },
   computed: {
     classes(): string[] {
-      return [
-        'select-field',
-        `options-${this.optionsVisible?'visible':'hidden'}`,
-      ];
+      return ['select-field', `options-${this.optionsVisible ? 'visible' : 'hidden'}`];
     },
     optionDict(): OptionDict[] {
-      return this.options.map((option): OptionDict => {
-        if (isSelectOptionWithLabel(option)) {
-          return { value: option[0], label: option[1] };
-        }
-        if (isSelectOptionObject(option)) {
-          return option;
-        }
-        return { value: option, label: option };
-      });
+      return this.options.map(
+        (option): OptionDict => {
+          if (isSelectOptionWithLabel(option)) {
+            return { value: option[0], label: option[1] };
+          }
+          if (isSelectOptionObject(option)) {
+            return option;
+          }
+          return { value: option, label: option };
+        },
+      );
     },
     valueLabel(): string {
       const selected = this.optionDict.find(option => option.value === this.value);
@@ -137,7 +165,7 @@ export default Vue.extend({
       this.close();
     },
     selectNext(): void {
-      if (this.focusedOptionIndex < this.options.length-1) {
+      if (this.focusedOptionIndex < this.options.length - 1) {
         this.focusedOptionIndex++;
       }
     },
@@ -158,7 +186,7 @@ export default Vue.extend({
       }
       this.close();
     },
-  }
+  },
 });
 </script>
 
@@ -183,19 +211,21 @@ export default Vue.extend({
       font-weight: 500;
     }
   }
-  .current-value, .toggle-button, .dialog-option {
+  .current-value,
+  .toggle-button,
+  .dialog-option {
     cursor: pointer;
     user-select: none;
   }
 
   .toggle-button {
     margin-right: 8px;
-    
+
     .icon {
-      transition: transform .15s;
+      transition: transform 0.15s;
     }
   }
-  &.options-visible  {
+  &.options-visible {
     .toggle-button .icon {
       transform: rotate(180deg);
     }
@@ -208,7 +238,7 @@ export default Vue.extend({
     background-color: #fff;
     border-radius: 0 0 4px 4px;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.1);
-    animation: slideOut ease-out .3s;
+    animation: slideOut ease-out 0.3s;
     overflow: hidden;
     .modal-title {
       display: none;
@@ -216,7 +246,7 @@ export default Vue.extend({
   }
   .dialog-options {
     .dialog-option {
-      font-size: (13/16)*1rem;
+      font-size: (13/16) * 1rem;
       font-weight: 500;
       padding: 0 14px 0 24px;
       display: flex;
@@ -231,17 +261,21 @@ export default Vue.extend({
       }
 
       &.focused {
-        background-color: rgba(0,0,0,0.04);
+        background-color: rgba(0, 0, 0, 0.04);
       }
     }
   }
 }
-.use-dropdown .select-field.options-visible  {
-  background-color: rgba(0,0,0,0.06);
+.use-dropdown .select-field.options-visible {
+  background-color: rgba(0, 0, 0, 0.06);
 }
 
 @keyframes slideOut {
-  0% { max-height: 0%; }
-  100% { max-height: 50vh; }
+  0% {
+    max-height: 0%;
+  }
+  100% {
+    max-height: 50vh;
+  }
 }
 </style>

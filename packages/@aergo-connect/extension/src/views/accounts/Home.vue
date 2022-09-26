@@ -10,11 +10,11 @@
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
             <span class="account_info_nickname_text">ACCOUNT1</span>
-            <Icon class="account_info_nickname_button" name="edit" :size="50" />
+            <Icon class="account_info_nickname_button" :name="`edit`" :size="50" />
           </div>
           <div class="account_info_address_wrapper">
             <span class="account_info_address_text">{{ address }}</span>
-            <Icon class="account_info_address_button" name="next" :size="50" />
+            <Icon class="account_info_address_button" :name="`next`" :size="50" />
           </div>
         </div>
       </div>
@@ -29,19 +29,19 @@
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon name="next_grey" />
+            <Icon :name="`next_grey`" />
           </li>
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon name="next_grey" />
+            <Icon :name="`next_grey`" />
           </li>
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon name="next_grey" />
+            <Icon :name="`next_grey`" />
           </li>
         </ul>
         <button class="token_list_button">
@@ -53,8 +53,8 @@
 
       <div class="content_footer">
         <ButtonGroup>
-          <Button type="font-gradation" size="small"><Icon name="send" />send</Button>
-          <Button type="font-gradation" size="small"><Icon name="send" />receive</Button>
+          <Button type="font-gradation" size="small"><Icon :name="`send`" />send</Button>
+          <Button type="font-gradation" size="small"><Icon :name="`send`" />receive</Button>
         </ButtonGroup>
       </div>
     </div>
@@ -92,11 +92,25 @@ import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountMod
 })
 export default class Home extends mixins() {
   hamburgerModal = false;
-  noAccountModal = false;
+  noAccountModal = true;
   removeAccountModal = false;
   address = '';
+  account = {} as Account;
 
-  @Watch('address')
+  // get accounts(): Account[] {
+  //   if (this.$store.state.accounts.keys.length) {
+  //     return Object.values(this.$store.state.accounts.accounts);
+  //   }
+  //   return [];
+  // }
+  // get getStoreAccount(): Account {
+  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
+  // }
+  // get accountSpec() {
+  //   return { address: this.$route.params.address, chainId: this.$route.params.chainId };
+  // }
+  // @Watch('account')
+
   hamburgerClick() {
     this.hamburgerModal = !this.hamburgerModal;
   }
@@ -112,24 +126,39 @@ export default class Home extends mixins() {
     this.hamburgerModal = false;
     this.removeAccountModal = true;
   }
-  get accounts(): Account[] {
-    if (this.$store.state.accounts.keys.length) {
-      return Object.values(this.$store.state.accounts.accounts);
-    }
-    return [];
-  }
-  get account(): Account {
-    return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  }
-  get accountSpec() {
-    return { address: this.$route.params.address, chainId: this.$route.params.chainId };
-  }
 
+  created() {
+    setTimeout(() => {
+      this.$router.push({
+        name: 'accounts-list-address',
+        params: {
+          address: this.account?.data?.spec.address,
+          chainId: this.account?.data?.spec.chainId,
+        },
+      });
+    }, 100);
+  }
+  beforeMount() {
+    this.getAccounts();
+  }
   mounted() {
-    if (this.account) {
+    console.log(this.account);
+    this.format();
+  }
+  async getAccounts() {
+    const accountsData = await this.$background.getAccounts();
+    this.account = accountsData[0];
+    if (accountsData.length !== 0) {
       this.noAccountModal = false;
     } else {
       this.noAccountModal = true;
+    }
+  }
+  format() {
+    if (this.account?.data?.spec.address) {
+      this.address = `${this.account?.data?.spec.address}`;
+    } else {
+      this.address = 'emptyIcon';
     }
   }
 }

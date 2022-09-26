@@ -2,7 +2,7 @@
   <ScrollView class="page">
     <div class="content">
       <div class="icon-header">
-        <Icon name="title-request" :size="36" />
+        <Icon :name="`title-request`" :size="36" />
       </div>
       <Heading style="white-space: nowrap">Access public address</Heading>
       <p v-if="request">

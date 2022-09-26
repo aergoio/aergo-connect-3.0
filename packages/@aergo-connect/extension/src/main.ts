@@ -20,7 +20,6 @@ function getRequestId() {
 }
 
 async function init(name: string) {
-
   const extensionPort = extension.runtime.connect({ name });
   const connectionStream = new PortStream(extensionPort);
   const background = await connectToBackground(connectionStream);

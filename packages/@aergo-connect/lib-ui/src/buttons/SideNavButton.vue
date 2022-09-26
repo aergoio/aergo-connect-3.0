@@ -32,7 +32,7 @@ export default Vue.extend({
   methods: {
     navigate() {
       if (this.to) {
-        this.$router.push(this.to);
+        this.$router.push({ name: this.to });
       } else {
         this.$emit('click');
       }

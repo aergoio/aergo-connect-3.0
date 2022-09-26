@@ -6,6 +6,7 @@
     :hover="hover"
     :size="size"
     @click="handleClick"
+    @keyup.enter="handleClick"
   >
     <template v-if="loading">
       <LoadingIndicator class="button-loading-indicator" />

@@ -98,6 +98,7 @@ export default class AccountList extends Vue {
 
   async mounted() {
     const temp = await this.$background.getActiveAccount();
+    console.log(this.$background);
     console.log(temp, 'activeAccount');
     this.activeAccount = await this.$background.getActiveAccount();
     // Scroll the active account into view
@@ -170,7 +171,8 @@ export default class AccountList extends Vue {
 <style lang="scss">
 .nav-account-list {
   max-height: 160px;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
+  overflow: hidden; /* Hide scrollbars */
 }
 </style>
 

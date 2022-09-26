@@ -47,12 +47,15 @@ export default class AccountsList extends Vue {
     }
     return [];
   }
-
+  created() {
+    console.log(this.accounts, ' accounts')
+  },
   mounted() {
     this.$store.dispatch('accounts/fetchAccounts');
   }
 
   selectAccount(account: any) {
+    console.log('clicked ', account);
     this.$background.setActiveAccount(account.data.spec);
   }
 }

@@ -1,47 +1,67 @@
 <template>
   <ScrollView class="page">
-    <Header button="hamburger" title="AERGO Mainnet" refresh @hamburgerClick="hamburgerClick" />
+    <Header
+      button="hamburger"
+      title="AERGO Mainnet"
+      refresh
+      network
+      @hamburgerClick="hamburgerClick"
+      @networkModalClick="networkModalClick"
+    />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
-    <List v-if="hamburgerModal" removeAccountModal @removeModalClick="handleRemoveModalClick" />
-    <div class="home_content">
+    <List
+      v-if="hamburgerModal"
+      removeAccountModal
+      @removeModalClick="handleRemoveModalClick"
+      @select="handleSelect"
+    />
+
+    <div v-if="!noAccountModal" class="home_content">
       <div class="account_info_wrapper">
-        <Identicon :text="address" class="account_info_img" />
+        <Identicon :text="account.data.spec.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
             <span class="account_info_nickname_text">ACCOUNT1</span>
-            <Icon class="account_info_nickname_button" :name="`edit`" :size="50" />
+            <Icon
+              class="account_info_nickname_button"
+              :name="`edit`"
+              :size="50"
+              @click="handleEdit"
+            />
           </div>
           <div class="account_info_address_wrapper">
-            <span class="account_info_address_text">{{ address }}</span>
+            <span class="account_info_address_text">{{
+              `${account.data.spec.address.slice(0, 12)}...${account.data.spec.address.slice(-4)}`
+            }}</span>
             <Icon class="account_info_address_button" :name="`next`" :size="50" />
           </div>
         </div>
       </div>
-
+      <NetworkModal v-if="networkModal" />
       <div class="token_content_wrapper">
         <ButtonGroup>
           <Button type="primary" size="small">Tokens</Button>
-          <Button type="primary" size="small">NFT</Button>
+          <Button type="primary" size="small" disabled>NFT</Button>
         </ButtonGroup>
         <ul class="token_list_ul">
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon :name="`next_grey`" />
+            <Icon class="next" :name="`next_grey`" @networkModalClick="networkModalClick" />
           </li>
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon :name="`next_grey`" />
+            <Icon class="next" :name="`next_grey`" @networkModalClick="networkModalClick" />
           </li>
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon :name="`next_grey`" />
+            <Icon class="next" :name="`next_grey`" @networkModalClick="networkModalClick" />
           </li>
         </ul>
         <button class="token_list_button">
@@ -65,103 +85,98 @@
 import Vue from 'vue';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import { Header } from '@aergo-connect/lib-ui/src/layouts';
-import Component, { mixins } from 'vue-class-component';
 import List from './List.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { Account } from '@herajs/wallet';
-import { Watch } from 'vue-property-decorator';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
-@Component({
+import { AccountSpec } from '@herajs/wallet/dist/types/models/account';
+import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
+export default Vue.extend({
   components: {
-    ScrollView,
-    Header,
-    List,
-    ButtonGroup,
-    Button,
-    Identicon,
-    Heading,
-    Icon,
-    NoAccountModal,
     RemoveAccountModal,
+    NoAccountModal,
+    NetworkModal,
+    Icon,
+    Heading,
+    Identicon,
+    Button,
+    ButtonGroup,
+    List,
+    Header,
+    ScrollView,
   },
-})
-export default class Home extends mixins() {
-  hamburgerModal = false;
-  noAccountModal = true;
-  removeAccountModal = false;
-  address = '';
-  account = {} as Account;
-
-  // get accounts(): Account[] {
-  //   if (this.$store.state.accounts.keys.length) {
-  //     return Object.values(this.$store.state.accounts.accounts);
-  //   }
-  //   return [];
-  // }
-  // get getStoreAccount(): Account {
-  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  // }
-  // get accountSpec() {
-  //   return { address: this.$route.params.address, chainId: this.$route.params.chainId };
-  // }
-  // @Watch('account')
-
-  hamburgerClick() {
-    this.hamburgerModal = !this.hamburgerModal;
-  }
-  handleCancel(modalEvent: string) {
-    if (modalEvent === 'noAccountModal') {
-      this.noAccountModal = false;
-    }
-    if (modalEvent === 'removeAccountModal') {
-      this.removeAccountModal = false;
-    }
-  }
-  handleRemoveModalClick() {
-    this.hamburgerModal = false;
-    this.removeAccountModal = true;
-  }
-
-  created() {
-    setTimeout(() => {
-      this.$router.push({
-        name: 'accounts-list-address',
-        params: {
-          address: this.account?.data?.spec.address,
-          chainId: this.account?.data?.spec.chainId,
-        },
-      });
-    }, 100);
-  }
-  beforeMount() {
-    this.getAccounts();
-  }
-  mounted() {
-    console.log(this.account);
-    this.format();
-  }
-  async getAccounts() {
-    const accountsData = await this.$background.getAccounts();
-    this.account = accountsData[0];
-    if (accountsData.length !== 0) {
-      this.noAccountModal = false;
-    } else {
-      this.noAccountModal = true;
-    }
-  }
-  format() {
-    if (this.account?.data?.spec.address) {
-      this.address = `${this.account?.data?.spec.address}`;
-    } else {
-      this.address = 'emptyIcon';
-    }
-  }
-}
+  data() {
+    return {
+      hamburgerModal: false,
+      removeAccountModal: false,
+      networkModal: false,
+    };
+  },
+  computed: {
+    accounts(): Account[] {
+      if (this.$store.state.accounts.keys.length) {
+        return Object.values(this.$store.state.accounts.accounts);
+      }
+      return [];
+    },
+    accountSpec(): AccountSpec {
+      return {
+        address: this.$route.params.address,
+        chainId: this.$route.params.chainId,
+      };
+    },
+    account(): Account {
+      return this.$store.getters['accounts/getAccount'](this.accountSpec);
+    },
+    noAccountModal() {
+      if (this.accounts.length === 0) {
+        return true;
+      }
+      return false;
+    },
+  },
+  methods: {
+    hamburgerClick() {
+      this.hamburgerModal = !this.hamburgerModal;
+    },
+    handleCancel(modalEvent: string) {
+      if (modalEvent === 'noAccountModal') {
+        this.noAccountModal = false;
+      }
+      if (modalEvent === 'removeAccountModal') {
+        this.removeAccountModal = false;
+      }
+    },
+    handleRemoveModalClick() {
+      this.hamburgerModal = false;
+      this.removeAccountModal = true;
+    },
+    handleSelect() {
+      this.hamburgerModal = false;
+    },
+    networkModalClick() {
+      console.log(this.networkModal);
+      this.networkModal = true;
+    },
+    handleEdit() {
+      console.log('edit');
+    },
+    async getAccounts() {
+      const accountsData = await this.$background.getAccounts();
+      this.account = accountsData[0];
+      if (accountsData.length !== 0) {
+        this.noAccountModal = false;
+      } else {
+        this.noAccountModal = true;
+      }
+    },
+  },
+});
 </script>
 
 <style lang="scss">
@@ -207,6 +222,9 @@ export default class Home extends mixins() {
         .account_info_nickname_text {
           margin-right: 76px;
         }
+        .account_info_nickname_button {
+          cursor: pointer;
+        }
       }
       .account_info_address_wrapper {
         width: 191px;
@@ -216,11 +234,22 @@ export default class Home extends mixins() {
         color: #279ecc;
         margin-left: 30px;
         .account_info_address_text {
+          font-family: 'Outfit';
+          font-style: normal;
+          font-weight: 300;
+          font-size: 12px;
+          line-height: 15px;
+          /* identical to box height */
+
+          letter-spacing: -0.333333px;
           width: 148.32px;
           height: 16px;
+          margin-left: 7.9px;
         }
         .account_info_address_button {
           float: right;
+          margin-right: 7.33px;
+          cursor: pointer;
         }
       }
     }
@@ -243,11 +272,16 @@ export default class Home extends mixins() {
         height: 62px;
       }
     }
+    .next {
+      cursor: pointer;
+    }
     .token_list_button {
       margin-top: 20px;
       display: flex;
       flex-direction: row;
       align-items: flex-start;
+      justify-content: center;
+      align-items: center;
       padding: 5px 10px 5px 8px;
       gap: 4px;
       width: 124px;
@@ -259,10 +293,10 @@ export default class Home extends mixins() {
 
       text-align: center;
       letter-spacing: -0.333333px;
+      cursor: pointer;
       .token_list_button_img {
         position: relative;
         bottom: 2px;
-        left: 5px;
       }
       .token_list_button_text {
         width: 76px;

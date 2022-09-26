@@ -10,27 +10,13 @@
       </div>
 
       <span class="sub-title">Nickname</span>
-      <input 
-        class="user_nickname_text"
-        autofocus
-        v-model="nick"
-      />
+      <input class="user_nickname_text" autofocus v-model="nick" />
 
       <ButtonGroup vertical class="buttonGroup-position">
-        <Button 
-          type="primary-outline" 
-          size="large-outline" 
-          :hover="true"
-          @click="goBackup"
-        >
+        <Button type="primary-outline" size="large-outline" :hover="true" @click="goBackup">
           Backup Private Key
         </Button>
-        <Button 
-          type="primary" 
-          size="large"
-          :hover="true"
-          @click="goHome"
-        >
+        <Button type="primary" size="large" :hover="true" @click="goHome">
           Home
         </Button>
       </ButtonGroup>
@@ -64,48 +50,38 @@ export default class Create extends mixins() {
     const { address, chainId, nick } = await this.$route.params;
     this.address = address;
     this.chainId = chainId;
-    this.nick = nick ;
+    this.nick = nick;
   }
 
   async goBackup() {
- 
-    const key = this.address.substr(0,5) + "_nick"
-    chrome.storage.local.set({[key]: this.nick});
+    const key = this.address.substr(0, 5) + '_nick';
+    chrome.storage.local.set({ [key]: this.nick });
 
     // test
-    chrome.storage.local.get([key], (result) => {
-        console.log("GET", result[key]);
+    chrome.storage.local.get([key], result => {
+      console.log('GET', result[key]);
     });
 
-    this.$router.push({ 
+    this.$router.push({
       name: 'account-backup',
-      params: { nick:this.nick }
+      params: { address: this.address, chainId: this.chainId, nick: this.nick },
     });
   }
 
   async goHome() {
- 
-    const key = this.address.substr(0,5) + "_nick"
-    chrome.storage.local.set({[key]: this.nick});
+    const key = this.address.substr(0, 5) + '_nick';
+    chrome.storage.local.set({ [key]: this.nick });
 
     // test
-    chrome.storage.local.get([key], (result) => {
-        console.log("GET", result[key]);
+    chrome.storage.local.get([key], result => {
+      console.log('GET', result[key]);
     });
 
-    this.$router.push({ 
-      name: 'accounts-list',
-      params: { nick:this.nick }
+    this.$router.push({
+      name: 'accounts-list-address',
+      params: { address: this.address, chainId: this.chainId, nick: this.nick },
     });
   }
-
-
-
-}
-</script>
-
-
-
 }
 </script>
 

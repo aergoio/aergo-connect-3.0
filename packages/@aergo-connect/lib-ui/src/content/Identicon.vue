@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import jdenticon from "jdenticon";
+import jdenticon from 'jdenticon';
 import Vue from 'vue';
 import { Address } from '@herajs/common';
 
@@ -40,14 +40,13 @@ const mutlicallSvg = `
 
 export default Vue.extend({
   props: ['text', 'emptyIcon'],
-  data () {
-    return {
-    }
+  data() {
+    return {};
   },
   watch: {
     text() {
       this.load();
-    }
+    },
   },
   methods: {
     load() {
@@ -60,14 +59,14 @@ export default Vue.extend({
         }
       } else {
         if (this.emptyIcon === 'deploy') {
-           this.$el.innerHTML = deploySvg;
+          this.$el.innerHTML = deploySvg;
         } else if (this.emptyIcon === 'multicall') {
-           this.$el.innerHTML = mutlicallSvg;
+          this.$el.innerHTML = mutlicallSvg;
         } else {
           this.$el.innerHTML = emptySvg;
         }
       }
-    }
+    },
   },
   mounted() {
     this.load();

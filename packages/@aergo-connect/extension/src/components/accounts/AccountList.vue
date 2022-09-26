@@ -1,17 +1,13 @@
 <template>
   <ul class="nav-account-list">
     <li
-      v-for="account in slicedAccounts()"
+      v-for="account in sortedAccounts"
       :key="account.key"
       class="nav-account-item"
       @click.capture="$emit('select', account)"
     >
       <div :class="activeAccount && activeAccount.key === account.key ? 'active' : ''">
-        <AccountItem
-          :address="
-            `${account.data.spec.address.slice(0, 3)}...${account.data.spec.address.slice(-3)}`
-          "
-        />
+        <AccountItem :address="account.data.spec.address" />
       </div>
     </li>
   </ul>
@@ -97,9 +93,6 @@ export default class AccountList extends Vue {
   activeAccount: any = null;
 
   async mounted() {
-    const temp = await this.$background.getActiveAccount();
-    console.log(this.$background);
-    console.log(temp, 'activeAccount');
     this.activeAccount = await this.$background.getActiveAccount();
     // Scroll the active account into view
     setTimeout(() => {
@@ -115,13 +108,13 @@ export default class AccountList extends Vue {
     }, 50);
   }
 
-  slicedAccounts() {
-    if (this.isAccountsListOpened) {
-      const slicedAccounts = this.accounts.slice(0, 1);
-      return slicedAccounts;
-    }
-    return this.accounts;
-  }
+  // slicedAccounts() {
+  //   if (this.isAccountsListOpened) {
+  //     const slicedAccounts = this.accounts.slice(0, 1);
+  //     return slicedAccounts;
+  //   }
+  //   return this.accounts;
+  // }
 
   get sortedAccounts() {
     const accounts = [...this.accounts].filter(account => typeof account.data !== 'undefined');

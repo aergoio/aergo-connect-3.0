@@ -5,8 +5,8 @@
         <Icon :name="`${button}`" />
       </Button>
     </div>
-    <h3 v-if="title">{{ title }}</h3>
-
+    <h3 v-if="title && !network">{{ title }}</h3>
+    <NetworkHeader v-if="network" @networkModalClick="networkModalClick" />
     <div class="header__button right" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
       <Icon class="refresh" name="refresh" />
       <a type="button" class="skip__btn">Skip</a>
@@ -20,8 +20,9 @@ import Vue, { PropType } from 'vue';
 import Icon from '../icons/Icon.vue';
 import { RawLocation } from 'vue-router';
 import Button from '../buttons/Button.vue';
+import NetworkHeader from '../layouts/NetworkHeader.vue';
 export default Vue.extend({
-  components: { Icon, Button },
+  components: { Icon, Button, NetworkHeader },
 
   props: {
     button: {
@@ -47,12 +48,19 @@ export default Vue.extend({
     to: {
       type: [String, Object] as PropType<RawLocation>,
     },
+    network: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     hamburgerClick() {
       this.$emit('hamburgerClick');
       // console.log(this.to);
       //      this.$router.push({ name: this.to });
+    },
+    networkModalClick() {
+      this.$emit('networkModalClick');
     },
   },
 });
@@ -70,7 +78,7 @@ export default Vue.extend({
   background: #ffffff;
   box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
   position: relative;
-
+  z-index: 2;
   h3 {
     margin: 0;
     font-weight: 500;

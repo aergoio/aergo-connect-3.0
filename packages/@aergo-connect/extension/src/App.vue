@@ -18,7 +18,6 @@ export default Vue.extend({
     const unlocked = await this.$background.isUnlocked();
     const isSetup = await this.$background.isSetup();
     const getAccounts = await this.$background.getAccounts();
-    console.log(getAccounts, 'getAccounts');
     this.$store.commit('ui/setUnlocked', unlocked);
 
     const peformAuthCheck = !(
@@ -31,13 +30,18 @@ export default Vue.extend({
     if (!isSetup) {
       this.$router.push({ name: 'welcome' });
     }
-    if (getAccounts.length > 0) {
+    if (getAccounts.length > 0 && isSetup && unlocked) {
       this.$router.push({
-        name: 'accounts-list',
+        name: 'accounts-list-address',
         params: {
           address: getAccounts[0].data.spec.address,
           chainId: getAccounts[0].data.spec.chainId,
         },
+      });
+    }
+    if (getAccounts.length === 0 && isSetup && unlocked) {
+      this.$router.push({
+        name: 'accounts-list',
       });
     }
   },

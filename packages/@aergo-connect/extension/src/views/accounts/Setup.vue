@@ -3,7 +3,6 @@
     <AppearVue :delay="0.6">
       <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
     </AppearVue>
-<<<<<<< Updated upstream
     <Header button="back" to="welcome" title="Set Password" />
     <div class="setup-content">
       <p class="phrases">This passphrase will be used to secure all your accounts.</p>
@@ -24,21 +23,6 @@
           :setting="setting"
         />
       </div>
-=======
-    <div class="simple-content">
-      <p class="simple-phrase">
-        This passphrase will be used to secure all your accounts.
-      </p>
-      <div class="field-title">New Password</div>
-      <PasswordStrengthField variant="default" v-model="password" autofocus :setting="setting" />
-      <div class="field-title">Confirm Password</div>
-      <PasswordRepeatField
-        variant="default"
-        v-model="passwordRepeat"
-        :initPassword="password"
-        :setting="setting"
-      />
->>>>>>> Stashed changes
     </div>
     <template #footer>
       <div v-if="!modal" class="footer">
@@ -46,7 +30,6 @@
           <CheckboxButton :checked="checked" @check="checkFunc" @enterKeyup="handleModal" />
           <div class="text">I understand that this wallet cannot recover this password for me.</div>
         </div>
-<<<<<<< Updated upstream
         <Button
           type="primary"
           size="large"
@@ -62,29 +45,6 @@
           @click="handleModal"
           >Set Password</Button
         >
-=======
-        <div class="check-text">
-          I understand that this wallet cannot recover this password for me.
-        </div>
-        <div class="simple-center">
-          <Button
-            type="primary"
-            size="large"
-            hover
-            :disabled="
-              checked &&
-              password === passwordRepeat &&
-              password.length > 0 &&
-              passwordRepeat.length > 0
-                ? false
-                : true
-            "
-            @click="handleModal"
-          >
-            Set Password
-          </Button>
-        </div>
->>>>>>> Stashed changes
       </div>
     </template>
   </ScrollView>
@@ -188,7 +148,6 @@ export default class Setup extends mixins() {
     margin-bottom: 10px;
   }
 }
-<<<<<<< Updated upstream
 
 .content_checkbox {
   display: flex;
@@ -207,6 +166,4 @@ export default class Setup extends mixins() {
     color: #686767;
   }
 }
-=======
->>>>>>> Stashed changes
 </style>

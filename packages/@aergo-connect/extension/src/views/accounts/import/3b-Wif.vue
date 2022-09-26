@@ -1,14 +1,26 @@
 <template>
   <ScrollView class="page">
     <Header button="back" title="Encrypted Private Key" :to="{ name: 'account-import' }" />
-    <div class="import-wif-content">
-      <p class="import-wif-note">Enter your encrypted private key and password.</p>
-      <div class="import-wif-textField">
-        <TextField label="Encrypted private key" v-model="encryptedKey" :error="errors.keystore" />
+    <div class="simple-content">
+      <span class="simple-preheader"> Enter your encrypted private key and password.  </span>
+      <div class="need-margin" >
+        <span class="field-title">Encrypted Private Key</span>        
+        <TextField 
+           class="simple-center"
+           v-model="encryptedKey" 
+           :error="errors.keystore" 
+           autofocus
+        />
       </div>
-      <PasswordStrengthField v-model="password" label="Encryption password" autoComplete="no" />
-      <div v-if="errors.password" class="import-wif-error">
-        <WarningInBox :error="errors.password" />
+      <div>
+        <span class="field-title">Encryption Password</span>        
+        <PasswordStrengthField 
+            v-model="password" 
+            autoComplete="no" 
+        />
+        <div v-if="errors.password" class="import-wif-error">
+          <WarningInBox :error="errors.password" />
+        </div>
       </div>
     </div>
     <template #footer>
@@ -99,26 +111,8 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 </script>
 
 <style lang="scss">
-.import-wif-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  .import-wif-note {
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 25px;
-    letter-spacing: -0.333333px;
-    color: #231f20;
-    width: 327px;
-    margin-top: 32px;
-  }
-
-  .import-wif-textField {
-    margin-bottom: 32px;
-  }
-  .import-wif-error {
-    margin-top: 14px;
-  }
+.need-margin {
+  margin-top: 20px;
+  margin-bottom: 40px;
 }
 </style>

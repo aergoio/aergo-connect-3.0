@@ -73,6 +73,8 @@ export default Vue.extend({
   background-clip: content-box, border-box;
   border-radius: 4px;
   transition: box-shadow 0.1s;
+  margin-top: 10px;
+  margin-bottom: 20px;
 
   .file__upload__input {
     width: 100%;

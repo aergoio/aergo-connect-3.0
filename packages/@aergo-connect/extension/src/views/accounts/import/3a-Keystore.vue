@@ -1,25 +1,24 @@
 <template>
   <ScrollView class="page">
     <Header button="back" title="Keystore File" :to="{ name: 'account-import' }" />
-    <div class="import-keystore-content">
-      <h3 class="import-keystore-note">Enter your keystore file and password.</h3>
-      <div class="import-keystore-fileInput">
-        <FileUploadInput
-          label="Keystore file"
-          type="file"
-          @file="setKeystore"
-          :error="errors.keystore"
-        />
-      </div>
-      <div class="import-keystore-passwordInput">
-        <PasswordStrengthField
+    <div class="simple-content">
+      <div class="simple-preheader margin"> Enter your keystore file and password.</div>
+      <div class="margin"></div>
+      <div class="field-title"> Keystore File </div>
+      <FileUploadInput
+        class="simple-center margin"
+        type="file"
+        @file="setKeystore"
+        :error="errors.keystore"
+      />
+      <div class="field-title"> Keystore Passphrase </div>
+      <PasswordStrengthField
+          class="simple-center"
           v-model="password"
           type="password"
-          label="Keystore passphrase"
           autoComplete="no"
-        />
-      </div>
-      <div v-if="errors.password" class="import-wif-error">
+      />
+      <div v-if="errors.password" class="simple-left">
         <WarningInBox :error="errors.password" />
       </div>
     </div>
@@ -119,21 +118,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 </script>
 
 <style lang="scss">
-.import-keystore-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  .import-keystore-note {
-    width: 327px;
-    margin-bottom: 49px;
-  }
-
-  .import-keystore-fileInput {
-    margin-bottom: 32px;
-  }
-  .import-keystore-passwordInput {
-    margin-bottom: 22px;
-  }
+.margin {
+  margin-bottom: 40px;
 }
 </style>

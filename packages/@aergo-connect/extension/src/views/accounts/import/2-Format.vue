@@ -1,9 +1,9 @@
 <template>
   <ScrollView class="page">
     <Header button="back" title="Import Account" :to="{ name: 'register' }" />
-    <div class="format-content">
-      <span class="preheader">Please select the import format.</span>
-      <p class="buttons">
+    <div class="simple-content">
+      <span class="simple-preheader">Please select the import format.</span>
+      <p class="buttons simple-center">
 
         <Button 
           type="primary-outline" 
@@ -65,29 +65,25 @@ export default class Import extends mixins() {}
 </script>
 
 <style lang="scss">
-.format-content {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-direction: column;
 
-  .buttons {
-    margin-bottom: 32px;
-    button {
-      margin-bottom: 30px;
-    }
+.buttons {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  button {
+    margin-bottom: 40px;
   }
+}
 
-  .note {
-    width: 327px;
-    font-weight: 400;
-    font-size: 15px;
-    line-height: 19px;
-    letter-spacing: -0.333333px;
-    color: #686767;
-    span {
-      color: #279ecc;
-    }
+.note {
+  margin-left: 24px;
+  width: 327px;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 19px;
+  letter-spacing: -0.333333px;
+  color: #686767;
+  span {
+    color: #279ecc;
   }
 }
 </style>

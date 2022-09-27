@@ -12,15 +12,14 @@
            autofocus
         />
       </div>
-      <div>
-        <span class="field-title">Encryption Password</span>        
-        <PasswordStrengthField 
-            v-model="password" 
-            autoComplete="no" 
-        />
-        <div v-if="errors.password" class="import-wif-error">
-          <WarningInBox :error="errors.password" />
-        </div>
+      <PasswordStrengthField
+        class="import-wif-textField"
+        v-model="password"
+        label="Encryption password"
+        autoComplete="no"
+      />
+      <div v-if="errors.password" class="import-wif-error">
+        <WarningInBox :error="errors.password" />
       </div>
     </div>
     <template #footer>
@@ -111,8 +110,27 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 </script>
 
 <style lang="scss">
-.need-margin {
-  margin-top: 20px;
-  margin-bottom: 40px;
+.import-wif-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .import-wif-note {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 25px;
+    letter-spacing: -0.333333px;
+    color: #231f20;
+    width: 327px;
+    margin-top: 32px;
+  }
+
+  .import-wif-textField {
+    margin-bottom: 32px;
+    width: 327px;
+  }
+  .import-wif-error {
+    margin-top: 14px;
+  }
 }
 </style>

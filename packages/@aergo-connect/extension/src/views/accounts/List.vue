@@ -11,12 +11,7 @@
           />
           <img v-else src="@aergo-connect/lib-ui/src/icons/img/arrow-up.svg" />
         </div>
-        <AccountList
-          :accounts="accounts"
-          :canDelete="true"
-          :isAccountsListOpened="isAccountsListOpened"
-          @select="handleSelect"
-        />
+        <AccountList :accounts="accounts" :canDelete="true" @select="handleSelect" />
         <SideNavButton img="add" title="Add Account" to="register" />
         <SideNavButton img="delete" title="Remove Account" @click="handleRemoveModal" />
       </section>

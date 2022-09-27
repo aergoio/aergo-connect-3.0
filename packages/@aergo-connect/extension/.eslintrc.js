@@ -37,5 +37,12 @@ module.exports = {
         ignoreWhenBindingPresent: true,
       },
     ],
+    'vue/no-reserved-component-names': [
+      'error',
+      {
+        disallowVueBuiltInComponents: false,
+        disallowVue3BuiltInComponents: false,
+      },
+    ],
   },
 };

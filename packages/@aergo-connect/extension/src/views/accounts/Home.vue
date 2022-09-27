@@ -34,37 +34,42 @@
             <span class="account_info_address_text">{{
               `${account.data.spec.address.slice(0, 12)}...${account.data.spec.address.slice(-4)}`
             }}</span>
-            <Icon class="account_info_address_button" :name="`next`" :size="50" />
+            <Icon
+              class="account_info_address_button"
+              :name="`next`"
+              :size="50"
+              @click="handleDetailAddress"
+            />
           </div>
         </div>
       </div>
-      <NetworkModal v-if="networkModal" />
+      <NetworkModal v-if="networkModal" @networkModalClick="networkModalClick" />
       <div class="token_content_wrapper">
         <ButtonGroup>
-          <Button type="primary" size="small">Tokens</Button>
-          <Button type="primary" size="small" disabled>NFT</Button>
+          <Button class="token-button" type="primary" size="small">Tokens</Button>
+          <Button class="token-button unclicked" type="primary" size="small">NFT</Button>
         </ButtonGroup>
         <ul class="token_list_ul">
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon class="next" :name="`next_grey`" @networkModalClick="networkModalClick" />
+            <Icon class="next" :name="`next_grey`" @click="handleToken" />
           </li>
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon class="next" :name="`next_grey`" @networkModalClick="networkModalClick" />
+            <Icon class="next" :name="`next_grey`" @click="handleToken" />
           </li>
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span>0.000AERGO</span>
-            <Icon class="next" :name="`next_grey`" @networkModalClick="networkModalClick" />
+            <Icon class="next" :name="`next_grey`" @click="handleToken" />
           </li>
         </ul>
-        <button class="token_list_button">
+        <button class="token_list_button" @click="handleImportAsset">
           <Icon name="plus" class="token_list_button_img" /><span class="token_list_button_text"
             >Import Asset</span
           >
@@ -73,8 +78,12 @@
 
       <div class="content_footer">
         <ButtonGroup>
-          <Button type="font-gradation" size="small"><Icon :name="`send`" />send</Button>
-          <Button type="font-gradation" size="small"><Icon :name="`send`" />receive</Button>
+          <Button class="button" type="font-gradation" size="small" @click="handleSend"
+            ><Icon class="button-icon" :name="`send`" />send</Button
+          >
+          <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+            ><Icon class="button-icon" :name="`send`" />receive</Button
+          >
         </ButtonGroup>
       </div>
     </div>
@@ -115,6 +124,7 @@ export default Vue.extend({
       hamburgerModal: false,
       removeAccountModal: false,
       networkModal: false,
+      importAssetModal: false,
     };
   },
   computed: {
@@ -160,11 +170,26 @@ export default Vue.extend({
       this.hamburgerModal = false;
     },
     networkModalClick() {
-      console.log(this.networkModal);
-      this.networkModal = true;
+      this.networkModal = !this.networkModal;
     },
     handleEdit() {
       console.log('edit');
+    },
+    handleDetailAddress() {
+      console.log('handleDetailAddress');
+    },
+    handleToken(token: any) {
+      console.log(token);
+      console.log('handleToken');
+    },
+    handleImportAsset() {
+      this.$router.push({ name: 'import-asset', params: { ...this.accountSpec } });
+    },
+    handleSend() {
+      console.log('send');
+    },
+    handleReceive() {
+      console.log('receive');
     },
     async getAccounts() {
       const accountsData = await this.$background.getAccounts();
@@ -262,6 +287,17 @@ export default Vue.extend({
     justify-content: center;
     height: 253px;
     margin-top: 16px;
+
+    .token-button {
+      width: 153px;
+      height: 39px;
+      background: #279ecc;
+      border-radius: 8px;
+      &.unclicked {
+        background: #f6f6f6;
+        box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.05);
+      }
+    }
     .token_list_ul {
       margin-top: 5px;
       .token_list_li {
@@ -329,6 +365,19 @@ export default Vue.extend({
 
   .content_footer {
     margin-top: 40px;
+    .button {
+      box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
+      border-radius: 4px;
+
+      .button-icon {
+        margin-right: 9.49px;
+      }
+      /* &.button-type-font-gradation:hover {
+        background: #ffffff;
+      } */
+    }
+    /* .button:hover {
+    } */
   }
 }
 </style>

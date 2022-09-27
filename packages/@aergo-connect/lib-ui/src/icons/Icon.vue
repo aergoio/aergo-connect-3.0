@@ -1,5 +1,5 @@
 <template>
-  <div class="icon" :class="[`icon--${name}`]">
+  <div class="icon" :class="[`icon--${name}`]" @click="handleClick">
     <component :is="`icon-${name}`" />
     <div v-if="badge" class="badge">{{ badgeText }}</div>
   </div>
@@ -40,6 +40,11 @@ export default Vue.extend({
   },
   components: {
     ...icons,
+  },
+  methods: {
+    handleClick() {
+      this.$emit('click');
+    },
   },
 });
 </script>

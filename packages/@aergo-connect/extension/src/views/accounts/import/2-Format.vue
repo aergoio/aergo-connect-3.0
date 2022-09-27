@@ -1,32 +1,31 @@
 <template>
   <ScrollView class="page">
     <Header button="back" title="Import Account" :to="{ name: 'register' }" />
-    <div class="simple-content">
-      <span class="simple-preheader">Please select the import format.</span>
-      <p class="buttons simple-center">
-
-        <Button 
-          type="primary-outline" 
-          size="large-outline" 
-          hover=true
+    <div class="format-content">
+      <span class="preheader">Please select the import format.</span>
+      <p class="buttons">
+        <Button
+          type="primary-outline"
+          size="large-outline"
+          hover="true"
           :to="{ name: 'account-import-seedphrase' }"
         >
           Mnemonic Seedphrase
-        </Button >
+        </Button>
 
-        <Button 
-          type="primary-outline" 
-          size="large-outline" 
-          hover=true
+        <Button
+          type="primary-outline"
+          size="large-outline"
+          hover="true"
           :to="{ name: 'account-import-wif' }"
         >
           Encrypted Private Key
-        </Button >
+        </Button>
 
-        <Button 
-          type="primary-outline" 
-          size="large-outline" 
-          hover=true
+        <Button
+          type="primary-outline"
+          size="large-outline"
+          hover="true"
           :to="{ name: 'account-import-keystore' }"
         >
           Keystore File

@@ -26,10 +26,19 @@ import { Button } from '@aergo-connect/lib-ui/src/buttons';
 import HeaderLogo from '@aergo-connect/lib-ui/src/icons/HeaderLogo.vue';
 
 import Vue from 'vue';
-import Component from 'vue-class-component';
 import { Account } from '@herajs/wallet';
 
-@Component({
+export default Vue.extend({
+  props: {
+    isAccountsListOpened: {
+      type: Boolean,
+      default: true,
+    },
+    accounts: {
+      type: Array,
+      default: [] as Account[],
+    },
+  },
   components: {
     ScrollView,
     Heading,
@@ -38,25 +47,28 @@ import { Account } from '@herajs/wallet';
     Header,
     HeaderLogo,
   },
-})
-export default class AccountsList extends Vue {
-  addAccountDialogVisible = false;
-  get accounts(): Account[] {
-    if (this.$store.state.accounts.keys.length) {
-      return Object.values(this.$store.state.accounts.accounts);
-    }
-    return [];
-  }
-  created() {
-    console.log(this.accounts, ' accounts')
+  data() {
+    return {
+      addAccountDialogVisible: false,
+    };
   },
+  computed: {
+    accounts(): Account[] {
+      if (this.$store.state.accounts.keys.length) {
+        return Object.values(this.$store.state.accounts.accounts);
+      }
+      return [];
+    },
+  },
+  methods: {
+    selectAccount(account: any) {
+      console.log('clicked ', account);
+      this.$background.setActiveAccount(account.data.spec);
+    },
+  },
+
   mounted() {
     this.$store.dispatch('accounts/fetchAccounts');
-  }
-
-  selectAccount(account: any) {
-    console.log('clicked ', account);
-    this.$background.setActiveAccount(account.data.spec);
-  }
-}
+  },
+});
 </script>

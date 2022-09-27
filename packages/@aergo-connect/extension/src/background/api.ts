@@ -52,7 +52,6 @@ export class Api {
 
   async setup({ password }: any) {
     await this.controller.setupAndUnlock(password);
-    console.log(this.controller.wallet);
     return true;
   }
 
@@ -194,7 +193,6 @@ export class Api {
       accountData.spec,
       accountData,
     );
-    console.log('addAccount', account);
     this.controller.trackAccount(account);
     return account.data.spec;
   }

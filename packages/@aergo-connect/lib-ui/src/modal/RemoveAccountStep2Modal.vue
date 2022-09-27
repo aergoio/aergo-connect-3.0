@@ -3,7 +3,9 @@
     <div class="removeAccount_modal_wrapper">
       <Icon :name="`warning2`" />
       <div class="removeAccount_title">Type 'delete' to confirm deleting this account.</div>
-      <input type="text" v-model="value" />
+      <div class="removeAccount_textField">
+        <TextField type="text" v-model="value" />
+      </div>
       <ButtonGroup class="button_wrapper" vertical>
         <ButtonVue
           type="secondary"
@@ -26,18 +28,20 @@ import Vue from 'vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import ButtonVue from '@aergo-connect/lib-ui/src/buttons/Button.vue';
+import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 export default Vue.extend({
-  components: { Icon, ButtonGroup, ButtonVue },
+  components: { Icon, ButtonGroup, ButtonVue, TextField },
   data() {
     return {
       value: '',
-      disabled: false,
     };
   },
-  watch: {
-    value() {
+  computed: {
+    disabled() {
       if (this.value === 'delete') {
-        this.disabled = true;
+        return true;
+      } else {
+        return false;
       }
     },
   },
@@ -101,6 +105,13 @@ export default Vue.extend({
 
       color: #e4097d;
     }
+
+    .removeAccount_textField {
+      margin-top: 20px;
+      width: 213px;
+      height: 48px;
+    }
+
     .removeAccount_text {
       width: 259px;
       font-family: 'Outfit';

@@ -22,7 +22,7 @@
         <Identicon :text="account.data.spec.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
-            <span class="account_info_nickname_text">ACCOUNT1</span>
+            <span class="account_info_nickname_text">address</span>
             <Icon
               class="account_info_nickname_button"
               :name="`edit`"
@@ -149,6 +149,9 @@ export default Vue.extend({
       }
       return false;
     },
+    // nick() {
+    //   return this.$route.params.nick;
+    // },
   },
   methods: {
     hamburgerClick() {
@@ -183,7 +186,7 @@ export default Vue.extend({
       console.log('handleToken');
     },
     handleImportAsset() {
-      this.$router.push({ name: 'import-asset', params: { ...this.accountSpec } });
+      this.$router.push({ name: 'import-asset', params: { ...this.accountSpec, nick: this.nick } });
     },
     handleSend() {
       console.log('send');
@@ -191,15 +194,15 @@ export default Vue.extend({
     handleReceive() {
       console.log('receive');
     },
-    async getAccounts() {
-      const accountsData = await this.$background.getAccounts();
-      this.account = accountsData[0];
-      if (accountsData.length !== 0) {
-        this.noAccountModal = false;
-      } else {
-        this.noAccountModal = true;
-      }
-    },
+    // async getAccounts() {
+    //   const accountsData = await this.$background.getAccounts();
+    //   this.account = accountsData[0];
+    //   if (accountsData.length !== 0) {
+    //     this.noAccountModal = false;
+    //   } else {
+    //     this.noAccountModal = true;
+    //   }
+    // },
   },
 });
 </script>

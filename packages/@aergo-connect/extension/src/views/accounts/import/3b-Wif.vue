@@ -6,7 +6,12 @@
       <div class="import-wif-textField">
         <TextField label="Encrypted private key" v-model="encryptedKey" :error="errors.keystore" />
       </div>
-      <PasswordStrengthField v-model="password" label="Encryption password" autoComplete="no" />
+      <PasswordStrengthField
+        class="import-wif-textField"
+        v-model="password"
+        label="Encryption password"
+        autoComplete="no"
+      />
       <div v-if="errors.password" class="import-wif-error">
         <WarningInBox :error="errors.password" />
       </div>
@@ -116,6 +121,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 
   .import-wif-textField {
     margin-bottom: 32px;
+    width: 327px;
   }
   .import-wif-error {
     margin-top: 14px;

@@ -16,6 +16,8 @@ import ImportKeystore from '../views/accounts/import/3a-Keystore.vue';
 import ImportWif from '../views/accounts/import/3b-Wif.vue';
 import ImportSeedphrase from '../views/accounts/import/3c-Seedphrase.vue';
 
+import ImportAsset from '../views/accounts/ImportAsset.vue';
+
 import ConnectHw from '../views/accounts/connect-hw/1-Network.vue';
 import ConnectHwAccounts from '../views/accounts/connect-hw/2-Accounts.vue';
 import AccountsList from '../views/accounts/List.vue';
@@ -114,7 +116,11 @@ const routes: RouteConfig[] = [
         name: 'accounts-list-address',
         component: Home,
       }),
-
+      withMeta(2, {
+        path: 'list/:chainId/:address/import/asset',
+        name: 'import-asset',
+        component: ImportAsset,
+      }), // 시연용
       withMeta(2, {
         path: 'balance/:chainId/:address',
         name: 'balance-list',

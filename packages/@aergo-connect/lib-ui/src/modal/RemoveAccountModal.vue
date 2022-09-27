@@ -31,6 +31,7 @@ export default Vue.extend({
       isNext: false,
     };
   },
+
   methods: {
     handleCancel() {
       this.$emit('cancel', 'removeAccountModal');

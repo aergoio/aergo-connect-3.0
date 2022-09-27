@@ -4,29 +4,28 @@
     <div class="format-content">
       <span class="preheader">Please select the import format.</span>
       <p class="buttons">
-
-        <Button 
-          type="primary-outline" 
-          size="large-outline" 
-          hover=true
+        <Button
+          type="primary-outline"
+          size="large-outline"
+          hover="true"
           :to="{ name: 'account-import-seedphrase' }"
         >
           Mnemonic Seedphrase
-        </Button >
+        </Button>
 
-        <Button 
-          type="primary-outline" 
-          size="large-outline" 
-          hover=true
+        <Button
+          type="primary-outline"
+          size="large-outline"
+          hover="true"
           :to="{ name: 'account-import-wif' }"
         >
           Encrypted Private Key
-        </Button >
+        </Button>
 
-        <Button 
-          type="primary-outline" 
-          size="large-outline" 
-          hover=true
+        <Button
+          type="primary-outline"
+          size="large-outline"
+          hover="true"
           :to="{ name: 'account-import-keystore' }"
         >
           Keystore File

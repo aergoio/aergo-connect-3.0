@@ -1,5 +1,5 @@
 <template>
-  <div class="network_modal_backdrop">
+  <div class="network_modal_backdrop" @click="networkModalClick">
     <div class="network_modal_wrapper">
       <div class="network_modal_title">Network</div>
       <div class="network_modal_line" />
@@ -39,7 +39,7 @@ export default Vue.extend({
   },
   methods: {
     networkModalClick() {
-      this.emit('networkModalClick');
+      this.$emit('networkModalClick');
     },
   },
 });

@@ -1,15 +1,15 @@
 <template>
   <div class="header">
     <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]">
-      <Button :to="to" @click="hamburgerClick">
+      <Button :to="to" @click="buttonClick">
         <Icon :name="`${button}`" />
       </Button>
     </div>
     <h3 v-if="title && !network">{{ title }}</h3>
     <NetworkHeader v-if="network" @networkModalClick="networkModalClick" />
     <div class="header__button right" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
-      <Icon class="refresh" name="refresh" />
-      <a type="button" class="skip__btn">Skip</a>
+      <Icon class="refresh" name="refresh" @refreshClick="refreshClick" />
+      <a type="button" class="skip__btn" @skipClick="skipClick">Skip</a>
     </div>
     <slot></slot>
   </div>
@@ -54,13 +54,22 @@ export default Vue.extend({
     },
   },
   methods: {
-    hamburgerClick() {
-      this.$emit('hamburgerClick');
-      // console.log(this.to);
-      //      this.$router.push({ name: this.to });
+    buttonClick() {
+      if (this.button === 'hamburger') {
+        this.$emit('hamburgerClick');
+      }
+      if (this.button === 'back') {
+        this.$emit('backClick');
+      }
     },
     networkModalClick() {
       this.$emit('networkModalClick');
+    },
+    refreshClick() {
+      this.$emit('refreshClick');
+    },
+    skipClick() {
+      this.$emit('skipClick');
     },
   },
 });
@@ -78,7 +87,7 @@ export default Vue.extend({
   background: #ffffff;
   box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
   position: relative;
-  z-index: 2;
+  z-index: 1;
   h3 {
     margin: 0;
     font-weight: 500;

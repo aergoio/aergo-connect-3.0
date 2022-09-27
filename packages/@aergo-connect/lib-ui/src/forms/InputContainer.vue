@@ -74,7 +74,7 @@ export default Vue.extend({
   display: flex;
   box-sizing: border-box;
   height: 48px;
-  width: 327px;
+  /* width: 327px; */
   align-items: center;
   transition: box-shadow 0.1s;
   margin-top: 10px;

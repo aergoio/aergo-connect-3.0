@@ -64,8 +64,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Component from 'vue-class-component';
-import { Prop } from 'vue-property-decorator';
 import { Account } from '@herajs/wallet';
 import { Amount } from '@herajs/client';
 import { groupBy } from '../../utils/group-by';
@@ -74,24 +72,91 @@ import { FormattedToken, Identicon } from '@aergo-connect/lib-ui/src/content';
 import { isPublicChainId } from '../../config';
 import AccountItem from '@aergo-connect/lib-ui/src/items/AccountItem.vue';
 
-@Component({
+export default Vue.extend({
   components: {
     Icon,
     Identicon,
     FormattedToken,
     AccountItem,
   },
-})
-export default class AccountList extends Vue {
-  @Prop({ type: Array, required: true }) readonly accounts!: Account[];
-  @Prop({ type: Boolean, default: true }) readonly groupByChain!: boolean;
-  @Prop({ type: Boolean, default: true }) readonly highlightNew!: boolean;
-  @Prop({ type: String, default: 'account-details' }) readonly accountRoute!: string;
-  @Prop({ type: String, default: 'balance-list' }) readonly balanceListRoute!: string;
-  @Prop({ type: Boolean, default: false }) readonly canDelete!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly isAccountsListOpened!: boolean;
-  activeAccount: any = null;
-
+  props: {
+    accounts: {
+      type: Array,
+      default: [] as Account[],
+    },
+    groupByChain: {
+      type: Boolean,
+      default: true,
+    },
+    highlightNew: {
+      type: Boolean,
+      default: true,
+    },
+    accountRoute: {
+      type: String,
+      default: 'account-details',
+    },
+    balanceListRoute: {
+      type: String,
+      default: 'balance-list',
+    },
+    canDelete: {
+      type: Boolean,
+      default: false,
+    },
+    isAccountsListOpened: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      activeAccount: {} as Account,
+    };
+  },
+  computed: {
+    sortedAccounts(): Account[] {
+      const accounts = [...this.accounts].filter(account => typeof account.data !== 'undefined');
+      // Order by address A-Z
+      accounts.sort((a, b) => a.data.spec?.address?.localeCompare(b.data.spec?.address));
+      // Order by balance, reversed
+      accounts.sort((a, b) =>
+        !a.data ? 0 : -new Amount(a.data.balance).compare(new Amount(b.data.balance)),
+      );
+      // Order by chainID A-Z. This does not affect the groupBy, it just orders the groups alphabetically (e.g. aergo.io < testnet.aergo.io)
+      accounts.sort((a, b) =>
+        !a.data ? 0 : a.data.spec?.chainId?.localeCompare(b.data.spec.chainId),
+      );
+      // Order the most recent accounts first, but only if they are new
+      if (this.highlightNew) {
+        accounts.sort((a, b) => {
+          // Use 0 for non-new accounts to not affect order, otherwise the added timestamp
+          const addedA =
+            this.isNew(a) && typeof a.data.added === 'string' ? +new Date(a.data.added) : 0;
+          const addedB =
+            this.isNew(b) && typeof b.data.added === 'string' ? +new Date(b.data.added) : 0;
+          return -(addedA - addedB);
+        });
+      }
+      return accounts;
+    },
+    accountsByChainId() {
+      if (this.groupByChain === false) return [['ALL', this.sortedAccounts]];
+      const result = groupBy(this.sortedAccounts, item => item?.data?.spec?.chainId || '');
+      return Array.from(result);
+    },
+  },
+  methods: {
+    isPublicChainId(chainId: string) {
+      return isPublicChainId(chainId);
+    },
+    isNew(account: Account) {
+      if (!this.highlightNew) return false;
+      const MaxAge = 1000 * 60 * 5; // 5 min
+      const added = typeof account.data.added === 'string' ? +new Date(account.data.added) : 0;
+      return +new Date() - added < MaxAge;
+    },
+  },
   async mounted() {
     this.activeAccount = await this.$background.getActiveAccount();
     // Scroll the active account into view
@@ -106,66 +171,15 @@ export default class AccountList extends Vue {
         element.scrollIntoView({ block: 'center' });
       }
     }, 50);
-  }
-
-  // slicedAccounts() {
-  //   if (this.isAccountsListOpened) {
-  //     const slicedAccounts = this.accounts.slice(0, 1);
-  //     return slicedAccounts;
-  //   }
-  //   return this.accounts;
-  // }
-
-  get sortedAccounts() {
-    const accounts = [...this.accounts].filter(account => typeof account.data !== 'undefined');
-    // Order by address A-Z
-    accounts.sort((a, b) => a.data.spec?.address?.localeCompare(b.data.spec?.address));
-    // Order by balance, reversed
-    accounts.sort((a, b) =>
-      !a.data ? 0 : -new Amount(a.data.balance).compare(new Amount(b.data.balance)),
-    );
-    // Order by chainID A-Z. This does not affect the groupBy, it just orders the groups alphabetically (e.g. aergo.io < testnet.aergo.io)
-    accounts.sort((a, b) =>
-      !a.data ? 0 : a.data.spec?.chainId?.localeCompare(b.data.spec.chainId),
-    );
-    // Order the most recent accounts first, but only if they are new
-    if (this.highlightNew) {
-      accounts.sort((a, b) => {
-        // Use 0 for non-new accounts to not affect order, otherwise the added timestamp
-        const addedA =
-          this.isNew(a) && typeof a.data.added === 'string' ? +new Date(a.data.added) : 0;
-        const addedB =
-          this.isNew(b) && typeof b.data.added === 'string' ? +new Date(b.data.added) : 0;
-        return -(addedA - addedB);
-      });
-    }
-    return accounts;
-  }
-
-  get accountsByChainId() {
-    if (this.groupByChain === false) return [['ALL', this.sortedAccounts]];
-    const result = groupBy(this.sortedAccounts, item => item?.data?.spec?.chainId || '');
-    return Array.from(result);
-  }
-
-  isPublicChainId(chainId: string) {
-    return isPublicChainId(chainId);
-  }
-
-  isNew(account: Account) {
-    if (!this.highlightNew) return false;
-    const MaxAge = 1000 * 60 * 5; // 5 min
-    const added = typeof account.data.added === 'string' ? +new Date(account.data.added) : 0;
-    return +new Date() - added < MaxAge;
-  }
-}
+  },
+});
 </script>
 
 <style lang="scss">
 .nav-account-list {
   max-height: 160px;
-  /* overflow-y: scroll; */
-  overflow: hidden; /* Hide scrollbars */
+  /* overflow-y: scroll; Hide scrollbars */
+  overflow: hidden;
 }
 </style>
 

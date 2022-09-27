@@ -13,6 +13,7 @@
       </div>
       <div class="import-keystore-passwordInput">
         <PasswordStrengthField
+          class="size"
           v-model="password"
           type="password"
           label="Keystore passphrase"
@@ -134,6 +135,9 @@ export default class Keystore extends mixins(PersistInputsMixin) {
   }
   .import-keystore-passwordInput {
     margin-bottom: 22px;
+    .size {
+      width: 327px;
+    }
   }
 }
 </style>

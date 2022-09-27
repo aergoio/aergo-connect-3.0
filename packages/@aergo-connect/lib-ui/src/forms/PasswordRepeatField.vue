@@ -1,7 +1,8 @@
 <template>
   <div>
-    <span class="input-label" v-if="label">{{ label }}</span>
+    <span class="field-title" v-if="label">{{ label }}</span>
     <TextField
+      class="simple-center"
       :type="revealPassword ? 'text' : 'password'"
       :variant="variant"
       :value="value"

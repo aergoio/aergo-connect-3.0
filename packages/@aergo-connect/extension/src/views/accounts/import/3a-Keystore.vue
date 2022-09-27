@@ -16,11 +16,9 @@
           class="size"
           v-model="password"
           type="password"
-          label="Keystore passphrase"
           autoComplete="no"
-        />
-      </div>
-      <div v-if="errors.password" class="import-wif-error">
+      />
+      <div v-if="errors.password" class="simple-left">
         <WarningInBox :error="errors.password" />
       </div>
     </div>

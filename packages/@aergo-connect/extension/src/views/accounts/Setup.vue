@@ -1,36 +1,38 @@
 <template>
   <ScrollView class="page">
+    <Header button="back" to="welcome" title="Set Password" />
     <AppearVue :delay="0.6">
       <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
     </AppearVue>
-    <Header button="back" to="welcome" title="Set Password" />
-    <div class="setup-content">
-      <p class="phrases">This passphrase will be used to secure all your accounts.</p>
-      <div>
-        <span class="password_title">New Password</span>
-        <PasswordStrengthField
-          variant="default"
-          v-model="password"
-          autofocus
-          :setting="setting"
-          @keyup.enter="$event.target.nextSibling.focus()"
-        />
-        <span class="password_title">Confirm Password</span>
-        <PasswordRepeatField
-          variant="default"
-          v-model="passwordRepeat"
-          :initPassword="password"
-          :setting="setting"
-        />
-      </div>
+    <div class="simple-content">
+      <p class="simple-phrase"> 
+         This passphrase will be used to secure all your accounts.  
+      </p>
+      <div class="field-title">New Password</div>
+      <PasswordStrengthField
+        variant="default"
+        v-model="password"
+        autofocus
+        :setting="setting"
+      />
+      <div class="field-title">Confirm Password</div>
+      <PasswordRepeatField
+        variant="default"
+        v-model="passwordRepeat"
+        :initPassword="password"
+        :setting="setting"
+      />
     </div>
     <template #footer>
       <div v-if="!modal" class="footer">
-        <div class="content_checkbox">
-          <CheckboxButton :checked="checked" @check="checkFunc" @enterKeyup="handleModal" />
-          <div class="text">I understand that this wallet cannot recover this password for me.</div>
+        <div class="check">
+          <CheckboxButton :checked="checked" @check="checkFunc" />
         </div>
-        <Button
+        <div class="check-text">
+            I understand that this wallet cannot recover this password for me.
+        </div>
+        <div class="simple-center">
+          <Button 
           type="primary"
           size="large"
           hover
@@ -43,8 +45,9 @@
               : true
           "
           @click="handleModal"
-          >Set Password</Button
-        >
+          > Set Password
+          </Button>
+        </div>
       </div>
     </template>
   </ScrollView>
@@ -126,44 +129,23 @@ export default class Setup extends mixins() {
 </script>
 
 <style lang="scss">
-.setup-content {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-direction: column;
-
-  .phrases {
-    margin-left: 24px;
-    margin-top: 32px;
-    margin-bottom: 30px;
-  }
-  .password_title {
-    font-family: 'Outfit';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    letter-spacing: -0.333333px;
-    color: #454344;
-    margin-top: 20px;
-    margin-bottom: 10px;
-  }
+.check {
+  position: absolute;
+  left: 24px;
+  top: 440px;
+}
+.check-text {
+  position: absolute;
+  left: 60px;
+  top: 430px;
+  width: 292px;
+  height: 40px;
+  font-family: 'Outfit';
+  font-style: normal;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.333333px;
+  color: #686767;
 }
 
-.content_checkbox {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 28px;
-  .text {
-    margin-left: 11px;
-    width: 292px;
-    height: 40px;
-    font-family: 'Outfit';
-    font-style: normal;
-    font-size: 16px;
-    line-height: 20px;
-    letter-spacing: -0.333333px;
-    color: #686767;
-  }
-}
 </style>

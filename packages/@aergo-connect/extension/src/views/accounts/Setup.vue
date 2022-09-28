@@ -5,16 +5,11 @@
       <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
     </AppearVue>
     <div class="simple-content">
-      <p class="simple-phrase"> 
-         This passphrase will be used to secure all your accounts.  
+      <p class="simple-phrase">
+        This passphrase will be used to secure all your accounts.
       </p>
       <div class="field-title">New Password</div>
-      <PasswordStrengthField
-        variant="default"
-        v-model="password"
-        autofocus
-        :setting="setting"
-      />
+      <PasswordStrengthField variant="default" v-model="password" autofocus :setting="setting" />
       <div class="field-title">Confirm Password</div>
       <PasswordRepeatField
         variant="default"
@@ -29,23 +24,24 @@
           <CheckboxButton :checked="checked" @check="checkFunc" />
         </div>
         <div class="check-text">
-            I understand that this wallet cannot recover this password for me.
+          I understand that this wallet cannot recover this password for me.
         </div>
         <div class="simple-center">
-          <Button 
-          type="primary"
-          size="large"
-          hover
-          :disabled="
-            checked &&
-            password === passwordRepeat &&
-            password.length > 0 &&
-            passwordRepeat.length > 0
-              ? false
-              : true
-          "
-          @click="handleModal"
-          > Set Password
+          <Button
+            type="primary"
+            size="large"
+            hover
+            :disabled="
+              checked &&
+              password === passwordRepeat &&
+              password.length > 0 &&
+              passwordRepeat.length > 0
+                ? false
+                : true
+            "
+            @click="handleModal"
+          >
+            Set Password
           </Button>
         </div>
       </div>
@@ -147,5 +143,4 @@ export default class Setup extends mixins() {
   letter-spacing: -0.333333px;
   color: #686767;
 }
-
 </style>

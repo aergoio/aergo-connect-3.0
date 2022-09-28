@@ -82,6 +82,7 @@ export default Vue.extend({
         name: 'accounts-list-address',
         params: {
           ...accountSpec,
+          nick: this.$route.params.nick,
         },
       });
     },

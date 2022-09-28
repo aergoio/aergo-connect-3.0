@@ -22,7 +22,7 @@
         <Identicon :text="account.data.spec.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
-            <span class="account_info_nickname_text">ACCOUNT1</span>
+            <span class="account_info_nickname_text">{{ $route.params.nick }}</span>
             <Icon
               class="account_info_nickname_button"
               :name="`edit`"

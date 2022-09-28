@@ -19,7 +19,7 @@
         <div>
           <SideNavButton img="sign-message" title="Sign Message" :to="{ name: 'sign-message' }" />
           <SideNavButton img="security" title="Security" :to="{ name: 'security' }" />
-          <SideNavButton img="lock" title="Lock" :to="{ name: 'lockscreen' }" />
+          <SideNavButton img="lock" title="Lock" @click="handleLock" />
         </div>
         <div class="side-nav-version">
           <span>Version</span>
@@ -87,6 +87,9 @@ export default Vue.extend({
           },
         })
         .catch(() => {});
+    },
+    handleLock() {
+      this.$background.lock();
     },
   },
   mounted() {

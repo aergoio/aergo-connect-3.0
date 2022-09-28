@@ -4,12 +4,15 @@
       <Icon :name="`aergoMainLogo`" :size="150" />
       <div class="password-input-wrapper">
         <label class="input-label">Password</label>
-        <PasswordStrengthField
-          v-model="password"
-          :error="errors.password"
-          :state="errors.password ? `invalid` : `default`"
-          @submit="unlock"
-        />
+        <div class="password-size">
+          <PasswordStrengthField
+            class=""
+            v-model="password"
+            :error="errors.password"
+            :state="errors.password ? `invalid` : `default`"
+            @submit="unlock"
+          />
+        </div>
       </div>
       <Button class="button_size" @click="unlock" type="primary" size="medium" @keyup.enter="unlock"
         >Unlock</Button
@@ -91,6 +94,10 @@ export default class Lockscreen extends mixins() {
   .password-input-wrapper {
     margin-top: 32px;
     height: 130px;
+    .password-size {
+      width: 327px;
+      height: 48px;
+    }
     .input-label {
       margin-bottom: 10px;
       font-weight: 400;
@@ -112,6 +119,7 @@ export default class Lockscreen extends mixins() {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     span {
       margin-top: 24px;
       width: 288px;

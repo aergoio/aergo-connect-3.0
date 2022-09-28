@@ -4,6 +4,7 @@
     <AppearVue :delay="0.6">
       <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
     </AppearVue>
+<<<<<<< Updated upstream
     <div class="simple-content">
       <p class="simple-phrase">
         This passphrase will be used to secure all your accounts.
@@ -17,6 +18,32 @@
         :initPassword="password"
         :setting="setting"
       />
+=======
+    <Header button="back" to="welcome" title="Set Password" />
+    <div class="setup-content">
+      <p class="phrases">This passphrase will be used to secure all your accounts.</p>
+      <div>
+        <span class="password_title">New Password</span>
+        <div class="password_size">
+          <PasswordStrengthField
+            variant="default"
+            v-model="password"
+            autofocus
+            :setting="setting"
+            @keyup.enter="$event.target.nextSibling.focus()"
+          />
+        </div>
+        <span class="password_title">Confirm Password</span>
+        <div class="password_size">
+          <PasswordRepeatField
+            variant="default"
+            v-model="passwordRepeat"
+            :initPassword="password"
+            :setting="setting"
+          />
+        </div>
+      </div>
+>>>>>>> Stashed changes
     </div>
     <template #footer>
       <div v-if="!modal" class="footer">
@@ -125,10 +152,32 @@ export default class Setup extends mixins() {
 </script>
 
 <style lang="scss">
-.check {
-  position: absolute;
-  left: 24px;
-  top: 440px;
+.setup-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+
+  .phrases {
+    margin-left: 24px;
+    margin-top: 32px;
+    margin-bottom: 30px;
+  }
+  .password_title {
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: -0.333333px;
+    color: #454344;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  .password_size {
+    width: 327px;
+    height: 48px;
+    margin-bottom: 42px;
+  }
 }
 .check-text {
   position: absolute;

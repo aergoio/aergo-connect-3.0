@@ -149,6 +149,9 @@ export default Vue.extend({
       }
       return false;
     },
+    // nick() {
+    //   return this.$route.params.nick;
+    // },
   },
   methods: {
     hamburgerClick() {
@@ -191,15 +194,15 @@ export default Vue.extend({
     handleReceive() {
       console.log('receive');
     },
-    async getAccounts() {
-      const accountsData = await this.$background.getAccounts();
-      this.account = accountsData[0];
-      if (accountsData.length !== 0) {
-        this.noAccountModal = false;
-      } else {
-        this.noAccountModal = true;
-      }
-    },
+    // async getAccounts() {
+    //   const accountsData = await this.$background.getAccounts();
+    //   this.account = accountsData[0];
+    //   if (accountsData.length !== 0) {
+    //     this.noAccountModal = false;
+    //   } else {
+    //     this.noAccountModal = true;
+    //   }
+    // },
   },
 });
 </script>

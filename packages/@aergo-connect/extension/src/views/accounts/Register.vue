@@ -35,30 +35,6 @@
     </Appear>
 
     <template #footer>
-      <!-- <div class="content">
-				<Appear :delay="0.6">
-					<ButtonGroup vertical>
-						<Button
-							type="primary-outline"
-							size="large"
-							:to="{ name: 'setup', params: { next: 'account-import' } }"
-							>Import your wallet</Button
-						>
-						<Button
-							type="primary"
-							size="large"
-							:to="{ name: 'setup', params: { next: 'account-create' } }"
-							>Create new wallet</Button
-						>
-						<Button
-							type="secondary"
-							size="large"
-							:to="{ name: 'setup', params: { next: 'account-import' } }"
-							>Import your wallet</Button
-						>
-					</ButtonGroup>
-				</Appear>
-			</div> -->
     </template>
   </ScrollView>
 </template>
@@ -82,37 +58,19 @@ import { PersistInputsMixin } from '../../store/ui';
   },
 })
 export default class Create extends mixins(PersistInputsMixin) {
-  // todo: chainid 관련 내용 제거
-  // persistFields = ['chainId'];
-  // options = [
-  //    ['aergo.io', 'Mainnet'],
-  //    ['testnet.aergo.io', 'Testnet'],
-  //  ];
-  //  address = '';
-
-  chainId = 'aergo.io';
 
   async handleCreate() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
-      chainId: this.chainId,
+      chainId: 'aergo.io',
     });
 
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
-
-    //    const nameObj = await this.$background.addName(account,nickName) ;
-    //    console.log("ADD", nameObj.data.spec.name) ;
-    //    const names = this.$background.getNames(account) ;
-    //    console.log("GET", names);
-
-    const key = account.address.substr(0, 5) + '_nick';
 
     this.$router.push({
       name: 'account-create',
       params: {
         next: 'account-create',
-        chainId: account.chainId,
         address: account.address,
-        nick: key,
       },
     });
   }

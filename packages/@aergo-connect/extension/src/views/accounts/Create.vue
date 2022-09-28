@@ -43,43 +43,35 @@ import { Identicon } from '@aergo-connect/lib-ui/src/content';
 })
 export default class Create extends mixins() {
   address = '';
-  chainId = '';
   nick = '';
+  key = '' ;
 
   async beforeMount() {
-    const { address, chainId, nick } = await this.$route.params;
+    const { address } = await this.$route.params;
     this.address = address;
-    this.chainId = chainId;
-    this.nick = nick;
+    this.key = this.address.substr(0,5) + "_nick";
+    this.nick = this.key ;
   }
 
   async goBackup() {
-    const key = this.address.substr(0, 5) + '_nick';
-    chrome.storage.local.set({ [key]: this.nick });
-
-    // test
-    chrome.storage.local.get([key], result => {
-      console.log('GET', result[key]);
-    });
+    localStorage.setItem(this.key,this.nick);
 
     this.$router.push({
       name: 'account-backup',
-      params: { address: this.address, chainId: this.chainId, nick: this.nick },
+      params: { 
+        address: this.address, 
+      },
     });
   }
 
   async goHome() {
-    const key = this.address.substr(0, 5) + '_nick';
-    chrome.storage.local.set({ [key]: this.nick });
-
-    // test
-    chrome.storage.local.get([key], result => {
-      console.log('GET', result[key]);
-    });
+    localStorage.setItem(this.key,this.nick);
 
     this.$router.push({
       name: 'accounts-list-address',
-      params: { address: this.address, chainId: this.chainId, nick: this.nick },
+      params: { 
+        address: this.address, 
+      },
     });
   }
 }

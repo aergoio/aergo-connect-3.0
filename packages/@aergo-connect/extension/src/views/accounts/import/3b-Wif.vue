@@ -64,9 +64,9 @@ import { waitFor } from '@herajs/common';
   },
 })
 export default class Keystore extends mixins(PersistInputsMixin) {
-  chainId = '';
-  persistFields = ['chainId']; // Data from 1-Network
-  persistFieldsKey = 'account-create';
+  //chainId = '';
+  //persistFields = ['chainId']; // Data from 1-Network
+  //persistFieldsKey = 'account-create';
 
   encryptedKey = '';
   password = '';
@@ -91,9 +91,9 @@ export default class Keystore extends mixins(PersistInputsMixin) {
       const identity = await identityFromPrivateKey(decryptedBytes);
       const accountSpec = await this.$background.importAccount({
         privateKey: Array.from(identity.privateKey),
-        chainId: this.chainId,
+        chainId: 'aergo.io',
       });
-      this.$router.push({ name: 'account-imported', params: { ...accountSpec } });
+      this.$router.push({ name: 'account-imported', params: { address: accountSpec.address } });
     } catch (e) {
       console.log(e);
       if (`${e}`.match(/invalid mac value/)) {

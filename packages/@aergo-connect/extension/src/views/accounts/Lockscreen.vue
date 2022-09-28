@@ -61,11 +61,11 @@ export default class Lockscreen extends mixins() {
       const getAccounts = await this.$background.getAccounts();
       console.log(getAccounts, 'getaccounts');
       let nextPath = this.$store.state.ui.route.currentPath;
+
       if (!nextPath || nextPath === '/' || nextPath === '/locked') {
         nextPath = {
           name: 'accounts-list-address',
           params: {
-            chainId: getAccounts[0].key.split('/')[0],
             address: getAccounts[0].key.split('/')[1],
           },
         };

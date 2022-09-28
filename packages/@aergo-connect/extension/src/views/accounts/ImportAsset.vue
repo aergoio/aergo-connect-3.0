@@ -63,16 +63,22 @@ export default Vue.extend({
     accountSpec() {
       return {
         address: this.$route.params.address,
-        chainId: this.$route.params.chainId,
+        chainId: 'aergo.io',
       };
     },
   },
   methods: {
     handleBack() {
-      this.$router.push({ name: 'accounts-list-address', params: { ...this.accountSpec } });
-    },
-  },
+      this.$router.push({ 
+        name: 'accounts-list-address', 
+        params: {
+          address: accountSpec.address,
+        }
+      })
+    }
+  }
 });
+
 </script>
 
 <style lang="scss">

@@ -44,6 +44,7 @@ export default Vue.extend({
   data() {
     return {
       isAccountsListOpened: true,
+      nick: ''
     };
   },
   props: {},
@@ -71,17 +72,18 @@ export default Vue.extend({
     handleRemoveModal() {
       this.$emit('removeModalClick');
     },
+
     handleSelect(account: Account) {
       const accountSpec = {
         address: account.data.spec.address,
-        chainId: account.data.spec.chainId,
+        chainId: 'aergo.io',
       };
       this.$store.dispatch('accounts/updateAccount', accountSpec);
       this.$emit('select', account);
       this.$router.push({
         name: 'accounts-list-address',
         params: {
-          ...accountSpec,
+          address: accountSpec.address,
         },
       });
     },

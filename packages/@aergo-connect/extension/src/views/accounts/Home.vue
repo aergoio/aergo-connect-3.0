@@ -19,10 +19,10 @@
 
     <div v-if="!noAccountModal" class="home_content">
       <div class="account_info_wrapper">
-        <Identicon :text="account.data.spec.address" class="account_info_img" />
+        <Identicon :text="$route.params.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
-            <span class="account_info_nickname_text">ACCOUNT1</span>
+            <span class="account_info_nickname_text">{{ nick($route.params.address) }}</span>
             <Icon
               class="account_info_nickname_button"
               :name="`edit`"
@@ -32,7 +32,7 @@
           </div>
           <div class="account_info_address_wrapper">
             <span class="account_info_address_text">{{
-              `${account.data.spec.address.slice(0, 12)}...${account.data.spec.address.slice(-4)}`
+              `${$route.params.address.slice(0,15)}...${$route.params.address.slice(-5)}`
             }}</span>
             <Icon
               class="account_info_address_button"
@@ -119,6 +119,7 @@ export default Vue.extend({
     Header,
     ScrollView,
   },
+
   data() {
     return {
       hamburgerModal: false,
@@ -127,7 +128,10 @@ export default Vue.extend({
       importAssetModal: false,
     };
   },
+
   computed: {
+
+/*
     accounts(): Account[] {
       if (this.$store.state.accounts.keys.length) {
         return Object.values(this.$store.state.accounts.accounts);
@@ -136,24 +140,28 @@ export default Vue.extend({
     },
     accountSpec(): AccountSpec {
       return {
-        address: this.$route.params.address,
-        chainId: this.$route.params.chainId,
+        address: this.address,
+        chainId: 'aergo.io',
       };
     },
     account(): Account {
       return this.$store.getters['accounts/getAccount'](this.accountSpec);
     },
+*/
     noAccountModal() {
-      if (this.accounts.length === 0) {
+      if (!this.$route.params.address) {
         return true;
       }
       return false;
-    },
+    }
   },
+
   methods: {
+
     hamburgerClick() {
       this.hamburgerModal = !this.hamburgerModal;
     },
+
     handleCancel(modalEvent: string) {
       if (modalEvent === 'noAccountModal') {
         this.noAccountModal = false;
@@ -162,10 +170,12 @@ export default Vue.extend({
         this.removeAccountModal = false;
       }
     },
+
     handleRemoveModalClick() {
       this.hamburgerModal = false;
       this.removeAccountModal = true;
     },
+
     handleSelect() {
       this.hamburgerModal = false;
     },
@@ -183,7 +193,7 @@ export default Vue.extend({
       console.log('handleToken');
     },
     handleImportAsset() {
-      this.$router.push({ name: 'import-asset', params: { ...this.accountSpec } });
+      this.$router.push({ name: 'import-asset', params: { address: this.$route.params.address } });
     },
     handleSend() {
       console.log('send');
@@ -191,6 +201,8 @@ export default Vue.extend({
     handleReceive() {
       console.log('receive');
     },
+
+/*
     async getAccounts() {
       const accountsData = await this.$background.getAccounts();
       this.account = accountsData[0];
@@ -200,8 +212,26 @@ export default Vue.extend({
         this.noAccountModal = true;
       }
     },
+
+*/
+    nick(address: string) {
+      // get nick
+      const key = address.substr(0,5) + "_nick";
+      var nick = "" ;
+      try {
+          nick = localStorage.getItem(key);
+      } catch (error) {
+          nick = key;
+          console.log("STORE_ERRORS", error);
+      }
+      if (!nick) nick = key ;
+      console.log("Nick", nick);
+
+      return nick ;
+    }
   },
 });
+
 </script>
 
 <style lang="scss">
@@ -257,7 +287,7 @@ export default Vue.extend({
         background: #ecf8fd;
         border-radius: 25px;
         color: #279ecc;
-        margin-left: 30px;
+        margin-left: 25px;
         .account_info_address_text {
           font-family: 'Outfit';
           font-style: normal;

@@ -151,13 +151,19 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 
       console.log(accountSpec, 'accountSpec');
 
-      var key = accountSpec.address.substr(0,5) + "_nick"
+      const key = accountSpec.address.substr(0, 5) + '_nick';
 
-      this.$router.push({ 
-          name: 'account-imported', 
-          params: { chainId: accountSpec.chainId, address: accountSpec.address, nick: key, ...accountSpec }, 
-      });
-
+      this.$router
+        .push({
+          name: 'account-imported',
+          params: {
+            chainId: accountSpec.chainId,
+            address: accountSpec.address,
+            nick: key,
+            ...accountSpec,
+          },
+        })
+        .catch(() => {});
     } catch (e) {
       console.log(e);
       this.errors.derivationPath = `${e}`;
@@ -169,27 +175,26 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 </script>
 
 <style lang="scss">
-
 .import-seedphrase-preheader {
-    display: flex;
-    flex-direction: column;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 18px;
-    letter-spacing: -0.333333px;
-    color: #454344;
-    margin-top: 30px;
-    margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 18px;
+  letter-spacing: -0.333333px;
+  color: #454344;
+  margin-top: 30px;
+  margin-bottom: 10px;
 }
 
 .import-seedphrase-validation {
-    display: flex;
-    font-weight: 300;
-    font-size: 18px;
-    line-height: 18px;
-    display: flex;
-    letter-spacing: -0.333333px;
-    margin-top: 20px;
+  display: flex;
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 18px;
+  display: flex;
+  letter-spacing: -0.333333px;
+  margin-top: 20px;
   &.invalid {
     color: #e4097d;
   }
@@ -200,5 +205,4 @@ export default class Keystore extends mixins(PersistInputsMixin) {
     margin-right: 6px;
   }
 }
-
 </style>

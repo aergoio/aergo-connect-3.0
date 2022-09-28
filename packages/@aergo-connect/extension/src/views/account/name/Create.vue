@@ -77,7 +77,7 @@ export default class AccountNameCreate extends Vue {
         // as there is not way to automatically identify assigned names.
         if (name.data.destination === this.$route.params.address) {
           alert('You have already registered this name. It has now been added.');
-          this.$router.push({ name: 'account-details' });
+          this.$router.push({ name: 'account-details' }).catch(() => {});
           return;
         }
         throw new Error(`Name is already registered to account ${name.data.destination}`);
@@ -86,7 +86,7 @@ export default class AccountNameCreate extends Vue {
         this.$background.getCreateNameTransaction(this.accountSpec, this.name),
       );
       this.$store.dispatch('ui/setTxBody', txBody);
-      this.$router.push({ name: 'account-send-confirm' });
+      this.$router.push({ name: 'account-send-confirm' }).catch(() => {});
     } catch (e) {
       this.errors.name = `${e}`;
       console.error(e);

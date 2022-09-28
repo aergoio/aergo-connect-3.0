@@ -1,18 +1,7 @@
 <template>
   <ScrollView class="page">
     <Appear>
-      <Header
-        button="back"
-        title="Register Account"
-        :to="{
-          name: 'accounts-list-address',
-          params: {
-            chainId: $store.state.accounts.keys[0].split('/')[0],
-            address: $store.state.accounts.keys[0].split('/')[1],
-            nick: $store.state.accounts.keys[0].split('/')[2],
-          },
-        }"
-      />
+      <Header button="back" title="Register Account" />
       <div class="register-contents">
         <Heading class="big-title">Register an Account</Heading>
         <span class="pre-header">Import on existing accounts or create a new one.</span>
@@ -29,7 +18,7 @@
             >
               Import
             </Button>
-            <Button type="primary" size="large" hover="true" @click="handleCreate">
+            <Button type="primary" size="large" hover @click="handleCreate">
               Create
             </Button>
             <Button
@@ -116,16 +105,18 @@ export default class Create extends mixins(PersistInputsMixin) {
     //    console.log("GET", names);
 
     const key = account.address.substr(0, 5) + '_nick';
-
-    this.$router.push({
-      name: 'account-create',
-      params: {
-        next: 'account-create',
-        chainId: account.chainId,
-        address: account.address,
-        nick: key,
-      },
-    });
+    this.$store.commit('accounts/setAccountNick', key);
+    this.$router
+      .push({
+        name: 'account-create',
+        params: {
+          next: 'account-create',
+          chainId: account.chainId,
+          address: account.address,
+          nick: key,
+        },
+      })
+      .catch(() => {});
   }
 }
 </script>

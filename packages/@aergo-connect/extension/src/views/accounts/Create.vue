@@ -10,10 +10,14 @@
       </div>
 
       <span class="sub-title">Nickname</span>
-      <input class="user_nickname_text" autofocus v-model="nick" />
+      <div class="user_nickname_wrapper">
+        <div class="user_nickname_text">
+          {{ nick }}
+        </div>
+      </div>
 
       <ButtonGroup vertical class="buttonGroup-position">
-        <Button type="primary-outline" size="large-outline" :hover="true" @click="goBackup">
+        <Button type="primary-outline" size="large-outline" hover @click="goBackup">
           Backup Private Key
         </Button>
         <Button type="primary" size="large" :hover="true" @click="goHome">
@@ -62,10 +66,12 @@ export default class Create extends mixins() {
       console.log('GET', result[key]);
     });
 
-    this.$router.push({
-      name: 'account-backup',
-      params: { address: this.address, chainId: this.chainId, nick: this.nick },
-    });
+    this.$router
+      .push({
+        name: 'account-backup',
+        params: { address: this.address, chainId: this.chainId, nick: this.nick },
+      })
+      .catch(() => {});
   }
 
   async goHome() {
@@ -77,10 +83,12 @@ export default class Create extends mixins() {
       console.log('GET', result[key]);
     });
 
-    this.$router.push({
-      name: 'accounts-list-address',
-      params: { address: this.address, chainId: this.chainId, nick: this.nick },
-    });
+    this.$router
+      .push({
+        name: 'accounts-list-address',
+        params: { address: this.address, chainId: this.chainId, nick: this.nick },
+      })
+      .catch(() => {});
   }
 }
 </script>
@@ -122,7 +130,7 @@ export default class Create extends mixins() {
     margin-top: 22px;
     margin-bottom: 7px;
   }
-  .user_nickname {
+  .user_nickname_wrapper {
     display: flex;
     align-items: center;
     width: 283px;

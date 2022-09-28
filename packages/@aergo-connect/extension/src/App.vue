@@ -25,27 +25,31 @@ export default Vue.extend({
     );
 
     if (!unlocked && peformAuthCheck && isSetup) {
-      this.$router.push({ name: 'lockscreen' });
+      this.$router.push({ name: 'lockscreen' }).catch(() => {});
     }
 
     if (!isSetup) {
-      this.$router.push({ name: 'welcome' });
+      this.$router.push({ name: 'welcome' }).catch(() => {});
     }
 
     if (isSetup && unlocked) {
       if (getAccounts.length > 0) {
-        this.$router.push({
-          name: 'accounts-list-address',
-          params: {
-            address: getAccounts[0].data.spec.address,
-            chainId: getAccounts[0].data.spec.chainId,
-          },
-        });
+        this.$router
+          .push({
+            name: 'accounts-list-address',
+            params: {
+              address: getAccounts[0].data.spec.address,
+              chainId: getAccounts[0].data.spec.chainId,
+            },
+          })
+          .catch(() => {});
       }
       if (getAccounts.length === 0) {
-        this.$router.push({
-          name: 'accounts-list',
-        });
+        this.$router
+          .push({
+            name: 'accounts-list',
+          })
+          .catch(() => {});
       }
     }
   },

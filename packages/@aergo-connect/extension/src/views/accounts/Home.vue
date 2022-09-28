@@ -183,7 +183,7 @@ export default Vue.extend({
       console.log('handleToken');
     },
     handleImportAsset() {
-      this.$router.push({ name: 'import-asset', params: { ...this.accountSpec } });
+      this.$router.push({ name: 'import-asset', params: { ...this.accountSpec } }).catch(() => {});
     },
     handleSend() {
       console.log('send');

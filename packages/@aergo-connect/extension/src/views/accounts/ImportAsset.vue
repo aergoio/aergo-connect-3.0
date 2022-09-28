@@ -69,7 +69,12 @@ export default Vue.extend({
   },
   methods: {
     handleBack() {
-      this.$router.push({ name: 'accounts-list-address', params: { ...this.accountSpec } });
+      this.$router
+        .push({
+          name: 'accounts-list-address',
+          params: { ...this.accountSpec, nick: this.$route.params.nick },
+        })
+        .catch(() => {});
     },
   },
 });

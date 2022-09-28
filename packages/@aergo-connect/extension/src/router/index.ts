@@ -10,13 +10,15 @@ import Setup from '../views/accounts/Setup.vue';
 import Create from '../views/accounts/Create.vue';
 import Home from '../views/accounts/Home.vue';
 
+import SignMessage from '../views/accounts/SignMessage.vue';
+import Security from '../views/accounts/Security.vue';
+import ImportAsset from '../views/accounts/ImportAsset.vue';
+
 import Import from '../views/accounts/import/1-Network.vue';
 import ImportFormat from '../views/accounts/import/2-Format.vue';
 import ImportKeystore from '../views/accounts/import/3a-Keystore.vue';
 import ImportWif from '../views/accounts/import/3b-Wif.vue';
 import ImportSeedphrase from '../views/accounts/import/3c-Seedphrase.vue';
-
-import ImportAsset from '../views/accounts/ImportAsset.vue';
 
 import ConnectHw from '../views/accounts/connect-hw/1-Network.vue';
 import ConnectHwAccounts from '../views/accounts/connect-hw/2-Accounts.vue';
@@ -112,47 +114,57 @@ const routes: RouteConfig[] = [
       }),
 
       withMeta(1, {
-        path: 'list/:chainId/:address',
+        path: 'list/:chainId/:address/:nick',
         name: 'accounts-list-address',
         component: Home,
       }),
       withMeta(2, {
-        path: 'list/:chainId/:address/import/asset',
+        path: 'list/:chainId/:address/:nick/import/asset',
         name: 'import-asset',
         component: ImportAsset,
       }), // 시연용
       withMeta(2, {
-        path: 'balance/:chainId/:address',
+        path: 'list/:chainId/:address/:nick/signmessage',
+        name: 'sign-message',
+        component: SignMessage,
+      }), // 시연용
+      withMeta(2, {
+        path: 'list/:chainId/:address/:nick/security',
+        name: 'security',
+        component: Security,
+      }), // 시연용
+      withMeta(2, {
+        path: 'balance/:chainId/:address/:nick',
         name: 'balance-list',
         component: BalanceList,
       }), // 시연용
 
       withMeta(2, {
-        path: '/account/:chainId/:address/create',
+        path: '/account/:chainId/:address/:nick/create',
         name: 'account-create',
         component: Create,
       }),
 
       withMeta(3, {
-        path: '/account/:chainId/:address/backup ',
+        path: '/account/:chainId/:address/:nick/create/backup ',
         name: 'account-backup',
         component: BackupPrivateKey,
       }),
 
       withMeta(4, {
-        path: '/account/:chainId/:address/backup/mnemonic ',
+        path: '/account/:chainId/:address/:nick/create/backup/mnemonic ',
         name: 'account-backup-mnemonic',
         component: MnemonicSeedPhrase,
       }),
 
       withMeta(4, {
-        path: '/account/:chainId/:address/backup/encrypted ',
+        path: '/account/:chainId/:address/:nick/create/backup/encrypted ',
         name: 'account-backup-encrypted',
         component: ExportWif,
       }),
 
       withMeta(4, {
-        path: '/account/:chainId/:address/backup/keystore ',
+        path: '/account/:chainId/:address/:nick/create/backup/keystore ',
         name: 'account-backup-keystore',
         component: Keystore,
       }),

@@ -2,14 +2,14 @@
   <ScrollView class="page">
     <Header button="back" title="Encrypted Private Key" :to="{ name: 'account-import' }" />
     <div class="simple-content">
-      <span class="simple-preheader"> Enter your encrypted private key and password.  </span>
-      <div class="need-margin" >
-        <span class="field-title">Encrypted Private Key</span>        
-        <TextField 
-           class="simple-center"
-           v-model="encryptedKey" 
-           :error="errors.keystore" 
-           autofocus
+      <span class="simple-preheader"> Enter your encrypted private key and password. </span>
+      <div class="need-margin">
+        <span class="field-title">Encrypted Private Key</span>
+        <TextField
+          class="simple-center"
+          v-model="encryptedKey"
+          :error="errors.keystore"
+          autofocus
         />
       </div>
       <PasswordStrengthField
@@ -93,7 +93,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
         privateKey: Array.from(identity.privateKey),
         chainId: this.chainId,
       });
-      this.$router.push({ name: 'account-imported', params: { ...accountSpec } });
+      this.$router.push({ name: 'account-imported', params: { ...accountSpec } }).catch(() => {});
     } catch (e) {
       console.log(e);
       if (`${e}`.match(/invalid mac value/)) {

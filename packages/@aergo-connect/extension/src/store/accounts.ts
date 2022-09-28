@@ -10,6 +10,7 @@ export interface AccountsState {
   };
   lastSeedPhrase: string;
   balances: any;
+  nick: string;
 }
 
 interface AccountSpec {
@@ -30,6 +31,7 @@ const storeModule: Module<AccountsState, RootState> = {
     keys: [],
     lastSeedPhrase: '',
     balances: {},
+    nick: '',
   },
   getters: {
     getAccount: state => (accountSpec: AccountSpec): Account | undefined => {
@@ -80,6 +82,7 @@ const storeModule: Module<AccountsState, RootState> = {
       for (const account of accounts) {
         state.accounts[account.key] = account;
       }
+      //TODO nick key값으로 넣어줘야함.
       const newKeys = accounts.map(acc => acc.key).filter(key => state.keys.indexOf(key) === -1);
       state.keys.push(...newKeys);
     },
@@ -92,6 +95,9 @@ const storeModule: Module<AccountsState, RootState> = {
     },
     setSeedPhrase(state, phrase: string) {
       state.lastSeedPhrase = phrase;
+    },
+    setAccountNick(state, nick: string) {
+      state.nick = nick;
     },
   },
 };

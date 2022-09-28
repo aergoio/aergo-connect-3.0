@@ -14,7 +14,9 @@
           />
         </div>
       </div>
-      <Button @click="unlock" type="primary" size="large" @keyup.enter="unlock">Unlock</Button>
+      <Button class="button_size" @click="unlock" type="primary" size="medium" @keyup.enter="unlock"
+        >Unlock</Button
+      >
       <div class="password-text-wrapper">
         <span>
           Wallet won't unlock? You can DELETE your current wallet and setup a new one.
@@ -73,7 +75,7 @@ export default class Lockscreen extends mixins() {
           },
         };
       }
-      this.$router.push(nextPath);
+      this.$router.push(nextPath).catch(() => {});
     } catch (e) {
       // this.errors.password = `${e}`;
       this.errors.password = `Please check the seed phrase again.`;
@@ -103,6 +105,12 @@ export default class Lockscreen extends mixins() {
       line-height: 20px;
       letter-spacing: -0.333333px;
       color: #454344;
+    }
+    .input-field {
+      width: 303px;
+    }
+    .button_size {
+      width: 303px;
     }
   }
 

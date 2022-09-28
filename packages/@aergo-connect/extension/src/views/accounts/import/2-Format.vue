@@ -7,7 +7,7 @@
         <Button
           type="primary-outline"
           size="large-outline"
-          hover="true"
+          hover
           :to="{ name: 'account-import-seedphrase' }"
         >
           Mnemonic Seedphrase
@@ -16,7 +16,7 @@
         <Button
           type="primary-outline"
           size="large-outline"
-          hover="true"
+          hover
           :to="{ name: 'account-import-wif' }"
         >
           Encrypted Private Key
@@ -25,7 +25,7 @@
         <Button
           type="primary-outline"
           size="large-outline"
-          hover="true"
+          hover
           :to="{ name: 'account-import-keystore' }"
         >
           Keystore File
@@ -64,7 +64,6 @@ export default class Import extends mixins() {}
 </script>
 
 <style lang="scss">
-
 .buttons {
   margin-top: 40px;
   margin-bottom: 20px;

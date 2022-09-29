@@ -1,10 +1,8 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" to="welcome" title="Set Password" />
     <AppearVue :delay="0.6">
       <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
     </AppearVue>
-<<<<<<< Updated upstream
     <div class="simple-content">
       <p class="simple-phrase">
         This passphrase will be used to secure all your accounts.
@@ -18,32 +16,6 @@
         :initPassword="password"
         :setting="setting"
       />
-=======
-    <Header button="back" to="welcome" title="Set Password" />
-    <div class="setup-content">
-      <p class="phrases">This passphrase will be used to secure all your accounts.</p>
-      <div>
-        <span class="password_title">New Password</span>
-        <div class="password_size">
-          <PasswordStrengthField
-            variant="default"
-            v-model="password"
-            autofocus
-            :setting="setting"
-            @keyup.enter="$event.target.nextSibling.focus()"
-          />
-        </div>
-        <span class="password_title">Confirm Password</span>
-        <div class="password_size">
-          <PasswordRepeatField
-            variant="default"
-            v-model="passwordRepeat"
-            :initPassword="password"
-            :setting="setting"
-          />
-        </div>
-      </div>
->>>>>>> Stashed changes
     </div>
     <template #footer>
       <div v-if="!modal" class="footer">
@@ -157,7 +129,9 @@ export default class Setup extends mixins() {
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-
+  .input-field {
+    width: 327px;
+  }
   .phrases {
     margin-left: 24px;
     margin-top: 32px;
@@ -178,18 +152,28 @@ export default class Setup extends mixins() {
     height: 48px;
     margin-bottom: 42px;
   }
+  .password-strength {
+    margin-left: 0;
+  }
 }
-.check-text {
+.check {
   position: absolute;
-  left: 60px;
-  top: 430px;
-  width: 292px;
-  height: 40px;
-  font-family: 'Outfit';
-  font-style: normal;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: -0.333333px;
-  color: #686767;
+  left: 24px;
+  top: 440px;
+}
+.check {
+  display: flex;
+  .check-text {
+    margin-left: 4.24px;
+    margin-bottom: 28px;
+    width: 292px;
+    height: 40px;
+    font-family: 'Outfit';
+    font-style: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.333333px;
+    color: #686767;
+  }
 }
 </style>

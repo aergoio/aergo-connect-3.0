@@ -99,6 +99,7 @@ export default class Lockscreen extends mixins() {
       height: 48px;
     }
     .input-label {
+      margin-left: 11px;
       margin-bottom: 10px;
       font-weight: 400;
       font-size: 16px;

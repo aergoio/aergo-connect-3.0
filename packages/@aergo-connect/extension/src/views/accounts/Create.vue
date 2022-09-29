@@ -1,18 +1,18 @@
 <template>
   <ScrollView>
     <div class="registered_content">
-      <Identicon :text="address" class="circle" />
+      <Identicon :text="$route.params.address" class="circle" />
       <Heading class="big-title">Registered Account!</Heading>
 
       <span class="sub-title"> Address</span>
       <div class="address">
-        <span class="address_hash">{{ address }}</span>
+        <span class="address_hash">{{ $route.params.address }}</span>
       </div>
 
       <span class="sub-title">Nickname</span>
       <div class="user_nickname_wrapper">
         <div class="user_nickname_text">
-          {{ nick }}
+          {{ $store.state.accounts.nick }}
         </div>
       </div>
 
@@ -50,21 +50,13 @@ export default class Create extends mixins() {
   chainId = '';
   nick = '';
 
-  async beforeMount() {
-    const { address, chainId, nick } = await this.$route.params;
-    this.address = address;
-    this.chainId = chainId;
-    this.nick = nick;
-  }
-
   async goBackup() {
-    const key = this.address.substr(0, 5) + '_nick';
-    chrome.storage.local.set({ [key]: this.nick });
-
-    // test
-    chrome.storage.local.get([key], result => {
-      console.log('GET', result[key]);
-    });
+    this.$router
+      .push({
+        name: 'account-backup',
+        params: { address: this.$route.params.address, chainId: this.$route.params.chainId },
+      })
+      .catch(() => {});
 
     this.$router
       .push({
@@ -75,13 +67,12 @@ export default class Create extends mixins() {
   }
 
   async goHome() {
-    const key = this.address.substr(0, 5) + '_nick';
-    chrome.storage.local.set({ [key]: this.nick });
-
-    // test
-    chrome.storage.local.get([key], result => {
-      console.log('GET', result[key]);
-    });
+    this.$router
+      .push({
+        name: 'accounts-list-address',
+        params: { address: this.$route.params.address, chainId: this.$route.params.chainId },
+      })
+      .catch(() => {});
 
     this.$router
       .push({

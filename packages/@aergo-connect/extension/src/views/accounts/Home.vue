@@ -151,6 +151,12 @@ export default Vue.extend({
     handleCancel(modalEvent: string) {
       if (modalEvent === 'noAccountModal') {
         this.noAccountModal = false;
+        this.$router.push({
+          name: 'accounts-list-address',
+          params: {
+            address: "This is a temporary account",
+          }
+        }
       }
       if (modalEvent === 'removeAccountModal') {
         this.removeAccountModal = false;

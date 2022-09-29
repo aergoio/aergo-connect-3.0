@@ -3,38 +3,27 @@
     <AppearVue :delay="0.6">
       <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
     </AppearVue>
-    <Header button="back" :to="{ name: 'welcome' }" title="Set Password" />
-    <div class="setup-content">
-      <p class="phrases">This passphrase will be used to secure all your accounts.</p>
-      <div>
-        <span class="password_title">New Password</span>
-        <div class="password_size">
-          <PasswordStrengthField
-            variant="default"
-            v-model="password"
-            autofocus
-            :setting="setting"
-            @keyup.enter="$event.target.nextSibling.focus()"
-          />
-        </div>
-        <span class="password_title">Confirm Password</span>
-        <div class="password_size">
-          <PasswordRepeatField
-            variant="default"
-            v-model="passwordRepeat"
-            :initPassword="password"
-            :setting="setting"
-          />
-        </div>
-      </div>
+    <div class="simple-content">
+      <p class="simple-phrase">
+        This passphrase will be used to secure all your accounts.
+      </p>
+      <div class="field-title">New Password</div>
+      <PasswordStrengthField variant="default" v-model="password" autofocus :setting="setting" />
+      <div class="field-title">Confirm Password</div>
+      <PasswordRepeatField
+        variant="default"
+        v-model="passwordRepeat"
+        :initPassword="password"
+        :setting="setting"
+      />
     </div>
     <template #footer>
       <div v-if="!modal" class="footer">
         <div class="check">
           <CheckboxButton :checked="checked" @check="checkFunc" />
-          <div class="check-text">
-            I understand that this wallet cannot recover this password for me.
-          </div>
+        </div>
+        <div class="check-text">
+          I understand that this wallet cannot recover this password for me.
         </div>
         <div class="simple-center">
           <Button
@@ -163,6 +152,14 @@ export default class Setup extends mixins() {
     height: 48px;
     margin-bottom: 42px;
   }
+  .password-strength {
+    margin-left: 0;
+  }
+}
+.check {
+  position: absolute;
+  left: 24px;
+  top: 440px;
 }
 .check {
   display: flex;

@@ -108,84 +108,87 @@ const routes: RouteConfig[] = [
       withMeta(1, { path: '/register', name: 'register', component: Register }),
 
       withMeta(1, {
-        path: 'list',
+        path: '/list',
         name: 'accounts-list',
         component: Home,
       }),
 
       withMeta(1, {
-        path: 'list/:chainId/:address/:nick',
+        path: '/list/:chainId/:address',
         name: 'accounts-list-address',
         component: Home,
       }),
       withMeta(2, {
-        path: 'list/:chainId/:address/:nick/import/asset',
+        path: '/list/:chainId/:address/import/asset',
         name: 'import-asset',
         component: ImportAsset,
       }), // 시연용
       withMeta(2, {
-        path: 'list/:chainId/:address/:nick/signmessage',
+        path: '/list/:chainId/:address/signmessage',
         name: 'sign-message',
         component: SignMessage,
       }), // 시연용
       withMeta(2, {
-        path: 'list/:chainId/:address/:nick/security',
+        path: '/list/:chainId/:address/security',
         name: 'security',
         component: Security,
       }), // 시연용
       withMeta(2, {
         path: 'balance/:chainId/:address/:nick',
-        name: 'balance-list',
-        component: BalanceList,
       }), // 시연용
+      // withMeta(2, {
+      //   path: 'balance/:chainId/:address/:nick',
+      //   name: 'balance-list',
+      //   component: BalanceList,
+      // }), // 시연용
 
       withMeta(2, {
-        path: '/account/:chainId/:address/:nick/create',
+        path: '/account/:chainId/:address/create',
         name: 'account-create',
         component: Create,
       }),
 
       withMeta(3, {
-        path: '/account/:chainId/:address/:nick/create/backup ',
+        path: '/account/:chainId/:address/create/backup ',
         name: 'account-backup',
         component: BackupPrivateKey,
       }),
 
       withMeta(4, {
-        path: '/account/:chainId/:address/:nick/create/backup/mnemonic ',
+        path: '/account/:chainId/:address/create/backup/mnemonic ',
         name: 'account-backup-mnemonic',
         component: MnemonicSeedPhrase,
       }),
 
       withMeta(4, {
-        path: '/account/:chainId/:address/:nick/create/backup/encrypted ',
+        path: '/account/:chainId/:address/create/backup/encrypted ',
         name: 'account-backup-encrypted',
         component: ExportWif,
       }),
 
       withMeta(4, {
-        path: '/account/:chainId/:address/:nick/create/backup/keystore ',
+        path: '/account/:chainId/:address/create/backup/keystore ',
         name: 'account-backup-keystore',
         component: Keystore,
       }),
 
       withMeta(2, {
-        path: 'import/format',
+        path: '/import/format',
         name: 'account-import',
         component: ImportFormat,
       }),
       withMeta(3, {
-        path: 'import/keystore',
+        path: '/import/keystore',
         name: 'account-import-keystore',
         component: ImportKeystore,
       }),
       withMeta(3, {
-        path: 'import/wif',
+        path: '/import/wif',
         name: 'account-import-wif',
         component: ImportWif,
       }),
       withMeta(3, {
-        path: 'import/seedphrase',
+        path: '/import/seedphrase',
         name: 'account-import-seedphrase',
         component: ImportSeedphrase,
       }),

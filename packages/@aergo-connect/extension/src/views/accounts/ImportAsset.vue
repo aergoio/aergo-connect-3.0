@@ -18,7 +18,8 @@
           <div class="network_circle" />
           <div class="network_text">AERGO Mainnet</div>
         </div>
-        <TextField class="network_textField" />
+        <TextField class="network_textField" @submit="search"/>
+        <p>   {{ results }}  </p>
       </div>
 
       <ul class="select_token_content">
@@ -57,8 +58,15 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
+
 export default Vue.extend({
+
   components: { Header, ScrollView, TextField, Button },
+  data() {
+    return {
+      results: {},
+    }
+  },
   computed: {
     accountSpec() {
       return {
@@ -75,8 +83,23 @@ export default Vue.extend({
           address: accountSpec.address,
         }
       })
-    }
-  }
+    },
+
+    async search(query) {
+      console.log("Search", this.query) ;
+      await fetch(`https://api.aergoscan.io/testnet/v2/token?q=*${query}*`).then(res => {
+            return res.json()
+        }).then(data => {
+
+          if (data.hits.length) {
+            this.results = data.hits[0].meta ;
+          } else {
+            this.results = {} ;
+          } 
+        });
+        console.log("Results", this.results) ;
+     }
+   }
 });
 
 </script>

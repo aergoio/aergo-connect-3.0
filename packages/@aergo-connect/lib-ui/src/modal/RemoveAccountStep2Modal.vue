@@ -47,7 +47,7 @@ export default Vue.extend({
   },
   methods: {
     handleCancel() {
-      this.$emit('click', 'removeAccountModal');
+      this.$emit('cancel');
     },
     async handleDeleteAccount() {
       const nativeCheck = confirm(
@@ -55,10 +55,13 @@ export default Vue.extend({
       );
       if (!nativeCheck) return;
       await this.$background.removeAccount({
-        chainId: this.$route.params.chainId,
+        chainId: 'aergo.io',
         address: this.$route.params.address,
       });
-      this.$router.push({ name: 'accounts-list-address' });
+      const accounts = await this.$background.getAccounts();
+      console.log("NewAddress",accounts[0]?.data.spec.address) ;
+      this.$emit('cancel');
+      this.$router.push({ name: 'accounts-list-address', params: {address: accounts[0]?.data.spec.address} });
     },
   },
 });

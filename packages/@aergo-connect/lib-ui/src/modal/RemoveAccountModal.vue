@@ -8,13 +8,13 @@
         not need this account anymore.
       </div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover @click="handleGoNext">Confirm</ButtonVue>
+        <ButtonVue type="secondary" size="medium" hover @click="handleGoNext" @cancel="handleCancel">Confirm</ButtonVue>
         <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
           >Cancel</ButtonVue
         >
       </ButtonGroup>
     </div>
-    <RemoveAccountStep2Modal v-if="isNext" @click="handleCancel" />
+    <RemoveAccountStep2Modal v-if="isNext" @cancel="handleCancel"/>
   </div>
 </template>
 

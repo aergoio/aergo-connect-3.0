@@ -126,36 +126,22 @@ export default Vue.extend({
       removeAccountModal: false,
       networkModal: false,
       importAssetModal: false,
+      noAccountModal: false,
     };
   },
 
-  computed: {
-
-/*
-    accounts(): Account[] {
-      if (this.$store.state.accounts.keys.length) {
-        return Object.values(this.$store.state.accounts.accounts);
-      }
-      return [];
-    },
-    accountSpec(): AccountSpec {
-      return {
-        address: this.address,
-        chainId: 'aergo.io',
-      };
-    },
-    account(): Account {
-      return this.$store.getters['accounts/getAccount'](this.accountSpec);
-    },
-*/
-    noAccountModal() {
-      if (!this.$route.params.address) {
-        return true;
-      }
-      return false;
-    }
+  mounted() {
+     console.log("Input Address",this.$route.params.address) ;
+     if (!this.$route.params.address) { this.getAccount() } 
   },
 
+  watch: {
+     '$route' (to, from) {
+        console.log("Watch Address",this.$route.params.address) ;
+        if (!this.$route.params.address) { this.getAccount() }
+     }
+  },
+  
   methods: {
 
     hamburgerClick() {
@@ -202,18 +188,21 @@ export default Vue.extend({
       console.log('receive');
     },
 
-/*
-    async getAccounts() {
-      const accountsData = await this.$background.getAccounts();
-      this.account = accountsData[0];
-      if (accountsData.length !== 0) {
-        this.noAccountModal = false;
+    async getAccount() {
+      const accounts = await this.$background.getAccounts();
+      if (accounts.length !== 0) {
+        console.log("NewAddress",accounts[0]?.data.spec.address) ;
+        this.$router.push({
+          name: 'accounts-list-address',
+          params: {
+            address: accounts[0]?.data.spec.address,
+          }
+        }) ;
       } else {
         this.noAccountModal = true;
       }
     },
 
-*/
     nick(address: string) {
       // get nick
       const key = address.substr(0,5) + "_nick";

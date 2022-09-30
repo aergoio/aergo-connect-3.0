@@ -45,7 +45,6 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Component, { mixins } from 'vue-class-component';
 import { PersistInputsMixin } from '../../store/ui';
-
 @Component({
   components: {
     ScrollView,
@@ -61,9 +60,7 @@ export default class Create extends mixins(PersistInputsMixin) {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: 'aergo.io',
     });
-
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
-
     this.$router.push({
       name: 'account-create',
       params: {

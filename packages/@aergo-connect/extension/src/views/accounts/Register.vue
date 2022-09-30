@@ -34,8 +34,7 @@
       </div>
     </Appear>
 
-    <template #footer>
-    </template>
+    <template #footer> </template>
   </ScrollView>
 </template>
 

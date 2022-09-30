@@ -1,5 +1,6 @@
 <template>
   <ScrollView class="page">
+    <Header button="back" title="Set Password" :to="{ name: 'welcome' }" />
     <AppearVue :delay="0.6">
       <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
     </AppearVue>
@@ -21,9 +22,9 @@
       <div v-if="!modal" class="footer">
         <div class="check">
           <CheckboxButton :checked="checked" @check="checkFunc" />
-        </div>
-        <div class="check-text">
-          I understand that this wallet cannot recover this password for me.
+          <div class="check-text">
+            I understand that this wallet cannot recover this password for me.
+          </div>
         </div>
         <div class="simple-center">
           <Button
@@ -158,15 +159,11 @@ export default class Setup extends mixins() {
     margin-left: 0;
   }
 }
-.check {
-  position: absolute;
-  left: 24px;
-  top: 440px;
-}
+
 .check {
   display: flex;
   .check-text {
-    margin-left: 4.24px;
+    margin-left: 11px;
     margin-bottom: 28px;
     width: 292px;
     height: 40px;

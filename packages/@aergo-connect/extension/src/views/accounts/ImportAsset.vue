@@ -1,5 +1,5 @@
 <template>
-  <ScrollView>
+  <ScrollView orientation="horizontal">
     <Header button="back" title="Import Asset" @backClick="handleBack" />
     <div class="tab_content">
       <div class="tab_wrapper">
@@ -16,35 +16,43 @@
       <div class="search_wrapper">
         <div class="network_wrapper">
           <div class="network_circle" />
-          <div class="network_text">AERGO Mainnet</div>
+          <div class="network_text">{{ network() }}</div>
         </div>
-        <TextField class="network_textField" />
+        <TextField class="network_textField" @submit="search"/>
+        <ul class="select_token_content">
+          <div v-if="results.length">
+            <p> NAME           SYMBOL </p>
+            <ul >
+              <li v-for="result in results" @click="select(result)">
+                <span> {{ result.meta.name + "    " + result.meta.symbol }} </span>
+              </li>
+            </ul>
+          </div>
+        </ul>
       </div>
-
-      <ul class="select_token_content">
-        <div class="select_token_text">Select the token or NFT</div>
-        <li class="select_token_list">
-          <div class="list_icon">Icon</div>
-          <div class="list_text">Balancer (BAL)</div>
-          <div class="list_button">Token</div>
-        </li>
-        <li class="select_token_list">
-          <div class="list_icon">Icon</div>
-          <div class="list_text">Balancer (BAL)</div>
-          <div class="list_button">Token</div>
-        </li>
-        <li class="select_token_list">
-          <div class="list_icon">Icon</div>
-          <div class="list_text">Balancer (BAL)</div>
-          <div class="list_button">Token</div>
-        </li>
-        <li class="select_token_list">
-          <div class="list_icon">Icon</div>
-          <div class="list_text">Balancer (BAL)</div>
-          <div class="list_button">Token</div>
-        </li>
-      </ul>
     </div>
+<!--
+        <li class="select_token_list">
+          <div class="list_icon">Icon</div>
+          <div class="list_text">Balancer (BAL)</div>
+          <div class="list_button">Token</div>
+        </li>
+        <li class="select_token_list">
+          <div class="list_icon">Icon</div>
+          <div class="list_text">Balancer (BAL)</div>
+          <div class="list_button">Token</div>
+        </li>
+        <li class="select_token_list">
+          <div class="list_icon">Icon</div>
+          <div class="list_text">Balancer (BAL)</div>
+          <div class="list_button">Token</div>
+        </li>
+        <li class="select_token_list">
+          <div class="list_icon">Icon</div>
+          <div class="list_text">Balancer (BAL)</div>
+          <div class="list_button">Token</div>
+        </li>
+--> 
     <template #footer>
       <Button type="primary" size="large">Import</Button>
     </template>
@@ -57,25 +65,47 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
+
 export default Vue.extend({
+
   components: { Header, ScrollView, TextField, Button },
-  computed: {
-    accountSpec() {
-      return {
-        address: this.$route.params.address,
-        chainId: this.$route.params.chainId,
-      };
-    },
+  data() {
+    return {
+      results: {},
+    }
   },
+
   methods: {
     handleBack() {
-      this.$router.push({
-        name: 'accounts-list-address',
-        params: { ...this.accountSpec, nick: this.$route.params.nick },
-      });
+      this.$router.push({ 
+        name: 'accounts-list-address', 
+        params: {
+          address: this.$route.params.address,
+        }
+      })
     },
-  },
+
+    async search(query) {
+      console.log("Search", this.query) ;
+      await fetch(`https://api.aergoscan.io/${this.network()}/v2/token?q=*${query}*`).then(res => {
+            return res.json()
+        }).then(data => {
+          this.results = data.hits ;
+        });
+     },
+    
+     async select(token) {
+        console.log("Selected",token.meta) ;
+     },
+
+     network() {
+        const network = localStorage.getItem('Network') ;
+        if (!network) network = 'testnet' ;
+        return network ;
+     }
+   }
 });
+
 </script>
 
 <style lang="scss">

@@ -146,24 +146,18 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 
       const accountSpec = await this.$background.importAccount({
         privateKey: Array.from(identity.privateKey),
-        chainId: this.chainId,
+        chainId: 'aergo.io',
       });
 
       console.log(accountSpec, 'accountSpec');
 
-      const key = accountSpec.address.substr(0, 5) + '_nick';
+      this.$router.push({ 
+          name: 'account-imported', 
+          params: { 
+            address: accountSpec.address
+          }, 
+      });
 
-      this.$router
-        .push({
-          name: 'account-imported',
-          params: {
-            chainId: accountSpec.chainId,
-            address: accountSpec.address,
-            nick: key,
-            ...accountSpec,
-          },
-        })
-        .catch(() => {});
     } catch (e) {
       console.log(e);
       this.errors.derivationPath = `${e}`;

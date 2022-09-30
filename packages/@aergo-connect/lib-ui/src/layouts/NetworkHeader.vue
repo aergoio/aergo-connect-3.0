@@ -2,7 +2,7 @@
   <div class="network_content">
     <div class="network_circle" />
     <span class="network_name" @click="networkModalClick">
-      AERGO Mainnet
+      {{ network }}
     </span>
   </div>
 </template>
@@ -15,6 +15,16 @@ export default Vue.extend({
       this.$emit('networkModalClick');
     },
   },
+  computed: {
+    network() {
+      const network = localStorage.getItem("Network") ;
+      if (!network) {
+        return "AERGO MAINNET" ;
+      } else {
+        return network ;
+      }
+    }
+  }
 });
 </script>
 

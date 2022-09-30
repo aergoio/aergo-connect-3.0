@@ -1,7 +1,7 @@
 <!-- <template>
   <div>
     <span>.</span>
-    <span>AERGO Mainnet</span>
+    <span> {{ network }} </span>
   </div>
 </template>
 
@@ -12,14 +12,14 @@ export default Vue.extend({
   components: {},
   computed: {
     network() {
-      const network = localStorage.getItem('Network');
+      const network = localStorage.getItem("Network") ; 
       if (!network) {
-        return 'AERGO MAINNET';
+        return "AERGO MAINNET" ;
       } else {
-        return network;
+        return network ;
       }
-    },
-  },
+    }
+  }
 });
 </script>
 

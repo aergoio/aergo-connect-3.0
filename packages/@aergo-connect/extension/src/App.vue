@@ -34,15 +34,26 @@ export default Vue.extend({
 
     if (isSetup && unlocked) {
       if (getAccounts.length > 0) {
-        this.$router
-          .push({
-            name: 'accounts-list-address',
-            params: {
-              address: getAccounts[0].data.spec.address,
-              chainId: getAccounts[0].data.spec.chainId,
-            },
-          })
-          .catch(() => {});
+
+        const key = getAccounts[0].data.spec.address.substr(0,5) + "_nick";
+        var nick='' ;
+        try {
+            nick = localStorage.getItem(key);
+        } catch (error) {
+            nick = key;
+            console.log("STORE_ERRORS", error);
+        }
+        if (!nick) nick = key ;
+        console.log("Nick", nick);
+
+        this.$router.push({
+          name: 'accounts-list-address',
+          params: {
+            address: getAccounts[0].data.spec.address,
+            chainId: getAccounts[0].data.spec.chainId,
+            nick: nick
+          },
+        });
       }
       if (getAccounts.length === 0) {
         this.$router

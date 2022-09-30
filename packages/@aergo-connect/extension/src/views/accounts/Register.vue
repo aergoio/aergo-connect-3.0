@@ -34,7 +34,8 @@
       </div>
     </Appear>
 
-    <template #footer> </template>
+    <template #footer>
+    </template>
   </ScrollView>
 </template>
 
@@ -60,25 +61,18 @@ import { IndexedDbStorage } from '@herajs/wallet';
 export default class Create extends mixins(PersistInputsMixin) {
   async handleCreate() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
-      chainId: this.chainId,
+      chainId: 'aergo.io',
     });
 
     this.$store.commit('accounts/setSeedPhrase', mnemonic);
 
-    const key = account.address.substr(0, 5) + '_nick';
-    chrome.storage.local.set({ [key]: account.address });
-    console.log(IndexedDbStorage.name, 'indexedDb');
-    this.$store.commit('accounts/setAccountNick', key);
-    this.$router
-      .push({
-        name: 'account-create',
-        params: {
-          next: 'account-create',
-          chainId: account.chainId,
-          address: account.address,
-        },
-      })
-      .catch(() => {});
+    this.$router.push({
+      name: 'account-create',
+      params: {
+        next: 'account-create',
+        address: account.address,
+      },
+    });
   }
 }
 </script>

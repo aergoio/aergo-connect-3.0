@@ -7,7 +7,7 @@
       @click.capture="$emit('select', account)"
     >
       <div :class="activeAccount && activeAccount.key === account.key ? 'active' : ''">
-        <AccountItem :address="account.data.spec.address" />
+        <AccountItem :address="account.data.spec.address" :nickname="nick(account.data.spec.address)"/>
       </div>
     </li>
   </ul>
@@ -109,20 +109,26 @@ export default Vue.extend({
       default: false,
     },
   },
+
   data() {
     return {
       activeAccount: {} as Account,
     };
   },
+
   computed: {
+
     sortedAccounts(): Account[] {
       const accounts = [...this.accounts].filter(account => typeof account.data !== 'undefined');
       // Order by address A-Z
+
       accounts.sort((a, b) => a.data.spec?.address?.localeCompare(b.data.spec?.address));
       // Order by balance, reversed
+
       accounts.sort((a, b) =>
         !a.data ? 0 : -new Amount(a.data.balance).compare(new Amount(b.data.balance)),
       );
+
       // Order by chainID A-Z. This does not affect the groupBy, it just orders the groups alphabetically (e.g. aergo.io < testnet.aergo.io)
       accounts.sort((a, b) =>
         !a.data ? 0 : a.data.spec?.chainId?.localeCompare(b.data.spec.chainId),
@@ -140,25 +146,46 @@ export default Vue.extend({
       }
       return accounts;
     },
+
     accountsByChainId() {
       if (this.groupByChain === false) return [['ALL', this.sortedAccounts]];
       const result = groupBy(this.sortedAccounts, item => item?.data?.spec?.chainId || '');
       return Array.from(result);
     },
+
   },
   methods: {
+
+    nick(address: string) {
+      const key = address.substr(0,5) + "_nick";
+      var nick = '' ;
+      try {
+        nick = localStorage.getItem(key);
+      } catch (error) {
+        nick = key;
+        console.log("STORE_ERRORS", error);
+      }
+      if (!nick) nick = key ;
+
+      return nick ;
+    },
+
     isPublicChainId(chainId: string) {
       return isPublicChainId(chainId);
     },
+
     isNew(account: Account) {
       if (!this.highlightNew) return false;
       const MaxAge = 1000 * 60 * 5; // 5 min
       const added = typeof account.data.added === 'string' ? +new Date(account.data.added) : 0;
       return +new Date() - added < MaxAge;
     },
+
   },
+
   async mounted() {
     this.activeAccount = await this.$background.getActiveAccount();
+
     // Scroll the active account into view
     setTimeout(() => {
       const element = this.$el.querySelectorAll('.active')[0];

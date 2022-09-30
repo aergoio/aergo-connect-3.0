@@ -66,9 +66,9 @@ import { WarningInBox } from '@aergo-connect/lib-ui/src/items';
   },
 })
 export default class Keystore extends mixins(PersistInputsMixin) {
-  chainId = '';
-  persistFields = ['chainId']; // Data from 1-Network
-  persistFieldsKey = 'account-create';
+//  chainId = '';
+//  persistFields = ['chainId']; // Data from 1-Network
+//  persistFieldsKey = 'account-create';
 
   keystoreContent: any = {};
   password = '';
@@ -99,9 +99,9 @@ export default class Keystore extends mixins(PersistInputsMixin) {
       const identity = await identityFromKeystore(this.keystoreContent, this.password);
       const accountSpec = await this.$background.importAccount({
         privateKey: Array.from(identity.privateKey),
-        chainId: this.chainId,
+        chainId: 'aergo.io',
       });
-      this.$router.push({ name: 'account-imported', params: { ...accountSpec } }).catch(()=>{})
+      this.$router.push({ name: 'account-imported', params: { address: accountSpec.address } });
     } catch (e) {
       console.log(e);
       if (`${e}`.match(/invalid mac value/)) {

@@ -27,7 +27,7 @@ export default Vue.extend({
   components: { Icon, ButtonGroup, ButtonVue },
   methods: {
     handleCancel() {
-      this.$emit('noAccountModalClick');
+      this.$emit('cancel', 'noAccountModal');
     },
   },
 });

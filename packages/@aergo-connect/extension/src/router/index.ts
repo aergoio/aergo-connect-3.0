@@ -114,12 +114,12 @@ const routes: RouteConfig[] = [
       }),
 
       withMeta(1, {
-        path: '/list/:chainId/:address',
+        path: 'list/:address',
         name: 'accounts-list-address',
         component: Home,
       }),
       withMeta(2, {
-        path: '/list/:chainId/:address/import/asset',
+        path: 'list/:address/import/asset',
         name: 'import-asset',
         component: ImportAsset,
       }), // 시연용
@@ -143,31 +143,31 @@ const routes: RouteConfig[] = [
       // }), // 시연용
 
       withMeta(2, {
-        path: '/account/:chainId/:address/create',
+        path: '/account/:address/create',
         name: 'account-create',
         component: Create,
       }),
 
       withMeta(3, {
-        path: '/account/:chainId/:address/create/backup ',
+        path: '/account/:address/backup ',
         name: 'account-backup',
         component: BackupPrivateKey,
       }),
 
       withMeta(4, {
-        path: '/account/:chainId/:address/create/backup/mnemonic ',
+        path: '/account/:address/backup/mnemonic ',
         name: 'account-backup-mnemonic',
         component: MnemonicSeedPhrase,
       }),
 
       withMeta(4, {
-        path: '/account/:chainId/:address/create/backup/encrypted ',
+        path: '/account/:address/backup/encrypted ',
         name: 'account-backup-encrypted',
         component: ExportWif,
       }),
 
       withMeta(4, {
-        path: '/account/:chainId/:address/create/backup/keystore ',
+        path: '/account/:address/backup/keystore ',
         name: 'account-backup-keystore',
         component: Keystore,
       }),
@@ -219,7 +219,7 @@ const routes: RouteConfig[] = [
       withMeta(
         5,
         {
-          path: 'networks/:chainId',
+          path: 'networks',
           name: 'networks-update',
           component: NetworksUpdate,
         },
@@ -305,7 +305,7 @@ const routes: RouteConfig[] = [
         component: VerifySeedPhrase,
       }),
       {
-        path: 'imported',
+        path: 'import/:address',
         name: 'account-imported',
         component: Create,
       },

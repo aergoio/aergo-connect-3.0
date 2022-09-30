@@ -47,39 +47,36 @@ import { Identicon } from '@aergo-connect/lib-ui/src/content';
 })
 export default class Create extends mixins() {
   address = '';
-  chainId = '';
   nick = '';
+  key = '' ;
+
+  async beforeMount() {
+    const { address } = await this.$route.params;
+    this.address = address;
+    this.key = this.address.substr(0,5) + "_nick";
+    this.nick = this.key ;
+  }
 
   async goBackup() {
-    this.$router
-      .push({
-        name: 'account-backup',
-        params: { address: this.$route.params.address, chainId: this.$route.params.chainId },
-      })
-      .catch(() => {});
+    localStorage.setItem(this.key,this.nick);
 
-    this.$router
-      .push({
-        name: 'account-backup',
-        params: { address: this.address, chainId: this.chainId, nick: this.nick },
-      })
-      .catch(() => {});
+    this.$router.push({
+      name: 'account-backup',
+      params: { 
+        address: this.address, 
+      },
+    });
   }
 
   async goHome() {
-    this.$router
-      .push({
-        name: 'accounts-list-address',
-        params: { address: this.$route.params.address, chainId: this.$route.params.chainId },
-      })
-      .catch(() => {});
+    localStorage.setItem(this.key,this.nick);
 
-    this.$router
-      .push({
-        name: 'accounts-list-address',
-        params: { address: this.address, chainId: this.chainId, nick: this.nick },
-      })
-      .catch(() => {});
+    this.$router.push({
+      name: 'accounts-list-address',
+      params: { 
+        address: this.address, 
+      },
+    });
   }
 }
 </script>

@@ -12,16 +12,13 @@
         />
       </div>
       <div class="import-keystore-passwordInput">
-        <PasswordStrengthField
-          class="size"
-          v-model="password"
-          type="password"
-          autoComplete="no"
-      />
-      <div v-if="errors.password" class="simple-left">
-        <WarningInBox :error="errors.password" />
+        <PasswordStrengthField class="size" v-model="password" type="password" autoComplete="no" />
+        <div v-if="errors.password" class="simple-left">
+          <WarningInBox :error="errors.password" />
+        </div>
       </div>
     </div>
+
     <template #footer>
       <div>
         <Button
@@ -66,9 +63,9 @@ import { WarningInBox } from '@aergo-connect/lib-ui/src/items';
   },
 })
 export default class Keystore extends mixins(PersistInputsMixin) {
-//  chainId = '';
-//  persistFields = ['chainId']; // Data from 1-Network
-//  persistFieldsKey = 'account-create';
+  //  chainId = '';
+  //  persistFields = ['chainId']; // Data from 1-Network
+  //  persistFieldsKey = 'account-create';
 
   keystoreContent: any = {};
   password = '';

@@ -44,7 +44,7 @@ export default Vue.extend({
   data() {
     return {
       isAccountsListOpened: true,
-      nick: ''
+      nick: '',
     };
   },
   props: {},
@@ -86,6 +86,10 @@ export default Vue.extend({
           address: accountSpec.address,
         },
       });
+    },
+
+    handleLock() {
+      this.$background.lock();
     },
   },
   mounted() {

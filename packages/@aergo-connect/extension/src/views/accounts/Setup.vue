@@ -125,7 +125,7 @@ export default class Setup extends mixins() {
       this.next();
     }
     // Init Network
-    localStorage.setItem("Network","AERGO MAINNET");
+    localStorage.setItem("Network","testnet");
   }
 }
 </script>

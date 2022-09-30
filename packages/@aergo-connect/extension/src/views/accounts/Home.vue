@@ -56,6 +56,12 @@
             <span> {{ state.balance }} </span>
             <Icon class="next" :name="`next_grey`" @click="handleToken" />
           </li>
+          <li v-for="token in tokens" class="token_list_li">
+            <Identicon :text="token.hash" class="list_icon" />
+            <span> {{ token.meta.name }} </span>
+            <span> {{ getBalance(token.hash) }} </span>
+            <Icon class="next" :name="`next_grey`" @click="handleToken" />
+          </li>
         </ul>
         <button class="token_list_button" @click="handleImportAsset">
           <Icon name="plus" class="token_list_button_img" /><span class="token_list_button_text"
@@ -116,7 +122,8 @@ export default Vue.extend({
       importAssetModal: false,
       noAccountModal: false,
       spec: {},
-      state: {}
+      state: {},
+      tokens: [],
     };
   },
 
@@ -132,13 +139,21 @@ export default Vue.extend({
   
   methods: {
     async init_state() {
+
       console.log("Input Address",this.$route.params.address) ;
-      if (!this.$route.params.address) { this.getNewAccount() ; } 
+      console.log("Nick Name",this.nick(this.$route.params.address)) ;
+
+      if (!this.$route.params.address) { 
+        console.log("GetNewAccount") ;
+        this.getNewAccount() ; 
+      } 
       else {
         this.spec = await { address: this.$route.params.address, chainId: 'aergo.io' } ;
-        this.state = await this.$background.getAccountState(this.spec) ;
         console.log("spec",this.spec) ;
+        this.state = await this.$background.getAccountState(this.spec) ;
         console.log("balance",this.state.balance) ;
+        this.tokens = await this.getTokens(this.spec.address) ;
+        console.log("tokens",this.tokens) ;
       };
     },
 
@@ -161,7 +176,6 @@ export default Vue.extend({
       if (modalEvent === 'removeAccountModal') {
         this.removeAccountModal = false;
       }
-
     },
 
     handleRemoveModalClick() {
@@ -197,6 +211,7 @@ export default Vue.extend({
 
     async getNewAccount() {
       const accounts = await this.$background.getAccounts();
+
       if (accounts.length !== 0) {
         console.log("NewAddress",accounts[0]?.data.spec.address) ;
 
@@ -214,8 +229,21 @@ export default Vue.extend({
       }
     },
 
+    getBalance(address: string) {
+      return "0" ;
+    },
+
+    async getTokens(address: string) {
+      const key = address.substr(0,5) + localStorage.getItem("Network")+"_token" ;
+      const tokensJ = localStorage.getItem(key) ;
+
+      var tokens = JSON.parse(tokensJ);
+      console.log("tokens", tokens) ;
+
+      return tokens ;
+    },
+
     nick(address: string) {
-      // get nick
       const key = address.substr(0,5) + "_nick";
       var nick = "" ;
       try {
@@ -225,7 +253,6 @@ export default Vue.extend({
           console.log("STORE_ERRORS", error);
       }
       if (!nick) nick = key ;
-      console.log("Nick", nick);
 
       return nick ;
     }

@@ -14,6 +14,7 @@ import Controller from './controller';
 import { ChainConfig } from '../config';
 import { promisifySimple } from '../utils/promisify';
 
+
 interface AccountSpec {
   chainId: string;
   address: string;
@@ -35,6 +36,38 @@ export class Api {
   constructor(controller: Controller) {
     this.controller = controller;
   }
+
+// seo
+/*
+  async deleteToken(address: string, token: any) {
+    const key = address.substr(0,5) + localStorage.getItem("Network")+"_token" ;
+    var list = localStorage.getItem(key) ;
+    let filtered = list.filter((element) => element.hash !== token.hash);
+    localStorage.setItem(key, filtered) ;
+    console.log ("deleteToken", token.meta.name) ;
+  }
+
+  async getNick(address: string) : Promise<string> {
+      const key = address.substr(0,5) + "_nick";
+      var nick = "" ;
+      new Promise ((resolve) => {
+          localStorage.getItem(key)
+         .then((res) => {
+           nick = res.data ;
+           resolve(res.data) ;
+         }) 
+         .catch (error => {
+           nick = key;
+           console.log("STORE_ERRORS", error);
+         })
+       });
+
+      if (!nick) nick = key ;
+      console.log("Nick", nick);
+
+      return nick ;
+  }
+*/
 
   async unlock({ password }: { password: string }) {
     await this.controller.unlock(password);

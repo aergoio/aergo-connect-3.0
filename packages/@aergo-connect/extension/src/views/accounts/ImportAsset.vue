@@ -90,7 +90,28 @@ export default Vue.extend({
     
      async select(token) {
         console.log("Selected",token.meta) ;
-        
+        this.addToken(this.$route.params.address,token) ;
+        this.$router.push({
+          name: 'accounts-list-address',
+          params: {
+            address: this.$route.params.address,
+          },
+        });        
+     },
+
+     async addToken(address, token) {
+
+       const key = address.substr(0,5) + localStorage.getItem("Network")+"_token" ;
+       var listJ = localStorage.getItem(key) ;
+       if (!listJ) {
+         var list = [token] ;
+         localStorage.setItem(key, JSON.stringify(list)) ;
+       } else {
+         var list = JSON.parse(listJ);
+         list.push(token) ;
+         localStorage.setItem(key, JSON.stringify(list)) ;
+       }
+       console.log ("addToken", list) ;
      },
 
      network() {

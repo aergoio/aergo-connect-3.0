@@ -32,7 +32,7 @@
           </div>
           <div class="account_info_address_wrapper">
             <span class="account_info_address_text">{{
-              `${$route.params.address.slice(0,15)}...${$route.params.address.slice(-5)}`
+              `${$route.params.address.slice(0, 15)}...${$route.params.address.slice(-5)}`
             }}</span>
             <Icon
               class="account_info_address_button"
@@ -132,7 +132,7 @@ export default Vue.extend({
 
   mounted() {
      console.log("Input Address",this.$route.params.address) ;
-     if (!this.$route.params.address) { this.getAccount() } 
+     if (!this.$route.params.address) { this.getAccount() }
   },
 
   watch: {
@@ -141,7 +141,7 @@ export default Vue.extend({
         if (!this.$route.params.address) { this.getAccount() }
      }
   },
-  
+
   methods: {
 
     hamburgerClick() {
@@ -181,11 +181,10 @@ export default Vue.extend({
       console.log('handleDetailAddress');
     },
     handleToken(token: any) {
-      console.log(token);
-      console.log('handleToken');
+      this.$router.push({ name: 'token-detail', params: { address: this.$route.params.address } }).catch(()=>{});
     },
     handleImportAsset() {
-      this.$router.push({ name: 'import-asset', params: { address: this.$route.params.address } });
+      this.$router.push({ name: 'import-asset', params: { address: this.$route.params.address } }).catch(()=>{});
     },
     handleSend() {
       console.log('send');
@@ -226,7 +225,6 @@ export default Vue.extend({
     }
   },
 });
-
 </script>
 
 <style lang="scss">

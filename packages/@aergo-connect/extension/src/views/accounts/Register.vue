@@ -1,7 +1,7 @@
 <template>
   <ScrollView class="page">
     <Appear>
-      <Header button="back" title="Register Account" />
+      <Header button="back" title="Register Account" :to="{ name: 'accounts-list' }" />
       <div class="register-contents">
         <Heading class="big-title">Register an Account</Heading>
         <span class="pre-header">Import on existing accounts or create a new one.</span>
@@ -34,8 +34,7 @@
       </div>
     </Appear>
 
-    <template #footer>
-    </template>
+    <template #footer> </template>
   </ScrollView>
 </template>
 
@@ -46,7 +45,6 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Component, { mixins } from 'vue-class-component';
 import { PersistInputsMixin } from '../../store/ui';
-import { IndexedDbStorage } from '@herajs/wallet';
 
 @Component({
   components: {

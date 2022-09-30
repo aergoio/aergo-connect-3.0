@@ -14,7 +14,9 @@ import SignMessage from '../views/accounts/SignMessage.vue';
 import Security from '../views/accounts/Security.vue';
 import ImportAsset from '../views/accounts/ImportAsset.vue';
 
-import Import from '../views/accounts/import/1-Network.vue';
+import TokenDetail from '../views/accounts/TokenDetail.vue';
+
+// import Import from '../views/accounts/import/1-Network.vue';
 import ImportFormat from '../views/accounts/import/2-Format.vue';
 import ImportKeystore from '../views/accounts/import/3a-Keystore.vue';
 import ImportWif from '../views/accounts/import/3b-Wif.vue';
@@ -22,23 +24,23 @@ import ImportSeedphrase from '../views/accounts/import/3c-Seedphrase.vue';
 
 import ConnectHw from '../views/accounts/connect-hw/1-Network.vue';
 import ConnectHwAccounts from '../views/accounts/connect-hw/2-Accounts.vue';
-import AccountsList from '../views/accounts/List.vue';
-import BalanceList from '../views/accounts/balance/List.vue';
+// import AccountsList from '../views/accounts/List.vue';
+// import BalanceList from '../views/accounts/balance/List.vue';
 import Settings from '../views/accounts/Settings.vue';
 import NetworksList from '../views/accounts/networks/List.vue';
 import NetworksUpdate from '../views/accounts/networks/Update.vue';
 
 import BackupPrivateKey from '../views/account/export/BackupPrivateKey.vue';
 import MnemonicSeedPhrase from '../views/account/export/MnemonicSeedPhrase.vue';
-import EncryptedPrivateKey from '../views/account/export/EncryptedPrivateKey.vue';
+// import EncryptedPrivateKey from '../views/account/export/EncryptedPrivateKey.vue';
 import Keystore from '../views/account/export/Keystore.vue';
 import ExportWif from '../views/account/export/Wif.vue';
 
 import AccountContainer from '../views/account/Container.vue';
-import AccountCreated from '../views/account/Created.vue';
+// import AccountCreated from '../views/account/Created.vue';
 import ViewSeedPhrase from '../views/account/seedphrase/View.vue';
 import VerifySeedPhrase from '../views/account/seedphrase/Verify.vue';
-import AccountImported from '../views/account/Imported.vue';
+// import AccountImported from '../views/account/Imported.vue';
 import TabContainer from '../views/account/TabContainer.vue';
 import AccountSend from '../views/account/send/1-Send.vue';
 import AccountSendConfirm from '../views/account/send/2-Confirm.vue';
@@ -134,8 +136,14 @@ const routes: RouteConfig[] = [
         component: Security,
       }), // 시연용
       withMeta(2, {
+        path: '/list/:address/tokendetail',
+        name: 'token-detail',
+        component: TokenDetail,
+      }), // 시연용
+      withMeta(2, {
         path: 'balance/:chainId/:address/:nick',
       }), // 시연용
+
       // withMeta(2, {
       //   path: 'balance/:chainId/:address/:nick',
       //   name: 'balance-list',

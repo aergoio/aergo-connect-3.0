@@ -18,20 +18,26 @@
           <div class="network_circle" />
           <div class="network_text">{{ network() }}</div>
         </div>
-        <TextField class="network_textField" @submit="search"/>
+        <TextField class="network_textField" @submit="search" />
         <ul class="select_token_content">
           <div v-if="results.length">
-            <p> NAME           SYMBOL </p>
-            <ul >
-              <li v-for="result in results" @click="select(result)">
-                <span> {{ result.meta.name + "    " + result.meta.symbol }} </span>
+            <ul>
+              <p class="select_token_text">Select the token or NFT.</p>
+              <li v-for="result in results" @click="select(result)" class="select_token_list">
+                <div class="direction_row">
+                  <Icon class="list_icon" :src="result.meta.image" alt="'image'" />
+                  <div class="list_text">{{ result.meta.name }}</div>
+                  <div class="list_text">{{ `(${result.meta.symbol})` }}</div>
+                  <div class="list_button">Token</div>
+                </div>
+                <div class="line" />
               </li>
             </ul>
           </div>
         </ul>
       </div>
     </div>
-<!--
+    <!--
         <li class="select_token_list">
           <div class="list_icon">Icon</div>
           <div class="list_text">Balancer (BAL)</div>
@@ -52,7 +58,7 @@
           <div class="list_text">Balancer (BAL)</div>
           <div class="list_button">Token</div>
         </li>
---> 
+-->
     <template #footer>
       <Button type="primary" size="large">Import</Button>
     </template>
@@ -67,45 +73,46 @@ import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 
 export default Vue.extend({
-
   components: { Header, ScrollView, TextField, Button },
   data() {
     return {
       results: {},
-    }
+    };
   },
 
   methods: {
     handleBack() {
-      this.$router.push({ 
-        name: 'accounts-list-address', 
+      this.$router.push({
+        name: 'accounts-list-address',
         params: {
           address: this.$route.params.address,
-        }
-      })
+        },
+      });
     },
 
     async search(query) {
-      console.log("Search", this.query) ;
-      await fetch(`https://api.aergoscan.io/${this.network()}/v2/token?q=*${query}*`).then(res => {
-            return res.json()
-        }).then(data => {
-          this.results = data.hits ;
+      console.log('Search', this.query);
+      await fetch(`https://api.aergoscan.io/${this.network()}/v2/token?q=*${query}*`)
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          this.results = data.hits;
         });
-     },
-    
-     async select(token) {
-        console.log("Selected",token.meta) ;
-     },
+    },
 
-     network() {
-        const network = localStorage.getItem('Network') ;
-        if (!network) network = 'testnet' ;
-        return network ;
-     }
-   }
+    async select(token) {
+      console.log('Selected', token.meta);
+      // this.token = token.meta;
+    },
+
+    network() {
+      let network = localStorage.getItem('Network');
+      if (!network) network = 'testnet';
+      return network;
+    },
+  },
 });
-
 </script>
 
 <style lang="scss">
@@ -193,8 +200,12 @@ export default Vue.extend({
 
   .select_token_content {
     width: 327px;
-    margin-top: 35px;
+    /* margin-top: 35px; */
+    .direction_row {
+      display: flex;
+    }
     .select_token_text {
+      margin-top: 12px;
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 300;
@@ -208,32 +219,34 @@ export default Vue.extend({
     }
     .select_token_list {
       width: 327px;
-      height: 62px;
       display: flex;
       align-items: center;
+      .line {
+        width: 327px;
+        height: 1px;
+        background: #f0f0f0;
+      }
       .list_icon {
         width: 42px;
         height: 42px;
-        margin-left: 34px;
         align-items: center;
       }
       .list_text {
         display: flex;
         /* Subtitle/S3 */
-        width: 200px;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
         font-size: 16px;
         line-height: 20px;
         letter-spacing: -0.333333px;
-        margin-left: 14px;
+        /* margin-left: 14px; */
         /* Grey/07 */
-
+        min-width: 120px;
         color: #454344;
       }
       .list_button {
-        margin-left: 112px;
+        margin-right: 22px;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;

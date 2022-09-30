@@ -12,7 +12,7 @@
       <span class="sub-title">Nickname</span>
       <div class="user_nickname_wrapper">
         <div class="user_nickname_text">
-          {{ $store.state.accounts.nick }}
+          {{ nick }}
         </div>
       </div>
 
@@ -48,33 +48,33 @@ import { Identicon } from '@aergo-connect/lib-ui/src/content';
 export default class Create extends mixins() {
   address = '';
   nick = '';
-  key = '' ;
+  key = '';
 
   async beforeMount() {
     const { address } = await this.$route.params;
     this.address = address;
-    this.key = this.address.substr(0,5) + "_nick";
-    this.nick = this.key ;
+    this.key = this.address.substr(0, 5) + '_nick';
+    this.nick = this.key;
   }
 
   async goBackup() {
-    localStorage.setItem(this.key,this.nick);
+    localStorage.setItem(this.key, this.nick);
 
     this.$router.push({
       name: 'account-backup',
-      params: { 
-        address: this.address, 
+      params: {
+        address: this.address,
       },
     });
   }
 
   async goHome() {
-    localStorage.setItem(this.key,this.nick);
+    localStorage.setItem(this.key, this.nick);
 
     this.$router.push({
       name: 'accounts-list-address',
-      params: { 
-        address: this.address, 
+      params: {
+        address: this.address,
       },
     });
   }

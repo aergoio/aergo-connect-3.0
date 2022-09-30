@@ -64,24 +64,48 @@ export default class Import extends mixins() {}
 </script>
 
 <style lang="scss">
-.buttons {
-  margin-top: 40px;
-  margin-bottom: 20px;
-  button {
-    margin-bottom: 40px;
-  }
-}
+.format-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .preheader {
+    margin-top: 32px;
+    width: 318px;
+    height: 25px;
+    /* Headline/H3 */
 
-.note {
-  margin-left: 24px;
-  width: 327px;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 19px;
-  letter-spacing: -0.333333px;
-  color: #686767;
-  span {
-    color: #279ecc;
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 25px;
+    letter-spacing: -0.333333px;
+
+    /* Grey/08 */
+
+    color: #231f20;
+  }
+  .buttons {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    button {
+      margin-bottom: 40px;
+    }
+  }
+
+  .note {
+    margin-left: 24px;
+    width: 320px;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 19px;
+    letter-spacing: -0.333333px;
+    color: #686767;
+    word-wrap: break-word;
+    span {
+      color: #279ecc;
+    }
   }
 }
 </style>

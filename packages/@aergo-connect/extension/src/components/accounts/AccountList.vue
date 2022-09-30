@@ -7,7 +7,10 @@
       @click.capture="$emit('select', account)"
     >
       <div :class="activeAccount && activeAccount.key === account.key ? 'active' : ''">
-        <AccountItem :address="account.data.spec.address" :nickname="nick(account.data.spec.address)"/>
+        <AccountItem
+          :address="account.data.spec.address"
+          :nickname="nick(account.data.spec.address)"
+        />
       </div>
     </li>
   </ul>
@@ -117,7 +120,6 @@ export default Vue.extend({
   },
 
   computed: {
-
     sortedAccounts(): Account[] {
       const accounts = [...this.accounts].filter(account => typeof account.data !== 'undefined');
       // Order by address A-Z
@@ -152,22 +154,20 @@ export default Vue.extend({
       const result = groupBy(this.sortedAccounts, item => item?.data?.spec?.chainId || '');
       return Array.from(result);
     },
-
   },
   methods: {
-
     nick(address: string) {
-      const key = address.substr(0,5) + "_nick";
-      var nick = '' ;
+      const key = address.substr(0, 5) + '_nick';
+      let nick = '';
       try {
         nick = localStorage.getItem(key);
       } catch (error) {
         nick = key;
-        console.log("STORE_ERRORS", error);
+        console.log('STORE_ERRORS', error);
       }
-      if (!nick) nick = key ;
+      if (!nick) nick = key;
 
-      return nick ;
+      return nick;
     },
 
     isPublicChainId(chainId: string) {
@@ -180,7 +180,6 @@ export default Vue.extend({
       const added = typeof account.data.added === 'string' ? +new Date(account.data.added) : 0;
       return +new Date() - added < MaxAge;
     },
-
   },
 
   async mounted() {

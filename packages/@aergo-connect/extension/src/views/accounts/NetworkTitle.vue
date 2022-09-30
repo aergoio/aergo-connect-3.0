@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div>
     <span>.</span>
     <span> {{ network }} </span>
@@ -23,4 +23,4 @@ export default Vue.extend({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss"></style> -->

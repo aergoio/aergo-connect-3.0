@@ -16,9 +16,11 @@ export default class RequestSelectAccount extends Vue {
   async redirectToRequest() {
     const activeAccount = await this.$background.getActiveAccount();
     if (!activeAccount) {
-      return this.$router.push({ name: 'request-accounts-list' });
+      return this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
     }
-    this.$router.push({ name: 'request-select-action', params: activeAccount.data.spec });
+    this.$router
+      .push({ name: 'request-select-action', params: activeAccount.data.spec })
+      .catch(() => {});
   }
 }
 </script>

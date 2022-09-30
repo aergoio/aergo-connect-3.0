@@ -52,7 +52,7 @@ export default class Create extends mixins() {
     }
   }
   configure() {
-    this.$router.push({ name: 'networks-list' });
+    this.$router.push({ name: 'networks-list' }).catch(() => {});
   }
   handleInput(value: string): void {
     this.$emit('input', value);

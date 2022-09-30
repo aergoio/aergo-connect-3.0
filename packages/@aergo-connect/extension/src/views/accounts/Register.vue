@@ -1,7 +1,7 @@
 <template>
   <ScrollView class="page">
     <Appear>
-      <Header button="back" title="Register Account" :to="{ name: 'accounts-list' }" />
+      <Header button="back" title="Register Account" />
       <div class="register-contents">
         <Heading class="big-title">Register an Account</Heading>
         <span class="pre-header">Import on existing accounts or create a new one.</span>
@@ -18,7 +18,7 @@
             >
               Import
             </Button>
-            <Button type="primary" size="large" hover="true" @click="handleCreate">
+            <Button type="primary" size="large" hover @click="handleCreate">
               Create
             </Button>
             <Button
@@ -46,6 +46,7 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Component, { mixins } from 'vue-class-component';
 import { PersistInputsMixin } from '../../store/ui';
+import { IndexedDbStorage } from '@herajs/wallet';
 
 @Component({
   components: {
@@ -58,7 +59,6 @@ import { PersistInputsMixin } from '../../store/ui';
   },
 })
 export default class Create extends mixins(PersistInputsMixin) {
-
   async handleCreate() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: 'aergo.io',

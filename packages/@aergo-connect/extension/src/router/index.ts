@@ -10,13 +10,15 @@ import Setup from '../views/accounts/Setup.vue';
 import Create from '../views/accounts/Create.vue';
 import Home from '../views/accounts/Home.vue';
 
+import SignMessage from '../views/accounts/SignMessage.vue';
+import Security from '../views/accounts/Security.vue';
+import ImportAsset from '../views/accounts/ImportAsset.vue';
+
 import Import from '../views/accounts/import/1-Network.vue';
 import ImportFormat from '../views/accounts/import/2-Format.vue';
 import ImportKeystore from '../views/accounts/import/3a-Keystore.vue';
 import ImportWif from '../views/accounts/import/3b-Wif.vue';
 import ImportSeedphrase from '../views/accounts/import/3c-Seedphrase.vue';
-
-import ImportAsset from '../views/accounts/ImportAsset.vue';
 
 import ConnectHw from '../views/accounts/connect-hw/1-Network.vue';
 import ConnectHwAccounts from '../views/accounts/connect-hw/2-Accounts.vue';
@@ -106,7 +108,7 @@ const routes: RouteConfig[] = [
       withMeta(1, { path: '/register', name: 'register', component: Register }),
 
       withMeta(1, {
-        path: 'list',
+        path: '/list',
         name: 'accounts-list',
         component: Home,
       }),
@@ -122,10 +124,23 @@ const routes: RouteConfig[] = [
         component: ImportAsset,
       }), // 시연용
       withMeta(2, {
-        path: 'balance/:address',
-        name: 'balance-list',
-        component: BalanceList,
+        path: '/list/:chainId/:address/signmessage',
+        name: 'sign-message',
+        component: SignMessage,
       }), // 시연용
+      withMeta(2, {
+        path: '/list/:chainId/:address/security',
+        name: 'security',
+        component: Security,
+      }), // 시연용
+      withMeta(2, {
+        path: 'balance/:chainId/:address/:nick',
+      }), // 시연용
+      // withMeta(2, {
+      //   path: 'balance/:chainId/:address/:nick',
+      //   name: 'balance-list',
+      //   component: BalanceList,
+      // }), // 시연용
 
       withMeta(2, {
         path: '/account/:address/create',
@@ -158,22 +173,22 @@ const routes: RouteConfig[] = [
       }),
 
       withMeta(2, {
-        path: 'import/format',
+        path: '/import/format',
         name: 'account-import',
         component: ImportFormat,
       }),
       withMeta(3, {
-        path: 'import/keystore',
+        path: '/import/keystore',
         name: 'account-import-keystore',
         component: ImportKeystore,
       }),
       withMeta(3, {
-        path: 'import/wif',
+        path: '/import/wif',
         name: 'account-import-wif',
         component: ImportWif,
       }),
       withMeta(3, {
-        path: 'import/seedphrase',
+        path: '/import/seedphrase',
         name: 'account-import-seedphrase',
         component: ImportSeedphrase,
       }),

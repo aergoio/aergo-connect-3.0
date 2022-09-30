@@ -204,7 +204,7 @@ export default class AccountSend extends mixins(PersistInputsMixin) {
         // Ignore
       }
     }
-    this.$router.push({ name: 'account-send-confirm' });
+    this.$router.push({ name: 'account-send-confirm' }).catch(() => {});
   }
 }
 </script>

@@ -74,7 +74,7 @@ export default class AccountNameUpdate extends Vue {
         ),
       );
       this.$store.dispatch('ui/setTxBody', txBody);
-      this.$router.push({ name: 'account-send-confirm' });
+      this.$router.push({ name: 'account-send-confirm' }).catch(() => {});
     } catch (e) {
       let msg = `${e}`;
       if (msg.match(/Invalid checksum/)) msg = 'Invalid checksum';

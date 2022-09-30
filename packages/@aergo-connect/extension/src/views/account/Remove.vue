@@ -50,7 +50,7 @@ export default class RequestAddress extends mixins() {
       chainId: this.$route.params.chainId,
       address: this.$route.params.address,
     });
-    this.$router.push({ name: 'accounts-list' });
+    this.$router.push({ name: 'accounts-list' }).catch(() => {});
   }
 }
 </script>

@@ -25,11 +25,11 @@ export default Vue.extend({
     );
 
     if (!unlocked && peformAuthCheck && isSetup) {
-      this.$router.push({ name: 'lockscreen' });
+      this.$router.push({ name: 'lockscreen' }).catch(() => {});
     }
 
     if (!isSetup) {
-      this.$router.push({ name: 'welcome' });
+      this.$router.push({ name: 'welcome' }).catch(() => {});
     }
 
     if (isSetup && unlocked) {
@@ -56,9 +56,11 @@ export default Vue.extend({
         });
       }
       if (getAccounts.length === 0) {
-        this.$router.push({
-          name: 'accounts-list',
-        });
+        this.$router
+          .push({
+            name: 'accounts-list',
+          })
+          .catch(() => {});
       }
     }
   },

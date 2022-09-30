@@ -12,14 +12,14 @@
           <img v-else src="@aergo-connect/lib-ui/src/icons/img/arrow-up.svg" />
         </div>
         <AccountList :accounts="accounts" :canDelete="true" @select="handleSelect" />
-        <SideNavButton img="add" title="Add Account" to="register" />
+        <SideNavButton img="add" title="Add Account" :to="{ name: 'register' }" />
         <SideNavButton img="delete" title="Remove Account" @click="handleRemoveModal" />
       </section>
       <section class="nav-footer">
         <div>
-          <SideNavButton img="sign-message" title="Sign Message" />
-          <SideNavButton img="security" title="Security" />
-          <SideNavButton img="lock" title="Lock" />
+          <SideNavButton img="sign-message" title="Sign Message" :to="{ name: 'sign-message' }" />
+          <SideNavButton img="security" title="Security" :to="{ name: 'security' }" />
+          <SideNavButton img="lock" title="Lock" @click="handleLock" />
         </div>
         <div class="side-nav-version">
           <span>Version</span>

@@ -53,19 +53,7 @@
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
-            <span>0.000AERGO</span>
-            <Icon class="next" :name="`next_grey`" @click="handleToken" />
-          </li>
-          <li class="token_list_li">
-            <Icon class="token_list_icon" />
-            <span>AERGO</span>
-            <span>0.000AERGO</span>
-            <Icon class="next" :name="`next_grey`" @click="handleToken" />
-          </li>
-          <li class="token_list_li">
-            <Icon class="token_list_icon" />
-            <span>AERGO</span>
-            <span>0.000AERGO</span>
+            <span> {{ state.balance }} </span>
             <Icon class="next" :name="`next_grey`" @click="handleToken" />
           </li>
         </ul>
@@ -127,40 +115,53 @@ export default Vue.extend({
       networkModal: false,
       importAssetModal: false,
       noAccountModal: false,
+      spec: {},
+      state: {}
     };
   },
 
   mounted() {
-     console.log("Input Address",this.$route.params.address) ;
-     if (!this.$route.params.address) { this.getAccount() } 
+     this.init_state() ;
   },
 
   watch: {
      '$route' (to, from) {
-        console.log("Watch Address",this.$route.params.address) ;
-        if (!this.$route.params.address) { this.getAccount() }
+        this.init_state() ;
      }
   },
   
   methods: {
+    async init_state() {
+      console.log("Input Address",this.$route.params.address) ;
+      if (!this.$route.params.address) { this.getNewAccount() ; } 
+      else {
+        this.spec = await { address: this.$route.params.address, chainId: 'aergo.io' } ;
+        this.state = await this.$background.getAccountState(this.spec) ;
+        console.log("spec",this.spec) ;
+        console.log("balance",this.state.balance) ;
+      };
+    },
 
     hamburgerClick() {
       this.hamburgerModal = !this.hamburgerModal;
     },
 
     handleCancel(modalEvent: string) {
+
       if (modalEvent === 'noAccountModal') {
         this.noAccountModal = false;
-        this.$router.push({
+        this.$router.push( {
           name: 'accounts-list-address',
           params: {
             address: "This is a temporary account",
           }
-        }
+        });
       }
+
       if (modalEvent === 'removeAccountModal') {
         this.removeAccountModal = false;
       }
+
     },
 
     handleRemoveModalClick() {
@@ -194,10 +195,14 @@ export default Vue.extend({
       console.log('receive');
     },
 
-    async getAccount() {
+    async getNewAccount() {
       const accounts = await this.$background.getAccounts();
       if (accounts.length !== 0) {
         console.log("NewAddress",accounts[0]?.data.spec.address) ;
+
+        // TODO: delete?
+        await this.$background.setActiveAccount(accounts[0]?.data.spec);
+
         this.$router.push({
           name: 'accounts-list-address',
           params: {
@@ -224,7 +229,7 @@ export default Vue.extend({
 
       return nick ;
     }
-  },
+  }
 });
 
 </script>
@@ -249,6 +254,7 @@ export default Vue.extend({
     border-radius: 8px;
     margin-top: 10px;
     margin-bottom: 12px;
+
     .account_info_img {
       width: 44px;
       height: 44px;
@@ -257,6 +263,7 @@ export default Vue.extend({
     .account_info_content_wrapper {
       display: flex;
       flex-direction: column;
+
       .account_info_nickname_wrapper {
         display: flex;
         flex-direction: row;
@@ -288,6 +295,7 @@ export default Vue.extend({
           font-size: 12px;
           line-height: 15px;
           /* identical to box height */
+
           letter-spacing: -0.333333px;
           width: 148.32px;
           height: 16px;
@@ -301,6 +309,7 @@ export default Vue.extend({
       }
     }
   }
+
   .token_content_wrapper {
     display: flex;
     flex-direction: column;
@@ -308,6 +317,7 @@ export default Vue.extend({
     justify-content: center;
     height: 253px;
     margin-top: 16px;
+
     .token-button {
       width: 153px;
       height: 39px;
@@ -346,6 +356,7 @@ export default Vue.extend({
       border: 1px solid #f6f6f6;
       box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1);
       border-radius: 28px;
+
       text-align: center;
       letter-spacing: -0.333333px;
       cursor: pointer;
@@ -356,29 +367,38 @@ export default Vue.extend({
       .token_list_button_text {
         width: 76px;
         height: 18px;
+
         /* Caption/C3 */
+
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
         font-size: 14px;
         line-height: 18px;
         /* identical to box height */
+
         text-align: center;
         letter-spacing: -0.333333px;
+
         /* Primary/Blue01 */
+
         color: #279ecc;
+
         /* Inside auto layout */
+
         flex: none;
         order: 1;
         flex-grow: 0;
       }
     }
   }
+
   .content_footer {
     margin-top: 40px;
     .button {
       box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
       border-radius: 4px;
+
       .button-icon {
         margin-right: 9.49px;
       }

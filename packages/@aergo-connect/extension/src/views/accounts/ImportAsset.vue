@@ -23,36 +23,20 @@
           <div v-if="results.length">
             <p> NAME           SYMBOL </p>
             <ul >
-              <li v-for="result in results" @click="select(result)">
-                <span> {{ result.meta.name + "    " + result.meta.symbol }} </span>
+              <li v-for="result in results" class="select_token_list" @click="select(result)">
+                  <Identicon :text="result.hash" class="list_icon" />
+                  <span class="list_text">
+                    {{ result.meta.name + "    " + result.meta.symbol }} 
+                  </span>
+                  <span class="list_button">
+                    {{ result.meta.type }} 
+                  </span>
               </li>
             </ul>
           </div>
         </ul>
       </div>
     </div>
-<!--
-        <li class="select_token_list">
-          <div class="list_icon">Icon</div>
-          <div class="list_text">Balancer (BAL)</div>
-          <div class="list_button">Token</div>
-        </li>
-        <li class="select_token_list">
-          <div class="list_icon">Icon</div>
-          <div class="list_text">Balancer (BAL)</div>
-          <div class="list_button">Token</div>
-        </li>
-        <li class="select_token_list">
-          <div class="list_icon">Icon</div>
-          <div class="list_text">Balancer (BAL)</div>
-          <div class="list_button">Token</div>
-        </li>
-        <li class="select_token_list">
-          <div class="list_icon">Icon</div>
-          <div class="list_text">Balancer (BAL)</div>
-          <div class="list_button">Token</div>
-        </li>
---> 
     <template #footer>
       <Button type="primary" size="large">Import</Button>
     </template>
@@ -65,10 +49,18 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
+import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
 
 export default Vue.extend({
 
-  components: { Header, ScrollView, TextField, Button },
+  components: { 
+    Header, 
+    ScrollView, 
+    TextField, 
+    Button,
+    Identicon,
+  },
+
   data() {
     return {
       results: {},
@@ -86,16 +78,19 @@ export default Vue.extend({
     },
 
     async search(query) {
-      console.log("Search", this.query) ;
+      console.log("Search", query) ;
       await fetch(`https://api.aergoscan.io/${this.network()}/v2/token?q=*${query}*`).then(res => {
             return res.json()
         }).then(data => {
           this.results = data.hits ;
         });
+        
+      console.log("Results", this.results) ;
      },
     
      async select(token) {
         console.log("Selected",token.meta) ;
+        
      },
 
      network() {
@@ -212,32 +207,32 @@ export default Vue.extend({
       display: flex;
       align-items: center;
       .list_icon {
-        width: 42px;
-        height: 42px;
-        margin-left: 34px;
+        width: 40px;
+        height: 40px;
+        margin-left: 24px;
         align-items: center;
       }
       .list_text {
         display: flex;
         /* Subtitle/S3 */
-        width: 200px;
+        width: 250px;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 20px;
         letter-spacing: -0.333333px;
-        margin-left: 14px;
+        margin-left: 12px;
         /* Grey/07 */
 
         color: #454344;
       }
       .list_button {
-        margin-left: 112px;
+        margin-left: 100px;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
-        font-size: 14px;
+        font-size: 12px;
         line-height: 18px;
         /* identical to box height */
 

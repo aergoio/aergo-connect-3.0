@@ -1,23 +1,19 @@
 <template>
   <ScrollView>
     <div class="registered_content">
-      <Identicon :text="$route.params.address" class="circle" />
+      <Identicon :text="address" class="circle" />
       <Heading class="big-title">Registered Account!</Heading>
 
       <span class="sub-title"> Address</span>
       <div class="address">
-        <span class="address_hash">{{ $route.params.address }}</span>
+        <span class="address_hash">{{ address }}</span>
       </div>
 
       <span class="sub-title">Nickname</span>
-      <div class="user_nickname_wrapper">
-        <div class="user_nickname_text">
-          {{ $store.state.accounts.nick }}
-        </div>
-      </div>
+      <input class="user_nickname_text" autofocus v-model="nick" />
 
       <ButtonGroup vertical class="buttonGroup-position">
-        <Button type="primary-outline" size="large-outline" hover @click="goBackup">
+        <Button type="primary-outline" size="large-outline" :hover="true" @click="goBackup">
           Backup Private Key
         </Button>
         <Button type="primary" size="large" :hover="true" @click="goHome">
@@ -69,6 +65,7 @@ export default class Create extends mixins() {
   }
 
   async goHome() {
+
     localStorage.setItem(this.key,this.nick);
 
     this.$router.push({
@@ -118,7 +115,7 @@ export default class Create extends mixins() {
     margin-top: 22px;
     margin-bottom: 7px;
   }
-  .user_nickname_wrapper {
+  .user_nickname {
     display: flex;
     align-items: center;
     width: 283px;

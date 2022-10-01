@@ -59,7 +59,7 @@
           <li v-for="token in tokens" class="token_list_li">
             <Identicon :text="token.hash" class="list_icon" />
             <span> {{ token.meta.name }} </span>
-            <span> {{ getBalance(token) }} </span>
+            <span> {{ getBalance(token.hash) }} </span>
             <Icon class="next" :name="`next_grey`" @click="handleToken" />
           </li>
         </ul>
@@ -120,13 +120,8 @@ export default Vue.extend({
       networkModal: false,
       importAssetModal: false,
       noAccountModal: false,
-      spec: {
-              address: '',
-              chainId: 'aergo.io'
-            },
-      state: {
-              balance: "0",
-            },
+      network: 'aergo.io',
+      state: {},
       tokens: [],
     };
   },
@@ -145,29 +140,32 @@ export default Vue.extend({
         console.log("GetNewAccount") ;
         this.getNewAccount() ;
       } else {
-        this.spec = await { address: this.$route.params.address, chainId: 'aergo.io' } ;
-        console.log("spec",this.spec) ;
-        this.state = await this.$background.getAccountState(this.spec) ;
+        this.network = await localStorage.getItem('Network') ;
+        this.state = await this.$background.getAccountState({ address: this.$route.params.address, chainId: this.network }) ;
         console.log("balance",this.state.balance) ;
-        this.tokens = await this.getTokens(this.spec.address) ;
+        this.tokens = await this.getTokens(this.$route.params.address) ;
         console.log("tokens",this.tokens) ;
       };
 
-      console.log("Nick Name",this.nick(this.$route.params.address)) ;
+      console.log("INIT ACCOUNT",this.tokens) ;
     },
 
     async getTokens(address: string) {
-      const key = address.substr(0,5) + localStorage.getItem("Network")+"_token" ;
+      const key = address.substr(0,5) + "_" + this.network + "_token" ;
       const tokensJ = localStorage.getItem(key) ;
 
-      var tokens = JSON.parse(tokensJ);
-      console.log("tokens", tokens) ;
-
-      return tokens ;
+      console.log("Tokens", tokensJ) ;
+      if (tokensJ) return JSON.parse(tokensJ || '{}');
+      else return [] ;
     },
 
     getBalance(token_hash: string) {
-      return "0" ;
+      return 0 ;
+/*
+      const balance = this.$background.getTokenBalance(this.network, this.$route.params.adress, token_hash) ;
+      if (!balance) return 0.0 ;
+      else return balance ;
+*/
     },
 
     hamburgerClick() {
@@ -243,8 +241,8 @@ export default Vue.extend({
           nick = key;
           console.log("STORE_ERRORS", error);
       }
+
       if (!nick) nick = key ;
-      console.log("Nick", nick);
       return nick ;
     }
   },

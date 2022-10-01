@@ -7,24 +7,16 @@ export interface ChainConfig {
 
 export const ChainConfigs: ChainConfig[] = [
   {
-    chainId: 'testnet.aergo.io',
+    chainId: 'testnet',
     nodeUrl: 'https://testnet-api-http.aergo.io',
   },
   {
-    chainId: 'main.aergo.io',
+    chainId: 'mainnet',
     nodeUrl: 'https://mainnet-api-http.aergo.io',
   },
   {
-    chainId: 'aergo.io',
-    nodeUrl: 'https://mainnet-api-http.aergo.io',
-  },
-  {
-    chainId: 'sqltestnet.aergo.io',
-    nodeUrl: 'https://sqltestnet-api-http.aergo.io',
-  },
-  {
-    chainId: 'dev.chain',
-    nodeUrl: 'http://127.0.0.1:7845',
+    chainId: 'alpha',
+    nodeUrl: 'https://alpha-api-http.aergo.io',
   },
 ];
 

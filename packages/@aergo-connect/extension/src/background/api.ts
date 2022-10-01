@@ -8,7 +8,9 @@ import {
 } from '@herajs/crypto';
 import { Amount } from '@herajs/common';
 import { Account, Transaction } from '@herajs/wallet';
-import { Address } from '@herajs/client';
+
+// seo
+import { Address, Contract } from '@herajs/client';
 
 import Controller from './controller';
 import { ChainConfig } from '../config';
@@ -26,6 +28,25 @@ interface TokenPriceInfo {
   currency: string;
 }
 const tokenPriceCache: Record<string, TokenPriceInfo> = {};
+/*
+const TokenABI = {
+"language": "lua",
+"version": "0.2",
+"state_variables": [],
+"functions": [
+    {
+    "name": "balanceOf",
+    "arguments": [
+        {
+        "name": "owner"
+        }
+    ],
+    "view": true,
+    "payable": false,
+    "feeDelegation": false
+    }
+]};
+*/
 
 /**
  * RPC API to be consumed by clients.
@@ -66,6 +87,16 @@ export class Api {
       console.log("Nick", nick);
 
       return nick ;
+  }
+
+  async queryContract (abi, address, name, args, chainId) {
+    const contract = Contract.fromAbi(abi).setAddress(address);
+    return await this.controller.wallet.getClient(chainId).queryContract(contract[name](...args));
+  }
+  async getTokenBalance (chainId: string, address: string, token: string) {
+    const contract = Contract.fromAbi(TokenABI).setAddress(token);
+    const result = await this.controller.wallet.getClient(chainId).queryContract(contract['balanceOf'](address));
+    return result._bignum;
   }
 */
 

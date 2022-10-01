@@ -101,7 +101,7 @@ export default Vue.extend({
     },
 
     async addToken(address, token) {
-      const key = address.substr(0,5) + localStorage.getItem("Network")+"_token" ;
+      const key = address.substr(0,5) + "_" + this.network() + "_token" ;
       const tokensJ = localStorage.getItem(key) ;
 
       var tokens = [] ;
@@ -115,7 +115,7 @@ export default Vue.extend({
 
     network() {
       const network = localStorage.getItem('Network') ;
-      if (!network) network = 'testnet' ;
+      if (!network) network = 'aergo.io' ;
       return network ;
     }
   }

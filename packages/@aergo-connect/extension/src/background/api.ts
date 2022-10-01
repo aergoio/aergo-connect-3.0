@@ -28,24 +28,14 @@ interface TokenPriceInfo {
   currency: string;
 }
 const tokenPriceCache: Record<string, TokenPriceInfo> = {};
+
 /*
 const TokenABI = {
-"language": "lua",
-"version": "0.2",
-"state_variables": [],
-"functions": [
-    {
-    "name": "balanceOf",
-    "arguments": [
-        {
-        "name": "owner"
-        }
-    ],
-    "view": true,
-    "payable": false,
-    "feeDelegation": false
-    }
-]};
+  "language": "lua",
+  "version": "0.2",
+  "state_variables":[ {"name":"Value","type":"value"} ],
+  "functions": [ { "name": "balanceOf", "arguments": [ { "name": "owner" } ] }]
+};
 */
 
 /**
@@ -58,8 +48,8 @@ export class Api {
     this.controller = controller;
   }
 
-// seo
 /*
+// seo
   async deleteToken(address: string, token: any) {
     const key = address.substr(0,5) + localStorage.getItem("Network")+"_token" ;
     var list = localStorage.getItem(key) ;
@@ -93,9 +83,11 @@ export class Api {
     const contract = Contract.fromAbi(abi).setAddress(address);
     return await this.controller.wallet.getClient(chainId).queryContract(contract[name](...args));
   }
+
+
   async getTokenBalance (chainId: string, address: string, token: string) {
-    const contract = Contract.fromAbi(TokenABI).setAddress(token);
-    const result = await this.controller.wallet.getClient(chainId).queryContract(contract['balanceOf'](address));
+    const contract = await Contract.fromAbi(TokenABI).setAddress(token);
+    const result = await this.controller.wallet.getClient(chainId).queryContract(contract.balanceOf(address));
     return result._bignum;
   }
 */

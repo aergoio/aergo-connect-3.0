@@ -53,7 +53,7 @@
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
-            <span> {{ state.balance }} </span>
+            <span> {{ aergo_balance }} </span>
             <Icon class="next" :name="`next_grey`" @click="handleToken" />
           </li>
           <li v-for="token in tokens" class="token_list_li">
@@ -99,6 +99,8 @@ import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
 import { AccountSpec } from '@herajs/wallet/dist/types/models/account';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
+import { Amount } from '@herajs/common';
+
 export default Vue.extend({
   components: {
     RemoveAccountModal,
@@ -121,8 +123,9 @@ export default Vue.extend({
       importAssetModal: false,
       noAccountModal: false,
       network: 'aergo.io',
-      state: {},
+      aergo_balance: "0",
       tokens: [],
+      balances: [],
     };
   },
   mounted() {
@@ -135,37 +138,56 @@ export default Vue.extend({
   },
   methods: {
     async init_account() {
+      console.log("Address",this.$route.params.address) ;
 
       if (!this.$route.params.address) {
-        console.log("GetNewAccount") ;
         this.getNewAccount() ;
       } else {
         this.network = await localStorage.getItem('Network') ;
-        this.state = await this.$background.getAccountState({ address: this.$route.params.address, chainId: this.network }) ;
-        console.log("balance",this.state.balance) ;
-        this.tokens = await this.getTokens(this.$route.params.address) ;
-        console.log("tokens",this.tokens) ;
-      };
+        const state = await this.$background.getAccountState({ address: this.$route.params.address, chainId: this.network }) ;
 
-      console.log("INIT ACCOUNT",this.tokens) ;
+        this.aergo_balance = new Amount(state.balance).formatNumber('aergo') ;
+        console.log("aergo",this.aergo_balance) ;
+
+        this.tokens = await this.getTokens(this.$route.params.address) ;
+        this.balances = await this.getBalances(this.$route.params.address) ;
+        console.log("balances",this.balances) ;
+      };
     },
 
     async getTokens(address: string) {
       const key = address.substr(0,5) + "_" + this.network + "_token" ;
-      const tokensJ = localStorage.getItem(key) ;
+      const tokensJ = await localStorage.getItem(key) ;
 
-      console.log("Tokens", tokensJ) ;
+//      console.log("Tokens", tokensJ) ;
       if (tokensJ) return JSON.parse(tokensJ || '{}');
       else return [] ;
     },
 
-    getBalance(token_hash: string) {
-      return 0 ;
-/*
-      const balance = this.$background.getTokenBalance(this.network, this.$route.params.adress, token_hash) ;
-      if (!balance) return 0.0 ;
-      else return balance ;
-*/
+    async getBalances(address: string) {
+
+      console.log("get balances", `https://api.aergoscan.io/${this.network}/v2/tokenBalance?q=${address}`) ;
+
+      var results = [] ;
+      await fetch(`https://api.aergoscan.io/${this.network}/v2/tokenBalance?q=${address}`).then(res => {
+            console.log("fetch end") ;
+            return res.json()
+      }).then(data => {
+         results = data.hits ;
+      });
+
+      console.log("balances", results) ;
+      return results ;
+    },
+
+    getBalance (token: string) {
+       const result = this.balances.find(element => element.meta.address == token);
+       if (!result) return 0 ;
+       else {
+         const value = result.meta.balance_float / Math.pow(10,result.token.meta.decimals) ;
+         console.log("RESULT", value) ;
+         return value ;
+       }
     },
 
     hamburgerClick() {
@@ -218,6 +240,7 @@ export default Vue.extend({
       console.log('receive');
     },
     async getNewAccount() {
+      console.log("GetNewAccount") ;
       const accounts = await this.$background.getAccounts();
       if (accounts.length !== 0) {
         console.log("NewAddress",accounts[0]?.data.spec.address) ;

@@ -49,10 +49,22 @@
       <NetworkModal v-if="networkModal" @networkModalClick="networkModalClick" />
       <div class="token_content_wrapper">
         <ButtonGroup>
-          <Button class="token-button" type="primary" size="small">Tokens</Button>
-          <Button class="token-button unclicked" type="primary" size="small">NFT</Button>
+          <Button
+            :class="[tab === `tokens` ? `token-button` : `token-button unclicked`]"
+            type="primary"
+            size="small"
+            @click="handleChangeTab('tokens')"
+            >Tokens</Button
+          >
+          <Button
+            :class="[tab === `nft` ? `token-button` : `token-button unclicked`]"
+            type="primary"
+            size="small"
+            @click="handleChangeTab('nft')"
+            >NFT</Button
+          >
         </ButtonGroup>
-        <ul class="token_list_ul">
+        <ul class="token_list_ul" v-if="tab === `tokens`">
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
@@ -66,13 +78,28 @@
             <Icon class="next" :name="`next_grey`" @click="handleToken" />
           </li>
         </ul>
+
+        <ul class="token_list_ul" v-if="tab === `nft`">
+          <li class="token_list_li">
+            <Icon class="token_list_icon" />
+            <span>CCCV</span>
+            <span> {{ aergoBalance }} </span>
+            <Icon class="next" :name="`next_grey`" @click="handleToken" />
+          </li>
+          <li v-for="token in tokens" class="token_list_li" :key="token.hash">
+            <Identicon :text="token.hash" class="list_icon" />
+            <span> {{ token.meta.name }} </span>
+            <span> {{ getBalance(token.hash) }} </span>
+            <Icon class="next" :name="`next_grey`" @click="handleToken" />
+          </li>
+        </ul>
+
         <button class="token_list_button" @click="handleImportAsset">
           <Icon name="plus" class="token_list_button_img" /><span class="token_list_button_text"
             >Import Asset</span
           >
         </button>
       </div>
-
       <div class="content_footer">
         <ButtonGroup>
           <Button class="button" type="font-gradation" size="small" @click="handleSend"
@@ -129,6 +156,7 @@ export default Vue.extend({
       aergoBalance: '',
       tokens: '',
       balances: [],
+      tab: 'tokens',
     };
   },
 
@@ -248,6 +276,10 @@ export default Vue.extend({
     handleReceive() {
       console.log('receive');
     },
+    handleChangeTab(value: string) {
+      console.log(value);
+      this.tab = value;
+    },
   },
 });
 </script>
@@ -270,7 +302,6 @@ export default Vue.extend({
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin-top: 10px;
-    margin-bottom: 12px;
     .account_info_img {
       width: 44px;
       height: 44px;
@@ -328,7 +359,6 @@ export default Vue.extend({
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 253px;
     margin-top: 16px;
     .token-button {
       width: 153px;
@@ -341,7 +371,8 @@ export default Vue.extend({
       }
     }
     .token_list_ul {
-      margin-top: 5px;
+      /* margin-top: 5px; */
+      height: 252px;
       .token_list_li {
         display: flex;
         justify-content: space-around;
@@ -354,7 +385,6 @@ export default Vue.extend({
       cursor: pointer;
     }
     .token_list_button {
-      /* margin-top: 20px; */
       display: flex;
       flex-direction: row;
       align-items: flex-start;
@@ -397,7 +427,7 @@ export default Vue.extend({
     }
   }
   .content_footer {
-    margin-top: 40px;
+    margin-top: 20px;
     .button {
       box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
       border-radius: 4px;

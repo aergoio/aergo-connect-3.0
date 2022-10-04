@@ -2,12 +2,12 @@
   <ScrollView class="page">
     <HeaderVue
       button="back"
-      title="AERGO GEM"
+      :title="$route.params.token.meta.name"
       refresh
       :to="{
         name: 'accounts-list-address',
         params: {
-          address: $route.params.address,
+          address: $store.state.accounts.address,
         },
       }"
     />
@@ -15,20 +15,20 @@
       <div class="account_detail_wrapper">
         <div class="direction-row">
           <div class="circle" />
-          <div class="network">AERGO Mainnet</div>
+          <div class="network">{{ $store.state.accounts.network }}</div>
         </div>
         <div class="account_wrapper">
           <Icon class="account_icon" />
-          <div class="account_title">ACCOUNT</div>
+          <div class="account_title">{{ $store.state.accounts.nick }} </div>
           <div class="account_title_wrapper">
-            <div class="account">AmsyLn...dePgfY</div>
+            <div class="account">{{ `${$store.state.accounts.address.slice(0, 15)}...${$store.state.accounts.address.slice(-5)}` }}</div>
           </div>
           <Button class="account_button">-</Button>
         </div>
       </div>
       <div class="token_transaction_history_wrapper">
         <Icon class="icon" />
-        <div class="price">2,000,000,000</div>
+        <div class="price">{{ $route.params.balance }}</div>
         <div class="token_name">ARG</div>
       </div>
 
@@ -38,33 +38,18 @@
       </div>
       <div class="token_detail_background">
         <ul class="token_detail_wrapper">
-          <li class="token_detail_list">
-            <div class="time">2022.03.08 22:56</div>
-            <div class="direction_row">
-              <div class="recieved">Received</div>
-              <div class="direction_row">
-                <div class="price">525.000</div>
-                <div class="token_name">ARG</div>
-              </div>
-            </div>
-            <div class="line"></div>
-            <div class="direction_row">
-              <div class="address">From: AmLx...e42f</div>
-              <Button class="button" :name="'pointer'" />
-            </div>
-          </li>
-          <li class="token_detail_list">
-            <div class="time">2022.03.08 22:56</div>
+          <li v-for="item in data" class="token_detail_list">
+            <div class="time">{{ item.meta.ts }}</div>
             <div class="direction_row">
               <div class="sent">Sent</div>
               <div class="direction_row">
-                <div class="price">525.000</div>
-                <div class="token_name">ARG</div>
+                <div class="price">{{ getBalance(item.meta.amount,item.token.meta.decimals) }}</div>
+                <div class="token_name">{{ item.token.meta.symbol }}</div>
               </div>
             </div>
             <div class="line"></div>
             <div class="direction_row">
-              <div class="address">From: AmLx...e42f</div>
+              <div class="address">{{ item.meta.from  }}</div>
               <Button :name="'pointer'" />
             </div>
           </li>
@@ -103,6 +88,79 @@ export default Vue.extend({
     Icon,
     HeaderVue,
   },
+
+/*
+  props: {
+    token: {
+      type: any,
+      default: []
+    },
+    token: {
+      type: any,
+      default: []
+    },
+  },
+*/
+
+  data() {
+    return {
+      error: '',
+      data: [],
+//      totalItems: 0,
+//      isLoading: false,
+      selectedFilterToken: 'all'
+    }
+  },
+
+  beforeMount () {
+    this.getHistory() ;
+  },
+
+  methods: {
+
+    getBalance(value: float, decimals: float) {
+       return value / Math.pow(10,decimals) ;
+    },
+
+
+    async getHistory() {
+
+    //  console.log("fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`) ;
+
+      const resp = await fetch(`https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`) ;
+
+      const response = await resp.json() ;
+
+      if (response.error) {
+          this.data = [] ;
+      }
+      else this.data = response.hits ;
+
+      console.log("response", this.data) ;
+
+/*
+      if (response.error) {
+        this.error = response.error.msg;
+      } else if (response.hits.length) {
+        this.data = await response.hits.map(item => ({
+          ...item.meta,
+          hash: item.hash,
+          name: item.token.meta.name,
+          symbol: item.token.meta.symbol,
+          decimals: item.token.meta.decimals,
+        }));
+        console.log("data", data) ;
+        this.totalItems = response.total;
+      } else {
+        this.data = [];
+        this.totalItems = 0;
+      }
+*/
+
+      this.$emit('onUpdateTotalCount', this.totalItems);
+
+    },
+  }
 });
 </script>
 

@@ -18,6 +18,7 @@
           <div class="tab_line" />
         </div>
       </div>
+      <ImportAssetModal v-if="importAssetModal" />
 
       <div v-if="state === `search`" class="search_wrapper">
         <div class="network_wrapper">
@@ -29,8 +30,6 @@
           class="network_textField"
           @submit="search"
         />
-
-        <ImportAssetModal v-if="importAssetModal" />
 
         <ul class="select_token_content">
           <div v-if="results.length">
@@ -70,10 +69,9 @@
                 :value="value"
                 @input="handleInput"
                 :error="error.value"
-                @submit="checkSubmit"
               />
             </div>
-            <div v-if="!error.state && value">
+            <div v-if="check">
               <div class="custom_element_wrapper">
                 <div>Asset Type</div>
                 <TextField placeholder="Token" class="asset_type" />
@@ -95,9 +93,16 @@
       <Button v-if="state === `search`" type="primary" size="large" @click="handleImport"
         >Import</Button
       >
-      <Button v-if="state === `custom`" type="primary" size="large" @click="checkSubmit"
+      <Button v-if="state === `custom` && !check" type="primary" size="large" @click="handleCheck"
         >Check
       </Button>
+      <Button
+        v-else-if="state === `custom` && check"
+        type="primary"
+        size="large"
+        @click="customSubmit"
+        >Import</Button
+      >
     </template>
   </ScrollView>
 </template>
@@ -125,15 +130,16 @@ export default Vue.extend({
       results: {},
       state: 'search',
       error: {
-        state: false,
+        state: true,
         value: '',
       },
       value: '',
+      check: false,
     };
   },
   watch: {
     value() {
-      if (this.value === this.$store.state.accounts.address || !this.value) {
+      if (this.value === this.$store.state.accounts.address) {
         this.error = { state: false, value: '' };
       } else {
         this.error = { state: true, value: 'Please check the address again.' };
@@ -206,8 +212,16 @@ export default Vue.extend({
     handleInput(value) {
       this.value = value;
     },
-    checkSubmit() {
-      console.log(this.value, 'check');
+    handleCheck() {
+      if (!this.error.state) {
+        this.check = true;
+      } else {
+        console.log('Please check the address again.');
+      }
+    },
+    customSubmit() {
+      console.log(this.value, 'submit');
+      this.importAssetModal = true;
     },
   },
 });

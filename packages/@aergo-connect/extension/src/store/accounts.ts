@@ -1,21 +1,26 @@
 import { Module } from 'vuex';
 import { RootState } from './index';
 import { Account, serializeAccountSpec } from '@herajs/wallet';
+import { Amount } from '@herajs/common';
 import Vue from 'vue';
 
 export interface AccountsState {
-  keys: string[];
-  accounts: {
-    [key: string]: Account;
-  };
-  lastSeedPhrase: string;
-  balances: any;
-  nick: string;
-}
 
-interface AccountSpec {
-  address: string;
-  chainId: string;
+  accounts: {
+    [key: string]: 
+      { 
+        address : string,
+        nick : string,
+        token: {
+          [network: string] : any,
+        },
+      }
+  };
+
+  network: string ;
+  address: string ;
+  nick: string;
+
 }
 
 function getVueInstance(instance: any): Vue {
@@ -25,79 +30,144 @@ function getVueInstance(instance: any): Vue {
 
 const storeModule: Module<AccountsState, RootState> = {
   namespaced: true,
+
   state: {
     accounts: {},
-    // Save keys extra for reactivity as the `accounts` object is not observable in the beginning.
-    keys: [],
-    lastSeedPhrase: '',
-    balances: {},
+    network: '',
+    address: '',
     nick: '',
   },
+
   getters: {
-    getAccount: state => (accountSpec: AccountSpec): Account | undefined => {
-      const key = serializeAccountSpec(accountSpec);
-      // Check state.keys to make the getter react to changes
-      if (state.keys.indexOf(key) === -1) return undefined;
-      return state.accounts[key];
-    },
-    getAccounts: state => () => {
-      return state.accounts;
-    },
+
   },
+
   actions: {
-    async fetchAccounts({ commit }) {
-      const vue = getVueInstance(this);
-      const accounts = await vue.$background.getAccounts();
-      commit('setAccounts', accounts);
-    },
-    async updateAccount({ commit }, { address, chainId }: AccountSpec) {
-      const vue = getVueInstance(this);
-      vue.$background.setActiveAccount({ address, chainId });
-      const account = await vue.$background.syncAccountState({
-        address,
-        chainId,
-      });
-      commit('setAccounts', [account]);
+
+    async tokens({ state }) {
+      const tokens = state.accounts[state.address]['token'][state.network] ;
+      if (!tokens) return [] ;
+      else return JSON.parse(tokens || '{}') ;
     },
 
-    // 시연용
-    async fetchAccountBalances({ commit }, { address, chainId }: AccountSpec) {
+    async aergoBalance({ state }) {
       const vue = getVueInstance(this);
-      //vue.$background.setActiveAccount({ address, chainId });
-      const balances = await vue.$background.getAccountBalance({
-        address,
-        chainId,
-      });
-      commit('setAccountBalances', balances);
+      const val = await vue.$background.getAccountState({ address: state.address, chainId: state.network }) ;
+      const result = await new Amount(val.balance).formatNumber('aergo') ;
+      console.log("aergoBalance", result) ;
+      return result ;
+    },
+
+    async loadAccount({ state, commit }) {
+      const vue = getVueInstance(this) ;
+      const account = vue.$background.getActiveAccount();
+
+      if (!account) { 
+        commit('setActiveAccount', account.data.spec.address) ;
+        console.log("loadAccount", state.address) ;
+        return true ;
+      } ;
+
+      const accounts = vue.$background.getAccounts();
+      if (accounts.length !== 0) {
+        commit('setActiveAccount', accounts[0]?.data.spec.address) ;
+        console.log("loadAccount", state.address) ;
+        return true ;
+      } ;
+
+      return false ;
+    },
+
+    async removeAccount({ state, commit }) {
+      const vue = getVueInstance(this);
+      vue.$background.removeAccount({ address: state.address, chainId: 'aergo.io'}) ;
+      commit('removeAccount') ;
+
+      const accounts = vue.$background.getAccounts();
+      if (accounts.length !== 0) commit('setActiveAccount', accounts[0]?.data.spec.address) ;
+      else commit('setActiveAccount', '') ;
+    },
+
+    async addAccount({ commit }, address: string) {
+      console.log('addAccount', address) ;
+      commit('addAccount', address) ;
+      commit('setActiveAccount', address) ;
+    },
+
+    async addToken({ state, commit }, token: any) {
+      const tokensJ = state.accounts[state.address]['token'][state.network] ; 
+      var tokens = [] ;
+      if (tokensJ) { tokens = JSON.parse(tokensJ); }
+      tokens.push(token) ;
+      
+      commit('setTokens', JSON.stringify(tokens)) ;
+      console.log("Add tokens", tokens) ;
+    },
+
+    async deleteToken({ state, commit }, token: any) {
+      const tokensJ = state.accounts[state.address]['token'][state.network] ; 
+
+      var tokens = [] ;
+      if (tokensJ) { tokens = JSON.parse(tokensJ); }
+      else return ;
+
+      const  fList = tokens.filter((element) => element.hash !== token.hash);
+      commit('setTokens', JSON.stringify(fList)) ;
+      console.log ("deleteToken", fList) ;
     },
   },
+
   mutations: {
-    setAccountBalances(state, balances: any) {
-      console.log('setAccountBalances');
-      console.log(balances);
-      state.balances = balances;
+
+    setActiveAccount(state, address: string) {
+      console.log("setActive in", address) ;
+
+      if (!address) {
+         state.address = '' ;
+         state.nick = '' ;
+         console.log("setActive", "NO_ADDRESS_INPUT") ;
+         return ;
+      }
+
+      const vue = getVueInstance(this);
+      vue.$background.setActiveAccount({ address: address, chainId: 'aergo.io'}) ;
+      state.address = address ;
+      console.log("accounts", state.accounts[address]) ;
+      state.nick = state.accounts[address]['nick'] ;
+      console.log("SetActiveAccount") ;
+    },
+
+    removeAccount(state) {
+      delete state.accounts[state.address] ;
+      state.address = '' ;
+      state.nick = '' ;
+    },
+      
+    addAccount(state, address: string) {
+
+      state.accounts[address] = {
+        address: address,
+        nick : address.substr(0, 5) + '_nick',
+        token: {},
+      } ;
+      console.log("addAccount out", state.accounts[address]['nick']) ;
+    },
+
+    setNick(state, nick: string) {
+      state.accounts[state.address]['nick'] = nick ;
+      state.nick = nick ;
+    },
+
+    setTokens(state, tokens: any) {
+      state.accounts[state.address]['token'][state.network] = tokens ;
+      console.log("tokens", tokens) ;
+    },
+
+    setNetwork(state, network: string) {
+      state.network = network ;
     },
 
     setAccounts(state, accounts: Account[]) {
-      for (const account of accounts) {
-        state.accounts[account.key] = account;
-      }
-      //TODO nick key값으로 넣어줘야함.
-      const newKeys = accounts.map(acc => acc.key).filter(key => state.keys.indexOf(key) === -1);
-      state.keys.push(...newKeys);
-    },
-    removeAccounts(state, accountSpecs: AccountSpec[]) {
-      const keys = accountSpecs.map(spec => serializeAccountSpec(spec));
-      state.keys = state.keys.filter(key => keys.indexOf(key) === -1);
-      for (const key of keys) {
-        delete state.accounts[key];
-      }
-    },
-    setSeedPhrase(state, phrase: string) {
-      state.lastSeedPhrase = phrase;
-    },
-    setAccountNick(state, nick: string) {
-      state.nick = nick;
     },
   },
 };

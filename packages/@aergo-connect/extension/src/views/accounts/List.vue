@@ -49,21 +49,18 @@ export default Vue.extend({
   },
   props: {},
   computed: {
-    accounts(): Account[] {
-      if (this.$store.state.accounts.keys.length) {
-        return Object.values(this.$store.state.accounts.accounts);
-      }
-      return [];
+    accounts(): any[] {
+      const accounts = this.$store.state.accounts.accounts;
+      console.log("List ORG", accounts) ;
+      const ac = Object.values(this.$store.state.accounts.accounts);
+      console.log("List ORG", ac) ;
+      return Object.values(this.$store.state.accounts.accounts);
     },
-    // accountSpec() {
-    //   return {
-    //     address: this.accounts[0]?.data.spec.address,
-    //     chainId: this.accounts[0]?.data.spec.chainId,
-    //   };
-    // },
-    // account(): Account {
-    //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
-    // },
+/*
+      const accounts = Object.values(this.$background.getAccounts()) ;
+      console.log("List", accounts);
+      console.log("List", this.$background.getAccounts()) ;
+*/
   },
   methods: {
     handleAccountsDropDown() {
@@ -73,17 +70,17 @@ export default Vue.extend({
       this.$emit('removeModalClick');
     },
 
-    handleSelect(account: Account) {
-      const accountSpec = {
-        address: account.data.spec.address,
-        chainId: 'aergo.io',
-      };
-      this.$store.dispatch('accounts/updateAccount', accountSpec);
+    handleSelect(account: any) {
+      const address = account.address ;
+
+      this.$store.commit('accounts/setActiveAccount', address);
+
       this.$emit('select', account);
+
       this.$router.push({
         name: 'accounts-list-address',
         params: {
-          address: accountSpec.address,
+          address: address,
         },
       });
     },
@@ -93,7 +90,7 @@ export default Vue.extend({
     },
   },
   mounted() {
-    this.$store.dispatch('accounts/fetchAccounts');
+//    this.$store.dispatch('accounts/fetchAccounts');
   },
 });
 </script>

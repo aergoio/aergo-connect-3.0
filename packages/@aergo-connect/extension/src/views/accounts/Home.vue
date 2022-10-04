@@ -19,10 +19,10 @@
 
     <div v-if="!noAccountModal" class="home_content">
       <div class="account_info_wrapper">
-        <Identicon :text="$route.params.address" class="account_info_img" />
+        <Identicon :text="$store.state.accounts.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
-            <span class="account_info_nickname_text">{{ nick($route.params.address) }}</span>
+            <span class="account_info_nickname_text">{{ $store.state.accounts.nick }}</span>
             <Icon
               class="account_info_nickname_button"
               :name="`edit`"
@@ -32,7 +32,7 @@
           </div>
           <div class="account_info_address_wrapper">
             <span class="account_info_address_text">{{
-              `${$route.params.address.slice(0, 15)}...${$route.params.address.slice(-5)}`
+              `${$store.state.accounts.address.slice(0, 15)}...${$store.state.accounts.address.slice(-5)}`
             }}</span>
             <Icon
               class="account_info_address_button"
@@ -53,7 +53,7 @@
           <li class="token_list_li">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
-            <span> {{ aergo_balance }} </span>
+            <span> {{ aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" @click="handleToken" />
           </li>
           <li v-for="token in tokens" class="token_list_li">
@@ -123,66 +123,61 @@ export default Vue.extend({
       importAssetModal: false,
       noAccountModal: false,
       network: 'aergo.io',
-      aergo_balance: "0",
-      tokens: [],
+      aergoBalance: '',
+      tokens: '',
       balances: [],
     };
   },
-  mounted() {
-     this.init_account();
+
+  beforeMount() {
+       this.init_account();
   },
+
   watch: {
-     '$route' (to, from) {
-        this.init_account();
+      '$route' (to, from) {
+         this.init_account();
      },
   },
+
   methods: {
+
     async init_account() {
-      console.log("Address",this.$route.params.address) ;
+      console.log("Address",this.$store.state.accounts.address) ;
 
-      if (!this.$route.params.address) {
-        this.getNewAccount() ;
+      if (this.$store.state.accounts.address)  {
+        this.tokens = await this.$store.dispatch('accounts/tokens') ; 
+        this.aergoBalance = await this.$store.dispatch('accounts/aergoBalance') ; 
+        await this.getBalances() ;
+        // this.balances = await this.getBalances() ;
       } else {
-        this.network = await localStorage.getItem('Network') ;
-        const state = await this.$background.getAccountState({ address: this.$route.params.address, chainId: this.network }) ;
+        const succ = this.$store.dispatch('accounts/loadAccount') ;
 
-        this.aergo_balance = new Amount(state.balance).formatNumber('aergo') ;
-        console.log("aergo",this.aergo_balance) ;
-
-        this.tokens = await this.getTokens(this.$route.params.address) ;
-        this.balances = await this.getBalances(this.$route.params.address) ;
-        console.log("balances",this.balances) ;
-      };
+        if (succ) this.$router.push({
+          name: 'accounts-list-address',
+          params: {
+            address: this.$store.state.accounts.address,
+          },
+        }) ; 
+        else this.noAccountModal = true ;
+      }
     },
 
-    async getTokens(address: string) {
-      const key = address.substr(0,5) + "_" + this.network + "_token" ;
-      const tokensJ = await localStorage.getItem(key) ;
-
-//      console.log("Tokens", tokensJ) ;
-      if (tokensJ) return JSON.parse(tokensJ || '{}');
-      else return [] ;
-    },
-
-    async getBalances(address: string) {
-
-      console.log("get balances", `https://api.aergoscan.io/${this.network}/v2/tokenBalance?q=${address}`) ;
-
-      var results = [] ;
-      await fetch(`https://api.aergoscan.io/${this.network}/v2/tokenBalance?q=${address}`).then(res => {
-            console.log("fetch end") ;
-            return res.json()
+    getBalances() {
+      console.log ("FETCH", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`) ;
+      fetch(`https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`).then(res => {
+         return res.json()
       }).then(data => {
-         results = data.hits ;
+         this.balances = data.hits ;
+//         return data.hits ;
       });
-
-      console.log("balances", results) ;
-      return results ;
     },
 
     getBalance (token: string) {
+       console.log("BALANCE", this.balances, token) ;
        const result = this.balances.find(element => element.meta.address == token);
+
        if (!result) return 0 ;
+
        else {
          const value = result.meta.balance_float / Math.pow(10,result.token.meta.decimals) ;
          console.log("RESULT", value) ;
@@ -231,7 +226,10 @@ export default Vue.extend({
       this.$router.push({ name: 'token-detail', params: { address: this.$route.params.address } }).catch(()=>{});
     },
     handleImportAsset() {
-      this.$router.push({ name: 'import-asset', params: { address: this.$route.params.address } }).catch(()=>{});
+      this.$router.push({ 
+        name: 'import-asset', 
+        params: { address: this.$store.state.accounts.address } 
+      }).catch(()=>{});
     },
     handleSend() {
       console.log('send');
@@ -239,35 +237,6 @@ export default Vue.extend({
     handleReceive() {
       console.log('receive');
     },
-    async getNewAccount() {
-      console.log("GetNewAccount") ;
-      const accounts = await this.$background.getAccounts();
-      if (accounts.length !== 0) {
-        console.log("NewAddress",accounts[0]?.data.spec.address) ;
-        this.$router.push({
-          name: 'accounts-list-address',
-          params: {
-            address: accounts[0]?.data.spec.address,
-          }
-        }) ;
-      } else {
-        this.noAccountModal = true;
-      }
-    },
-    nick(address: string) {
-      // get nick
-      const key = address.substr(0,5) + "_nick";
-      var nick = "" ;
-      try {
-          nick = localStorage.getItem(key);
-      } catch (error) {
-          nick = key;
-          console.log("STORE_ERRORS", error);
-      }
-
-      if (!nick) nick = key ;
-      return nick ;
-    }
   },
 });
 </script>

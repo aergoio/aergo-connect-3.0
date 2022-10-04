@@ -1,15 +1,15 @@
 <template>
   <ul class="nav-account-list">
     <li
-      v-for="account in sortedAccounts"
+      v-for="account in accounts"
       :key="account.key"
       class="nav-account-item"
       @click.capture="$emit('select', account)"
     >
-      <div :class="activeAccount && activeAccount.key === account.key ? 'active' : ''">
+      <div :class="activeAccount && $store.state.accounts.address === account.address ? 'active' : ''">
         <AccountItem
-          :address="account.data.spec.address"
-          :nickname="nick(account.data.spec.address)"
+          :address="account.address"
+          :nickname="account.nick"
         />
       </div>
     </li>
@@ -85,7 +85,7 @@ export default Vue.extend({
   props: {
     accounts: {
       type: Array,
-      default: [] as Account[],
+      default: [] as any[],
     },
     groupByChain: {
       type: Boolean,
@@ -120,7 +120,7 @@ export default Vue.extend({
   },
 
   computed: {
-    sortedAccounts(): Account[] {
+    sortedAccounts(): any[] {
       const accounts = [...this.accounts].filter(account => typeof account.data !== 'undefined');
       // Order by address A-Z
 

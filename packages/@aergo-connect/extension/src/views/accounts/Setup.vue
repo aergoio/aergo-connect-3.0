@@ -121,7 +121,8 @@ export default class Setup extends mixins() {
       this.next();
     }
     // Init Network
-    localStorage.setItem("Network","testnet");
+    // localStorage.setItem("Network","testnet");
+    this.$store.commit('accounts/setNetwork', "testnet");
   }
 }
 </script>

@@ -10,7 +10,10 @@ Vue.use(Vuex);
 // Persist some modules to local storage
 const vuexLocal = new VuexPersistence<RootState>({
   storage: window.localStorage,
-  modules: ['ui'],
+//seo
+  modules: ['ui', 'accounts'],
+
+//  modules: ['ui'],
 });
 
 export interface RootState {

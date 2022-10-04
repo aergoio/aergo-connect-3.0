@@ -90,7 +90,10 @@ export default class Keystore extends mixins(PersistInputsMixin) {
         privateKey: Array.from(identity.privateKey),
         chainId: 'aergo.io',
       });
+
+      this.$store.commit('accounts/addAccount', accountSpec.address);
       this.$router.push({ name: 'account-imported', params: { address: accountSpec.address } });
+
     } catch (e) {
       console.log(e);
       if (`${e}`.match(/invalid mac value/)) {

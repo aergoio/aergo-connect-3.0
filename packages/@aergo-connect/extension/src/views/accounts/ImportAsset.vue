@@ -16,7 +16,7 @@
       <div class="search_wrapper">
         <div class="network_wrapper">
           <div class="network_circle" />
-          <div class="network_text">{{ network() }}</div>
+          <div class="network_text">{{ $store.state.accounts.network }}</div>
         </div>
         <TextField class="network_textField" @submit="search"/>
         <ul class="select_token_content">
@@ -72,14 +72,14 @@ export default Vue.extend({
       this.$router.push({ 
         name: 'accounts-list-address', 
         params: {
-          address: this.$route.params.address,
+          address: this.$store.state.accounts.address,
         }
       });
     },
 
     async search(query) {
       console.log("Search", query) ;
-      await fetch(`https://api.aergoscan.io/${this.network()}/v2/token?q=*${query}*`).then(res => {
+      await fetch(`https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=*${query}*`).then(res => {
             return res.json()
         }).then(data => {
           this.results = data.hits ;
@@ -90,16 +90,20 @@ export default Vue.extend({
     
     async select(token) {
       console.log("Selected",token.meta) ;
-      this.addToken(this.$route.params.address, token) ;
+
+//      this.addToken(this.$route.params.address, token) ;
+
+      this.$store.dispatch('accounts/addToken', token) ;
         
       this.$router.push({ 
         name: 'accounts-list-address', 
         params: {
-          address: this.$route.params.address,
+          address: this.$store.state.accounts.address,
         }
       })
     },
 
+/*
     async addToken(address, token) {
       const key = address.substr(0,5) + "_" + this.network() + "_token" ;
       const tokensJ = localStorage.getItem(key) ;
@@ -112,12 +116,7 @@ export default Vue.extend({
       localStorage.setItem(key,JSON.stringify(tokens)) ;
       console.log("tokens", tokens) ;
     },
-
-    network() {
-      const network = localStorage.getItem('Network') ;
-      if (!network) network = 'aergo.io' ;
-      return network ;
-    }
+*/
   }
 });
 

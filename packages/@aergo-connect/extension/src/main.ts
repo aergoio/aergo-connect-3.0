@@ -54,6 +54,7 @@ async function init(name: string) {
         router.push({ name: 'lockscreen' });
       }
     }
+
     if (Object.prototype.hasOwnProperty.call(state, 'accounts')) {
       store.commit('accounts/setAccounts', state.accounts);
     }
@@ -62,6 +63,7 @@ async function init(name: string) {
     }
   });
 
+  console.log("STATE", store.state.accounts) ; 
   console.log('idleTimeout:' + store.state.ui.idleTimeout);
   extension.idle.setDetectionInterval(store.state.ui.idleTimeout);
 }

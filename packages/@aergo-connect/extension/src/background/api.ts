@@ -9,8 +9,10 @@ import {
 import { Amount } from '@herajs/common';
 import { Account, Transaction } from '@herajs/wallet';
 
+/*
 // seo
 import { Address, Contract } from '@herajs/client';
+*/
 
 import Controller from './controller';
 import { ChainConfig } from '../config';
@@ -48,43 +50,8 @@ export class Api {
     this.controller = controller;
   }
 
-/*
 // seo
-  async deleteToken(address: string, token: any) {
-    const key = address.substr(0,5) + localStorage.getItem("Network")+"_token" ;
-    var list = localStorage.getItem(key) ;
-    let filtered = list.filter((element) => element.hash !== token.hash);
-    localStorage.setItem(key, filtered) ;
-    console.log ("deleteToken", token.meta.name) ;
-  }
-
-  async getNick(address: string) : Promise<string> {
-      const key = address.substr(0,5) + "_nick";
-      var nick = "" ;
-      new Promise ((resolve) => {
-          localStorage.getItem(key)
-         .then((res) => {
-           nick = res.data ;
-           resolve(res.data) ;
-         }) 
-         .catch (error => {
-           nick = key;
-           console.log("STORE_ERRORS", error);
-         })
-       });
-
-      if (!nick) nick = key ;
-      console.log("Nick", nick);
-
-      return nick ;
-  }
-
-  async queryContract (abi, address, name, args, chainId) {
-    const contract = Contract.fromAbi(abi).setAddress(address);
-    return await this.controller.wallet.getClient(chainId).queryContract(contract[name](...args));
-  }
-
-
+/*
   async getTokenBalance (chainId: string, address: string, token: string) {
     const contract = await Contract.fromAbi(TokenABI).setAddress(token);
     const result = await this.controller.wallet.getClient(chainId).queryContract(contract.balanceOf(address));
@@ -439,22 +406,6 @@ export class Api {
       price: tokenData[params.vs_currencies],
     };
     return tokenPriceCache[currency];
-  }
-
-  // 시연용
-  async getAccountBalance(accountSpec: AccountSpec) {
-    const baseUrl = 'http://192.168.1.247:3000/testnet';
-    const address = new Address(accountSpec.address);
-    const q = encodeURIComponent(`${address}`);
-    const url = `${baseUrl}/accountBalance?q=${q}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data;
-    } catch (e) {
-      console.log(`[track accountBalance] Failed: ${e}`);
-      return {};
-    }
   }
 
   async getTokenTransfers(accountSpec: AccountSpec, contractAddress: string) {

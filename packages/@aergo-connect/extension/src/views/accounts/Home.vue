@@ -65,32 +65,32 @@
           >
         </ButtonGroup>
         <ul class="token_list_ul" v-if="tab === `tokens`">
-          <li class="token_list_li">
+          <li class="token_list_li" @click="handleToken">
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span> {{ aergoBalance }} </span>
-            <Icon class="next" :name="`next_grey`" @click="handleToken" />
+            <Icon class="next" :name="`next_grey`" />
           </li>
-          <li v-for="token in tokens" class="token_list_li" :key="token.hash">
+          <li v-for="token in tokens" class="token_list_li" :key="token.hash" @click="handleToken">
             <Identicon :text="token.hash" class="list_icon" />
             <span> {{ token.meta.name }} </span>
             <span> {{ getBalance(token.hash) }} </span>
-            <Icon class="next" :name="`next_grey`" @click="handleToken" />
+            <Icon class="next" :name="`next_grey`" />
           </li>
         </ul>
 
         <ul class="token_list_ul" v-if="tab === `nft`">
-          <li class="token_list_li">
+          <li class="token_list_li" @click="handleToken">
             <Icon class="token_list_icon" />
             <span>CCCV</span>
             <span> {{ aergoBalance }} </span>
-            <Icon class="next" :name="`next_grey`" @click="handleToken" />
+            <Icon class="next" :name="`next_grey`" />
           </li>
-          <li v-for="token in tokens" class="token_list_li" :key="token.hash">
+          <li v-for="token in tokens" class="token_list_li" :key="token.hash" @click="handleToken">
             <Identicon :text="token.hash" class="list_icon" />
             <span> {{ token.meta.name }} </span>
             <span> {{ getBalance(token.hash) }} </span>
-            <Icon class="next" :name="`next_grey`" @click="handleToken" />
+            <Icon class="next" :name="`next_grey`" />
           </li>
         </ul>
 
@@ -271,7 +271,12 @@ export default Vue.extend({
         .catch(() => {});
     },
     handleSend() {
-      console.log('send');
+      this.$router
+        .push({
+          name: 'send',
+          params: { address: this.$store.state.accounts.address },
+        })
+        .catch(() => {});
     },
     handleReceive() {
       console.log('receive');
@@ -379,10 +384,8 @@ export default Vue.extend({
         align-items: center;
         width: 375px;
         height: 62px;
+        cursor: pointer;
       }
-    }
-    .next {
-      cursor: pointer;
     }
     .token_list_button {
       display: flex;

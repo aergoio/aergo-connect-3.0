@@ -4,14 +4,15 @@
       <div class="registAsset_title">Imported Asset Successfully!</div>
       <Identicon :text="result.hash" class="token_icon" />
       <p>
-                    {{ $route.params.result.meta.name }}
-                    {{ result.meta.symbol }}
-                    {{ result.meta.type }}
-                    {{ result.hash }}
-
+        {{ $route.params.result.meta.name }}
+        {{ result.meta.symbol }}
+        {{ result.meta.type }}
+        {{ result.hash }}
       </p>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover @click="register" @cancel="handleCancel">Confirm</ButtonVue>
+        <ButtonVue type="secondary" size="medium" hover @click="register" @cancel="handleCancel"
+          >Confirm</ButtonVue
+        >
         <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
           >Cancel</ButtonVue
         >

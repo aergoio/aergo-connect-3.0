@@ -32,7 +32,10 @@
           </div>
           <div class="account_info_address_wrapper">
             <span class="account_info_address_text">{{
-              `${$store.state.accounts.address.slice(0, 15)}...${$store.state.accounts.address.slice(-5)}`
+              `${$store.state.accounts.address.slice(
+                0,
+                15,
+              )}...${$store.state.accounts.address.slice(-5)}`
             }}</span>
             <Icon
               class="account_info_address_button"
@@ -56,7 +59,7 @@
             <span> {{ aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" @click="handleToken" />
           </li>
-          <li v-for="token in tokens" class="token_list_li">
+          <li v-for="token in tokens" class="token_list_li" :key="token.hash">
             <Identicon :text="token.hash" class="list_icon" />
             <span> {{ token.meta.name }} </span>
             <span> {{ getBalance(token.hash) }} </span>
@@ -130,59 +133,64 @@ export default Vue.extend({
   },
 
   beforeMount() {
-       this.init_account();
+    this.init_account();
   },
 
   watch: {
-      '$route' (to, from) {
-         this.init_account();
-     },
+    $route(to, from) {
+      this.init_account();
+    },
   },
 
   methods: {
-
     async init_account() {
-      console.log("Address",this.$store.state.accounts.address) ;
-
-      if (this.$store.state.accounts.address)  {
-        this.tokens = await this.$store.dispatch('accounts/tokens') ; 
-        this.aergoBalance = await this.$store.dispatch('accounts/aergoBalance') ; 
-        await this.getBalances() ;
+      console.log('Address', this.$store.state.accounts.address);
+      if (this.$store.state.accounts.address) {
+        this.tokens = await this.$store.dispatch('accounts/tokens');
+        this.aergoBalance = await this.$store.dispatch('accounts/aergoBalance');
+        await this.getBalances();
         // this.balances = await this.getBalances() ;
       } else {
-        const succ = this.$store.dispatch('accounts/loadAccount') ;
+        const succ = this.$store.dispatch('accounts/loadAccount');
 
-        if (succ) this.$router.push({
-          name: 'accounts-list-address',
-          params: {
-            address: this.$store.state.accounts.address,
-          },
-        }) ; 
-        else this.noAccountModal = true ;
+        if (succ)
+          this.$router.push({
+            name: 'accounts-list-address',
+            params: {
+              address: this.$store.state.accounts.address,
+            },
+          });
+        else this.noAccountModal = true;
       }
     },
 
     getBalances() {
-      console.log ("FETCH", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`) ;
-      fetch(`https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`).then(res => {
-         return res.json()
-      }).then(data => {
-         this.balances = data.hits ;
-//         return data.hits ;
-      });
+      console.log(
+        'FETCH',
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,
+      );
+      fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          this.balances = data.hits;
+          //         return data.hits ;
+        });
     },
 
-    getBalance (token: string) {
-       console.log("BALANCE", this.balances, token) ;
-       const result = this.balances.find(element => element.meta.address == token);
+    getBalance(token: string) {
+      console.log('BALANCE', this.balances, token);
+      const result = this.balances.find(element => element.meta.address == token);
 
-       if (!result) return 0 ;
-
-       else {
-         const value = result.meta.balance_float / Math.pow(10,result.token.meta.decimals) ;
-         console.log("RESULT", value) ;
-         return value ;
-       }
+      if (!result) return 0;
+      else {
+        const value = result.meta.balance_float / Math.pow(10, result.token.meta.decimals);
+        console.log('RESULT', value);
+        return value;
+      }
     },
 
     hamburgerClick() {
@@ -190,20 +198,19 @@ export default Vue.extend({
     },
 
     handleCancel(modalEvent: string) {
-
       if (modalEvent === 'noAccountModal') {
         this.noAccountModal = false;
         this.$router.push({
           name: 'accounts-list-address',
           params: {
-            address: "This is a temporary account",
-          }
+            address: 'This is a temporary account',
+          },
         });
-      } ;
+      }
 
       if (modalEvent === 'removeAccountModal') {
         this.removeAccountModal = false;
-      } ;
+      }
     },
 
     handleRemoveModalClick() {
@@ -223,13 +230,17 @@ export default Vue.extend({
       console.log('handleDetailAddress');
     },
     handleToken(token: any) {
-      this.$router.push({ name: 'token-detail', params: { address: this.$route.params.address } }).catch(()=>{});
+      this.$router
+        .push({ name: 'token-detail', params: { address: this.$route.params.address } })
+        .catch(() => {});
     },
     handleImportAsset() {
-      this.$router.push({ 
-        name: 'import-asset', 
-        params: { address: this.$store.state.accounts.address } 
-      }).catch(()=>{});
+      this.$router
+        .push({
+          name: 'import-asset',
+          params: { address: this.$store.state.accounts.address },
+        })
+        .catch(() => {});
     },
     handleSend() {
       console.log('send');
@@ -343,7 +354,7 @@ export default Vue.extend({
       cursor: pointer;
     }
     .token_list_button {
-      margin-top: 20px;
+      /* margin-top: 20px; */
       display: flex;
       flex-direction: row;
       align-items: flex-start;
@@ -402,4 +413,3 @@ export default Vue.extend({
   }
 }
 </style>
-

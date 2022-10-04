@@ -3,42 +3,101 @@
     <Header button="back" title="Import Asset" @backClick="handleBack" />
     <div class="tab_content">
       <div class="tab_wrapper">
-        <div class="tab_active">
+        <div
+          :class="[state === `search` ? `tab_active` : `tab_disable`]"
+          @click="handleChangeState('search')"
+        >
           <div class="tab_text">Search</div>
           <div class="tab_line" />
         </div>
-        <div class="tab_disable">
+        <div
+          :class="[state === `custom` ? `tab_active` : `tab_disable`]"
+          @click="handleChangeState('custom')"
+        >
           <div class="tab_text">Custom</div>
           <div class="tab_line" />
         </div>
       </div>
 
-      <div class="search_wrapper">
+      <div v-if="state === `search`" class="search_wrapper">
         <div class="network_wrapper">
           <div class="network_circle" />
-          <div class="network_text">{{ $store.state.accounts.network }}</div>
+          <div class="network_text">{{ $store.state.accounts.network || 'AERGO Mainnet' }}</div>
         </div>
-        <TextField class="network_textField" @submit="search"/>
+        <TextField
+          placeholder="Name / Symbol / Address"
+          class="network_textField"
+          @submit="search"
+        />
+
+        <ImportAssetModal v-if="importAssetModal" />
+
         <ul class="select_token_content">
           <div v-if="results.length">
-            <p> NAME           SYMBOL </p>
-            <ul >
-              <li v-for="result in results" class="select_token_list" @click="select(result)">
-                  <Identicon :text="result.hash" class="list_icon" />
-                  <span class="list_text">
-                    {{ result.meta.name + "    " + result.meta.symbol }} 
-                  </span>
-                  <span class="list_button">
-                    {{ result.meta.type }} 
-                  </span>
+            <div class="select_token_text">Select the token or NFT.</div>
+            <ul>
+              <li
+                v-for="result in results"
+                :key="result.hash"
+                class="select_token_list"
+                @click="select(result)"
+              >
+                <Identicon :text="result.hash" class="list_icon" />
+                <span class="list_text">
+                  {{ result.meta.name + '    ' + result.meta.symbol }}
+                </span>
+                <span class="list_button">
+                  {{ result.meta.type }}
+                </span>
               </li>
             </ul>
           </div>
         </ul>
       </div>
+
+      <div v-if="state === `custom`">
+        <div class="custom_wrapper">
+          <div class="network_wrapper">
+            <div class="network_circle" />
+            <div class="network_text">{{ $store.state.accounts.network || 'AERGO Mainnet' }}</div>
+          </div>
+          <div class="custom_detail_wrapper">
+            <div>
+              <div>Contract Address</div>
+              <TextField
+                placeholder="Enter the address"
+                class="contract_address"
+                :value="value"
+                @input="handleInput"
+                :error="error.value"
+                @submit="checkSubmit"
+              />
+            </div>
+            <div v-if="!error.state && value">
+              <div class="custom_element_wrapper">
+                <div>Asset Type</div>
+                <TextField placeholder="Token" class="asset_type" />
+              </div>
+              <div class="custom_element_wrapper">
+                <div>Symbol</div>
+                <TextField placeholder="BAL" class="asset_type" />
+              </div>
+              <div class="custom_element_wrapper">
+                <div>Decimal</div>
+                <TextField placeholder="18" class="asset_type" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <template #footer>
-      <Button type="primary" size="large">Import</Button>
+      <Button v-if="state === `search`" type="primary" size="large" @click="handleImport"
+        >Import</Button
+      >
+      <Button v-if="state === `custom`" type="primary" size="large" @click="checkSubmit"
+        >Check
+      </Button>
     </template>
   </ScrollView>
 </template>
@@ -50,76 +109,108 @@ import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
-
+import ImportAssetModal from '@aergo-connect/lib-ui/src/modal/ImportAssetModal.vue';
 export default Vue.extend({
-
-  components: { 
-    Header, 
-    ScrollView, 
-    TextField, 
+  components: {
+    Header,
+    ScrollView,
+    TextField,
     Button,
     Identicon,
+    ImportAssetModal,
   },
-
   data() {
     return {
+      importAssetModal: false,
       results: {},
-    }
+      state: 'search',
+      error: {
+        state: false,
+        value: '',
+      },
+      value: '',
+    };
   },
-
+  watch: {
+    value() {
+      if (this.value === this.$store.state.accounts.address || !this.value) {
+        this.error = { state: false, value: '' };
+      } else {
+        this.error = { state: true, value: 'Please check the address again.' };
+      }
+    },
+  },
   methods: {
     handleBack() {
-      this.$router.push({ 
-        name: 'accounts-list-address', 
+      this.$router.push({
+        name: 'accounts-list-address',
         params: {
           address: this.$store.state.accounts.address,
-        }
+        },
       });
     },
 
     async search(query) {
-      console.log("Search", query) ;
-      await fetch(`https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=*${query}*`).then(res => {
-            return res.json()
-        }).then(data => {
-          this.results = data.hits ;
+      console.log('Search', query);
+      await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=*${query}*`,
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          this.results = data.hits;
         });
-        
-       console.log("Results", this.results) ;
+
+      console.log('Results', this.results);
     },
-    
+
     async select(token) {
-      console.log("Selected",token.meta) ;
+      console.log('Selected', token.meta);
 
-//      this.addToken(this.$route.params.address, token) ;
+      //      this.addToken(this.$route.params.address, token) ;
 
-      this.$store.dispatch('accounts/addToken', token) ;
-        
-      this.$router.push({ 
-        name: 'accounts-list-address', 
+      this.$store.dispatch('accounts/addToken', token);
+
+      this.$router.push({
+        name: 'accounts-list-address',
         params: {
           address: this.$store.state.accounts.address,
-        }
-      })
+        },
+      });
     },
 
-/*
+    /*
     async addToken(address, token) {
-      const key = address.substr(0,5) + "_" + this.network() + "_token" ;
-      const tokensJ = localStorage.getItem(key) ;
+      const key = address.substr(0, 5) + '_' + this.network() + '_token';
+      const tokensJ = localStorage.getItem(key);
 
-      var tokens = [] ;
+      let tokens = [];
       if (tokensJ) {
         tokens = JSON.parse(tokensJ);
       }
-      tokens.push(token) ;
-      localStorage.setItem(key,JSON.stringify(tokens)) ;
-      console.log("tokens", tokens) ;
+      tokens.push(token);
+      localStorage.setItem(key, JSON.stringify(tokens));
+      console.log('tokens', tokens);
     },
-*/
-  }
+    */
+    async custom() {
+      console.log('custom');
+    },
+    handleChangeState(state) {
+      this.state = state;
+    },
+    handleImport() {
+      this.importAssetModal = true;
+    },
+    handleInput(value) {
+      this.value = value;
+    },
+    checkSubmit() {
+      console.log(this.value, 'check');
+    },
+  },
 });
-
 </script>
 
 <style lang="scss">
@@ -132,6 +223,7 @@ export default Vue.extend({
     width: 375px;
     height: 35px;
     display: flex;
+    cursor: pointer;
     .tab_active {
       height: 35px;
       .tab_text {
@@ -172,42 +264,52 @@ export default Vue.extend({
   }
   .search_wrapper {
     width: 327px;
-    height: 48px;
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
-    .network_wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      .network_circle {
-        border-radius: 50%;
-        background: #e4097d;
-        width: 6px;
-        height: 6px;
-        margin-right: 2px;
-      }
-      .network_text {
-        color: #686767;
-        font-family: 'Outfit';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 13px;
-        line-height: 16px;
-        text-align: center;
-        letter-spacing: -0.333333px;
-      }
-      .network_textField {
-        width: 327px;
-        height: 48px;
-        border-radius: 4px;
-      }
+    .network_textField {
+      width: 327px;
+      height: 48px;
+      border-radius: 4px;
     }
+  }
+}
+.input-error-text {
+  height: 0;
+}
+.custom_wrapper {
+  .custom_detail_wrapper {
+    .custom_element_wrapper {
+      margin-top: 10px;
+    }
+  }
+}
+.network_wrapper {
+  margin-top: 20px;
+  width: 327px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  .network_circle {
+    border-radius: 50%;
+    background: #e4097d;
+    width: 6px;
+    height: 6px;
+    margin-right: 2px;
+  }
+  .network_text {
+    color: #686767;
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 16px;
+    text-align: center;
+    letter-spacing: -0.333333px;
   }
 
   .select_token_content {
     width: 327px;
-    margin-top: 35px;
+    margin-top: 12px;
     .select_token_text {
       font-family: 'Outfit';
       font-style: normal;
@@ -225,6 +327,7 @@ export default Vue.extend({
       height: 62px;
       display: flex;
       align-items: center;
+      cursor: pointer;
       .list_icon {
         width: 40px;
         height: 40px;
@@ -262,6 +365,10 @@ export default Vue.extend({
 
         color: #84ceeb;
       }
+    }
+    .select_token_list:hover {
+      background: #eff5f7;
+      opacity: 0.5;
     }
   }
 }

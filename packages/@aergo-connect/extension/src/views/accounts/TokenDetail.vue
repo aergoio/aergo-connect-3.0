@@ -22,8 +22,8 @@
           <div class="account_title">ACCOUNT</div>
           <div class="account_title_wrapper">
             <div class="account">AmsyLn...dePgfY</div>
+            <Icon class="account_button" :name="`delete2`" @click="handleDelete" />
           </div>
-          <Button class="account_button">-</Button>
         </div>
       </div>
       <div class="token_transaction_history_wrapper">
@@ -103,6 +103,11 @@ export default Vue.extend({
     Icon,
     HeaderVue,
   },
+  methods: {
+    handleDelete() {
+      console.log('delete');
+    },
+  },
 });
 </script>
 
@@ -143,6 +148,7 @@ export default Vue.extend({
     }
     .account_wrapper {
       display: flex;
+      align-items: center;
       .account_icon {
         margin-left: 38px;
       }
@@ -162,12 +168,18 @@ export default Vue.extend({
         color: #454344;
       }
       .account_title_wrapper {
-        margin-left: 24px;
+        display: flex;
+        align-items: center;
+        margin-left: 40px;
+
         width: 105px;
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
         .account {
+          display: flex;
+          align-items: center;
+          justify-content: center;
           font-family: 'Outfit';
           font-style: normal;
           font-weight: 300;
@@ -175,18 +187,21 @@ export default Vue.extend({
           line-height: 15px;
           text-align: right;
           letter-spacing: -0.333333px;
-
+          position: relative;
+          left: 10px;
           /* Primary/Blue01 */
 
           color: #279ecc;
         }
       }
       .account_button {
-        margin-left: 53px;
+        cursor: pointer;
+        margin-left: 58px;
       }
     }
   }
   .token_transaction_history_wrapper {
+    margin-top: 10px;
     margin-left: 24px;
     display: flex;
     align-items: center;

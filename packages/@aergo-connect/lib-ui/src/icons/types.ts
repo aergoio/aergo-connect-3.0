@@ -59,5 +59,6 @@ export const iconNames = tuple(
   'next_grey',
   'pointer',
   'delete2',
+  'redTrashBin',
 );
 export type IconName = typeof iconNames[number];

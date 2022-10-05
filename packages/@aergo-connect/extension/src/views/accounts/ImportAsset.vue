@@ -18,12 +18,12 @@
           <div class="tab_line" />
         </div>
       </div>
-      <ImportAssetModal v-if="importAssetModal" />
+      <ImportAssetModal v-if="importAssetModal" :token="token" />
 
       <div v-if="state === `search`" class="search_wrapper">
         <div class="network_wrapper">
           <div class="network_circle" />
-          <div class="network_text">{{ $store.state.accounts.network || 'AERGO Mainnet' }}</div>
+          <div class="network_text">{{ $store.state.accounts.network }}</div>
         </div>
         <TextField
           placeholder="Name / Symbol / Address"
@@ -41,13 +41,16 @@
                 class="select_token_list"
                 @click="select(result)"
               >
-                <Identicon :text="result.hash" class="list_icon" />
-                <span class="list_text">
-                  {{ result.meta.name + '    ' + result.meta.symbol }}
-                </span>
-                <span class="list_button">
-                  {{ result.meta.type }}
-                </span>
+                <div class="token_list_wrapper">
+                  <Identicon :text="result.hash" class="list_icon" />
+                  <span class="list_text">
+                    {{ result.meta.name + '    ' + result.meta.symbol }}
+                  </span>
+                  <span class="list_button">
+                    {{ result.meta.type }}
+                  </span>
+                </div>
+                <div class="line" />
               </li>
             </ul>
           </div>
@@ -58,7 +61,7 @@
         <div class="custom_wrapper">
           <div class="network_wrapper">
             <div class="network_circle" />
-            <div class="network_text">{{ $store.state.accounts.network || 'AERGO Mainnet' }}</div>
+            <div class="network_text">{{ $store.state.accounts.network }}</div>
           </div>
           <div class="custom_detail_wrapper">
             <div>
@@ -135,6 +138,7 @@ export default Vue.extend({
       },
       value: '',
       check: false,
+      token: [],
     };
   },
   watch: {
@@ -161,10 +165,10 @@ export default Vue.extend({
       await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=*${query}*`,
       )
-        .then(res => {
+        .then((res) => {
           return res.json();
         })
-        .then(data => {
+        .then((data) => {
           this.results = data.hits;
         });
 
@@ -175,15 +179,9 @@ export default Vue.extend({
       console.log('Selected', token.meta);
 
       //      this.addToken(this.$route.params.address, token) ;
-
+      this.token = Object.values(token);
       this.$store.dispatch('accounts/addToken', token);
-
-      this.$router.push({
-        name: 'accounts-list-address',
-        params: {
-          address: this.$store.state.accounts.address,
-        },
-      });
+      this.importAssetModal = true;
     },
 
     /*
@@ -219,20 +217,99 @@ export default Vue.extend({
         console.log('Please check the address again.');
       }
     },
-    customSubmit() {
-      console.log(this.value, 'submit');
-      this.importAssetModal = true;
-    },
+    // customSubmit() {
+    //   console.log(this.value, 'submit');
+    //   this.importAssetModal = true;
+    // },
   },
 });
 </script>
 
 <style lang="scss">
+.header {
+  z-index: 1;
+}
 .tab_content {
   display: flex;
   flex-direction: column;
   align-items: center;
   height: 100%;
+  .select_token_content {
+    width: 327px;
+    margin-top: 15px;
+
+    .select_token_text {
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 300;
+      font-size: 12px;
+      line-height: 15px;
+      letter-spacing: -0.333333px;
+
+      /* Grey/06 */
+
+      color: #686767;
+    }
+    .select_token_list {
+      cursor: pointer;
+      .token_list_wrapper {
+        width: 327px;
+        height: 62px;
+        display: flex;
+        align-items: center;
+        .list_icon {
+          width: 42px;
+          height: 42px;
+          margin-left: 24px;
+          border-radius: 50%;
+        }
+        .list_text {
+          display: flex;
+          /* Subtitle/S3 */
+          width: 250px;
+          font-family: 'Outfit';
+          font-style: normal;
+          font-weight: 400;
+          font-size: 14px;
+          line-height: 20px;
+          letter-spacing: -0.333333px;
+          margin-left: 12px;
+          /* Grey/07 */
+
+          color: #454344;
+        }
+        .list_button {
+          margin-right: 21px;
+          font-family: 'Outfit';
+          font-style: normal;
+          font-weight: 400;
+          font-size: 12px;
+          line-height: 18px;
+          /* identical to box height */
+
+          text-align: right;
+          letter-spacing: -0.333333px;
+
+          /* Primary/Blue02 */
+
+          color: #84ceeb;
+        }
+      }
+
+      .line {
+        /* Grey/01 */
+        width: 311px;
+        height: 1px;
+        background: #f0f0f0;
+        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
+        margin-left: 10px;
+      }
+    }
+    .select_token_list:hover {
+      background: #eff5f7;
+      opacity: 0.5;
+    }
+  }
   .tab_wrapper {
     width: 375px;
     height: 35px;
@@ -319,71 +396,6 @@ export default Vue.extend({
     line-height: 16px;
     text-align: center;
     letter-spacing: -0.333333px;
-  }
-
-  .select_token_content {
-    width: 327px;
-    margin-top: 12px;
-    .select_token_text {
-      font-family: 'Outfit';
-      font-style: normal;
-      font-weight: 300;
-      font-size: 12px;
-      line-height: 15px;
-      letter-spacing: -0.333333px;
-
-      /* Grey/06 */
-
-      color: #686767;
-    }
-    .select_token_list {
-      width: 327px;
-      height: 62px;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      .list_icon {
-        width: 40px;
-        height: 40px;
-        margin-left: 24px;
-        align-items: center;
-      }
-      .list_text {
-        display: flex;
-        /* Subtitle/S3 */
-        width: 250px;
-        font-family: 'Outfit';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: -0.333333px;
-        margin-left: 12px;
-        /* Grey/07 */
-
-        color: #454344;
-      }
-      .list_button {
-        margin-left: 100px;
-        font-family: 'Outfit';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 12px;
-        line-height: 18px;
-        /* identical to box height */
-
-        text-align: right;
-        letter-spacing: -0.333333px;
-
-        /* Primary/Blue02 */
-
-        color: #84ceeb;
-      }
-    }
-    .select_token_list:hover {
-      background: #eff5f7;
-      opacity: 0.5;
-    }
   }
 }
 </style>

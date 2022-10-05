@@ -147,8 +147,10 @@ const routes: RouteConfig[] = [
         component: TokenDetail,
       }),
       withMeta(2, {
-        path: 'balance/:chainId/:address/:nick',
-      }), // 시연용
+        path: '/list/:address/tokendetail/aergo',
+        name: 'token-detail-aergo',
+        component: TokenDetail,
+      }),
 
       // withMeta(2, {
       //   path: 'balance/:chainId/:address/:nick',
@@ -242,7 +244,7 @@ const routes: RouteConfig[] = [
     ],
   },
   {
-    path: '/account/:chainId/:address/:from/:contract/',
+    path: '/account/:address/:from/:contract/',
     component: AccountContainer,
     children: [
       {

@@ -1,5 +1,5 @@
 <template>
-  <ScrollView class="page">
+  <ScrollView>
     <Header
       button="hamburger"
       :title="$store.state.accounts.network"
@@ -10,14 +10,15 @@
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
-    <List
-      v-if="hamburgerModal"
-      removeAccountModal
-      @removeModalClick="handleRemoveModalClick"
-      @select="handleSelect"
-    />
 
     <div v-if="!noAccountModal" class="home_content">
+      <List
+        v-if="hamburgerModal"
+        removeAccountModal
+        @removeModalClick="handleRemoveModalClick"
+        @select="handleSelect"
+        @listModalOff="hamburgerClick"
+      />
       <div class="account_info_wrapper">
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
@@ -47,6 +48,7 @@
         </div>
       </div>
       <NetworkModal v-if="networkModal" @networkModalClick="networkModalClick" />
+
       <div class="token_content_wrapper">
         <ButtonGroup>
           <Button
@@ -65,32 +67,46 @@
           >
         </ButtonGroup>
         <ul class="token_list_ul" v-if="tab === `tokens`">
-          <li class="token_list_li" @click="handleToken">
-            <Icon class="token_list_icon" />
-            <span>AERGO</span>
-            <span> {{ aergoBalance }} </span>
-            <Icon class="next" :name="`next_grey`" @click="handleAergo" />
+          <li class="token_list_li" @click="handleAergo">
+            <div class="token_list_wrapper">
+              <Icon :name="`aergo`" class="token_list_icon" />
+              <span>AERGO</span>
+              <span> {{ aergoBalance }} </span>
+              <Icon class="next" :name="`next_grey`" />
+            </div>
+            <div class="line" />
           </li>
-          <li v-for="token in tokens" class="token_list_li" :key="token.hash" @click="handleToken">
-            <Identicon :text="token.hash" class="list_icon" />
-            <span> {{ token.meta.name }} </span>
-            <span> {{ getBalance(token.hash) }} </span>
-            <Icon class="next" :name="`next_grey`" @click="handleToken(token)" />
+          <li
+            v-for="token in tokens"
+            class="token_list_li"
+            :key="token.hash"
+            @click="handleToken(token)"
+          >
+            <div class="token_list_wrapper">
+              <Identicon :text="token.hash" class="list_icon" />
+              <span> {{ token.meta.name }} </span>
+              <span> {{ getBalance(token.hash) }} </span>
+              <Icon class="next" :name="`next_grey`" />
+            </div>
+            <div class="line" />
           </li>
         </ul>
 
         <ul class="token_list_ul" v-if="tab === `nft`">
-          <li class="token_list_li" @click="handleToken">
+          <!-- <li class="token_list_li" @click="handleToken">
             <Icon class="token_list_icon" />
             <span>CCCV</span>
             <span> {{ aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" />
-          </li>
+          </li> -->
           <li v-for="token in tokens" class="token_list_li" :key="token.hash" @click="handleToken">
-            <Identicon :text="token.hash" class="list_icon" />
-            <span> {{ token.meta.name }} </span>
-            <span> {{ getBalance(token.hash) }} </span>
-            <Icon class="next" :name="`next_grey`" />
+            <div class="token_list_wrapper">
+              <Identicon :text="token.hash" class="list_icon" />
+              <span> {{ token.meta.name }} </span>
+              <span> {{ getBalance(token.hash) }} </span>
+              <Icon class="next" :name="`next_grey`" />
+            </div>
+            <div class="line" />
           </li>
         </ul>
 
@@ -123,12 +139,12 @@ import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import { Account } from '@herajs/wallet';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
-import { AccountSpec } from '@herajs/wallet/dist/types/models/account';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
+import { AccountSpec } from '@herajs/wallet/dist/types/models/account';
+import { Account } from '@herajs/wallet';
 import { Amount } from '@herajs/common';
 
 export default Vue.extend({
@@ -169,6 +185,10 @@ export default Vue.extend({
       this.init_account();
     },
   },
+  async mounted() {
+    const a = await this.getTokenBalance(this.$store.state.accounts.address);
+    console.log(a);
+  },
 
   methods: {
     async init_account() {
@@ -180,14 +200,15 @@ export default Vue.extend({
         // this.balances = await this.getBalances() ;
       } else {
         const succ = this.$store.dispatch('accounts/loadAccount');
-
         if (succ)
-          this.$router.push({
-            name: 'accounts-list-address',
-            params: {
-              address: this.$store.state.accounts.address,
-            },
-          });
+          this.$router
+            .push({
+              name: 'accounts-list-address',
+              params: {
+                address: this.$store.state.accounts.address,
+              },
+            })
+            .catch(() => {});
         else this.noAccountModal = true;
       }
     },
@@ -200,10 +221,10 @@ export default Vue.extend({
       fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,
       )
-        .then(res => {
+        .then((res) => {
           return res.json();
         })
-        .then(data => {
+        .then((data) => {
           this.balances = data.hits;
           //         return data.hits ;
         });
@@ -211,7 +232,7 @@ export default Vue.extend({
 
     getBalance(token: string) {
       console.log('BALANCE', this.balances, token);
-      const result = this.balances.find(element => element.meta.address == token);
+      const result = this.balances.find((element) => element.meta.address == token);
 
       if (!result) return 0;
       else {
@@ -258,7 +279,16 @@ export default Vue.extend({
       console.log('handleDetailAddress');
     },
 
-    handleAergo(token: any) {},
+    handleAergo() {
+      this.$router
+        .push({
+          name: 'token-detail-aergo',
+          params: {
+            address: this.$route.params.address,
+          },
+        })
+        .catch(() => {});
+    },
 
     handleToken(token: any) {
       this.$router
@@ -300,6 +330,9 @@ export default Vue.extend({
 });
 </script>
 <style lang="scss">
+.header {
+  z-index: 2;
+}
 .home_content {
   display: flex;
   flex-direction: column;
@@ -389,13 +422,34 @@ export default Vue.extend({
     .token_list_ul {
       /* margin-top: 5px; */
       height: 252px;
+      /* overflow: hidden; */
+      overflow-y: scroll;
       .token_list_li {
+        cursor: pointer;
+      }
+      .token_list_wrapper {
+        width: 375px;
+        height: 62px;
         display: flex;
         justify-content: space-around;
         align-items: center;
-        width: 375px;
-        height: 62px;
-        cursor: pointer;
+        .token_list_icon {
+          width: 46px;
+          height: 46px;
+          border-radius: 50%;
+          border: 1px solid #f0f0f0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+      .line {
+        /* Grey/01 */
+        width: 311px;
+        height: 1px;
+        background: #f0f0f0;
+        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
+        margin-left: 32px;
       }
     }
     .token_list_button {
@@ -415,6 +469,7 @@ export default Vue.extend({
       text-align: center;
       letter-spacing: -0.333333px;
       cursor: pointer;
+      margin-top: 10px;
       .token_list_button_img {
         position: relative;
         bottom: 2px;
@@ -441,7 +496,7 @@ export default Vue.extend({
     }
   }
   .content_footer {
-    margin-top: 20px;
+    margin-top: 10px;
     .button {
       box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
       border-radius: 4px;

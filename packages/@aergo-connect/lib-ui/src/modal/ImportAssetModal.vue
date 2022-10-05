@@ -3,8 +3,10 @@
     <div class="import_asset_wrapper">
       <div class="import_asset_header">Imported Asset Successfully!</div>
       <div class="import_asset_icon_wrapper">
-        <Icon class="import_asset_icon" />
-        <div class="import_asset_title">Balancer (BAL)</div>
+        <Icon class="import_asset_icon" :src="token[1].image || 'imgsrc'" alt="'noImg'" />
+        <div class="import_asset_title">
+          {{ `${token[1].name}` + ' ' + '(' + `${token[1].symbol}` + ')' }}
+        </div>
       </div>
 
       <div class="import_asset_detail_wrapper">
@@ -12,28 +14,28 @@
           <div class="network_title">Network</div>
           <div class="network_state_wrapper">
             <div class="network_state" />
-            <div class="network_text">AERGO Mainnet</div>
+            <div class="network_text">{{ $store.state.accounts.network }}</div>
           </div>
         </div>
 
         <div class="token_type_detail_wrapper">
           <div>
             <div class="title">Type</div>
-            <div class="content">Token</div>
+            <div class="content">{{ token[1].type }}</div>
           </div>
           <div>
             <div class="title">Symbol</div>
-            <div class="content">BAL</div>
+            <div class="content">{{ token[1].symbol }}</div>
           </div>
           <div>
             <div class="title">Decimal</div>
-            <div class="content">18</div>
+            <div class="content">{{ token[1].decimals }}</div>
           </div>
         </div>
 
         <div class="address_wrapper">
           <div class="address_title">Address</div>
-          <div class="address_content">AmhYXBer9JhCQ7UnpRLnjG2r3TyDqaNsYubs8wVoS3eHuwQ8uSi7</div>
+          <div class="address_content">{{ token[0] }}</div>
         </div>
       </div>
 
@@ -48,9 +50,23 @@ import Icon from '../icons/Icon.vue';
 import Button from '../buttons/Button.vue';
 export default Vue.extend({
   components: { Icon, Button },
+  props: {
+    token: {
+      type: Object,
+      default: {},
+    },
+  },
+  mounted() {
+    console.log(this.token);
+  },
   methods: {
     handleClick() {
-      console.log('OK');
+      this.$router.push({
+        name: 'accounts-list-address',
+        params: {
+          address: this.$store.state.accounts.address,
+        },
+      });
     },
   },
 });

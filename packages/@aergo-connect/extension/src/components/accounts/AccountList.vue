@@ -6,11 +6,10 @@
       class="nav-account-item"
       @click.capture="$emit('select', account)"
     >
-      <div :class="activeAccount && $store.state.accounts.address === account.address ? 'active' : ''">
-        <AccountItem
-          :address="account.address"
-          :nickname="account.nick"
-        />
+      <div
+        :class="activeAccount && $store.state.accounts.address === account.address ? 'active' : ''"
+      >
+        <AccountItem :address="account.address" :nickname="account.nick" />
       </div>
     </li>
   </ul>
@@ -121,7 +120,7 @@ export default Vue.extend({
 
   computed: {
     sortedAccounts(): any[] {
-      const accounts = [...this.accounts].filter(account => typeof account.data !== 'undefined');
+      const accounts = [...this.accounts].filter((account) => typeof account.data !== 'undefined');
       // Order by address A-Z
 
       accounts.sort((a, b) => a.data.spec?.address?.localeCompare(b.data.spec?.address));
@@ -151,7 +150,7 @@ export default Vue.extend({
 
     accountsByChainId() {
       if (this.groupByChain === false) return [['ALL', this.sortedAccounts]];
-      const result = groupBy(this.sortedAccounts, item => item?.data?.spec?.chainId || '');
+      const result = groupBy(this.sortedAccounts, (item) => item?.data?.spec?.chainId || '');
       return Array.from(result);
     },
   },

@@ -1,9 +1,9 @@
 <template>
-  <div class="side-nav-backdrop">
+  <div class="side-nav-backdrop" @click="handleListModalOff">
     <div class="side-nav-wrap">
       <section class="side-nav-accounts">
         <img class="side-nav-logo" src="@aergo-connect/lib-ui/src/icons/img/nav-logo.svg" />
-        <div class="accounts-dropDown" @click="handleAccountsDropDown">
+        <div class="accounts-dropDown" @click="(event) => handleAccountsDropDown(event)">
           <span>Accounts</span>
           <img
             v-if="isAccountsListOpened"
@@ -50,28 +50,34 @@ export default Vue.extend({
   props: {},
   computed: {
     accounts(): any[] {
-      const accounts = this.$store.state.accounts.accounts;
-      console.log("List ORG", accounts) ;
-      const ac = Object.values(this.$store.state.accounts.accounts);
-      console.log("List ORG", ac) ;
+      // const accounts = this.$store.state.accounts.accounts;
+      // console.log('List ORG', accounts);
+      // const ac = Object.values(this.$store.state.accounts.accounts);
+      // console.log('List ORG', ac);
       return Object.values(this.$store.state.accounts.accounts);
     },
-/*
+    /*
       const accounts = Object.values(this.$background.getAccounts()) ;
       console.log("List", accounts);
       console.log("List", this.$background.getAccounts()) ;
 */
   },
+
   methods: {
-    handleAccountsDropDown() {
+    handleAccountsDropDown(event: any) {
+      // TODO : dropdown 버튼 눌렀을때 accounts list 중 하나만 추출하기
+      event.stopPropagation();
       this.isAccountsListOpened = !this.isAccountsListOpened;
     },
     handleRemoveModal() {
       this.$emit('removeModalClick');
+      return false;
     },
-
+    handleListModalOff() {
+      this.$emit('listModalOff');
+    },
     handleSelect(account: any) {
-      const address = account.address ;
+      const address = account.address;
 
       this.$store.commit('accounts/setActiveAccount', address);
 
@@ -90,17 +96,18 @@ export default Vue.extend({
     },
   },
   mounted() {
-//    this.$store.dispatch('accounts/fetchAccounts');
+    //    this.$store.dispatch('accounts/fetchAccounts');
   },
 });
 </script>
 
 <style lang="scss">
 .side-nav-backdrop {
+  position: absolute;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
   width: 100%;
   height: 100%;
-  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -119,13 +126,14 @@ export default Vue.extend({
     justify-content: space-between;
     margin: 0;
     padding-left: 16px;
-
+    z-index: 1;
     .side-nav-logo {
       margin-left: 14px;
     }
 
     .accounts-dropDown {
       display: flex;
+      z-index: 2;
       justify-content: space-between;
       margin: 12px 20px 12px 6px;
       cursor: pointer;

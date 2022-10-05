@@ -18,9 +18,7 @@
             >
               Import
             </Button>
-            <Button type="primary" size="large" hover @click="handleCreate">
-              Create
-            </Button>
+            <Button type="primary" size="large" hover @click="handleCreate"> Create </Button>
             <Button
               type="primary"
               disabled
@@ -61,7 +59,7 @@ export default class Create extends mixins(PersistInputsMixin) {
       chainId: 'aergo.io',
     });
 
-//    this.$store.commit('accounts/setSeedPhrase', mnemonic);
+    //    this.$store.commit('accounts/setSeedPhrase', mnemonic);
 
     this.$store.dispatch('accounts/addAccount', account.address);
 

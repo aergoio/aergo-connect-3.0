@@ -11,20 +11,15 @@
 
       <span class="sub-title">Nickname</span>
       <div class="user_nickname_wrapper">
-        <input 
-          class="user_nickname_text"
-          v-model="nick"
-          autofocus
-        />
+        <div class="user_nickname_text">{{ nick }}</div>
+        <!-- <input class="user_nickname_text" v-model="nick" autofocus /> -->
       </div>
 
       <ButtonGroup vertical class="buttonGroup-position">
         <Button type="primary-outline" size="large-outline" hover @click="goBackup">
           Backup Private Key
         </Button>
-        <Button type="primary" size="large" :hover="true" @click="goHome">
-          Home
-        </Button>
+        <Button type="primary" size="large" :hover="true" @click="goHome"> Home </Button>
       </ButtonGroup>
     </div>
   </ScrollView>

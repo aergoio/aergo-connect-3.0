@@ -51,18 +51,18 @@ export default Vue.extend({
     },
     async handleDeleteAccount() {
       const nativeCheck = confirm(
-        `Are you really sure you want to remove the account ${this.$route.params.address} from this wallet?`,
+        `Are you really sure you want to remove the account ${this.$store.state.accounts.address} from this wallet?`,
       );
       if (!nativeCheck) return;
-      await this.$background.removeAccount({
-        chainId: 'aergo.io',
-        address: this.$route.params.address,
-      });
-      const accounts = await this.$background.getAccounts();
-      console.log("NewAddress",accounts[0]?.data.spec.address) ;
+      await this.$store.dispatch('accounts/removeAccount') ;
       this.$emit('cancel');
-      this.$router.push({ name: 'accounts-list-address', params: {address: accounts[0]?.data.spec.address} });
-    },
+      this.$router.push({ 
+        name: 'accounts-list-address', 
+        params: { 
+          address: this.$store.state.accounts.address, 
+        }
+      });
+    }
   },
 });
 </script>

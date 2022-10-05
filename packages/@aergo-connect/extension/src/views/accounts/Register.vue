@@ -58,11 +58,7 @@ export default class Create extends mixins(PersistInputsMixin) {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: 'aergo.io',
     });
-
-    //    this.$store.commit('accounts/setSeedPhrase', mnemonic);
-
     this.$store.dispatch('accounts/addAccount', account.address);
-
     this.$router.push({
       name: 'account-create',
       params: {

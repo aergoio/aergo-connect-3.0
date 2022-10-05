@@ -1,24 +1,24 @@
 <template>
   <div class="network_modal_backdrop" @click="networkModalClick">
     <div class="network_modal_wrapper">
-      <div class="network_modal_title">Network</div>
+      <div class="network_modal_title">Select Network</div>
       <div class="network_modal_line" />
       <ul class="network_modal_ul">
         <li class="network_modal_li">
           <div class="network_modal_circle1" />
-          <span class="network_modal_name">AERGO Mainnet</span>
-          <Icon :name="'check'" class="network_modal_icon" />
+          <span class="network_modal_name" @click="setNetwork('mainnet')" >AERGO Mainnet</span>
+          <Icon class="network_modal_icon" />
         </li>
         <div class="list_line" />
         <li class="network_modal_li">
           <div class="network_modal_circle2" />
-          <span class="network_modal_name">AERGO Testnet</span>
+          <span class="network_modal_name" @click="setNetwork('testnet')">AERGO Testnet</span>
           <Icon class="network_modal_icon" />
         </li>
         <div class="list_line" />
         <li class="network_modal_li">
           <div class="network_modal_circle3" />
-          <span>AERGO Alphanet</span>
+          <span class="network_modal_name" @click="setNetwork('alpha')">AERGO alpha</span>
           <Icon class="network_modal_icon" />
         </li>
         <div class="list_line" />
@@ -40,6 +40,18 @@ export default Vue.extend({
   methods: {
     networkModalClick() {
       this.$emit('networkModalClick');
+    },
+
+    setNetwork (network) {
+      this.$store.commit('accounts/setNetwork', network) ;
+
+      // reset account_data
+      this.$router.push({
+        name: 'accounts-list-address',
+        params: {
+          address: this.$store.state.accounts.address,
+        }
+     });
     },
   },
 });

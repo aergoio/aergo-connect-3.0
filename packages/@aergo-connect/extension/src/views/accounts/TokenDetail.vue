@@ -156,7 +156,7 @@ export default Vue.extend({
   },
 
   methods: {
-    getBalance(value: float, decimals: float) {
+    getBalance(value: number, decimals: number) {
       return value / Math.pow(10, decimals);
     },
 
@@ -170,20 +170,17 @@ export default Vue.extend({
       return this.$route.params.token.meta.name;
     },
 
-    async getHistory() {
+    async getHistory(): Promise<void> {
       //  console.log("fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`) ;
 
       const resp = await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`,
-      );
+      ) ;
 
       const response = await resp.json();
-      console.log(response, 'response!!!!');
-      if (response.error) {
-        this.data = [];
-      } else this.data = response.hits;
-
-      console.log('response', this.data);
+      if (response.error) this.data = [];
+      else this.data = response.hits;
+    },
 
       /*
       if (response.error) {
@@ -202,10 +199,10 @@ export default Vue.extend({
         this.data = [];
         this.totalItems = 0;
       }
+
+//      this.$emit('onUpdateTotalCount', this.totalItems);
 */
 
-      this.$emit('onUpdateTotalCount', this.totalItems);
-    },
     handleDelete() {
       console.log('delete');
     },

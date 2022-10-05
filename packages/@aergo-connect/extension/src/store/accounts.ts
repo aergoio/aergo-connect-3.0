@@ -45,18 +45,28 @@ const storeModule: Module<AccountsState, RootState> = {
     },
 
     async aergoBalance({ state }) {
+
       const vue = getVueInstance(this);
+      const account = vue.$background.getActiveAccount();
+
+      console.log('aergoBalance Address', state.address);
+      console.log('aergoBalance Address', state.network);
+      console.log('aergoBalance activeAc', account);
+      
+
       const val = await vue.$background.getAccountState({
         address: state.address,
         chainId: state.network,
       });
       const result = await new Amount(val.balance).formatNumber('aergo');
       console.log('aergoBalance', result);
+
       return result;
     },
 
     async loadAccount({ state, commit }) {
       const vue = getVueInstance(this);
+/*
       const account = vue.$background.getActiveAccount();
 
       if (!account) {
@@ -65,14 +75,19 @@ const storeModule: Module<AccountsState, RootState> = {
         return true;
       }
 
-      const accounts = vue.$background.getAccounts();
+*/
+      const accounts = await vue.$background.getAccounts();
+      console.log('accounts', accounts);
+
       if (accounts.length !== 0) {
         commit('setActiveAccount', accounts[0]?.data.spec.address);
         console.log('loadAccount', state.address);
-        return true;
-      }
 
-      return false;
+        return true ;
+      }
+      else {
+        return false ;
+      }
     },
 
     async removeAccount({ state, commit }) {
@@ -87,7 +102,7 @@ const storeModule: Module<AccountsState, RootState> = {
 
     async addAccount({ commit }, address: string) {
       console.log('addAccount', address);
-      commit('addAccount', address);
+      await commit('addAccount', address);
       commit('setActiveAccount', address);
     },
 
@@ -132,7 +147,9 @@ const storeModule: Module<AccountsState, RootState> = {
       vue.$background.setActiveAccount({ address: address, chainId: 'aergo.io' });
       state.address = address;
       console.log('accounts', state.accounts[address]);
+
       state.nick = state.accounts[address]['nick'];
+
       console.log('SetActiveAccount');
     },
 

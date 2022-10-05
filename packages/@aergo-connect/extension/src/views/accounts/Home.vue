@@ -293,6 +293,7 @@ export default Vue.extend({
           name: 'token-detail-aergo',
           params: {
             address: this.$route.params.address,
+            balance: this.aergoBalance,
           },
         })
         .catch(() => {});

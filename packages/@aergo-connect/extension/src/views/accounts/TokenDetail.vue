@@ -24,35 +24,35 @@
                 )}...${$store.state.accounts.address.slice(-6)}`
               }}
             </div>
-            <Icon class="account_button" :name="`delete2`" @click="handleDelete" />
+            <Icon v-if="state === 'others'" class="account_button" :name="`delete2`" @click="handleDelete" />
           </div>
         </div>
-      </div>
-      <div v-if="state === 'others'" class="token_transaction_history_wrapper">
-        <Icon class="icon" />
-        <div class="price">{{ $route.params.balance }}</div>
-        <div class="token_name">ARG</div>
       </div>
 
       <div v-if="state === 'aergo'" class="token_transaction_history_wrapper aergo">
         <div class="flex-row">
           <Icon class="icon" :name="'aergo'" />
-          <div class="price_wrapper">
-            <div class="price">{{ $route.params.balance || '2,000,000.000' }}</div>
+          <div class="balance_wrapper">
+            <div class="balance">{{ $route.params.balance || '2,000,000.000' }}</div>
             <div class="dollor">$ 0.0</div>
           </div>
-          <div class="token_name">AERGO</div>
+          <div class="token_symbol">ARG</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
           <div class="detail_title">Staked Balance</div>
-          <div class="detail_content">0 AERGO</div>
+          <div class="detail_content">0 ARG</div>
         </div>
         <div class="line detail" />
         <div class="detail_wrapper">
           <div class="detail_title">Registered Names</div>
           <div class="detail_content">0</div>
         </div>
+      </div>
+      <div v-else class="token_transaction_history_wrapper">
+        <Icon class="icon" />
+        <div class="balance">{{ $route.params.balance }}</div>
+        <div class="token_symbol">{{ $route.params.token.meta.symbol }}</div>
       </div>
 
       <div class="transaction_history_wrapper">
@@ -62,19 +62,21 @@
       <div class="token_detail_background">
         <ul class="token_detail_wrapper">
           <li v-for="item in data" class="token_detail_list">
-            <div class="time">{{ item.meta.ts }}</div>
+            <div class="time">{{ item.meta.ts.slice(0,16) }}</div>
             <div class="direction_row">
-              <div class="sent">Sent</div>
+              <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div>
+              <div v-else class="sent">Recevied</div>
               <div class="direction_row">
-                <div class="price">
+                <div class="balance">
                   {{ getBalance(item.meta.amount, item.token.meta.decimals) }}
                 </div>
-                <div class="token_name">{{ item.token.meta.symbol }}</div>
+                <div class="token_symbol">{{ item.token.meta.symbol }}</div>
               </div>
             </div>
             <div class="line"></div>
             <div class="direction_row">
-              <div class="address">{{ item.meta.from }}</div>
+              <div v-if="item.meta.from == $store.state.accounts.address" class="address">{{ item.meta.to }}</div>
+              <div v-else class="address">{{ item.meta.from }}</div>
               <Button :name="'pointer'" />
             </div>
           </li>
@@ -389,7 +391,7 @@ export default Vue.extend({
       align-items: center;
       border-radius: 50%;
     }
-    .price_wrapper {
+    .balance_wrapper {
       width: 200px;
       margin-top: 14px;
       .dollor {
@@ -409,7 +411,7 @@ export default Vue.extend({
         margin-left: 15px;
       }
     }
-    .price {
+    .balance {
       margin-left: 15px;
       /* Headline/H3 */
       width: 141px;
@@ -498,7 +500,7 @@ export default Vue.extend({
         .time {
           margin-left: 16px;
           margin-top: 8px;
-          width: 89px;
+          width: 100px;
           height: 15px;
           font-family: 'Outfit';
           font-style: normal;
@@ -547,7 +549,7 @@ export default Vue.extend({
 
             color: #454344;
           }
-          .price {
+          .balance {
             margin-right: 8px;
             width: 66px;
             height: 21px;
@@ -562,7 +564,7 @@ export default Vue.extend({
 
             color: #454344;
           }
-          .token_name {
+          .token_symbol {
             margin-right: 16px;
           }
 

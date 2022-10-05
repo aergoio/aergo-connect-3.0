@@ -2,7 +2,7 @@
   <ScrollView class="page">
     <Header
       button="hamburger"
-      title="AERGO Mainnet"
+      :title="$store.state.accounts.network"
       refresh
       network
       @hamburgerClick="hamburgerClick"
@@ -69,13 +69,13 @@
             <Icon class="token_list_icon" />
             <span>AERGO</span>
             <span> {{ aergoBalance }} </span>
-            <Icon class="next" :name="`next_grey`" />
+            <Icon class="next" :name="`next_grey`" @click="handleAergo" />
           </li>
           <li v-for="token in tokens" class="token_list_li" :key="token.hash" @click="handleToken">
             <Identicon :text="token.hash" class="list_icon" />
             <span> {{ token.meta.name }} </span>
             <span> {{ getBalance(token.hash) }} </span>
-            <Icon class="next" :name="`next_grey`" />
+            <Icon class="next" :name="`next_grey`" @click="handleToken(token)" />
           </li>
         </ul>
 
@@ -257,11 +257,22 @@ export default Vue.extend({
     handleDetailAddress() {
       console.log('handleDetailAddress');
     },
+
+    handleAergo(token: any) {},
+
     handleToken(token: any) {
       this.$router
-        .push({ name: 'token-detail', params: { address: this.$route.params.address } })
+        .push({
+          name: 'token-detail',
+          params: {
+            address: this.$route.params.address,
+            token: token,
+            balance: this.getBalance(token.hash),
+          },
+        })
         .catch(() => {});
     },
+
     handleImportAsset() {
       this.$router
         .push({

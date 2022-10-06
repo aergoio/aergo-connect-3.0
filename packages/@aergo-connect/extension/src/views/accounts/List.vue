@@ -83,12 +83,14 @@ export default Vue.extend({
 
       this.$emit('select', account);
 
-      this.$router.push({
-        name: 'accounts-list-address',
-        params: {
-          address: address,
-        },
-      });
+      this.$router
+        .push({
+          name: 'accounts-list',
+          params: {
+            address: address,
+          },
+        })
+        .catch(() => {});
     },
 
     handleLock() {

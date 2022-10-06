@@ -54,15 +54,15 @@ export default Vue.extend({
         `Are you really sure you want to remove the account ${this.$store.state.accounts.address} from this wallet?`,
       );
       if (!nativeCheck) return;
-      await this.$store.dispatch('accounts/removeAccount') ;
+      await this.$store.dispatch('accounts/removeAccount');
       this.$emit('cancel');
-      this.$router.push({ 
-        name: 'accounts-list-address', 
-        params: { 
-          address: this.$store.state.accounts.address, 
-        }
+      this.$router.push({
+        name: 'accounts-list',
+        params: {
+          address: this.$store.state.accounts.address,
+        },
       });
-    }
+    },
   },
 });
 </script>

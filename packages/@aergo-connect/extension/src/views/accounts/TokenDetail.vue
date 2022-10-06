@@ -4,7 +4,7 @@
       button="back"
       :title="getTitle()"
       refresh
-      :to="{ name: 'accounts-list-address', params: { address: $store.state.accounts.address } }"
+      :to="{ name: 'accounts-list', params: { address: $store.state.accounts.address } }"
     />
     <div class="token_detail_content_wrapper">
       <div class="account_detail_wrapper">

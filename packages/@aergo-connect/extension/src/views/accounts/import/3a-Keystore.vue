@@ -99,7 +99,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
         chainId: 'aergo.io',
       });
 
-      this.$store.commit('accounts/addAccount', accountSpec.address);
+      this.$store.dispatch('accounts/addAccount', accountSpec.address);
       this.$router.push({ name: 'account-imported', params: { address: accountSpec.address } });
 
     } catch (e) {

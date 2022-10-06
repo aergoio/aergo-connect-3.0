@@ -42,18 +42,19 @@ import { Identicon } from '@aergo-connect/lib-ui/src/content';
     Icon,
   },
 })
+
 export default class Create extends mixins() {
   address = '';
   nick = '';
   key = '';
   async beforeMount() {
-    const { address } = await this.$route.params;
-    this.address = address;
-    this.key = this.address.substr(0, 5) + '_nick';
-    this.nick = this.key;
+    this.address = await this.$store.state.accounts.address;
+    this.nick = await this.$store.state.accounts.nick; 
+    console.log("created in ", this.address) ;
+    console.log("created in ", this.nick) ;
   }
   async goBackup() {
-    localStorage.setItem(this.key, this.nick);
+    this.$store.commit('accounts/setNick', this.nick) ;
     this.$router.push({
       name: 'account-backup',
       params: {
@@ -62,7 +63,9 @@ export default class Create extends mixins() {
     });
   }
   async goHome() {
-    localStorage.setItem(this.key, this.nick);
+    console.log("created", this.nick) ;
+    console.log("created", this.$store.state.accounts.nick) ;
+    this.$store.commit('accounts/setNick', this.nick) ;
     this.$router.push({
       name: 'accounts-list-address',
       params: {

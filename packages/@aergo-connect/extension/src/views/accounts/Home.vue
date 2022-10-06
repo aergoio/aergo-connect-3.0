@@ -184,56 +184,64 @@ export default Vue.extend({
     $route(to, from) {
       this.init_account();
     },
-  },
-  async mounted() {
-    const a = await this.getTokenBalance(this.$store.state.accounts.address);
-    console.log(a);
+
+    '$store.state.accounts.network': function() {
+      this.init_account();
+    }
   },
 
   methods: {
+
     async init_account() {
       console.log('Address', this.$store.state.accounts.address);
-      if (this.$store.state.accounts.address) {
-        this.tokens = await this.$store.dispatch('accounts/tokens');
-        this.aergoBalance = await this.$store.dispatch('accounts/aergoBalance');
-        await this.getBalances();
-        // this.balances = await this.getBalances() ;
-      } else {
-        const succ = this.$store.dispatch('accounts/loadAccount');
-        if (succ)
-          this.$router
-            .push({
-              name: 'accounts-list-address',
-              params: {
-                address: this.$store.state.accounts.address,
-              },
-            })
-            .catch(() => {});
-        else this.noAccountModal = true;
+      if (this.$store.state.accounts.address !== '') { await this.getState() } 
+      else {
+        console.log('Other Account Loading ..');
+        const succ = await this.$store.dispatch('accounts/loadAccount');
+        if (succ) {
+          console.log('New Address', this.$store.state.accounts.address);
+          this.$router.push({
+            name: 'accounts-list-address',
+            params: {
+              address: this.$store.state.accounts.address,
+            },
+          });
+        }
+        else {
+          console.log('Need Register');
+          this.noAccountModal = true;
+        }
       }
     },
 
-    getBalances() {
-      console.log(
-        'FETCH',
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,
-      );
-      fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,
-      )
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          this.balances = data.hits;
-          //         return data.hits ;
-        });
+    async getState() {
+
+      this.aergoBalance = await this.$store.dispatch('accounts/aergoBalance');
+      console.log("aergoBalance", this.aergoBalance) ;
+      this.tokens = await this.$store.dispatch('accounts/tokens');
+
+      await this.getBalances();
+      console.log("balance structure", this.balances) ;
+
+      await this.balances.forEach(e => { this.tokens.push(e.token) }) ;
+      console.log("token structure", this.tokens) ;
+    },
+
+    async getBalances() {
+//      console.log( 'FETCH', `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,);
+
+      const resp = await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`, 
+      ) ;
+
+      const response = await resp.json();
+      if (response.error) this.balances =  [] ; 
+      else this.balances = response.hits;
     },
 
     getBalance(token: string) {
       console.log('BALANCE', this.balances, token);
-      const result = this.balances.find((element) => element.meta.address == token);
-
+      const result = this.balances.find(element => element.meta.address == token);
       if (!result) return 0;
       else {
         const value = result.meta.balance_float / Math.pow(10, result.token.meta.decimals);
@@ -285,6 +293,7 @@ export default Vue.extend({
           name: 'token-detail-aergo',
           params: {
             address: this.$route.params.address,
+            balance: this.aergoBalance,
           },
         })
         .catch(() => {});

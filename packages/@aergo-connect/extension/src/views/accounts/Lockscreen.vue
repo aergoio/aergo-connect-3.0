@@ -61,9 +61,14 @@ export default class Lockscreen extends mixins() {
   async unlock(): Promise<void> {
     try {
       await this.$background.unlock({ password: this.password });
-      const getAccounts = await this.$background.getAccounts();
-
       let nextPath = this.$store.state.ui.route.currentPath;
+
+      console.log("currentPath", nextPath) ;
+
+/*
+      const getAccounts = await this.$background.getAccounts();
+      console.log("getAccounts", getAccounts) ;
+
       if (getAccounts.length > 0) {
         nextPath = {
           name: 'accounts-list-address',
@@ -74,9 +79,13 @@ export default class Lockscreen extends mixins() {
       } else {
         this.$router.push({ name: 'accounts-list' });
       }
+*/
+      if (!nextPath || nextPath === '/' || nextPath === '/locked') {
+        nextPath = { name: 'accounts-list-address' };
+      }
+
       this.$router.push(nextPath).catch(() => {});
-      // if (!nextPath || nextPath === '/' || nextPath === '/locked') {
-      // }
+
     } catch (e) {
       // this.errors.password = `${e}`;
       this.errors.password = `Please check the seed phrase again.`;

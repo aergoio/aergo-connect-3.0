@@ -48,12 +48,6 @@ const storeModule: Module<AccountsState, RootState> = {
 
       const vue = getVueInstance(this);
       const account = vue.$background.getActiveAccount();
-
-      console.log('aergoBalance Address', state.address);
-      console.log('aergoBalance Address', state.network);
-      console.log('aergoBalance activeAc', account);
-      
-
       const val = await vue.$background.getAccountState({
         address: state.address,
         chainId: state.network,
@@ -66,16 +60,6 @@ const storeModule: Module<AccountsState, RootState> = {
 
     async loadAccount({ state, commit }) {
       const vue = getVueInstance(this);
-/*
-      const account = vue.$background.getActiveAccount();
-
-      if (!account) {
-        commit('setActiveAccount', account.data.spec.address);
-        console.log('loadAccount', state.address);
-        return true;
-      }
-
-*/
       const accounts = await vue.$background.getAccounts();
       console.log('accounts', accounts);
 

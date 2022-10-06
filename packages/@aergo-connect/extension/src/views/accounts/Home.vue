@@ -187,6 +187,10 @@ export default Vue.extend({
 
     '$store.state.accounts.network': function() {
       this.init_account();
+    },
+
+    '$store.state.accounts.address': function() {
+      this.init_account();
     }
   },
 
@@ -200,12 +204,16 @@ export default Vue.extend({
         const succ = await this.$store.dispatch('accounts/loadAccount');
         if (succ) {
           console.log('New Address', this.$store.state.accounts.address);
+
+/*
           this.$router.push({
             name: 'accounts-list-address',
             params: {
               address: this.$store.state.accounts.address,
             },
           });
+*/
+
         }
         else {
           console.log('Need Register');
@@ -223,7 +231,7 @@ export default Vue.extend({
       await this.getBalances();
       console.log("balance structure", this.balances) ;
 
-      await this.balances.forEach(e => { this.tokens.push(e.token) }) ;
+      await this.balances.forEach(e => { if (e.token.image) this.tokens.push(e.token) }) ;
       console.log("token structure", this.tokens) ;
     },
 
@@ -256,13 +264,7 @@ export default Vue.extend({
 
     handleCancel(modalEvent: string) {
       if (modalEvent === 'noAccountModal') {
-        this.noAccountModal = false;
-        this.$router.push({
-          name: 'accounts-list-address',
-          params: {
-            address: 'This is a temporary account',
-          },
-        });
+        this.$background.lock() ;
       }
 
       if (modalEvent === 'removeAccountModal') {

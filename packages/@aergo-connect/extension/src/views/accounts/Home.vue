@@ -185,27 +185,27 @@ export default Vue.extend({
       this.init_account();
     },
 
-    '$store.state.accounts.network': function() {
+    '$store.state.accounts.network': function () {
       this.init_account();
     },
 
-    '$store.state.accounts.address': function() {
+    '$store.state.accounts.address': function () {
       this.init_account();
-    }
+    },
   },
 
   methods: {
-
     async init_account() {
       console.log('Address', this.$store.state.accounts.address);
-      if (this.$store.state.accounts.address !== '') { await this.getState() } 
-      else {
+      if (this.$store.state.accounts.address !== '') {
+        await this.getState();
+      } else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');
         if (succ) {
           console.log('New Address', this.$store.state.accounts.address);
 
-/*
+          /*
           this.$router.push({
             name: 'accounts-list-address',
             params: {
@@ -213,9 +213,7 @@ export default Vue.extend({
             },
           });
 */
-
-        }
-        else {
+        } else {
           console.log('Need Register');
           this.noAccountModal = true;
         }
@@ -223,33 +221,34 @@ export default Vue.extend({
     },
 
     async getState() {
-
       this.aergoBalance = await this.$store.dispatch('accounts/aergoBalance');
-      console.log("aergoBalance", this.aergoBalance) ;
+      console.log('aergoBalance', this.aergoBalance);
       this.tokens = await this.$store.dispatch('accounts/tokens');
 
       await this.getBalances();
-      console.log("balance structure", this.balances) ;
+      console.log('balance structure', this.balances);
 
-      await this.balances.forEach(e => { if (e.token.image) this.tokens.push(e.token) }) ;
-      console.log("token structure", this.tokens) ;
+      await this.balances.forEach((e) => {
+        if (e.token.image) this.tokens.push(e.token);
+      });
+      console.log('token structure', this.tokens);
     },
 
     async getBalances() {
-//      console.log( 'FETCH', `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,);
+      //      console.log( 'FETCH', `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,);
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`, 
-      ) ;
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,
+      );
 
       const response = await resp.json();
-      if (response.error) this.balances =  [] ; 
+      if (response.error) this.balances = [];
       else this.balances = response.hits;
     },
 
     getBalance(token: string) {
       console.log('BALANCE', this.balances, token);
-      const result = this.balances.find(element => element.meta.address == token);
+      const result = this.balances.find((element) => element.meta.address == token);
       if (!result) return 0;
       else {
         const value = result.meta.balance_float / Math.pow(10, result.token.meta.decimals);
@@ -264,7 +263,7 @@ export default Vue.extend({
 
     handleCancel(modalEvent: string) {
       if (modalEvent === 'noAccountModal') {
-        this.$background.lock() ;
+        this.$background.lock();
       }
 
       if (modalEvent === 'removeAccountModal') {

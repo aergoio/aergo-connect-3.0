@@ -45,7 +45,6 @@ const storeModule: Module<AccountsState, RootState> = {
     },
 
     async aergoBalance({ state }) {
-
       const vue = getVueInstance(this);
       const account = vue.$background.getActiveAccount();
       const val = await vue.$background.getAccountState({
@@ -67,10 +66,9 @@ const storeModule: Module<AccountsState, RootState> = {
         commit('setActiveAccount', accounts[0]?.data.spec.address);
         console.log('loadAccount', state.address);
 
-        return true ;
-      }
-      else {
-        return false ;
+        return true;
+      } else {
+        return false;
       }
     },
 
@@ -110,7 +108,7 @@ const storeModule: Module<AccountsState, RootState> = {
         tokens = JSON.parse(tokensJ);
       } else return;
 
-      const fList = tokens.filter(element => element.hash !== token.hash);
+      const fList = tokens.filter((element) => element.hash !== token.hash);
       commit('setTokens', JSON.stringify(fList));
       console.log('deleteToken', fList);
     },

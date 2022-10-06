@@ -34,19 +34,18 @@
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
             <div class="balance">{{ $route.params.balance || '2,000,000.000' }}</div>
-            <div class="dollor">$ 0.0</div>
           </div>
-          <div class="token_symbol">ARG</div>
+          <div class="token_symbol">AERGO</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
           <div class="detail_title">Staked Balance</div>
-          <div class="detail_content">0 ARG</div>
+          <div class="detail_content">{{ aergoStaking() }}</div>
         </div>
         <div class="line detail" />
         <div class="detail_wrapper">
           <div class="detail_title">Registered Names</div>
-          <div class="detail_content">0</div>
+          <div class="detail_content"></div>
         </div>
       </div>
       <div v-else class="token_transaction_history_wrapper">
@@ -61,7 +60,24 @@
       </div>
       <div class="token_detail_background">
         <ul class="token_detail_wrapper">
-          <li v-for="item in data" class="token_detail_list">
+          <li v-if="state==='aergo'" v-for="item in data" class="token_detail_list">
+            <div class="time">aergo</div>
+            <div class="direction_row">
+              <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
+              <div v-else class="sent">Recevied</div>
+              <div class="direction_row">
+                <div class="balance"> {{ item.meta.amount_float }} </div>
+                <div class="token_symbol">AERGO</div>
+              </div>
+            </div>
+            <div class="line"></div>
+            <div class="direction_row">
+              <div v-if="$store.state.accounts.address" class="address"></div>
+              <div v-else class="address"></div>
+              <Button :name="'pointer'" />
+            </div>
+          </li>
+          <li v-if="state==='others'" v-for="item in data" class="token_detail_list">
             <div class="time">{{ item.meta.ts.slice(0,16) }}</div>
             <div class="direction_row">
               <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div>
@@ -105,6 +121,12 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
+import { Amount } from '@herajs/common';
+
+function  getVueInstance(instance: any): Vue {
+  // @ts-ignore
+    return instance._vm as Vue;
+}
 
 export default Vue.extend({
   components: {
@@ -118,34 +140,21 @@ export default Vue.extend({
     Identicon,
   },
 
-  /*
-  props: {
-    token: {
-      type: any,
-      default: []
-    },
-    token: {
-      type: any,
-      default: []
-    },
-  },
-*/
-
   data() {
     return {
       error: '',
       data: [],
-      //      totalItems: 0,
-      //      isLoading: false,
       selectedFilterToken: 'all',
     };
   },
 
   beforeMount() {
-    this.getHistory();
+    if (this.state === 'aergo') this.getAergoHistory() ;
+    else this.getTokenHistory();
   },
 
   computed: {
+
     state() {
       if (this.getTitle() === 'AERGO') {
         return 'aergo';
@@ -158,6 +167,41 @@ export default Vue.extend({
   },
 
   methods: {
+
+    aergoStaking() {
+      return "0" ;
+      const staking = this.$background.getStaking({ 
+        chainId: this.$store.state.accounts.network, 
+        address: this.$store.state.accounts.address, 
+      });
+      if (!staking) return '' ;
+      else return new Amount(staking.amount).formatNumber('aergo') ;
+    },
+
+/*
+    async getAergoHistory() {
+//      const vue = getVueInstance(this);
+      this.data = await this.$background.getAccountTx({ address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network }) ;
+
+
+//      setTimeout(() => this.getAergoHistory(), 10*1000);
+
+      console.log("aergoTx", this.data) ;
+    },
+
+      try {
+        this.transactions = await timedAsync(
+        this.$background.getAccountTx({ address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network }),
+        { fastTime: 1000 } as any,
+      );
+      this.state = 'loaded';
+      setTimeout(() => this.reload(), 10*1000);
+    } catch(e) {
+      this.state = 'error';
+      console.error(e);
+    }
+*/
+
     getBalance(value: number, decimals: number) {
       return value / Math.pow(10, decimals);
     },
@@ -172,7 +216,7 @@ export default Vue.extend({
       return this.$route.params.token.meta.name;
     },
 
-    async getHistory(): Promise<void> {
+    async getTokenHistory(): Promise<void> {
       //  console.log("fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`) ;
 
       const resp = await fetch(
@@ -184,27 +228,35 @@ export default Vue.extend({
       else this.data = response.hits;
     },
 
-      /*
-      if (response.error) {
-        this.error = response.error.msg;
-      } else if (response.hits.length) {
-        this.data = await response.hits.map(item => ({
-          ...item.meta,
-          hash: item.hash,
-          name: item.token.meta.name,
-          symbol: item.token.meta.symbol,
-          decimals: item.token.meta.decimals,
-        }));
-        console.log("data", data) ;
-        this.totalItems = response.total;
-      } else {
-        this.data = [];
-        this.totalItems = 0;
+    async getAergoHistory(): Promise<void> {
+        console.log("aergo fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`) ;
+
+      const resp = await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`,
+      ) ;
+
+      const response = await resp.json();
+      if (response.error) this.data = [];
+      else this.data = response.hits;
+
+      console.log("tx", this.data) ;
+    },
+/*
+    get stakedFiatBalance(): string {
+      if (!this.tokenPriceInfo || !this.tokenPriceInfo.price || !this.staking || !this.staking.amount) return '';
+      const aergoAmount = new Amount(this.staking.amount).formatNumber('aergo');
+      const balance = Number(aergoAmount) * this.tokenPriceInfo.price;
+      return formatCurrency(balance, this.tokenPriceInfo.currency);
+    },
+
+    async load() {
+      if (this.state === 'initial') {
+        this.state = 'loading';
       }
-
-//      this.$emit('onUpdateTotalCount', this.totalItems);
+      this.staking = await this.$background.getStaking(this.accountSpec);
+      this.state = 'loaded';
+    },
 */
-
     handleDelete() {
       console.log('delete');
     },

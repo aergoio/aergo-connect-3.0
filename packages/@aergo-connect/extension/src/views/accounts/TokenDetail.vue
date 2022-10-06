@@ -24,7 +24,12 @@
                 )}...${$store.state.accounts.address.slice(-6)}`
               }}
             </div>
-            <Icon v-if="state === 'others'" class="account_button" :name="`delete2`" @click="handleDelete" />
+            <Icon
+              v-if="state === 'others'"
+              class="account_button"
+              :name="`delete2`"
+              @click="handleDelete"
+            />
           </div>
         </div>
       </div>
@@ -34,39 +39,46 @@
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
             <div class="balance">{{ $route.params.balance || '2,000,000.000' }}</div>
+            <div class="dollor">$</div>
           </div>
           <div class="token_symbol">AERGO</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
           <div class="detail_title">Staked Balance</div>
-          <div class="detail_content">{{ aergoStaking() }}</div>
+          <div class="detail_content">{{ `${aergoStaking()} AERGO` }}</div>
         </div>
         <div class="line detail" />
         <div class="detail_wrapper">
           <div class="detail_title">Registered Names</div>
-          <div class="detail_content"></div>
+          <div class="detail_content">{{ `0` }}</div>
         </div>
       </div>
-      <div v-else class="token_transaction_history_wrapper">
-        <Icon class="icon" />
+
+      <div v-else-if="'others'" class="token_transaction_history_wrapper others">
+        <Icon class="icon" :src="$route.params.token.meta.image" alt="404" />
         <div class="balance">{{ $route.params.balance }}</div>
         <div class="token_symbol">{{ $route.params.token.meta.symbol }}</div>
       </div>
 
       <div class="transaction_history_wrapper">
         <div class="title">Transaction History</div>
-        <div class="checkbox">checkbox</div>
+        <select class="select">
+          <option class="option" selected>All</option>
+          <option class="option">Received</option>
+          <option class="option">Sent</option>
+        </select>
       </div>
-      <div class="token_detail_background">
+
+      <div v-if="state === 'aergo'" class="token_detail_background">
         <ul class="token_detail_wrapper">
-          <li v-if="state==='aergo'" v-for="item in data" class="token_detail_list">
+          <li v-if="state === 'aergo'" v-for="item in data" class="token_detail_list">
             <div class="time">aergo</div>
             <div class="direction_row">
               <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
               <div v-else class="sent">Recevied</div>
               <div class="direction_row">
-                <div class="balance"> {{ item.meta.amount_float }} </div>
+                <div class="balance">{{ item.meta.amount_float }}</div>
                 <div class="token_symbol">AERGO</div>
               </div>
             </div>
@@ -77,8 +89,17 @@
               <Button :name="'pointer'" />
             </div>
           </li>
-          <li v-if="state==='others'" v-for="item in data" class="token_detail_list">
-            <div class="time">{{ item.meta.ts.slice(0,16) }}</div>
+          <div v-if="data.length === 0" class="token_detail_list_nothing_wrapper aergo">
+            <Icon class="nothing_icon" :name="`nothing`" />
+            <div class="nothing_text">No Transaction Details.</div>
+          </div>
+        </ul>
+      </div>
+
+      <div v-else-if="state === 'others'" class="token_detail_background others">
+        <ul class="token_detail_wrapper">
+          <li v-if="state === 'others'" v-for="item in data" class="token_detail_list">
+            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
             <div class="direction_row">
               <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div>
               <div v-else class="sent">Recevied</div>
@@ -91,11 +112,17 @@
             </div>
             <div class="line"></div>
             <div class="direction_row">
-              <div v-if="item.meta.from == $store.state.accounts.address" class="address">{{ item.meta.to }}</div>
+              <div v-if="item.meta.from == $store.state.accounts.address" class="address">
+                {{ item.meta.to }}
+              </div>
               <div v-else class="address">{{ item.meta.from }}</div>
               <Button :name="'pointer'" />
             </div>
           </li>
+          <div v-if="data.length === 0" class="token_detail_list_nothing_wrapper others">
+            <Icon class="nothing_icon" :name="`nothing`" />
+            <div class="nothing_text">No Transaction Details.</div>
+          </div>
         </ul>
       </div>
     </div>
@@ -123,9 +150,9 @@ import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
 import { Amount } from '@herajs/common';
 
-function  getVueInstance(instance: any): Vue {
+function getVueInstance(instance: any): Vue {
   // @ts-ignore
-    return instance._vm as Vue;
+  return instance._vm as Vue;
 }
 
 export default Vue.extend({
@@ -149,12 +176,11 @@ export default Vue.extend({
   },
 
   beforeMount() {
-    if (this.state === 'aergo') this.getAergoHistory() ;
+    if (this.state === 'aergo') this.getAergoHistory();
     else this.getTokenHistory();
   },
 
   computed: {
-
     state() {
       if (this.getTitle() === 'AERGO') {
         return 'aergo';
@@ -167,18 +193,17 @@ export default Vue.extend({
   },
 
   methods: {
-
     aergoStaking() {
-      return "0" ;
-      const staking = this.$background.getStaking({ 
-        chainId: this.$store.state.accounts.network, 
-        address: this.$store.state.accounts.address, 
+      return '0';
+      const staking = this.$background.getStaking({
+        chainId: this.$store.state.accounts.network,
+        address: this.$store.state.accounts.address,
       });
-      if (!staking) return '' ;
-      else return new Amount(staking.amount).formatNumber('aergo') ;
+      if (!staking) return '';
+      else return new Amount(staking.amount).formatNumber('aergo');
     },
 
-/*
+    /*
     async getAergoHistory() {
 //      const vue = getVueInstance(this);
       this.data = await this.$background.getAccountTx({ address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network }) ;
@@ -221,7 +246,7 @@ export default Vue.extend({
 
       const resp = await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`,
-      ) ;
+      );
 
       const response = await resp.json();
       if (response.error) this.data = [];
@@ -229,19 +254,22 @@ export default Vue.extend({
     },
 
     async getAergoHistory(): Promise<void> {
-        console.log("aergo fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`) ;
+      console.log(
+        'aergo fetch',
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`,
+      );
 
       const resp = await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`,
-      ) ;
+      );
 
       const response = await resp.json();
       if (response.error) this.data = [];
       else this.data = response.hits;
 
-      console.log("tx", this.data) ;
+      console.log('tx', this.data);
     },
-/*
+    /*
     get stakedFiatBalance(): string {
       if (!this.tokenPriceInfo || !this.tokenPriceInfo.price || !this.staking || !this.staking.amount) return '';
       const aergoAmount = new Amount(this.staking.amount).formatNumber('aergo');
@@ -374,12 +402,25 @@ export default Vue.extend({
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     &.aergo {
-      height: 139px;
+      height: 143px;
     }
+    &.others {
+      flex-direction: row;
+      justify-content: space-evenly;
+      .icon {
+        margin-top: 0;
+      }
+    }
+
     .flex-row {
       display: flex;
       justify-content: space-evenly;
       width: 100%;
+      align-items: center;
+      .token_symbol {
+        margin-right: 13px;
+        margin-bottom: 10px;
+      }
     }
 
     .line {
@@ -531,11 +572,50 @@ export default Vue.extend({
     width: 375px;
     height: 260px;
     bottom: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    &.others {
+      height: 345px;
+    }
     .token_detail_wrapper {
       flex-direction: column;
       display: flex;
       justify-content: space-evenly;
       align-items: center;
+      /* overflow-y: scroll; */
+      overflow-y: hidden;
+      .token_detail_list_nothing_wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        &.aergo {
+          margin-bottom: 100px;
+        }
+        &.others {
+          margin-bottom: 50px;
+        }
+        .nothing_text {
+          /* Caption/C1 */
+          margin-top: 18.5px;
+          font-family: 'Outfit';
+          font-style: normal;
+          font-weight: 400;
+          font-size: 15px;
+          line-height: 19px;
+          /* identical to box height */
+
+          text-align: center;
+          letter-spacing: -0.333333px;
+
+          /* Grey/03 */
+
+          color: #bababa;
+        }
+      }
       .line {
         margin-left: 16px;
         margin-top: 6px;
@@ -644,5 +724,27 @@ export default Vue.extend({
       }
     }
   }
+}
+.select {
+  margin-left: 98px;
+  background: #ffffff;
+  /* Grey/02 */
+  width: 80px;
+  height: 28px;
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 19px;
+  /* identical to box height */
+
+  letter-spacing: -0.333333px;
+
+  /* Grey/06 */
+
+  color: #686767;
 }
 </style>

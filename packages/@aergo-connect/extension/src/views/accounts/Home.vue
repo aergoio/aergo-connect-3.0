@@ -70,9 +70,9 @@
           <li class="token_list_li" @click="handleAergo">
             <div class="token_list_wrapper">
               <Icon :name="`aergo`" class="token_list_icon" />
-              <span>AERGO</span>
-              <span> {{ aergoBalance }} </span>
-              <Icon class="next" :name="`next_grey`" />
+              <span class="token_list_text">AERGO</span>
+              <span class="token_list_balance"> {{ aergoBalance }} </span>
+              <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
           </li>
@@ -83,10 +83,13 @@
             @click="handleToken(token)"
           >
             <div class="token_list_wrapper">
-              <Identicon :text="token.hash" class="list_icon" />
-              <span> {{ token.meta.name }} </span>
-              <span> {{ getBalance(token.hash) }} </span>
-              <Icon class="next" :name="`next_grey`" />
+              <!-- <Identicon :text="token.hash" class="list_icon" /> -->
+              <div class="token_list_icon">
+                <img :src="token.meta.image" alt="404" />
+              </div>
+              <span class="token_list_text"> {{ token.meta.name }} </span>
+              <span class="token_list_balance"> {{ getBalance(token.hash) }} </span>
+              <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
           </li>
@@ -101,10 +104,13 @@
           </li> -->
           <li v-for="token in tokens" class="token_list_li" :key="token.hash" @click="handleToken">
             <div class="token_list_wrapper">
-              <Identicon :text="token.hash" class="list_icon" />
-              <span> {{ token.meta.name }} </span>
-              <span> {{ getBalance(token.hash) }} </span>
-              <Icon class="next" :name="`next_grey`" />
+              <!-- <Identicon :text="token.hash" class="list_icon" /> -->
+              <div class="token_list_icon">
+                <img :src="token.meta.image" alt="404" />
+              </div>
+              <span class="token_list_text"> {{ token.meta.name }} </span>
+              <span class="token_list_balance"> {{ getBalance(token.hash) }} </span>
+              <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
           </li>
@@ -430,9 +436,9 @@ export default Vue.extend({
       }
     }
     .token_list_ul {
-      /* margin-top: 5px; */
+      width: 375px;
       height: 252px;
-      /* overflow: hidden; */
+      overflow-x: hidden;
       overflow-y: scroll;
       .token_list_li {
         cursor: pointer;
@@ -441,9 +447,10 @@ export default Vue.extend({
         width: 375px;
         height: 62px;
         display: flex;
-        justify-content: space-around;
+        /* justify-content: space-around; */
         align-items: center;
         .token_list_icon {
+          margin-left: 32px;
           width: 46px;
           height: 46px;
           border-radius: 50%;
@@ -451,6 +458,16 @@ export default Vue.extend({
           display: flex;
           justify-content: center;
           align-items: center;
+        }
+        .token_list_text {
+          margin-left: 18px;
+          width: 192.5px;
+        }
+        .token_list_balance {
+          margin-left: 20px;
+        }
+        .token_list_nextbutton {
+          margin-left: 10px;
         }
       }
       .line {

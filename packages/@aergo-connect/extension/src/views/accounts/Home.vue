@@ -1,5 +1,5 @@
 <template>
-  <ScrollView class="page">
+  <ScrollView>
     <Header
       button="hamburger"
       :title="$store.state.accounts.network"
@@ -10,14 +10,15 @@
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
-    <List
-      v-if="hamburgerModal"
-      removeAccountModal
-      @removeModalClick="handleRemoveModalClick"
-      @select="handleSelect"
-    />
 
     <div v-if="!noAccountModal" class="home_content">
+      <List
+        v-if="hamburgerModal"
+        removeAccountModal
+        @removeModalClick="handleRemoveModalClick"
+        @select="handleSelect"
+        @listModalOff="hamburgerClick"
+      />
       <div class="account_info_wrapper">
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
@@ -47,32 +48,74 @@
         </div>
       </div>
       <NetworkModal v-if="networkModal" @networkModalClick="networkModalClick" />
+
       <div class="token_content_wrapper">
         <ButtonGroup>
-          <Button class="token-button" type="primary" size="small">Tokens</Button>
-          <Button class="token-button unclicked" type="primary" size="small">NFT</Button>
+          <Button
+            :class="[tab === `tokens` ? `token-button` : `token-button unclicked`]"
+            type="primary"
+            size="small"
+            @click="handleChangeTab('tokens')"
+            >Tokens</Button
+          >
+          <Button
+            :class="[tab === `nft` ? `token-button` : `token-button unclicked`]"
+            type="primary"
+            size="small"
+            @click="handleChangeTab('nft')"
+            >NFT</Button
+          >
         </ButtonGroup>
-        <ul class="token_list_ul">
-          <li class="token_list_li">
-            <Icon class="token_list_icon" />
-            <span>AERGO</span>
-            <span> {{ aergoBalance }} </span>
-            <Icon class="next" :name="`next_grey`" @click="handleAergo" />
+        <ul class="token_list_ul" v-if="tab === `tokens`">
+          <li class="token_list_li" @click="handleAergo">
+            <div class="token_list_wrapper">
+              <Icon :name="`aergo`" class="token_list_icon" />
+              <span>AERGO</span>
+              <span> {{ aergoBalance }} </span>
+              <Icon class="next" :name="`next_grey`" />
+            </div>
+            <div class="line" />
           </li>
-          <li v-for="token in tokens" class="token_list_li" :key="token.hash">
-            <Identicon :text="token.hash" class="list_icon" />
-            <span> {{ token.meta.name }} </span>
-            <span> {{ getBalance(token.hash) }} </span>
-            <Icon class="next" :name="`next_grey`" @click="handleToken(token)" />
+          <li
+            v-for="token in tokens"
+            class="token_list_li"
+            :key="token.hash"
+            @click="handleToken(token)"
+          >
+            <div class="token_list_wrapper">
+              <Identicon :text="token.hash" class="list_icon" />
+              <span> {{ token.meta.name }} </span>
+              <span> {{ getBalance(token.hash) }} </span>
+              <Icon class="next" :name="`next_grey`" />
+            </div>
+            <div class="line" />
           </li>
         </ul>
+
+        <ul class="token_list_ul" v-if="tab === `nft`">
+          <!-- <li class="token_list_li" @click="handleToken">
+            <Icon class="token_list_icon" />
+            <span>CCCV</span>
+            <span> {{ aergoBalance }} </span>
+            <Icon class="next" :name="`next_grey`" />
+          </li> -->
+          <li v-for="token in tokens" class="token_list_li" :key="token.hash" @click="handleToken">
+            <div class="token_list_wrapper">
+              <Identicon :text="token.hash" class="list_icon" />
+              <span> {{ token.meta.name }} </span>
+              <span> {{ getBalance(token.hash) }} </span>
+              <Icon class="next" :name="`next_grey`" />
+            </div>
+            <div class="line" />
+          </li>
+        </ul>
+
         <button class="token_list_button" @click="handleImportAsset">
           <Icon name="plus" class="token_list_button_img" /><span class="token_list_button_text"
             >Import Asset</span
           >
         </button>
       </div>
-
       <div class="content_footer">
         <ButtonGroup>
           <Button class="button" type="font-gradation" size="small" @click="handleSend"
@@ -96,12 +139,12 @@ import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import { Account } from '@herajs/wallet';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
-import { AccountSpec } from '@herajs/wallet/dist/types/models/account';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
+import { AccountSpec } from '@herajs/wallet/dist/types/models/account';
+import { Account } from '@herajs/wallet';
 import { Amount } from '@herajs/common';
 
 export default Vue.extend({
@@ -129,6 +172,7 @@ export default Vue.extend({
       aergoBalance: '',
       tokens: '',
       balances: [],
+      tab: 'tokens',
     };
   },
 
@@ -140,51 +184,64 @@ export default Vue.extend({
     $route(to, from) {
       this.init_account();
     },
+
+    '$store.state.accounts.network': function() {
+      this.init_account();
+    }
   },
 
   methods: {
+
     async init_account() {
       console.log('Address', this.$store.state.accounts.address);
-      if (this.$store.state.accounts.address) {
-        this.tokens = await this.$store.dispatch('accounts/tokens');
-        this.aergoBalance = await this.$store.dispatch('accounts/aergoBalance');
-        await this.getBalances();
-        // this.balances = await this.getBalances() ;
-      } else {
-        const succ = this.$store.dispatch('accounts/loadAccount');
-
-        if (succ)
+      if (this.$store.state.accounts.address !== '') { await this.getState() } 
+      else {
+        console.log('Other Account Loading ..');
+        const succ = await this.$store.dispatch('accounts/loadAccount');
+        if (succ) {
+          console.log('New Address', this.$store.state.accounts.address);
           this.$router.push({
             name: 'accounts-list-address',
             params: {
               address: this.$store.state.accounts.address,
             },
           });
-        else this.noAccountModal = true;
+        }
+        else {
+          console.log('Need Register');
+          this.noAccountModal = true;
+        }
       }
     },
 
-    getBalances() {
-      console.log(
-        'FETCH',
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,
-      );
-      fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,
-      )
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          this.balances = data.hits;
-          //         return data.hits ;
-        });
+    async getState() {
+
+      this.aergoBalance = await this.$store.dispatch('accounts/aergoBalance');
+      console.log("aergoBalance", this.aergoBalance) ;
+      this.tokens = await this.$store.dispatch('accounts/tokens');
+
+      await this.getBalances();
+      console.log("balance structure", this.balances) ;
+
+      await this.balances.forEach(e => { this.tokens.push(e.token) }) ;
+      console.log("token structure", this.tokens) ;
+    },
+
+    async getBalances() {
+//      console.log( 'FETCH', `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,);
+
+      const resp = await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`, 
+      ) ;
+
+      const response = await resp.json();
+      if (response.error) this.balances =  [] ; 
+      else this.balances = response.hits;
     },
 
     getBalance(token: string) {
       console.log('BALANCE', this.balances, token);
       const result = this.balances.find(element => element.meta.address == token);
-
       if (!result) return 0;
       else {
         const value = result.meta.balance_float / Math.pow(10, result.token.meta.decimals);
@@ -230,18 +287,29 @@ export default Vue.extend({
       console.log('handleDetailAddress');
     },
 
-    handleAergo(token: any) {
+    handleAergo() {
+      this.$router
+        .push({
+          name: 'token-detail-aergo',
+          params: {
+            address: this.$route.params.address,
+            balance: this.aergoBalance,
+          },
+        })
+        .catch(() => {});
     },
 
     handleToken(token: any) {
-      this.$router.push(
-        { name: 'token-detail',
+      this.$router
+        .push({
+          name: 'token-detail',
           params: {
             address: this.$route.params.address,
             token: token,
             balance: this.getBalance(token.hash),
-        }
-      }).catch(()=>{});
+          },
+        })
+        .catch(() => {});
     },
 
     handleImportAsset() {
@@ -253,15 +321,27 @@ export default Vue.extend({
         .catch(() => {});
     },
     handleSend() {
-      console.log('send');
+      this.$router
+        .push({
+          name: 'send',
+          params: { address: this.$store.state.accounts.address },
+        })
+        .catch(() => {});
     },
     handleReceive() {
       console.log('receive');
+    },
+    handleChangeTab(value: string) {
+      console.log(value);
+      this.tab = value;
     },
   },
 });
 </script>
 <style lang="scss">
+.header {
+  z-index: 2;
+}
 .home_content {
   display: flex;
   flex-direction: column;
@@ -280,7 +360,6 @@ export default Vue.extend({
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin-top: 10px;
-    margin-bottom: 12px;
     .account_info_img {
       width: 44px;
       height: 44px;
@@ -338,7 +417,6 @@ export default Vue.extend({
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 253px;
     margin-top: 16px;
     .token-button {
       width: 153px;
@@ -351,20 +429,39 @@ export default Vue.extend({
       }
     }
     .token_list_ul {
-      margin-top: 5px;
+      /* margin-top: 5px; */
+      height: 252px;
+      /* overflow: hidden; */
+      overflow-y: scroll;
       .token_list_li {
+        cursor: pointer;
+      }
+      .token_list_wrapper {
+        width: 375px;
+        height: 62px;
         display: flex;
         justify-content: space-around;
         align-items: center;
-        width: 375px;
-        height: 62px;
+        .token_list_icon {
+          width: 46px;
+          height: 46px;
+          border-radius: 50%;
+          border: 1px solid #f0f0f0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+      .line {
+        /* Grey/01 */
+        width: 311px;
+        height: 1px;
+        background: #f0f0f0;
+        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
+        margin-left: 32px;
       }
     }
-    .next {
-      cursor: pointer;
-    }
     .token_list_button {
-      /* margin-top: 20px; */
       display: flex;
       flex-direction: row;
       align-items: flex-start;
@@ -381,6 +478,7 @@ export default Vue.extend({
       text-align: center;
       letter-spacing: -0.333333px;
       cursor: pointer;
+      margin-top: 10px;
       .token_list_button_img {
         position: relative;
         bottom: 2px;
@@ -407,7 +505,7 @@ export default Vue.extend({
     }
   }
   .content_footer {
-    margin-top: 40px;
+    margin-top: 10px;
     .button {
       box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
       border-radius: 4px;

@@ -38,8 +38,7 @@ const storeModule: Module<UiState, RootState> = {
       settings: defaultSettings,
     },
     unlocked: false,
-    idleTimeout: 1000000,
-    // idleTimeout:20,
+    idleTimeout: 1000000000,
   },
   getters: {
     getSetting: state => (keyPath: string): Json => {

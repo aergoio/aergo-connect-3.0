@@ -2,14 +2,9 @@
   <ScrollView class="page">
     <HeaderVue
       button="back"
-      :title="$route.params.token.meta.name"
+      :title="getTitle()"
       refresh
-      :to="{
-        name: 'accounts-list-address',
-        params: {
-          address: $store.state.accounts.address,
-        },
-      }"
+      :to="{ name: 'accounts-list-address', params: { address: $store.state.accounts.address } }"
     />
     <div class="token_detail_content_wrapper">
       <div class="account_detail_wrapper">
@@ -18,18 +13,46 @@
           <div class="network">{{ $store.state.accounts.network }}</div>
         </div>
         <div class="account_wrapper">
-          <Icon class="account_icon" />
-          <div class="account_title">{{ $store.state.accounts.nick }} </div>
+          <Identicon :text="$store.state.accounts.address" class="account_icon" />
+          <div class="account_title">{{ $store.state.accounts.nick }}</div>
           <div class="account_title_wrapper">
-            <div class="account">{{ `${$store.state.accounts.address.slice(0, 15)}...${$store.state.accounts.address.slice(-5)}` }}</div>
+            <div class="account">
+              {{
+                `${$store.state.accounts.address.slice(
+                  0,
+                  6,
+                )}...${$store.state.accounts.address.slice(-6)}`
+              }}
+            </div>
+            <Icon v-if="state === 'others'" class="account_button" :name="`delete2`" @click="handleDelete" />
           </div>
-          <Button class="account_button">-</Button>
         </div>
       </div>
-      <div class="token_transaction_history_wrapper">
+
+      <div v-if="state === 'aergo'" class="token_transaction_history_wrapper aergo">
+        <div class="flex-row">
+          <Icon class="icon" :name="'aergo'" />
+          <div class="balance_wrapper">
+            <div class="balance">{{ $route.params.balance || '2,000,000.000' }}</div>
+            <div class="dollor">$ 0.0</div>
+          </div>
+          <div class="token_symbol">ARG</div>
+        </div>
+        <div class="line" />
+        <div class="detail_wrapper">
+          <div class="detail_title">Staked Balance</div>
+          <div class="detail_content">0 ARG</div>
+        </div>
+        <div class="line detail" />
+        <div class="detail_wrapper">
+          <div class="detail_title">Registered Names</div>
+          <div class="detail_content">0</div>
+        </div>
+      </div>
+      <div v-else class="token_transaction_history_wrapper">
         <Icon class="icon" />
-        <div class="price">{{ $route.params.balance }}</div>
-        <div class="token_name">ARG</div>
+        <div class="balance">{{ $route.params.balance }}</div>
+        <div class="token_symbol">{{ $route.params.token.meta.symbol }}</div>
       </div>
 
       <div class="transaction_history_wrapper">
@@ -39,17 +62,21 @@
       <div class="token_detail_background">
         <ul class="token_detail_wrapper">
           <li v-for="item in data" class="token_detail_list">
-            <div class="time">{{ item.meta.ts }}</div>
+            <div class="time">{{ item.meta.ts.slice(0,16) }}</div>
             <div class="direction_row">
-              <div class="sent">Sent</div>
+              <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div>
+              <div v-else class="sent">Recevied</div>
               <div class="direction_row">
-                <div class="price">{{ getBalance(item.meta.amount,item.token.meta.decimals) }}</div>
-                <div class="token_name">{{ item.token.meta.symbol }}</div>
+                <div class="balance">
+                  {{ getBalance(item.meta.amount, item.token.meta.decimals) }}
+                </div>
+                <div class="token_symbol">{{ item.token.meta.symbol }}</div>
               </div>
             </div>
             <div class="line"></div>
             <div class="direction_row">
-              <div class="address">{{ item.meta.from  }}</div>
+              <div v-if="item.meta.from == $store.state.accounts.address" class="address">{{ item.meta.to }}</div>
+              <div v-else class="address">{{ item.meta.from }}</div>
               <Button :name="'pointer'" />
             </div>
           </li>
@@ -77,6 +104,7 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
+import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
 
 export default Vue.extend({
   components: {
@@ -87,9 +115,10 @@ export default Vue.extend({
     Appear,
     Icon,
     HeaderVue,
+    Identicon,
   },
 
-/*
+  /*
   props: {
     token: {
       type: any,
@@ -106,39 +135,56 @@ export default Vue.extend({
     return {
       error: '',
       data: [],
-//      totalItems: 0,
-//      isLoading: false,
-      selectedFilterToken: 'all'
-    }
+      //      totalItems: 0,
+      //      isLoading: false,
+      selectedFilterToken: 'all',
+    };
   },
 
-  beforeMount () {
-    this.getHistory() ;
+  beforeMount() {
+    this.getHistory();
+  },
+
+  computed: {
+    state() {
+      if (this.getTitle() === 'AERGO') {
+        return 'aergo';
+      } else if (this.getTitle() === 'NFT') {
+        return 'nft';
+      } else {
+        return 'others';
+      }
+    },
   },
 
   methods: {
-
-    getBalance(value: float, decimals: float) {
-       return value / Math.pow(10,decimals) ;
+    getBalance(value: number, decimals: number) {
+      return value / Math.pow(10, decimals);
     },
 
-
-    async getHistory() {
-
-    //  console.log("fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`) ;
-
-      const resp = await fetch(`https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`) ;
-
-      const response = await resp.json() ;
-
-      if (response.error) {
-          this.data = [] ;
+    getTitle() {
+      if (
+        this.$store.state.ui.route.currentPath ===
+        `/list/${this.$store.state.accounts.address}/tokendetail/aergo`
+      ) {
+        return 'AERGO';
       }
-      else this.data = response.hits ;
+      return this.$route.params.token.meta.name;
+    },
 
-      console.log("response", this.data) ;
+    async getHistory(): Promise<void> {
+      //  console.log("fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`) ;
 
-/*
+      const resp = await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`,
+      ) ;
+
+      const response = await resp.json();
+      if (response.error) this.data = [];
+      else this.data = response.hits;
+    },
+
+      /*
       if (response.error) {
         this.error = response.error.msg;
       } else if (response.hits.length) {
@@ -155,12 +201,14 @@ export default Vue.extend({
         this.data = [];
         this.totalItems = 0;
       }
+
+//      this.$emit('onUpdateTotalCount', this.totalItems);
 */
 
-      this.$emit('onUpdateTotalCount', this.totalItems);
-
+    handleDelete() {
+      console.log('delete');
     },
-  }
+  },
 });
 </script>
 
@@ -201,8 +249,13 @@ export default Vue.extend({
     }
     .account_wrapper {
       display: flex;
+      align-items: center;
+      margin-top: 8px;
       .account_icon {
         margin-left: 38px;
+
+        width: 20px;
+        height: 20px;
       }
       .account_title {
         margin-left: 12px;
@@ -220,12 +273,18 @@ export default Vue.extend({
         color: #454344;
       }
       .account_title_wrapper {
+        display: flex;
+        align-items: center;
         margin-left: 24px;
+
         width: 105px;
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
         .account {
+          display: flex;
+          align-items: center;
+          justify-content: center;
           font-family: 'Outfit';
           font-style: normal;
           font-weight: 300;
@@ -233,21 +292,25 @@ export default Vue.extend({
           line-height: 15px;
           text-align: right;
           letter-spacing: -0.333333px;
-
+          position: relative;
+          left: 6px;
           /* Primary/Blue01 */
 
           color: #279ecc;
         }
       }
       .account_button {
-        margin-left: 53px;
+        cursor: pointer;
+        margin-left: 48px;
       }
     }
   }
   .token_transaction_history_wrapper {
+    margin-top: 10px;
     margin-left: 24px;
     display: flex;
     align-items: center;
+    flex-direction: column;
     width: 327px;
     height: 61px;
     background: #ffffff;
@@ -258,10 +321,97 @@ export default Vue.extend({
 
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    .icon {
-      margin-left: 14px;
+    &.aergo {
+      height: 139px;
     }
-    .price {
+    .flex-row {
+      display: flex;
+      justify-content: space-evenly;
+      width: 100%;
+    }
+
+    .line {
+      margin-top: 12px;
+      background: #f0f0f0;
+      width: 299px;
+      height: 1px;
+    }
+    &.detail {
+      margin-top: 6px;
+    }
+    .detail_wrapper {
+      margin-top: 6px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .detail_title {
+        /* Caption/C1 */
+        margin-left: 14px;
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 19px;
+        /* identical to box height */
+
+        letter-spacing: -0.333333px;
+
+        /* Grey/06 */
+
+        color: #686767;
+      }
+      .detail_content {
+        margin-right: 14px;
+        /* Caption/C1 */
+        float: right;
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 19px;
+        /* identical to box height */
+
+        text-align: right;
+        letter-spacing: -0.333333px;
+
+        /* Grey/07 */
+
+        color: #454344;
+      }
+    }
+    .icon {
+      margin-top: 14px;
+      margin-left: 8px;
+      border: 1px solid #d8d8d8;
+      width: 41px;
+      height: 41px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+    }
+    .balance_wrapper {
+      width: 200px;
+      margin-top: 14px;
+      .dollor {
+        /* Caption/C3 */
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 18px;
+        /* identical to box height */
+
+        letter-spacing: -0.333333px;
+
+        /* Grey/04 */
+
+        color: #9c9a9a;
+        margin-left: 15px;
+      }
+    }
+    .balance {
       margin-left: 15px;
       /* Headline/H3 */
       width: 141px;
@@ -278,11 +428,9 @@ export default Vue.extend({
       color: #231f20;
     }
     .token_name {
-      margin-left: 69px;
-      width: 33px;
-      height: 20px;
       /* Subtitle/S3 */
-
+      margin-right: 8px;
+      margin-top: 18px;
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 400;
@@ -329,7 +477,7 @@ export default Vue.extend({
     box-shadow: inset 0px 21px 17px -19px rgba(0, 0, 0, 0.05);
     position: absolute;
     width: 375px;
-    height: 340px;
+    height: 260px;
     bottom: 0px;
     .token_detail_wrapper {
       flex-direction: column;
@@ -352,7 +500,7 @@ export default Vue.extend({
         .time {
           margin-left: 16px;
           margin-top: 8px;
-          width: 89px;
+          width: 100px;
           height: 15px;
           font-family: 'Outfit';
           font-style: normal;
@@ -401,7 +549,7 @@ export default Vue.extend({
 
             color: #454344;
           }
-          .price {
+          .balance {
             margin-right: 8px;
             width: 66px;
             height: 21px;
@@ -416,7 +564,7 @@ export default Vue.extend({
 
             color: #454344;
           }
-          .token_name {
+          .token_symbol {
             margin-right: 16px;
           }
 

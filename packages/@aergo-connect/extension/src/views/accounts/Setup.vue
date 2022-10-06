@@ -1,13 +1,11 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" title="Set Password" :to="{ name: 'welcome' }" />
     <AppearVue :delay="0.6">
       <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
     </AppearVue>
+    <Header button="back" title="Set Password" :to="{ name: 'welcome' }" />
     <div class="simple-content">
-      <p class="simple-phrase">
-        This passphrase will be used to secure all your accounts.
-      </p>
+      <p class="simple-phrase">This passphrase will be used to secure all your accounts.</p>
       <div class="field-title">New Password</div>
       <PasswordStrengthField variant="default" v-model="password" autofocus :setting="setting" />
       <div class="field-title">Confirm Password</div>
@@ -21,7 +19,7 @@
     <template #footer>
       <div v-if="!modal" class="footer">
         <div class="check">
-          <CheckboxButton :checked="checked" @check="checkFunc" />
+          <CheckboxButton :checked="checked" @check="checkFunc" @enterKeyup="handleModal" />
           <div class="check-text">
             I understand that this wallet cannot recover this password for me.
           </div>
@@ -122,7 +120,7 @@ export default class Setup extends mixins() {
     }
     // Init Network
     // localStorage.setItem("Network","testnet");
-    this.$store.commit('accounts/setNetwork', "testnet");
+    this.$store.commit('accounts/setNetwork', 'testnet');
   }
 }
 </script>
@@ -156,11 +154,15 @@ export default class Setup extends mixins() {
     height: 48px;
     margin-bottom: 42px;
   }
-  .password-strength {
-    margin-left: 0;
-  }
+}
+.password-strength {
+  margin-left: 24px;
 }
 
+.input-error-text {
+  margin-top: 6px;
+  margin-bottom: 21px;
+}
 .check {
   display: flex;
   .check-text {

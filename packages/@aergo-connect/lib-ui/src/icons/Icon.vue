@@ -11,7 +11,7 @@ import { IconName } from './types';
 
 function namedRequireAll(context: __WebpackModuleApi.RequireContext, namePrefix = '') {
   const icons = {} as Record<string, FunctionalComponentOptions>;
-  context.keys().forEach(key => {
+  context.keys().forEach((key) => {
     const matched = key.match(/\/(.*?)\./i);
     if (matched && matched.length > 1) {
       const name = matched[1];
@@ -56,7 +56,6 @@ export default Vue.extend({
   // position: relative;
   // display: inline-block;
   /* cursor: pointer; */
-
   svg {
     position: relative;
     display: inline-block;

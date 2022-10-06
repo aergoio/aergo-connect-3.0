@@ -13,6 +13,7 @@ import Home from '../views/accounts/Home.vue';
 import SignMessage from '../views/accounts/SignMessage.vue';
 import Security from '../views/accounts/Security.vue';
 import ImportAsset from '../views/accounts/ImportAsset.vue';
+import Send from '../views/accounts/Send.vue';
 
 import TokenDetail from '../views/accounts/TokenDetail.vue';
 
@@ -124,25 +125,32 @@ const routes: RouteConfig[] = [
         path: 'list/:address/import/asset',
         name: 'import-asset',
         component: ImportAsset,
-      }), // 시연용
+      }),
       withMeta(2, {
-        path: '/list/:chainId/:address/signmessage',
+        path: '/list/:address/signmessage',
         name: 'sign-message',
         component: SignMessage,
-      }), // 시연용
+      }),
       withMeta(2, {
-        path: '/list/:chainId/:address/security',
+        path: '/list/:address/security',
         name: 'security',
         component: Security,
-      }), // 시연용
+      }),
+      withMeta(2, {
+        path: '/list/:address/send',
+        name: 'send',
+        component: Send,
+      }),
       withMeta(2, {
         path: '/list/:address/tokendetail',
         name: 'token-detail',
         component: TokenDetail,
-      }), // 시연용
+      }),
       withMeta(2, {
-        path: 'balance/:chainId/:address/:nick',
-      }), // 시연용
+        path: '/list/:address/tokendetail/aergo',
+        name: 'token-detail-aergo',
+        component: TokenDetail,
+      }),
 
       // withMeta(2, {
       //   path: 'balance/:chainId/:address/:nick',
@@ -236,7 +244,7 @@ const routes: RouteConfig[] = [
     ],
   },
   {
-    path: '/account/:chainId/:address/:from/:contract/',
+    path: '/account/:address/:from/:contract/',
     component: AccountContainer,
     children: [
       {

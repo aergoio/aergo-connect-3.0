@@ -18,9 +18,7 @@
         >Unlock</Button
       >
       <div class="password-text-wrapper">
-        <span>
-          Wallet won't unlock? You can DELETE your current wallet and setup a new one.
-        </span>
+        <span> Wallet won't unlock? You can DELETE your current wallet and setup a new one. </span>
         <a href="#">Reset Wallet</a>
       </div>
     </div>
@@ -64,22 +62,21 @@ export default class Lockscreen extends mixins() {
     try {
       await this.$background.unlock({ password: this.password });
       const getAccounts = await this.$background.getAccounts();
-      console.log(getAccounts, 'getaccounts');
-      let nextPath = this.$store.state.ui.route.currentPath;
 
-      if (!nextPath || nextPath === '/' || nextPath === '/locked') {
-        if (getAccounts.length > 0) {
-          nextPath = {
-            name: 'accounts-list-address',
-            params: {
-              address: getAccounts[0].key.split('/')[1],
-            },
-          };
-        }
-        this.$router.push(nextPath).catch(() => {});
+      let nextPath = this.$store.state.ui.route.currentPath;
+      if (getAccounts.length > 0) {
+        nextPath = {
+          name: 'accounts-list-address',
+          params: {
+            address: getAccounts[0].key.split('/')[1],
+          },
+        };
       } else {
         this.$router.push({ name: 'accounts-list' });
       }
+      this.$router.push(nextPath).catch(() => {});
+      // if (!nextPath || nextPath === '/' || nextPath === '/locked') {
+      // }
     } catch (e) {
       // this.errors.password = `${e}`;
       this.errors.password = `Please check the seed phrase again.`;

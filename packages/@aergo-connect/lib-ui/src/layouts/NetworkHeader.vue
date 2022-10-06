@@ -17,9 +17,9 @@ export default Vue.extend({
   },
   computed: {
     network() {
-      const network = localStorage.getItem("Network") ;
+      const network = this.$store.state.accounts.network ;
       if (!network) {
-        return "AERGO MAINNET" ;
+        return "mainnet" ;
       } else {
         return network ;
       }
@@ -37,7 +37,7 @@ export default Vue.extend({
     background: #e4097d;
     width: 6px;
     height: 6px;
-    margin-right: 2px;
+    margin-right: 5px;
     border-radius: 50%;
   }
   .network_name {

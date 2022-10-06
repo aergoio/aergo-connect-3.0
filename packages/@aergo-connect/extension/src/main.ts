@@ -55,12 +55,14 @@ async function init(name: string) {
       }
     }
 
+/*
     if (Object.prototype.hasOwnProperty.call(state, 'accounts')) {
       store.commit('accounts/setAccounts', state.accounts);
     }
     if (Object.prototype.hasOwnProperty.call(state, 'accountsRemoved')) {
-      store.commit('accounts/removeAccounts', state.accountsRemoved);
+      store.dispatch('accounts/removeAccount', state.accountsRemoved);
     }
+*/
   });
 
   console.log('STATE', store.state.accounts);

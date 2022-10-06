@@ -45,14 +45,16 @@ export default Vue.extend({
         if (!nick) nick = key;
         console.log('Nick', nick);
 
-        this.$router.push({
-          name: 'accounts-list-address',
-          params: {
-            address: getAccounts[0].data.spec.address,
-            chainId: getAccounts[0].data.spec.chainId,
-            nick: nick,
-          },
-        });
+        this.$router
+          .push({
+            name: 'accounts-list-address',
+            params: {
+              address: getAccounts[0].data.spec.address,
+              // chainId: getAccounts[0].data.spec.chainId,
+              nick: nick,
+            },
+          })
+          .catch(() => {});
       }
       if (getAccounts.length === 0) {
         this.$router

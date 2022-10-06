@@ -10,11 +10,7 @@
         </div>
       </template>
       <div class="balance-list-wrap">
-        <AccountBalanceList
-          :address="accountSpec.address"
-          :chainId="accountSpec.chainId"
-          :canDelete="true"
-        />
+        <AccountBalanceList :address="accountSpec.address" :canDelete="true" />
       </div>
       <template #footer>
         <div class="footer-content">

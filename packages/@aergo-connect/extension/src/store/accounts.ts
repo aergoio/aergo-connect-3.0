@@ -39,7 +39,8 @@ const storeModule: Module<AccountsState, RootState> = {
 
   actions: {
     async tokens({ state }) {
-      const tokens = state.accounts[state.address]['token'][state.network];
+      const tokens = await state.accounts[state.address]['token'][state.network];
+      console.log("tokens", tokens) ;
       if (!tokens) return [];
       else return JSON.parse(tokens || '{}');
     },
@@ -65,7 +66,6 @@ const storeModule: Module<AccountsState, RootState> = {
       if (accounts.length !== 0) {
         commit('setActiveAccount', accounts[0]?.data.spec.address);
         console.log('loadAccount', state.address);
-
         return true;
       } else {
         return false;

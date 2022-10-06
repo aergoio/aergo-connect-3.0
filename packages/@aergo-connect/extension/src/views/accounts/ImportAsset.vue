@@ -178,26 +178,11 @@ export default Vue.extend({
     async select(token) {
       console.log('Selected', token.meta);
 
-      //      this.addToken(this.$route.params.address, token) ;
       this.token = Object.values(token);
       this.$store.dispatch('accounts/addToken', token);
       this.importAssetModal = true;
     },
 
-    /*
-    async addToken(address, token) {
-      const key = address.substr(0, 5) + '_' + this.network() + '_token';
-      const tokensJ = localStorage.getItem(key);
-
-      let tokens = [];
-      if (tokensJ) {
-        tokens = JSON.parse(tokensJ);
-      }
-      tokens.push(token);
-      localStorage.setItem(key, JSON.stringify(tokens));
-      console.log('tokens', tokens);
-    },
-    */
     async custom() {
       console.log('custom');
     },

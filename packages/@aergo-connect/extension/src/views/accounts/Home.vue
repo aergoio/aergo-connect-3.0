@@ -77,7 +77,7 @@
             <div class="line" />
           </li>
           <li
-            v-for="token in tokens"
+            v-for="token in $store.state.session.tokens"
             class="token_list_li"
             :key="token.hash"
             @click="handleToken(token)"
@@ -102,7 +102,7 @@
             <span> {{ aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" />
           </li> -->
-          <li v-for="token in tokens" class="token_list_li" :key="token.hash" @click="handleToken">
+          <li v-for="token in $store.state.session.tokens" class="token_list_li" :key="token.hash" @click="handleToken">
             <div class="token_list_wrapper">
               <!-- <Identicon :text="token.hash" class="list_icon" /> -->
               <div class="token_list_icon">
@@ -176,8 +176,8 @@ export default Vue.extend({
       noAccountModal: false,
       network: 'aergo.io',
       aergoBalance: '',
-      tokens: '',
-      balances: [],
+//      tokens: '',
+//      balances: [],
       tab: 'tokens',
     };
   },
@@ -251,6 +251,7 @@ export default Vue.extend({
       if (response.error) this.balances = [];
       else this.balances = response.hits;
     },
+*/
 
     getBalance(token: string) {
       console.log('BALANCE', this.balances, token);
@@ -299,7 +300,7 @@ export default Vue.extend({
         .push({
           name: 'token-detail-aergo',
           params: {
-            address: this.$route.params.address,
+            address: this.$store.state.accounts.address,
             balance: this.aergoBalance,
           },
         })
@@ -307,13 +308,14 @@ export default Vue.extend({
     },
 
     handleToken(token: any) {
+      this.$store.commit('session/setToken', token) ;
       this.$router
         .push({
           name: 'token-detail',
           params: {
-            address: this.$route.params.address,
-            token: token,
-            balance: this.getBalance(token.hash),
+            address: this.$store.state.accounts.address,
+            token: this.$store.state.session.token,
+            balance: this.tokenBalance(token.hash),
           },
         })
         .catch(() => {});

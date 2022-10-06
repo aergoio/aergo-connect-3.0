@@ -2,9 +2,7 @@
   <ScrollView>
     <Header button="back" title="Security" @backClick="handleBack" />
     <div class="security_content">
-      <div class="security_header">
-        Confirm your password
-      </div>
+      <div class="security_header">Confirm your password</div>
       <div class="password_wrapper">
         <div class="password_title">Password</div>
         <PasswordStrengthField />
@@ -36,7 +34,7 @@ export default Vue.extend({
     // handleBack() {
     //   this.$router
     //     .push({
-    //       name: 'accounts-list-address',
+    //       name: 'accounts-list',
     //       params: { ...this.accountSpec, nick: this.$route.params.nick },
     //     })
     //     .catch(() => {});

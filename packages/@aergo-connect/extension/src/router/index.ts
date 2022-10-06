@@ -111,16 +111,16 @@ const routes: RouteConfig[] = [
       withMeta(1, { path: '/register', name: 'register', component: Register }),
 
       withMeta(1, {
-        path: '/list',
+        path: 'list',
         name: 'accounts-list',
         component: Home,
       }),
 
-      withMeta(1, {
-        path: 'list/:address',
-        name: 'accounts-list-address',
-        component: Home,
-      }),
+      // withMeta(1, {
+      //   path: 'list/:address',
+      //   name: 'accounts-list-address',
+      //   component: Home,
+      // }),
       withMeta(2, {
         path: 'list/:address/import/asset',
         name: 'import-asset',
@@ -243,91 +243,91 @@ const routes: RouteConfig[] = [
       ),
     ],
   },
-  {
-    path: '/account/:address/:from/:contract/',
-    component: AccountContainer,
-    children: [
-      {
-        path: '',
-        component: TabContainer,
-        children: [
-          {
-            path: 'details',
-            component: AccountDetailsContainer,
-            alias: '',
-            children: [
-              { path: '', name: 'account-details', component: AccountDetails },
-              {
-                path: 'export/keystore',
-                name: 'account-export-keystore',
-                component: AccountExportKeystore,
-              },
-              {
-                path: 'export/wif',
-                name: 'account-export-wif',
-                component: AccountExportWif,
-              },
-              {
-                path: 'name/create',
-                name: 'account-name-create',
-                component: AccountNameCreate,
-              },
-              {
-                path: 'name/:name/update',
-                name: 'account-name-update',
-                component: AccountNameUpdate,
-              },
-            ],
-          },
-          {
-            path: 'send',
-            component: AccountDetailsContainer,
-            alias: '',
-            children: [
-              { path: '', name: 'account-send', component: AccountSend },
-              {
-                path: 'confirm',
-                name: 'account-send-confirm',
-                component: AccountSendConfirm,
-              },
-            ],
-          },
-          {
-            path: 'history',
-            name: 'account-history',
-            component: AccountHistory,
-          },
-          { path: 'sign', name: 'account-sign', component: AccountSign },
-        ],
-      },
-      {
-        path: 'send/success/:hash',
-        name: 'account-send-success',
-        component: AccountSendSuccess,
-      },
-      // withMeta(1, {
-      //   path: 'created',
-      //   name: 'account-created',
-      //   component: AccountCreated,
-      // }),
-      withMeta(2, {
-        path: 'seedphrase',
-        name: 'account-seedphrase-view',
-        component: ViewSeedPhrase,
-      }),
-      withMeta(3, {
-        path: 'seedphrase-verify',
-        name: 'account-seedphrase-verify',
-        component: VerifySeedPhrase,
-      }),
-      {
-        path: 'import/:address',
-        name: 'account-imported',
-        component: Create,
-      },
-      { path: 'remove', name: 'account-remove', component: AccountRemove },
-    ],
-  },
+  // {
+  //   path: '/account/:address/:from/:contract/',
+  //   component: AccountContainer,
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: TabContainer,
+  //       children: [
+  //         {
+  //           path: 'details',
+  //           component: AccountDetailsContainer,
+  //           alias: '',
+  //           children: [
+  //             { path: '', name: 'account-details', component: AccountDetails },
+  //             {
+  //               path: 'export/keystore',
+  //               name: 'account-export-keystore',
+  //               component: AccountExportKeystore,
+  //             },
+  //             {
+  //               path: 'export/wif',
+  //               name: 'account-export-wif',
+  //               component: AccountExportWif,
+  //             },
+  //             {
+  //               path: 'name/create',
+  //               name: 'account-name-create',
+  //               component: AccountNameCreate,
+  //             },
+  //             {
+  //               path: 'name/:name/update',
+  //               name: 'account-name-update',
+  //               component: AccountNameUpdate,
+  //             },
+  //           ],
+  //         },
+  //         {
+  //           path: 'send',
+  //           component: AccountDetailsContainer,
+  //           alias: '',
+  //           children: [
+  //             { path: '', name: 'account-send', component: AccountSend },
+  //             {
+  //               path: 'confirm',
+  //               name: 'account-send-confirm',
+  //               component: AccountSendConfirm,
+  //             },
+  //           ],
+  //         },
+  //         {
+  //           path: 'history',
+  //           name: 'account-history',
+  //           component: AccountHistory,
+  //         },
+  //         { path: 'sign', name: 'account-sign', component: AccountSign },
+  //       ],
+  //     },
+  //     {
+  //       path: 'send/success/:hash',
+  //       name: 'account-send-success',
+  //       component: AccountSendSuccess,
+  //     },
+  //     // withMeta(1, {
+  //     //   path: 'created',
+  //     //   name: 'account-created',
+  //     //   component: AccountCreated,
+  //     // }),
+  //     withMeta(2, {
+  //       path: 'seedphrase',
+  //       name: 'account-seedphrase-view',
+  //       component: ViewSeedPhrase,
+  //     }),
+  //     withMeta(3, {
+  //       path: 'seedphrase-verify',
+  //       name: 'account-seedphrase-verify',
+  //       component: VerifySeedPhrase,
+  //     }),
+  //     {
+  //       path: 'import/:address',
+  //       name: 'account-imported',
+  //       component: Create,
+  //     },
+  //     { path: 'remove', name: 'account-remove', component: AccountRemove },
+  //   ],
+  // },
   {
     path: '/request',
     component: RequestContainer,

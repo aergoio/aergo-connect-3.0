@@ -213,7 +213,7 @@ export default Vue.extend({
 
           /*
           this.$router.push({
-            name: 'accounts-list-address',
+            name: 'accounts-list',
             params: {
               address: this.$store.state.accounts.address,
             },

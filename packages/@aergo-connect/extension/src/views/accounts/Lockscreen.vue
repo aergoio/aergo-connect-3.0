@@ -62,9 +62,7 @@ export default class Lockscreen extends mixins() {
     try {
       await this.$background.unlock({ password: this.password });
       let nextPath = this.$store.state.ui.route.currentPath;
-
-      console.log('currentPath', nextPath);
-
+      console.log(nextPath, 'nextPath');
       /*
       const getAccounts = await this.$background.getAccounts();
       console.log("getAccounts", getAccounts) ;
@@ -83,7 +81,7 @@ export default class Lockscreen extends mixins() {
       const getAccounts = await this.$background.getAccounts();
       if (!nextPath || nextPath === '/' || nextPath === '/locked') {
         nextPath = {
-          name: 'accounts-list-address',
+          name: 'accounts-list',
           params: {
             address: getAccounts[0].key.split('/')[1],
           },

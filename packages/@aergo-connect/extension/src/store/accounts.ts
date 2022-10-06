@@ -40,28 +40,13 @@ const storeModule: Module<AccountsState, RootState> = {
   actions: {
     async tokens({ state }) {
       const tokens = await state.accounts[state.address]['token'][state.network];
-      console.log("tokens", tokens) ;
       if (!tokens) return [];
       else return JSON.parse(tokens || '{}');
-    },
-
-    async aergoBalance({ state }) {
-      const vue = getVueInstance(this);
-      const account = vue.$background.getActiveAccount();
-      const val = await vue.$background.getAccountState({
-        address: state.address,
-        chainId: state.network,
-      });
-      const result = await new Amount(val.balance).formatNumber('aergo');
-      console.log('aergoBalance', result);
-
-      return result;
     },
 
     async loadAccount({ state, commit }) {
       const vue = getVueInstance(this);
       const accounts = await vue.$background.getAccounts();
-      console.log('accounts', accounts);
 
       if (accounts.length !== 0) {
         commit('setActiveAccount', accounts[0]?.data.spec.address);

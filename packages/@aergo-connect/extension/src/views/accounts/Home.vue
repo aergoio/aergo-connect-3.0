@@ -72,12 +72,13 @@
               <Icon :name="`aergo`" class="token_list_icon" />
               <span class="token_list_text">AERGO</span>
               <span class="token_list_balance"> {{ aergoBalance }} </span>
+              <span> AER </span>
               <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
           </li>
           <li
-            v-for="token in tokens"
+            v-for="token in $store.state.session.tokens"
             class="token_list_li"
             :key="token.hash"
             @click="handleToken(token)"
@@ -88,7 +89,7 @@
                 <img :src="token.meta.image" alt="404" />
               </div>
               <span class="token_list_text"> {{ token.meta.name }} </span>
-              <span class="token_list_balance"> {{ getBalance(token.hash) }} </span>
+              <span class="token_list_balance"> {{ tokenBalance(token.hash) }} </span>
               <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
@@ -102,7 +103,7 @@
             <span> {{ aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" />
           </li> -->
-          <li v-for="token in tokens" class="token_list_li" :key="token.hash" @click="handleToken">
+          <li v-for="token in $store.state.session.tokens" class="token_list_li" :key="token.hash" @click="handleToken">
             <div class="token_list_wrapper">
               <!-- <Identicon :text="token.hash" class="list_icon" /> -->
               <div class="token_list_icon">
@@ -176,20 +177,17 @@ export default Vue.extend({
       noAccountModal: false,
       network: 'aergo.io',
       aergoBalance: '',
-      tokens: '',
-      balances: [],
+//      tokens: '',
+//      balances: [],
       tab: 'tokens',
     };
   },
 
-  beforeMount() {
+  mounted() {
     this.init_account();
   },
 
   watch: {
-    $route(to, from) {
-      this.init_account();
-    },
 
     '$store.state.accounts.network': function () {
       this.init_account();
@@ -201,66 +199,32 @@ export default Vue.extend({
   },
 
   methods: {
+
     async init_account() {
+
       console.log('Address', this.$store.state.accounts.address);
-      if (this.$store.state.accounts.address !== '') {
-        await this.getState();
-      } else {
+      await this.$store.commit('ui/setIdleTimeout', 100000)
+
+      if (this.$store.state.accounts.address) {
+         await this.$store.dispatch('session/InitState') ;
+
+         this.aergoBalance = await this.$store.dispatch('session/aergoBalance') ;
+      }
+      else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');
-        if (succ) {
-          console.log('New Address', this.$store.state.accounts.address);
 
-          /*
-          this.$router.push({
-            name: 'accounts-list',
-            params: {
-              address: this.$store.state.accounts.address,
-            },
-          });
-*/
-        } else {
+        if (!succ) {
           console.log('Need Register');
           this.noAccountModal = true;
         }
       }
     },
 
-    async getState() {
-      this.aergoBalance = await this.$store.dispatch('accounts/aergoBalance');
-      console.log('aergoBalance', this.aergoBalance);
-      this.tokens = await this.$store.dispatch('accounts/tokens');
-
-      await this.getBalances();
-      console.log('balance structure', this.balances);
-
-      await this.balances.forEach((e) => {
-        if (e.token.image) this.tokens.push(e.token);
-      });
-      console.log('token structure', this.tokens);
-    },
-
-    async getBalances() {
-      //      console.log( 'FETCH', `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,);
-
-      const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,
-      );
-
-      const response = await resp.json();
-      if (response.error) this.balances = [];
-      else this.balances = response.hits;
-    },
-
-    getBalance(token: string) {
-      console.log('BALANCE', this.balances, token);
-      const result = this.balances.find((element) => element.meta.address == token);
-      if (!result) return 0;
-      else {
-        const value = result.meta.balance_float / Math.pow(10, result.token.meta.decimals);
-        console.log('RESULT', value);
-        return value;
-      }
+    tokenBalance(tokenAddress) {
+      const ss = this.$store.dispatch('session/tokenBalance', tokenAddress) ;
+      console.log('MES', ss) ;
+      return ss ;
     },
 
     hamburgerClick() {
@@ -307,12 +271,13 @@ export default Vue.extend({
     },
 
     handleToken(token: any) {
+      this.$store.commit('session/setToken', token) ;
       this.$router
         .push({
           name: 'token-detail',
           params: {
             address: this.$store.state.accounts.address,
-            token: token,
+            token: this.$store.state.session.token,
             balance: this.getBalance(token.hash),
           },
         })

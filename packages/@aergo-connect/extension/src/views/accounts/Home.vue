@@ -419,6 +419,12 @@ export default Vue.extend({
       .token_list_li {
         cursor: pointer;
       }
+      .token_list_li:hover {
+        /* Primary/lightsky */
+
+        background: #eff5f7;
+        opacity: 0.5;
+      }
       .token_list_wrapper {
         width: 375px;
         height: 62px;
@@ -438,9 +444,6 @@ export default Vue.extend({
         .token_list_text {
           margin-left: 18px;
           width: 192.5px;
-        }
-        .token_list_balance {
-          margin-left: 20px;
         }
         .token_list_nextbutton {
           margin-left: 10px;
@@ -531,8 +534,6 @@ export default Vue.extend({
         -webkit-text-fill-color: #fff;
       }
     }
-    /* .button:hover {
-    } */
   }
 }
 </style>

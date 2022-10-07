@@ -28,27 +28,27 @@
       </div>
 
       <div class="token_content_wrapper">
-        <Icon class="token_icon" :name="'aergo'" />
-        <div class="token_amount">2,000,000.000</div>
-        <div class="token_name">AERGO</div>
+        <Identicon v-if="!icon" :text="asset" class="token_icon" />
+        <Icon v-else class="token_icon" :name="icon" />
+        <div class="token_amount">{{ balance }}</div>
+        <div class="token_symbol">{{ symbol }} </div>
       </div>
 
       <div class="send_form_wrapper">
         <div class="flex-row">
           <div class="title">Asset</div>
-          <select class="select_box">
-            <option>AERGO</option>
-            <option>AERGO GEM</option>
-            <option>TOKEN</option>
+          <select class="select_box" v-model="asset">
+               <option value="AERGO"> AERGO </option>
+               <option v-for="token in $store.state.session.tokens" :value="token.hash"> {{ token.meta.name }} </option>
           </select>
         </div>
         <div class="flex-row">
           <div class="title">Amount</div>
-          <input type="text" class="text_box" />
+          <input v-bind="amount" type="text" class="text_box" />
         </div>
         <div class="flex-column">
           <div class="title">Send to</div>
-          <input type="text" class="text_box" />
+          <input v-bind="to" type="text" class="text_box" />
         </div>
       </div>
     </div>
@@ -74,8 +74,30 @@ export default Vue.extend({
     return {
       optionsModal: false,
       confirmationModal: false,
+      asset: "AERGO",
+      symbol: "AER",
+      icon: "aergo",
+      balance: this.$store.state.session.aergoBalance,
+      amount: 0,
+      to: "",
     };
   },
+
+  watch: {
+    'asset': function() {
+       if (this.asset == "AERGO") {
+         this.symbol = "AER" ;
+         this.icon = "aergo" ;
+         this.balance = this.$store.state.session.aergoBalance ;
+       } else {
+         this.symbol  = this.$store.state.session.tokens[this.asset]['meta']['symbol'] ;
+         this.icon    = this.$store.state.session.tokens[this.asset]['meta']['image'] ;
+         this.balance = this.$store.state.session.tokens[this.asset]['balance'] ;
+//         if (!this.icon) this.icon = "404" ; 
+       }
+    }
+  },
+
   methods: {
     handleBack() {
       this.$router.push({
@@ -90,6 +112,11 @@ export default Vue.extend({
     },
     handleSendClick() {
       console.log('click');
+      if (this.amount > this.balance) {
+        // error 출력 또는 입력 시에 확인
+        console.log('insufficent');
+      }
+      else this.comfirmModal = true ;
     },
   },
 });
@@ -231,7 +258,7 @@ export default Vue.extend({
 
       color: #231f20;
     }
-    .token_name {
+    .token_symbol {
       margin-left: 48px;
       /* Subtitle/S3 */
 

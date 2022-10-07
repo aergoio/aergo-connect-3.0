@@ -1,5 +1,7 @@
 <template>
   <ScrollView>
+    <SendOptionsModal v-if="optionsModal" />
+    <ConfirmationModal v-if="confirmationModal" />
     <Header button="back" title="Send" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
@@ -51,21 +53,29 @@
       </div>
     </div>
     <template #footer class="footer">
-      <div class="show_option">Show optional fields</div>
-      <Button type="primary" size="large">Send</Button>
+      <div class="show_option" @click="handleOptionsModal">Show optional fields</div>
+      <Button type="primary" size="large" @click="handleSendClick">Send</Button>
     </template>
   </ScrollView>
 </template>
 
 <script>
 import Vue from 'vue';
+import SendOptionsModal from '@aergo-connect/lib-ui/src/modal/SendOptionsModal.vue';
+import ConfirmationModal from '@aergo-connect/lib-ui/src/modal/ConfirmationModal.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 export default Vue.extend({
-  components: { ScrollView, Header, Identicon, Icon, Button },
+  components: { ScrollView, SendOptionsModal, ConfirmationModal, Header, Identicon, Icon, Button },
+  data() {
+    return {
+      optionsModal: false,
+      confirmationModal: false,
+    };
+  },
   methods: {
     handleBack() {
       this.$router.push({
@@ -74,6 +84,12 @@ export default Vue.extend({
           address: this.$store.state.accounts.address,
         },
       });
+    },
+    handleOptionsModal() {
+      this.optionsModal = true;
+    },
+    handleSendClick() {
+      console.log('click');
     },
   },
 });

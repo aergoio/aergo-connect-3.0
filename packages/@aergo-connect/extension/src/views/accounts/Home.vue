@@ -299,7 +299,7 @@ export default Vue.extend({
         .push({
           name: 'token-detail-aergo',
           params: {
-            address: this.$route.params.address,
+            address: this.$store.state.accounts.address,
             balance: this.aergoBalance,
           },
         })
@@ -311,7 +311,7 @@ export default Vue.extend({
         .push({
           name: 'token-detail',
           params: {
-            address: this.$route.params.address,
+            address: this.$store.state.accounts.address,
             token: token,
             balance: this.getBalance(token.hash),
           },
@@ -333,8 +333,6 @@ export default Vue.extend({
           name: 'send',
           params: {
             address: this.$store.state.accounts.address,
-            token: token,
-            balance: this.getBalance(token.hash),
           },
         })
         .catch(() => {});

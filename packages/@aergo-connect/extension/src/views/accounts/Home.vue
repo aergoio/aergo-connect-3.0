@@ -278,7 +278,7 @@ export default Vue.extend({
           params: {
             address: this.$store.state.accounts.address,
             token: this.$store.state.session.token,
-            balance: this.tokenBalance(token.hash),
+            balance: this.getBalance(token.hash),
           },
         })
         .catch(() => {});
@@ -292,11 +292,13 @@ export default Vue.extend({
         })
         .catch(() => {});
     },
-    handleSend() {
+    handleSend(token: any) {
       this.$router
         .push({
           name: 'send',
-          params: { address: this.$store.state.accounts.address },
+          params: {
+            address: this.$store.state.accounts.address,
+          },
         })
         .catch(() => {});
     },

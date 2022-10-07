@@ -14,7 +14,7 @@ import SignMessage from '../views/accounts/SignMessage.vue';
 import Security from '../views/accounts/Security.vue';
 import ImportAsset from '../views/accounts/ImportAsset.vue';
 import Send from '../views/accounts/Send.vue';
-
+import Receive from '../views/accounts/Receive.vue';
 import TokenDetail from '../views/accounts/TokenDetail.vue';
 
 // import Import from '../views/accounts/import/1-Network.vue';
@@ -140,6 +140,11 @@ const routes: RouteConfig[] = [
         path: '/list/:address/send',
         name: 'send',
         component: Send,
+      }),
+      withMeta(2, {
+        path: '/list/:address/receive',
+        name: 'receive',
+        component: Receive,
       }),
       withMeta(2, {
         path: '/list/:address/tokendetail',

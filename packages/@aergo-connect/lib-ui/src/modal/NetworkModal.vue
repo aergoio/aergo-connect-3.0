@@ -6,7 +6,7 @@
       <ul class="network_modal_ul">
         <li class="network_modal_li">
           <div class="network_modal_circle1" />
-          <span class="network_modal_name" @click="setNetwork('mainnet')" >AERGO Mainnet</span>
+          <span class="network_modal_name" @click="setNetwork('mainnet')">AERGO Mainnet</span>
           <Icon class="network_modal_icon" />
         </li>
         <div class="list_line" />
@@ -42,16 +42,16 @@ export default Vue.extend({
       this.$emit('networkModalClick');
     },
 
-    setNetwork (network) {
-      this.$store.commit('accounts/setNetwork', network) ;
+    setNetwork(network) {
+      this.$store.commit('accounts/setNetwork', network);
 
       // reset account_data
       this.$router.push({
-        name: 'accounts-list-address',
+        name: 'accounts-list',
         params: {
           address: this.$store.state.accounts.address,
-        }
-     });
+        },
+      });
     },
   },
 });

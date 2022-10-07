@@ -70,23 +70,27 @@
           <li class="token_list_li" @click="handleAergo">
             <div class="token_list_wrapper">
               <Icon :name="`aergo`" class="token_list_icon" />
-              <span>AERGO</span>
-              <span> {{ aergoBalance }} </span>
-              <Icon class="next" :name="`next_grey`" />
+              <span class="token_list_text">AERGO</span>
+              <span class="token_list_balance"> {{ aergoBalance }} </span>
+              <span> AER </span>
+              <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
           </li>
           <li
-            v-for="token in tokens"
+            v-for="token in $store.state.session.tokens"
             class="token_list_li"
             :key="token.hash"
             @click="handleToken(token)"
           >
             <div class="token_list_wrapper">
-              <Identicon :text="token.hash" class="list_icon" />
-              <span> {{ token.meta.name }} </span>
-              <span> {{ getBalance(token.hash) }} </span>
-              <Icon class="next" :name="`next_grey`" />
+              <!-- <Identicon :text="token.hash" class="list_icon" /> -->
+              <div class="token_list_icon">
+                <img :src="token.meta.image" alt="404" />
+              </div>
+              <span class="token_list_text"> {{ token.meta.name }} </span>
+              <span class="token_list_balance"> {{ tokenBalance(token.hash) }} </span>
+              <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
           </li>
@@ -99,12 +103,15 @@
             <span> {{ aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" />
           </li> -->
-          <li v-for="token in tokens" class="token_list_li" :key="token.hash" @click="handleToken">
+          <li v-for="token in $store.state.session.tokens" class="token_list_li" :key="token.hash" @click="handleToken">
             <div class="token_list_wrapper">
-              <Identicon :text="token.hash" class="list_icon" />
-              <span> {{ token.meta.name }} </span>
-              <span> {{ getBalance(token.hash) }} </span>
-              <Icon class="next" :name="`next_grey`" />
+              <!-- <Identicon :text="token.hash" class="list_icon" /> -->
+              <div class="token_list_icon">
+                <img :src="token.meta.image" alt="404" />
+              </div>
+              <span class="token_list_text"> {{ token.meta.name }} </span>
+              <span class="token_list_balance"> {{ getBalance(token.hash) }} </span>
+              <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
           </li>
@@ -170,92 +177,54 @@ export default Vue.extend({
       noAccountModal: false,
       network: 'aergo.io',
       aergoBalance: '',
-      tokens: '',
-      balances: [],
+//      tokens: '',
+//      balances: [],
       tab: 'tokens',
     };
   },
 
-  beforeMount() {
+  mounted() {
     this.init_account();
   },
 
   watch: {
-    $route(to, from) {
+
+    '$store.state.accounts.network': function () {
       this.init_account();
     },
 
-    '$store.state.accounts.network': function() {
+    '$store.state.accounts.address': function () {
       this.init_account();
     },
-
-    '$store.state.accounts.address': function() {
-      this.init_account();
-    }
   },
 
   methods: {
 
     async init_account() {
+
       console.log('Address', this.$store.state.accounts.address);
-      if (this.$store.state.accounts.address !== '') { await this.getState() } 
+      await this.$store.commit('ui/setIdleTimeout', 100000)
+
+      if (this.$store.state.accounts.address) {
+         await this.$store.dispatch('session/InitState') ;
+
+         this.aergoBalance = await this.$store.dispatch('session/aergoBalance') ;
+      }
       else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');
-        if (succ) {
-          console.log('New Address', this.$store.state.accounts.address);
 
-/*
-          this.$router.push({
-            name: 'accounts-list-address',
-            params: {
-              address: this.$store.state.accounts.address,
-            },
-          });
-*/
-
-        }
-        else {
+        if (!succ) {
           console.log('Need Register');
           this.noAccountModal = true;
         }
       }
     },
 
-    async getState() {
-
-      this.aergoBalance = await this.$store.dispatch('accounts/aergoBalance');
-      console.log("aergoBalance", this.aergoBalance) ;
-      this.tokens = await this.$store.dispatch('accounts/tokens');
-
-      await this.getBalances();
-      console.log("balance structure", this.balances) ;
-
-      await this.balances.forEach(e => { if (e.token.image) this.tokens.push(e.token) }) ;
-      console.log("token structure", this.tokens) ;
-    },
-
-    async getBalances() {
-//      console.log( 'FETCH', `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`,);
-
-      const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenBalance?q=${this.$store.state.accounts.address}`, 
-      ) ;
-
-      const response = await resp.json();
-      if (response.error) this.balances =  [] ; 
-      else this.balances = response.hits;
-    },
-
-    getBalance(token: string) {
-      console.log('BALANCE', this.balances, token);
-      const result = this.balances.find(element => element.meta.address == token);
-      if (!result) return 0;
-      else {
-        const value = result.meta.balance_float / Math.pow(10, result.token.meta.decimals);
-        console.log('RESULT', value);
-        return value;
-      }
+    tokenBalance(tokenAddress) {
+      const ss = this.$store.dispatch('session/tokenBalance', tokenAddress) ;
+      console.log('MES', ss) ;
+      return ss ;
     },
 
     hamburgerClick() {
@@ -264,7 +233,7 @@ export default Vue.extend({
 
     handleCancel(modalEvent: string) {
       if (modalEvent === 'noAccountModal') {
-        this.$background.lock() ;
+        this.$background.lock();
       }
 
       if (modalEvent === 'removeAccountModal') {
@@ -294,7 +263,7 @@ export default Vue.extend({
         .push({
           name: 'token-detail-aergo',
           params: {
-            address: this.$route.params.address,
+            address: this.$store.state.accounts.address,
             balance: this.aergoBalance,
           },
         })
@@ -302,12 +271,13 @@ export default Vue.extend({
     },
 
     handleToken(token: any) {
+      this.$store.commit('session/setToken', token) ;
       this.$router
         .push({
           name: 'token-detail',
           params: {
-            address: this.$route.params.address,
-            token: token,
+            address: this.$store.state.accounts.address,
+            token: this.$store.state.session.token,
             balance: this.getBalance(token.hash),
           },
         })
@@ -322,11 +292,13 @@ export default Vue.extend({
         })
         .catch(() => {});
     },
-    handleSend() {
+    handleSend(token: any) {
       this.$router
         .push({
           name: 'send',
-          params: { address: this.$store.state.accounts.address },
+          params: {
+            address: this.$store.state.accounts.address,
+          },
         })
         .catch(() => {});
     },
@@ -431,9 +403,9 @@ export default Vue.extend({
       }
     }
     .token_list_ul {
-      /* margin-top: 5px; */
+      width: 375px;
       height: 252px;
-      /* overflow: hidden; */
+      overflow-x: hidden;
       overflow-y: scroll;
       .token_list_li {
         cursor: pointer;
@@ -442,9 +414,10 @@ export default Vue.extend({
         width: 375px;
         height: 62px;
         display: flex;
-        justify-content: space-around;
+        /* justify-content: space-around; */
         align-items: center;
         .token_list_icon {
+          margin-left: 32px;
           width: 46px;
           height: 46px;
           border-radius: 50%;
@@ -452,6 +425,16 @@ export default Vue.extend({
           display: flex;
           justify-content: center;
           align-items: center;
+        }
+        .token_list_text {
+          margin-left: 18px;
+          width: 192.5px;
+        }
+        .token_list_balance {
+          margin-left: 20px;
+        }
+        .token_list_nextbutton {
+          margin-left: 10px;
         }
       }
       .line {

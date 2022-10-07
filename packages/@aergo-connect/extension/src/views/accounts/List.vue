@@ -13,7 +13,7 @@
         </div>
         <AccountList :accounts="accounts" :canDelete="true" @select="handleSelect" />
         <SideNavButton img="add" title="Add Account" :to="{ name: 'register' }" />
-        <SideNavButton img="delete" title="Remove Account" @click="handleRemoveModal" />
+        <!-- <SideNavButton img="delete" title="Remove Account" @click="handleRemoveModal" /> -->
       </section>
       <section class="nav-footer">
         <div>
@@ -69,10 +69,10 @@ export default Vue.extend({
       event.stopPropagation();
       this.isAccountsListOpened = !this.isAccountsListOpened;
     },
-    handleRemoveModal() {
-      this.$emit('removeModalClick');
-      return false;
-    },
+    // handleRemoveModal() {
+    //   this.$emit('removeModalClick');
+    //   return false;
+    // },
     handleListModalOff() {
       this.$emit('listModalOff');
     },
@@ -83,12 +83,14 @@ export default Vue.extend({
 
       this.$emit('select', account);
 
-      this.$router.push({
-        name: 'accounts-list-address',
-        params: {
-          address: address,
-        },
-      });
+      this.$router
+        .push({
+          name: 'accounts-list',
+          params: {
+            address: address,
+          },
+        })
+        .catch(() => {});
     },
 
     handleLock() {

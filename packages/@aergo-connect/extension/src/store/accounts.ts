@@ -39,38 +39,21 @@ const storeModule: Module<AccountsState, RootState> = {
 
   actions: {
     async tokens({ state }) {
-      const tokens = state.accounts[state.address]['token'][state.network];
+      const tokens = await state.accounts[state.address]['token'][state.network];
       if (!tokens) return [];
       else return JSON.parse(tokens || '{}');
-    },
-
-    async aergoBalance({ state }) {
-
-      const vue = getVueInstance(this);
-      const account = vue.$background.getActiveAccount();
-      const val = await vue.$background.getAccountState({
-        address: state.address,
-        chainId: state.network,
-      });
-      const result = await new Amount(val.balance).formatNumber('aergo');
-      console.log('aergoBalance', result);
-
-      return result;
     },
 
     async loadAccount({ state, commit }) {
       const vue = getVueInstance(this);
       const accounts = await vue.$background.getAccounts();
-      console.log('accounts', accounts);
 
       if (accounts.length !== 0) {
         commit('setActiveAccount', accounts[0]?.data.spec.address);
         console.log('loadAccount', state.address);
-
-        return true ;
-      }
-      else {
-        return false ;
+        return true;
+      } else {
+        return false;
       }
     },
 
@@ -110,7 +93,7 @@ const storeModule: Module<AccountsState, RootState> = {
         tokens = JSON.parse(tokensJ);
       } else return;
 
-      const fList = tokens.filter(element => element.hash !== token.hash);
+      const fList = tokens.filter((element) => element.hash !== token.hash);
       commit('setTokens', JSON.stringify(fList));
       console.log('deleteToken', fList);
     },

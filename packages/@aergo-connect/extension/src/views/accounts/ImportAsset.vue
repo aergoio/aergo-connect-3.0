@@ -93,9 +93,9 @@
       </div>
     </div>
     <template #footer>
-      <Button v-if="state === `search`" type="primary" size="large" @click="handleImport"
+      <!-- <Button v-if="state === `search`" type="primary" size="large" @click="handleImport"
         >Import</Button
-      >
+      > -->
       <Button v-if="state === `custom` && !check" type="primary" size="large" @click="handleCheck"
         >Check
       </Button>
@@ -153,7 +153,7 @@ export default Vue.extend({
   methods: {
     handleBack() {
       this.$router.push({
-        name: 'accounts-list-address',
+        name: 'accounts-list',
         params: {
           address: this.$store.state.accounts.address,
         },
@@ -178,26 +178,11 @@ export default Vue.extend({
     async select(token) {
       console.log('Selected', token.meta);
 
-      //      this.addToken(this.$route.params.address, token) ;
       this.token = Object.values(token);
       this.$store.dispatch('accounts/addToken', token);
       this.importAssetModal = true;
     },
 
-    /*
-    async addToken(address, token) {
-      const key = address.substr(0, 5) + '_' + this.network() + '_token';
-      const tokensJ = localStorage.getItem(key);
-
-      let tokens = [];
-      if (tokensJ) {
-        tokens = JSON.parse(tokensJ);
-      }
-      tokens.push(token);
-      localStorage.setItem(key, JSON.stringify(tokens));
-      console.log('tokens', tokens);
-    },
-    */
     async custom() {
       console.log('custom');
     },
@@ -235,9 +220,13 @@ export default Vue.extend({
   align-items: center;
   height: 100%;
   .select_token_content {
-    width: 327px;
+    width: 375px;
     margin-top: 15px;
-
+    ul {
+      overflow-y: scroll;
+      overflow-x: hidden;
+      height: 380px;
+    }
     .select_token_text {
       font-family: 'Outfit';
       font-style: normal;
@@ -252,6 +241,7 @@ export default Vue.extend({
     }
     .select_token_list {
       cursor: pointer;
+      width: 327px;
       .token_list_wrapper {
         width: 327px;
         height: 62px;
@@ -260,7 +250,6 @@ export default Vue.extend({
         .list_icon {
           width: 42px;
           height: 42px;
-          margin-left: 24px;
           border-radius: 50%;
         }
         .list_text {
@@ -279,7 +268,7 @@ export default Vue.extend({
           color: #454344;
         }
         .list_button {
-          margin-right: 21px;
+          margin-right: 5px;
           font-family: 'Outfit';
           font-style: normal;
           font-weight: 400;

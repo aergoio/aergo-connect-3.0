@@ -38,16 +38,17 @@ async function init(name: string) {
   new Vue({
     router,
     store,
-    render: h => h(App),
+    render: (h) => h(App),
     data() {
       return { name };
     },
   }).$mount('#app');
 
   // React to state updates from background
-  background.on('update', function(state) {
+  background.on('update', function (state) {
     console.log('update from bg', state);
     const isNonAuthPage = router.currentRoute.meta && router.currentRoute.meta.noAuthCheck === true;
+    console.log(isNonAuthPage, 'isNonAuthPage');
     if (Object.prototype.hasOwnProperty.call(state, 'unlocked')) {
       store.commit('ui/setUnlocked', state.unlocked);
       if (state.unlocked === false && !isNonAuthPage) {
@@ -55,7 +56,7 @@ async function init(name: string) {
       }
     }
 
-/*
+    /*
     if (Object.prototype.hasOwnProperty.call(state, 'accounts')) {
       store.commit('accounts/setAccounts', state.accounts);
     }
@@ -65,7 +66,7 @@ async function init(name: string) {
 */
   });
 
-  console.log('STATE', store.state.accounts);
+//  console.log('STATE', store.state.accounts);
   console.log('idleTimeout:' + store.state.ui.idleTimeout);
   extension.idle.setDetectionInterval(store.state.ui.idleTimeout);
 }

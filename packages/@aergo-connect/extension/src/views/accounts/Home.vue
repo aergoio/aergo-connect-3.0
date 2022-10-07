@@ -327,11 +327,15 @@ export default Vue.extend({
         })
         .catch(() => {});
     },
-    handleSend() {
+    handleSend(token: any) {
       this.$router
         .push({
           name: 'send',
-          params: { address: this.$store.state.accounts.address },
+          params: {
+            address: this.$store.state.accounts.address,
+            token: token,
+            balance: this.getBalance(token.hash),
+          },
         })
         .catch(() => {});
     },

@@ -8,7 +8,6 @@ import store from '../store';
 export interface SessionState {
   tokens: any ;
   token: any ;
-  balances: any;
   aergoBalance: number;
   tokenBalance: number;
 }
@@ -24,82 +23,77 @@ const storeModule: Module<SessionState, RootState> = {
   state: {
     token: {},
     tokens: [], 
-    balances: [],
     aergoBalance: 0,
     tokenBalance: 0,
   },
 
-  getters: {},
-
   actions: {
+    aergoBalance({ state }) {
+      return state.aergoBalance ;
+    },
 
-    async aergoBalance({ state, commit }) {
-      const vue = await getVueInstance(this);
+    tokenBalance({ state }, address: string) {
+      return state.tokens[address]['balance'] ;
+    },
+
+    async updateBalances({ state, commit }) {
+
+      const vue = getVueInstance(this);
       const val = await vue.$background.getAccountState({
         address: store.state.accounts.address,
         chainId: store.state.accounts.network,
       });
+
       const result = await new Amount(val.balance).formatNumber('aergo');
-      console.log("AERGO",result) ;
+      await commit('setAergoBalance', result) ;
 
-      commit('setAergoBalance', result) ;
-      return result ;
-    },
-
-    tokenBalance({ state, commit }, token: string) {
-
-      if (!state.balances) return 0 ;
-      const result = state.balances.find(element => element.meta.address == token) ;
-      if (!result) return 0;
-      else {
-        const value = result.meta.balance_float / Math.pow(10, result.token.meta.decimals);
-        console.log("VALUE",value) ;
-        return value;
-      }
-    },
-
-    async InitState({state, commit}) {
-
-      const tokens = await store.dispatch('accounts/tokens');
-      commit('setTokens', tokens);
-
-      var resp = {} ;
-      await fetch(
+      const resp = await fetch(
         `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
-      ).then((res) => {
-          return res.json();
-      }).then((response) => {
-         resp = response.hits.map(item => ({
-           meta : item.meta,
-           token: item.token,
-         })) ;
-      });
+      ) ;
 
-      if (resp.error) commit('setState', {}) ;
-      else commit('setState', resp) ;
+      const response = await resp.json() ;
 
-      console.log("INIT STATE",resp) ;
+      if (response.error) return ;
+      await commit('setTokenBalance', response.hits) ;
+
+      console.log("UPDATE BAL", state.aergoBalance, state.tokens) ;
+    },
+
+    async initState({state, commit}) {
+      const tokens = await store.dispatch('accounts/tokens');
+      console.log("fetch", `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`) ;
+      const resp = await fetch(
+        `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
+      ) ;
+
+      const response = await resp.json() ;
+
+      if (response.error) await commit('setTokens', tokens, {}) ;
+      else await commit('setTokens', tokens, response.hits) ;
+
+      await store.dispatch('session/updateBalances');
+
+      console.log("INIT STATE") ;
     },
   },
 
   mutations: {
 
-    setState(state, balances: any) {
-
-      state.balances = balances ;
-      state.balances.forEach(e => { if (e.token.image) state.tokens.push(e.token) }) ;
-
-      console.log("SET STATE") ;
+    setTokenBalance(state, balances: any) {
+      state.tokens.forEach(token => {
+        const bal = balances.find(element => element.meta.address == token.hash ) ;
+        if (bal) {
+          token['balance'] = bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals) ;
+        } else {
+          token['balance'] = 0 ;
+        }
+      }) ;
     },
 
-    setToken(state, token: any) {
-      state.token = token ;
-//      console.log("token", state.tokens) ;
-    },
-
-    setTokenBalance(state, val: number) {
-      state.tokenBalance = val ;
-//      console.log("tokenBal", state.tokenBalance) ;
+    setTokens(state, tokens: any, balances: any) {
+      console.log("SET TOKENS") ;
+      state.tokens = tokens ;
+      if (balances) balances.forEach(e => { if (e.token.image) state.tokens.push(e.token) }) 
     },
 
     setAergoBalance(state, val: number) {
@@ -107,9 +101,9 @@ const storeModule: Module<SessionState, RootState> = {
 //      console.log("aergoBal", state.aergoBalance) ;
     },
 
-    setTokens(state, tokens: any) {
-      state.tokens = tokens ;
-//     console.log("tokens", state.tokens) ;
+     setToken(state, token: any) {
+      state.token = token ;
+//      console.log("token", state.tokens) ;
     },
   },
 };

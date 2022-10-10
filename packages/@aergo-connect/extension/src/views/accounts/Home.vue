@@ -100,7 +100,7 @@
           <!-- <li class="token_list_li" @click="handleToken">
             <Icon class="token_list_icon" />
             <span>CCCV</span>
-            <span> {{ aergoBalance }} </span>
+            <span> {{ $store.state.session.aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" />
           </li> -->
           <li v-for="token in $store.state.session.tokens" class="token_list_li" :key="token.hash" @click="handleToken">
@@ -263,7 +263,7 @@ export default Vue.extend({
           name: 'token-detail-aergo',
           params: {
             address: this.$store.state.accounts.address,
-            balance: $store.state.session.aergoBalance,
+            balance: this.$store.state.session.aergoBalance,
           },
         })
         .catch(() => {});

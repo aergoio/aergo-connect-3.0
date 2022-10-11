@@ -38,10 +38,9 @@ const storeModule: Module<AccountsState, RootState> = {
   getters: {},
 
   actions: {
+
     async tokens({ state }) {
-      const tokens = await state.accounts[state.address]['token'][state.network];
-      if (!tokens) return [];
-      else return JSON.parse(tokens || '{}');
+        return state.accounts[state.address]['token'][state.network];
     },
 
     async loadAccount({ state, commit }) {
@@ -74,28 +73,21 @@ const storeModule: Module<AccountsState, RootState> = {
     },
 
     async addToken({ state, commit }, token: any) {
-      const tokensJ = state.accounts[state.address]['token'][state.network];
-      let tokens = [];
-      if (tokensJ) {
-        tokens = JSON.parse(tokensJ);
-      }
-      tokens.push(token);
-
-      commit('setTokens', JSON.stringify(tokens));
+      var tokens = state.accounts[state.address]['token'][state.network];
+      
+      if (!tokens) {
+         tokens = {} ;
+      } ;
+      tokens[token.hash] = token ;
+      commit('setTokens', tokens);
       console.log('Add tokens', tokens);
     },
 
     async deleteToken({ state, commit }, token: any) {
-      const tokensJ = state.accounts[state.address]['token'][state.network];
-
-      let tokens = [];
-      if (tokensJ) {
-        tokens = JSON.parse(tokensJ);
-      } else return;
-
-      const fList = tokens.filter((element) => element.hash !== token.hash);
-      commit('setTokens', JSON.stringify(fList));
-      console.log('deleteToken', fList);
+      const tokens = state.accounts[state.address]['token'][state.network];
+      delete tokens[token.hash];
+      commit('setTokens', tokens);
+      console.log('deleteToken', token);
     },
   },
 

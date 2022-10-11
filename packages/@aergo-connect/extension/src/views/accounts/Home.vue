@@ -71,7 +71,7 @@
             <div class="token_list_wrapper">
               <Icon :name="`aergo`" class="token_list_icon" />
               <span class="token_list_text">AERGO</span>
-              <span class="token_list_balance"> {{ aergoBalance }} </span>
+              <span class="token_list_balance"> {{ $store.state.session.aergoBalance }} </span>
               <span> AER </span>
               <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
@@ -89,7 +89,7 @@
                 <img :src="token.meta.image" alt="404" />
               </div>
               <span class="token_list_text"> {{ token.meta.name }} </span>
-              <span class="token_list_balance"> {{ tokenBalance(token.hash) }} </span>
+              <span class="token_list_balance"> {{ token.balance }} </span>
               <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
@@ -100,7 +100,7 @@
           <!-- <li class="token_list_li" @click="handleToken">
             <Icon class="token_list_icon" />
             <span>CCCV</span>
-            <span> {{ aergoBalance }} </span>
+            <span> {{ $store.state.session.aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" />
           </li> -->
           <li v-for="token in $store.state.session.tokens" class="token_list_li" :key="token.hash" @click="handleToken">
@@ -110,7 +110,7 @@
                 <img :src="token.meta.image" alt="404" />
               </div>
               <span class="token_list_text"> {{ token.meta.name }} </span>
-              <span class="token_list_balance"> {{ getBalance(token.hash) }} </span>
+              <span class="token_list_balance"> {{ token.balance }} </span>
               <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
@@ -176,39 +176,39 @@ export default Vue.extend({
       importAssetModal: false,
       noAccountModal: false,
       network: 'aergo.io',
-      aergoBalance: '',
-//      tokens: '',
-//      balances: [],
       tab: 'tokens',
     };
   },
 
-  mounted() {
-    this.init_account();
+  beforeMount() {
+    this.initAccount();
   },
 
   watch: {
 
+    $route(to, from) {
+      this.initAccount();
+    },
+
     '$store.state.accounts.network': function () {
-      this.init_account();
+      this.initAccount();
     },
 
     '$store.state.accounts.address': function () {
-      this.init_account();
+      this.initAccount();
     },
   },
 
   methods: {
 
-    async init_account() {
+    async initAccount() {
 
       console.log('Address', this.$store.state.accounts.address);
-      await this.$store.commit('ui/setIdleTimeout', 100000)
+      this.$store.commit('ui/setIdleTimeout', 100000) ;
 
       if (this.$store.state.accounts.address) {
-         await this.$store.dispatch('session/InitState') ;
-
-         this.aergoBalance = await this.$store.dispatch('session/aergoBalance') ;
+        await this.$store.dispatch('session/initState') ;
+        console.log('aergoBalance', this.$store.state.session.aergoBalance);
       }
       else {
         console.log('Other Account Loading ..');
@@ -218,13 +218,12 @@ export default Vue.extend({
           console.log('Need Register');
           this.noAccountModal = true;
         }
+        else await this.$store.dispatch('session/InitState') ;
       }
+
     },
 
-    tokenBalance(tokenAddress) {
-      const ss = this.$store.dispatch('session/tokenBalance', tokenAddress) ;
-      console.log('MES', ss) ;
-      return ss ;
+    async updateBalance() {
     },
 
     hamburgerClick() {
@@ -264,7 +263,7 @@ export default Vue.extend({
           name: 'token-detail-aergo',
           params: {
             address: this.$store.state.accounts.address,
-            balance: this.aergoBalance,
+            balance: this.$store.state.session.aergoBalance,
           },
         })
         .catch(() => {});
@@ -277,8 +276,8 @@ export default Vue.extend({
           name: 'token-detail',
           params: {
             address: this.$store.state.accounts.address,
-            token: this.$store.state.session.token,
-            balance: this.getBalance(token.hash),
+            token: token,
+            balance: token.balance,
           },
         })
         .catch(() => {});

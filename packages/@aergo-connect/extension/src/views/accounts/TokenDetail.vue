@@ -38,10 +38,10 @@
         <div class="flex-row">
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
-            <div class="balance">{{ $route.params.balance || '2,000,000.000' }}</div>
+            <div class="balance">{{ $store.state.session.aergoBalance || '2,000,000.000' }}</div>
             <div class="dollor">$</div>
           </div>
-          <div class="token_symbol">AERGO</div>
+          <div class="token_symbol">AER</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
@@ -291,6 +291,12 @@ export default Vue.extend({
 */
     handleDelete() {
       console.log('delete');
+      this.$store.dispatch('accounts/deleteToken', this.$route.params.token) ;
+      this.$router
+         .push({
+           name: 'accounts-list',
+           params: { address: this.$store.state.accounts.address },
+        }) ;
     },
   },
 });

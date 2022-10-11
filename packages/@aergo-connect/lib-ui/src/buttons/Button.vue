@@ -133,11 +133,11 @@ export default Vue.extend({
     width: 157px;
   }
   &.button-size-medium {
-    width: 303px;
+    width: 289px;
     height: 44px;
   }
   &.button-size-medium-outline {
-    width: 303px;
+    width: 285px;
     height: 40px;
   }
   &.button-size-large {

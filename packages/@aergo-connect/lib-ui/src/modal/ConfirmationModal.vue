@@ -10,14 +10,14 @@
           <div class="title">Network</div>
           <div class="flex-row network">
             <div class="circle" />
-            <div class="detail network">AERGO Mainnet</div>
+            <div class="detail network">{{ $store.state.accounts.network }}</div>
           </div>
         </div>
         <div class="line" />
         <div class="flex-row">
           <div class="title">Recipient</div>
           <div class="flex-row">
-            <div class="detail address">AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW</div>
+            <div class="detail address">{{ to }}</div>
           </div>
         </div>
         <div class="line" />
@@ -25,7 +25,7 @@
         <div class="flex-row">
           <div class="title">Amount</div>
           <div class="flex-row">
-            <div class="detail amount">500 AERGO</div>
+            <div class="detail amount">{{ amount }}</div>
           </div>
         </div>
         <div class="line" />
@@ -33,7 +33,7 @@
         <div class="flex-row">
           <div class="title">Type</div>
           <div class="flex-row">
-            <div class="detail type">transfer</div>
+            <div class="detail type">{{ txType }}</div>
           </div>
         </div>
         <div class="line" />
@@ -49,13 +49,13 @@
         <div class="flex-row">
           <div class="title">Payload</div>
           <div class="flex-row">
-            <div class="detail payload">{{ JSON.stringify(payload) }}</div>
+            <div class="detail payload">{{ payload }}</div>
           </div>
         </div>
       </div>
       <ButtonGroup vertical class="button_wrapper">
         <Button size="medium" type="primary" @click="handleOk">OK</Button>
-        <Button size="medium" type="primary-outline" @click="handleCancel">Cancel</Button>
+        <Button size="medium-outline" type="primary-outline" @click="handleCancel">Cancel</Button>
       </ButtonGroup>
     </div>
   </div>
@@ -68,22 +68,26 @@ import ButtonGroup from '../buttons/ButtonGroup.vue';
 import Button from '../buttons/Button.vue';
 export default Vue.extend({
   components: { Icon, Button, ButtonGroup },
-  data() {
-    return {
-      payload: {
-        Name: 'transfer',
-        Args: ['AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW'],
-      },
-    };
+
+  props: {
+    amount: Number,
+    to: String,
+    unit: String,
+    payload: String,
+    txType: String,
   },
+
   methods: {
     handleOk() {
-      console.log('ok');
+      console.log('ok', this.to);
+      this.$emit('confirm');
     },
     handleCancel() {
       console.log('cancel');
+      this.$emit('cancel');
     },
   },
+
 });
 </script>
 

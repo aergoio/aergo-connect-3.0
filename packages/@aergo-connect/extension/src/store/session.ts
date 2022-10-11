@@ -60,7 +60,10 @@ const storeModule: Module<SessionState, RootState> = {
     },
 
     async initState({state, commit}) {
+
       const tokens = await store.dispatch('accounts/tokens');
+      console.log("INIT STATE", tokens) ;
+
       console.log("fetch", `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`) ;
       const resp = await fetch(
         `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
@@ -80,12 +83,13 @@ const storeModule: Module<SessionState, RootState> = {
   mutations: {
 
     setTokenBalance(state, balances: any) {
-      state.tokens.forEach(token => {
-        const bal = balances.find(element => element.meta.address == token.hash ) ;
+
+      Object.keys(state.tokens).forEach(key => {
+        const bal = balances.find(element => element.meta.address == state.tokens[key].hash ) ;
         if (bal) {
-          token['balance'] = bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals) ;
+          state.tokens[key]['balance'] = bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals) ;
         } else {
-          token['balance'] = 0 ;
+          state.tokens[key]['balance'] = 0 ;
         }
       }) ;
     },

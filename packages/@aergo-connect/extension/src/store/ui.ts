@@ -2,6 +2,7 @@ import { Module } from 'vuex';
 import { Route } from 'vue-router';
 import { RootState } from './index';
 import { Json } from '../types';
+import { Tx } from '@herajs/client';
 
 interface InputData {
   // Values get persisted into localstorage, so only use json-compatible types
@@ -25,6 +26,7 @@ export interface UiState {
   };
   unlocked: boolean;
   idleTimeout: number;
+  txTypes: any;
 }
 
 const storeModule: Module<UiState, RootState> = {
@@ -39,6 +41,7 @@ const storeModule: Module<UiState, RootState> = {
     },
     unlocked: false,
     idleTimeout: 1000000000,
+    txTypes: [ 'TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE', 'DEPLOY', 'REDEPLOY' ] ,
   },
   getters: {
     getSetting: state => (keyPath: string): Json => {

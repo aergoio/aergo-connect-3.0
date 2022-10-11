@@ -4,18 +4,15 @@
       <div class="title">Optional Fields</div>
       <div class="flex-column">
         <div class="title">Type</div>
-        <select class="select_box">
-          <option>Transfer</option>
-          <option>Call</option>
-          <option>Call with fee delegation</option>
-          <option>Multiple Call</option>
-          <option>Governance</option>
-          <option>Normal(legacy)</option>
+        <select class="select_box" v-model="iTxType">
+          <option v-for="type in $store.state.ui.txTypes" :value="type">
+            {{ type }}
+          </option>
         </select>
       </div>
       <div class="flex-column">
         <div class="title data">Data (payload)</div>
-        <text-area type="text" class="text_box" />
+        <input v-model="iPayload" type="text" class="text_box" />
       </div>
       <Button size="medium" type="primary" class="button" @click="handleOk">OK</Button>
     </div>
@@ -25,10 +22,28 @@
 <script>
 import Vue from 'vue';
 import Button from '../buttons/Button.vue';
+import { Tx } from '@herajs/client';
+
 export default Vue.extend({
   components: { Button },
+  props: {
+    payload: String,
+    txType: String,
+  },
+  data() {
+    return {
+      iPayload: '',
+      iTxType: '',
+    };
+  },
+
+  beforeMount() {
+      this.iPayload = this.payload ;
+      this.iTxType = this.txType ;
+  },
   methods: {
     handleOk() {
+      this.$emit('updateTx', this.iTxType, this.iPayload) ;
       console.log('ok');
     },
   },

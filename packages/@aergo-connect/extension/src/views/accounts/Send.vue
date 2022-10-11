@@ -1,13 +1,18 @@
 <template>
   <ScrollView>
-    <SendOptionsModal v-if="optionsModal" />
+    <SendOptionsModal 
+      v-if="optionsModal" 
+      :txType="txType"
+      :payload="txBody.payload"
+      @updateTx="updateTx"
+    />
     <ConfirmationModal 
       v-if="confirmationModal" 
-      :amount="amount"
-      :to="to"
-      :unit="unit"
-      :payload="payload"
+      :to="inputTo"
+      :amount="inputAmount"
+      :symbol="symbol"
       :txType="txType"
+      :payload="txBody.payload"
       @confirm="handleConfirm"
       @cancel="handleCancel"
     />
@@ -36,12 +41,12 @@
         </div>
       </div>
       <div class="token_content_wrapper">
-        <Identicon v-if="!icon" :text="asset" class="token_icon" />
+        <Identicon v-if="!icon" :text="tokenHash" class="token_icon" />
         <Icon v-else-if="asset == -1"  class="token_icon" :name="icon" />
         <img v-else class="token_icon" :src="icon" />
 
         <div class="token_amount">{{ balance }}</div>
-        <div class="token_symbol">{{ unit }} </div>
+        <div class="token_symbol">{{ symbol }} </div>
       </div>
       <div class="send_form_wrapper">
         <div class="flex-row">
@@ -59,11 +64,11 @@
         </div>
         <div class="flex-row" v-else >
           <div class="title">Amount</div>
-          <input v-model.number="amount" type="text" class="text_box" />
+          <input v-model.number="inputAmount" type="text" class="text_box" />
         </div>
         <div class="flex-column">
           <div class="title">Send to</div>
-          <input v-model="to" type="text" class="text_box" />
+          <input v-model="inputTo" type="text" class="text_box" />
         </div>
       </div>
     </div>
@@ -117,16 +122,26 @@ export default Vue.extend({
     return {
       optionsModal: false,
       confirmationModal: false,
-      asset: 'AERGO',
+
+      asset: -1,
       icon: 'aergo',
       balance: this.$store.state.session.aergoBalance,
-      to: 'Amh4pmDMvqez6USJaQTs236YXqHVzMzo5cvgrybjthu5aZEpMxsQ',
-      amount: '0',
-      asset: -1,
-      unit: 'aergo',
-      payload: '',
       tokenType: 'AERGO',
-      txType: Tx.Type.TRANSFER,
+      symbol: 'aergo',
+      inputAmount: '0',
+      inputTo: 'Amh4pmDMvqez6USJaQTs236YXqHVzMzo5cvgrybjthu5aZEpMxsQ',
+      txType: 'TRANSFER',
+      tokenHash: '',
+      
+      txBody: {
+        from: this.$store.state.accounts.address,
+        to: '',
+        amount: '0',
+        unit: 'aergo',
+        payload: '',
+        limit: 0,
+        type: 0,
+      },
 
 // for tx 
       dialogState: '',
@@ -142,18 +157,25 @@ export default Vue.extend({
          this.balance    = this.$store.state.session.aergoBalance ;
 	 this.tokenType  = 'AERGO' ;
          this.icon       = 'aergo' ;
-	 this.unit       = 'aergo' ;
+	 this.symbol     = 'aergo' ;
        } else {
          this.balance =    this.$store.state.session.tokens[this.asset]['balance'] ;
 	 this.tokenType  = this.$store.state.session.tokens[this.asset]['meta']['type'] ;
          this.icon       = this.$store.state.session.tokens[this.asset]['meta']['image'] ;
-	 this.unit       = this.$store.state.session.tokens[this.asset]['meta']['symbol'] ;
-//         if (!this.icon) this.icon = "404" ; 
+	 this.symbol     = this.$store.state.session.tokens[this.asset]['meta']['symbol'] ;
+	 this.tokenHash  = this.$store.state.session.tokens[this.asset].hash ;
        }
     }
   },
 
   methods: {
+    updateTx(txType, payload) {
+      console.log("return option", txType, payload) ;
+      this.txType = txType ;
+      this.txBody.payload = payload ;
+      this.optionsModal = false ;
+    },
+
     handleBack() {
       this.$router.push({
         name: 'accounts-list',
@@ -162,36 +184,43 @@ export default Vue.extend({
         },
       });
     },
-
     handleOptionsModal() {
       this.optionsModal = true;
     },
-
     handleSendClick() {
       console.log('click');
       if (this.amount > this.balance) {
         // error 출력 또는 입력 시에 확인
         console.log('insufficent');
-      } else {
+        return ;
+      } 
 
-        // payload & txType 만들기
-        if (this.tokenType == 'ARC1') {
+      if (this.tokenType == 'AERGO') {
+        this.txBody.to = this.inputTo ;
+        this.txBody.amount = `${this.inputAmount} ${this.txBody.unit}` ;
 
-          console.log("TO ", this.to) ;
+      } else if (this.tokenType == 'ARC1') {
+        this.txBody.to = this.$store.state.session.tokens[this.asset].hash ;
+        this.txBody.amount = `0 ${this.txBody.unit}` ;
 
-          this.payload =
-            '{"Name": "transfer", "Args": ["' +
-            this.to + 
-            '", "' + 
-            this.amount + 
-            '000000000000000000", ""]}';
+        this.txBody.payload =
+          '{"Name": "transfer", "Args": ["' +
+          this.inputTo + 
+          '", "' + 
+          this.inputAmount + 
+          '000000000000000000", ""]}';
 
-          const payload = JSON.parse(this.payload) ;
-          this.payload = JSON.stringify(payload) ;
-        };
+        const payload = JSON.parse(this.txBody.payload) ;
+        this.txBody.payload = JSON.stringify(payload) ;
 
-        this.confirmationModal = true ;
-      }
+        this.txType = 'CALL' ; 
+      };
+
+      this.txBody.type = Tx.Type[this.txType] ;
+      
+      console.log("txBody", this.txBody) ;
+
+      this.confirmationModal = true ;
     },
       
     handleCancel() {
@@ -205,29 +234,7 @@ export default Vue.extend({
     },
 
     async handleConfirm() {
-
       this.confirmationModal = false ;
-
-      // make txBody
-      const txBody = {
-        from: this.$store.state.accounts.address,
-        unit: 'aergo', 
-        type: this.txType, 
-        payload: this.payload,
-        to: '',
-        amount: 0,
-      } ;
-
-      if (this.tokenType == 'AERGO') {
-        txBody.to = this.to ;
-        txBody.amount = `${this.amount} ${this.unit}` ;
-      } else if (this.tokenType == 'ARC1') {
-
-        console.log('CONTRACT ADDRESS', this.$store.state.session.tokens[this.asset].hash) ;
-        txBody.to = this.$store.state.session.tokens[this.asset].hash ;
-        txBody.amount = `0 aergo` ;
-        txBody.txType = Tx.Type.CALL ;
-      } ;
 
 // sign
 //      if (!txBody.from) {
@@ -240,11 +247,11 @@ export default Vue.extend({
 //      txBody = await this.signWithLedger(txBody);
 //    } 
 
-      console.log("txBody", txBody) ;
+      console.log("txBody", this.txBody) ;
       
       // send 
       try {
-        const hash = await timedAsync(this.sendTransaction(txBody), { fastTime: 1000 });
+        const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         this.setStatus('success', 'Done');
         setTimeout(() => { this.$router.push({ name: 'account-send-success', params: { hash } }); }, 1000);
       } catch(e) {

@@ -25,7 +25,7 @@
               }}
             </div>
             <Icon
-              v-if="state === 'others'"
+              v-if="state === 'others' && !$route.params.token.meta.image"
               class="account_button"
               :name="`delete2`"
               @click="handleDelete"
@@ -56,8 +56,8 @@
       </div>
 
       <div v-else-if="'others'" class="token_transaction_history_wrapper others">
-        <Icon class="icon" :src="$route.params.token.meta.image" alt="404" />
-        <div class="balance">{{ $route.params.balance }}</div>
+        <img class="icon" :src="$route.params.token.meta.image" alt="404" />
+        <div class="balance">{{ $route.params.token.balance }}</div>
         <div class="token_symbol">{{ $route.params.token.meta.symbol }}</div>
       </div>
 
@@ -129,13 +129,9 @@
     <template #footer>
       <div class="footer">
         <Appear :delay="0.6">
-          <ButtonGroup>
-            <Button class="button" type="font-gradation" size="small" @click="handleSend"
-              ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
-            >
-            <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-              ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
-            >
+          <ButtonGroup horizontal class="button_wrapper">
+            <Button type="primary" size="small" :to="{ name: 'setup' }" hover>Send</Button>
+            <Button type="primary" size="small" :to="{ name: 'setup' }" hover>Receive</Button>
           </ButtonGroup>
         </Appear>
       </div>
@@ -756,38 +752,5 @@ export default Vue.extend({
   /* Grey/06 */
 
   color: #686767;
-}
-.footer {
-  .button-group {
-    width: 328px;
-    display: flex;
-    justify-content: space-between;
-  }
-  .button {
-    box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
-    border-radius: 4px;
-    width: 157px;
-    .button-icon {
-      margin-right: 9.49px;
-    }
-    &.button-type-font-gradation:hover {
-      background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
-      /* shadow/02 */
-
-      box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
-      border-radius: 4px;
-    }
-    &.button-type-font-gradation:hover span {
-      background: none;
-      color: #fff;
-      -webkit-text-fill-color: #fff;
-    }
-    &.button-type-font-gradation:hover path {
-      background: none;
-      color: #fff;
-      fill: #fff;
-      -webkit-text-fill-color: #fff;
-    }
-  }
 }
 </style>

@@ -71,12 +71,10 @@ const storeModule: Module<SessionState, RootState> = {
 
       const response = await resp.json() ;
 
-      if (response.error) await commit('setTokens', tokens, {}) ;
-      else await commit('setTokens', tokens, response.hits) ;
-
+      await commit('setTokens', response.hits, tokens) ;
       await store.dispatch('session/updateBalances');
 
-      console.log("INIT STATE") ;
+      console.log("INIT tokens", state.tokens) ;
     },
   },
 
@@ -87,6 +85,8 @@ const storeModule: Module<SessionState, RootState> = {
       Object.keys(state.tokens).forEach(key => {
         const bal = balances.find(element => element.meta.address == state.tokens[key].hash ) ;
         if (bal) {
+        const bal = balances.find(element => element.meta.address == state.tokens[key].hash ) ;
+        if (bal) {
           state.tokens[key]['balance'] = bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals) ;
         } else {
           state.tokens[key]['balance'] = 0 ;
@@ -94,10 +94,17 @@ const storeModule: Module<SessionState, RootState> = {
       }) ;
     },
 
-    setTokens(state, tokens: any, balances: any) {
-      console.log("SET TOKENS") ;
-      state.tokens = tokens ;
-      if (balances) balances.forEach(e => { if (e.token.image) state.tokens.push(e.token) }) 
+    setTokens(state, balances: any, tokens: any) {
+      console.log("SET TOKENS Balances", tokens, balances) ;
+      if (tokens) state.tokens = tokens ;
+      else state.tokens = [] ;
+
+      if (balances) balances.forEach(e => {
+         if (e.token.meta.image) {
+           console.log("ADD TOKEN", e.token.hash) ;
+           state.tokens.push(e.token) ;
+         }
+       })
     },
 
     setAergoBalance(state, val: number) {

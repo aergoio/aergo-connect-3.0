@@ -11,7 +11,11 @@ import Create from '../views/accounts/Create.vue';
 import Home from '../views/accounts/Home.vue';
 
 import SignMessage from '../views/accounts/SignMessage.vue';
+
 import Security from '../views/accounts/Security.vue';
+import Security2 from '../views/accounts/Security-step2.vue';
+import ChangePassword from '../views/accounts/ChangePassword.vue';
+
 import ImportAsset from '../views/accounts/ImportAsset.vue';
 import Send from '../views/accounts/Send.vue';
 import Receive from '../views/accounts/Receive.vue';
@@ -132,9 +136,19 @@ const routes: RouteConfig[] = [
         component: SignMessage,
       }),
       withMeta(2, {
-        path: '/list/:address/security',
+        path: '/list/:address/security/1',
         name: 'security',
         component: Security,
+      }),
+      withMeta(2, {
+        path: '/list/:address/security/2',
+        name: 'security-2',
+        component: Security2,
+      }),
+      withMeta(2, {
+        path: '/list/:address/security/changepassword',
+        name: 'change-password',
+        component: ChangePassword,
       }),
       withMeta(2, {
         path: '/list/:address/send',

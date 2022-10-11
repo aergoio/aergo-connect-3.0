@@ -181,12 +181,6 @@ export default Vue.extend({
       importAssetModal: false,
       noAccountModal: false,
       network: 'aergo.io',
-<<<<<<< HEAD
-      aergoBalance: '',
-      //      tokens: '',
-      //      balances: [],
-=======
->>>>>>> d04510ab4745641f909faa7b4ea71929d65aa6d0
       tab: 'tokens',
     };
   },
@@ -196,14 +190,10 @@ export default Vue.extend({
   },
 
   watch: {
-<<<<<<< HEAD
-=======
-
     $route(to, from) {
       this.initAccount();
     },
 
->>>>>>> d04510ab4745641f909faa7b4ea71929d65aa6d0
     '$store.state.accounts.network': function () {
       this.initAccount();
     },
@@ -214,50 +204,25 @@ export default Vue.extend({
   },
 
   methods: {
-<<<<<<< HEAD
-    async init_account() {
-      console.log('Address', this.$store.state.accounts.address);
-      await this.$store.commit('ui/setIdleTimeout', 100000);
-
-      if (this.$store.state.accounts.address) {
-        await this.$store.dispatch('session/InitState');
-
-        this.aergoBalance = await this.$store.dispatch('session/aergoBalance');
-      } else {
-=======
-
     async initAccount() {
-
       console.log('Address', this.$store.state.accounts.address);
-      this.$store.commit('ui/setIdleTimeout', 100000) ;
+      this.$store.commit('ui/setIdleTimeout', 100000);
 
       if (this.$store.state.accounts.address) {
-        await this.$store.dispatch('session/initState') ;
+        await this.$store.dispatch('session/initState');
         console.log('aergoBalance', this.$store.state.session.aergoBalance);
-      }
-      else {
->>>>>>> d04510ab4745641f909faa7b4ea71929d65aa6d0
+      } else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');
 
         if (!succ) {
           console.log('Need Register');
           this.noAccountModal = true;
-        }
-        else await this.$store.dispatch('session/InitState') ;
+        } else await this.$store.dispatch('session/InitState');
       }
-
     },
 
-<<<<<<< HEAD
-    tokenBalance(tokenAddress) {
-      const ss = this.$store.dispatch('session/tokenBalance', tokenAddress);
-      console.log('MES', ss);
-      return ss;
-=======
-    async updateBalance() {
->>>>>>> d04510ab4745641f909faa7b4ea71929d65aa6d0
-    },
+    async updateBalance() {},
 
     hamburgerClick() {
       this.hamburgerModal = !this.hamburgerModal;

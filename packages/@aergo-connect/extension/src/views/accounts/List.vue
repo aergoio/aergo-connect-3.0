@@ -27,7 +27,11 @@
       <section class="nav-footer">
         <div>
           <SideNavButton img="sign-message" title="Sign Message" :to="{ name: 'sign-message' }" />
-          <SideNavButton img="security" title="Security" :to="{ name: 'security' }" />
+          <SideNavButton
+            img="security"
+            title="Security"
+            :to="{ name: 'security', params: { address: $store.state.accounts.address } }"
+          />
           <SideNavButton img="lock" title="Lock" @click="handleLock" />
         </div>
         <div class="side-nav-version">

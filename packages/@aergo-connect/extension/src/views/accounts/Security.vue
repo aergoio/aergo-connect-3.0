@@ -9,7 +9,7 @@
       </div>
     </div>
     <template #footer>
-      <Button type="primary" size="large">Confirm</Button>
+      <Button type="primary" size="large" @click="handleGoStep2">Confirm</Button>
     </template>
   </ScrollView>
 </template>
@@ -36,6 +36,13 @@ export default Vue.extend({
         .push({
           name: 'accounts-list',
           params: { ...this.accountSpec, nick: this.$route.params.nick },
+        })
+        .catch(() => {});
+    },
+    handleGoStep2() {
+      this.$router
+        .push({
+          name: 'security-2',
         })
         .catch(() => {});
     },

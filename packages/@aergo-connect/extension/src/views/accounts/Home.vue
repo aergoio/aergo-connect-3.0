@@ -318,6 +318,7 @@ export default Vue.extend({
 });
 </script>
 <style lang="scss">
+@import '../../../../lib-ui/src/styles/variables';
 .header {
   z-index: 2;
 }
@@ -340,9 +341,20 @@ export default Vue.extend({
     border-radius: 8px;
     margin-top: 10px;
     .account_info_img {
-      width: 44px;
-      height: 44px;
-      margin-left: 20px;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      background-image: linear-gradient(#fff, #fff), linear-gradient(to right, #279ecc, #a13e99);
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+      svg {
+        width: 44px;
+        height: 44px;
+      }
     }
     .account_info_content_wrapper {
       display: flex;

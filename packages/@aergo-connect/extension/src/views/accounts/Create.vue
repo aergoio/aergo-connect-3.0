@@ -9,7 +9,10 @@
         <span class="address_hash">{{ $route.params.address }}</span>
       </div>
 
-      <span class="sub-title">Nickname</span>
+      <div class="flex-row-nick">
+        <span class="sub-title">Nickname</span>
+        <Icon :name="`edit`" @click="handleEdit" />
+      </div>
       <div class="user_nickname_wrapper">
         <div class="user_nickname_text">{{ nick }}</div>
         <!-- <input class="user_nickname_text" v-model="nick" autofocus /> -->
@@ -30,8 +33,8 @@ import { Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Component, { mixins } from 'vue-class-component';
-import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import { Identicon } from '@aergo-connect/lib-ui/src/content';
+import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 @Component({
   components: {
     Identicon,
@@ -71,6 +74,9 @@ export default class Create extends mixins() {
         address: this.address,
       },
     });
+  }
+  handleEdit() {
+    console.log('edit nick');
   }
 }
 </script>
@@ -138,5 +144,21 @@ export default class Create extends mixins() {
 .buttonGroup-position {
   position: absolute;
   top: 448px;
+}
+.flex-row-nick {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  .sub-title {
+    margin-top: 0;
+  }
+  .icon {
+    margin-left: 11px;
+    margin-bottom: 11px;
+    cursor: pointer;
+  }
+  path {
+    fill: #279ecc;
+  }
 }
 </style>

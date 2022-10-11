@@ -181,7 +181,6 @@ export default Vue.extend({
     background: $white;
     color: $gradation04;
     box-shadow: none;
-    background-color: $Pink01;
   }
   &.button-type-secondary-outline {
     color: $Pink01;

@@ -1,6 +1,6 @@
 <template>
   <div :visible="visible" title="Export Account" @close="$emit('close')">
-    <Header button="back" title="Backup Private Key" :to="{ name: 'account-create' }" />
+    <Header button="back" title="Backup Private Key" :to="routing" />
     <section class="exportAccountDialog-contents">
       <div class="btn-p-wrapper">
         <Button
@@ -41,20 +41,27 @@ import { ModalDialog, Header } from '@aergo-connect/lib-ui/src/layouts';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import { Button } from '@aergo-connect/lib-ui/src/buttons';
 import Vue from 'vue';
-import Component from 'vue-class-component';
-import { Prop } from 'vue-property-decorator';
 
-@Component({
+export default Vue.extend({
   components: {
     Icon,
     ModalDialog,
     Header,
     Button,
   },
-})
-export default class AddAccountDialog extends Vue {
-  @Prop(Boolean) readonly visible = false;
-}
+  props: {
+    visible: { type: Boolean, default: false },
+  },
+  computed: {
+    routing() {
+      if (this.$store.state.ui.route.previousPath.split('/')[3] === 'security') {
+        return { name: 'security' };
+      } else {
+        return { name: 'account-create' };
+      }
+    },
+  },
+});
 </script>
 
 <style lang="scss">

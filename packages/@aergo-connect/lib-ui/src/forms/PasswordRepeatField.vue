@@ -22,7 +22,7 @@
           :name="`check`"
           class="match-password"
           :size="20"
-          style="margin-right:10px"
+          style="margin-right: 10px"
         />
         <Icon v-else :name="`x`" :size="20" class="match-password" />
       </div>

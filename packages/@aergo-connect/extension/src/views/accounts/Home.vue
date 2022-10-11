@@ -103,7 +103,12 @@
             <span> {{ $store.state.session.aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" />
           </li> -->
-          <li v-for="token in $store.state.session.tokens" class="token_list_li" :key="token.hash" @click="handleToken">
+          <li
+            v-for="token in $store.state.session.tokens"
+            class="token_list_li"
+            :key="token.hash"
+            @click="handleToken"
+          >
             <div class="token_list_wrapper">
               <!-- <Identicon :text="token.hash" class="list_icon" /> -->
               <div class="token_list_icon">
@@ -126,10 +131,10 @@
       <div class="content_footer">
         <ButtonGroup>
           <Button class="button" type="font-gradation" size="small" @click="handleSend"
-            ><Icon class="button-icon" :name="`send`" />send</Button
+            ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
           >
           <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-            ><Icon class="button-icon" :name="`send`" />receive</Button
+            ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
           >
         </ButtonGroup>
       </div>
@@ -185,7 +190,6 @@ export default Vue.extend({
   },
 
   watch: {
-
     $route(to, from) {
       this.initAccount();
     },
@@ -200,31 +204,25 @@ export default Vue.extend({
   },
 
   methods: {
-
     async initAccount() {
-
       console.log('Address', this.$store.state.accounts.address);
-      this.$store.commit('ui/setIdleTimeout', 100000) ;
+      this.$store.commit('ui/setIdleTimeout', 100000);
 
       if (this.$store.state.accounts.address) {
-        await this.$store.dispatch('session/initState') ;
+        await this.$store.dispatch('session/initState');
         console.log('aergoBalance', this.$store.state.session.aergoBalance);
-      }
-      else {
+      } else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');
 
         if (!succ) {
           console.log('Need Register');
           this.noAccountModal = true;
-        }
-        else await this.$store.dispatch('session/InitState') ;
+        } else await this.$store.dispatch('session/InitState');
       }
-
     },
 
-    async updateBalance() {
-    },
+    async updateBalance() {},
 
     hamburgerClick() {
       this.hamburgerModal = !this.hamburgerModal;
@@ -270,7 +268,7 @@ export default Vue.extend({
     },
 
     handleToken(token: any) {
-      this.$store.commit('session/setToken', token) ;
+      this.$store.commit('session/setToken', token);
       this.$router
         .push({
           name: 'token-detail',
@@ -302,6 +300,14 @@ export default Vue.extend({
         .catch(() => {});
     },
     handleReceive() {
+      this.$router
+        .push({
+          name: 'receive',
+          params: {
+            address: this.$store.state.accounts.address,
+          },
+        })
+        .catch(() => {});
       console.log('receive');
     },
     handleChangeTab(value: string) {
@@ -409,6 +415,12 @@ export default Vue.extend({
       .token_list_li {
         cursor: pointer;
       }
+      .token_list_li:hover {
+        /* Primary/lightsky */
+
+        background: #eff5f7;
+        opacity: 0.5;
+      }
       .token_list_wrapper {
         width: 375px;
         height: 62px;
@@ -428,9 +440,6 @@ export default Vue.extend({
         .token_list_text {
           margin-left: 18px;
           width: 192.5px;
-        }
-        .token_list_balance {
-          margin-left: 20px;
         }
         .token_list_nextbutton {
           margin-left: 10px;
@@ -490,18 +499,37 @@ export default Vue.extend({
   }
   .content_footer {
     margin-top: 10px;
+    .button-group {
+      width: 328px;
+      display: flex;
+      justify-content: space-between;
+    }
     .button {
       box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
       border-radius: 4px;
+      width: 157px;
       .button-icon {
         margin-right: 9.49px;
       }
-      /* &.button-type-font-gradation:hover {
-        background: #ffffff;
-      } */
+      &.button-type-font-gradation:hover {
+        background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+        /* shadow/02 */
+
+        box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
+        border-radius: 4px;
+      }
+      &.button-type-font-gradation:hover span {
+        background: none;
+        color: #fff;
+        -webkit-text-fill-color: #fff;
+      }
+      &.button-type-font-gradation:hover path {
+        background: none;
+        color: #fff;
+        fill: #fff;
+        -webkit-text-fill-color: #fff;
+      }
     }
-    /* .button:hover {
-    } */
   }
 }
 </style>

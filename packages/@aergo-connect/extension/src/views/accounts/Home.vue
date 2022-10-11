@@ -69,11 +69,15 @@
         <ul class="token_list_ul" v-if="tab === `tokens`">
           <li class="token_list_li" @click="handleAergo">
             <div class="token_list_wrapper">
-              <Icon :name="`aergo`" class="token_list_icon" />
-              <span class="token_list_text">AERGO</span>
-              <span class="token_list_balance"> {{ $store.state.session.aergoBalance }} </span>
-              <span> AER </span>
-              <Icon class="token_list_nextbutton" :name="`next_grey`" />
+              <div class="token_list_row">
+                <Icon :name="`aergo`" class="token_list_icon" />
+                <span class="token_list_text">AERGO</span>
+              </div>
+              <div class="token_list_amount">
+                <span class="token_list_balance"> {{ $store.state.session.aergoBalance }} </span>
+                <span> AERGO </span>
+                <Icon class="token_list_nextbutton" :name="`next_grey`" />
+              </div>
             </div>
             <div class="line" />
           </li>
@@ -89,8 +93,10 @@
                 <img :src="token.meta.image" alt="404" />
               </div>
               <span class="token_list_text"> {{ token.meta.name }} </span>
-              <span class="token_list_balance"> {{ token.balance }} </span>
-              <Icon class="token_list_nextbutton" :name="`next_grey`" />
+              <div class="token_list_amount">
+                <span class="token_list_balance"> {{ token.balance }} </span>
+                <Icon class="token_list_nextbutton" :name="`next_grey`" />
+              </div>
             </div>
             <div class="line" />
           </li>
@@ -115,14 +121,19 @@
                 <img :src="token.meta.image" alt="404" />
               </div>
               <span class="token_list_text"> {{ token.meta.name }} </span>
-              <span class="token_list_balance"> {{ token.balance }} </span>
+              <div class="token_list_amount">
+                <span class="token_list_balance"> {{ token.balance }} </span>
+              </div>
               <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
           </li>
         </ul>
 
-        <button class="token_list_button" @click="handleImportAsset">
+        <button
+          class="token_list_button"
+          @click="[tab === 'tokens' ? handleImportAsset('token') : handleImportAsset('nft')]"
+        >
           <Icon name="plus" class="token_list_button_img" /><span class="token_list_button_text"
             >Import Asset</span
           >
@@ -281,13 +292,23 @@ export default Vue.extend({
         .catch(() => {});
     },
 
-    handleImportAsset() {
-      this.$router
-        .push({
-          name: 'import-asset',
-          params: { address: this.$store.state.accounts.address },
-        })
-        .catch(() => {});
+    handleImportAsset(to: string) {
+      if (to === 'token') {
+        this.$router
+          .push({
+            name: 'import-asset-token',
+            params: { address: this.$store.state.accounts.address },
+          })
+          .catch(() => {});
+      }
+      if (to === 'nft') {
+        this.$router
+          .push({
+            name: 'import-asset-nft',
+            params: { address: this.$store.state.accounts.address },
+          })
+          .catch(() => {});
+      }
     },
     handleSend(token: any) {
       this.$router
@@ -434,13 +455,15 @@ export default Vue.extend({
         opacity: 0.5;
       }
       .token_list_wrapper {
-        width: 375px;
         height: 62px;
         display: flex;
-        /* justify-content: space-around; */
+        justify-content: space-around;
         align-items: center;
+        .token_list_row {
+          display: flex;
+          align-items: center;
+        }
         .token_list_icon {
-          margin-left: 32px;
           width: 46px;
           height: 46px;
           border-radius: 50%;
@@ -449,9 +472,15 @@ export default Vue.extend({
           justify-content: center;
           align-items: center;
         }
+        .token_list_amount {
+          display: flex;
+          align-items: center;
+          .token_list_balance {
+            margin-right: 4px;
+          }
+        }
         .token_list_text {
           margin-left: 18px;
-          width: 192.5px;
         }
         .token_list_nextbutton {
           margin-left: 10px;

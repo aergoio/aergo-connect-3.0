@@ -81,10 +81,7 @@ const storeModule: Module<SessionState, RootState> = {
   mutations: {
 
     setTokenBalance(state, balances: any) {
-
       Object.keys(state.tokens).forEach(key => {
-        const bal = balances.find(element => element.meta.address == state.tokens[key].hash ) ;
-        if (bal) {
         const bal = balances.find(element => element.meta.address == state.tokens[key].hash ) ;
         if (bal) {
           state.tokens[key]['balance'] = bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals) ;

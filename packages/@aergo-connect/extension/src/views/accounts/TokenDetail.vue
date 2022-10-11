@@ -5,6 +5,7 @@
       :title="getTitle()"
       refresh
       :to="{ name: 'accounts-list', params: { address: $store.state.accounts.address } }"
+      @refreshClick="refreshClick"
     />
     <div class="token_detail_content_wrapper">
       <div class="account_detail_wrapper">
@@ -203,30 +204,6 @@ export default Vue.extend({
       else return new Amount(staking.amount).formatNumber('aergo');
     },
 
-    /*
-    async getAergoHistory() {
-//      const vue = getVueInstance(this);
-      this.data = await this.$background.getAccountTx({ address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network }) ;
-
-
-//      setTimeout(() => this.getAergoHistory(), 10*1000);
-
-      console.log("aergoTx", this.data) ;
-    },
-
-      try {
-        this.transactions = await timedAsync(
-        this.$background.getAccountTx({ address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network }),
-        { fastTime: 1000 } as any,
-      );
-      this.state = 'loaded';
-      setTimeout(() => this.reload(), 10*1000);
-    } catch(e) {
-      this.state = 'error';
-      console.error(e);
-    }
-*/
-
     getBalance(value: number, decimals: number) {
       return value / Math.pow(10, decimals);
     },
@@ -239,6 +216,12 @@ export default Vue.extend({
         return 'AERGO';
       }
       return this.$route.params.token.meta.name;
+    },
+
+    refreshClick() {
+      console.log("refresh") ;
+      if (this.state === 'aergo') this.getAergoHistory();
+      else this.getTokenHistory();
     },
 
     async getTokenHistory(): Promise<void> {
@@ -269,7 +252,8 @@ export default Vue.extend({
 
       console.log('tx', this.data);
     },
-    /*
+
+ /*
     get stakedFiatBalance(): string {
       if (!this.tokenPriceInfo || !this.tokenPriceInfo.price || !this.staking || !this.staking.amount) return '';
       const aergoAmount = new Amount(this.staking.amount).formatNumber('aergo');

@@ -130,9 +130,13 @@
     <template #footer>
       <div class="footer">
         <Appear :delay="0.6">
-          <ButtonGroup horizontal class="button_wrapper">
-            <Button type="primary" size="small" :to="{ name: 'setup' }" hover>Send</Button>
-            <Button type="primary" size="small" :to="{ name: 'setup' }" hover>Receive</Button>
+          <ButtonGroup>
+            <Button class="button" type="font-gradation" size="small" @click="handleSend"
+              ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
+            >
+            <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+              ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
+            >
           </ButtonGroup>
         </Appear>
       </div>
@@ -220,7 +224,7 @@ export default Vue.extend({
     },
 
     refreshClick() {
-      console.log("refresh") ;
+      console.log('refresh');
       if (this.state === 'aergo') this.getAergoHistory();
       else this.getTokenHistory();
     },
@@ -254,7 +258,7 @@ export default Vue.extend({
       console.log('tx', this.data);
     },
 
- /*
+    /*
     get stakedFiatBalance(): string {
       if (!this.tokenPriceInfo || !this.tokenPriceInfo.price || !this.staking || !this.staking.amount) return '';
       const aergoAmount = new Amount(this.staking.amount).formatNumber('aergo');
@@ -272,12 +276,18 @@ export default Vue.extend({
 */
     handleDelete() {
       console.log('delete');
-      this.$store.dispatch('accounts/deleteToken', this.$store.state.session.token) ;
-      this.$router
-         .push({
-           name: 'accounts-list',
-           params: { address: this.$store.state.accounts.address },
-        }) ;
+      this.$store.dispatch('accounts/deleteToken', this.$route.params.token);
+      this.$router.push({
+        name: 'accounts-list',
+        params: { address: this.$store.state.accounts.address },
+      });
+    },
+
+    handleSend() {
+      console.log('send');
+    },
+    handleReceive() {
+      console.log('receive');
     },
   },
 });
@@ -737,5 +747,36 @@ export default Vue.extend({
   /* Grey/06 */
 
   color: #686767;
+}
+
+.button-group {
+  width: 328px;
+  display: flex;
+  justify-content: space-between;
+  .button {
+    box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
+    border-radius: 4px;
+    width: 157px;
+    .button-icon {
+      margin-right: 9.49px;
+    }
+    &.button-type-font-gradation:hover {
+      background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+      /* shadow/02 */
+      box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
+      border-radius: 4px;
+    }
+    &.button-type-font-gradation:hover span {
+      background: none;
+      color: #fff;
+      -webkit-text-fill-color: #fff;
+    }
+    &.button-type-font-gradation:hover path {
+      background: none;
+      color: #fff;
+      fill: #fff;
+      -webkit-text-fill-color: #fff;
+    }
+  }
 }
 </style>

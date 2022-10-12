@@ -140,15 +140,17 @@
           >
         </button>
       </div>
-      <div class="content_footer">
-        <ButtonGroup>
-          <Button class="button" type="font-gradation" size="small" @click="handleSend"
-            ><Icon class="button-icon" :name="`send`" />send</Button
-          >
-          <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-            ><Icon class="button-icon" :name="`send`" />receive</Button
-          >
-        </ButtonGroup>
+      <div class="footer">
+        <Appear :delay="0.6">
+          <ButtonGroup>
+            <Button class="button" type="font-gradation" size="small" @click="handleSend"
+              ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
+            >
+            <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+              ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
+            >
+          </ButtonGroup>
+        </Appear>
       </div>
     </div>
   </ScrollView>
@@ -333,7 +335,14 @@ export default Vue.extend({
         .catch(() => {});
     },
     handleReceive() {
-      console.log('receive');
+      this.$router
+        .push({
+          name: 'receive',
+          params: {
+            address: this.$store.state.accounts.address,
+          },
+        })
+        .catch(() => {});
     },
     handleChangeTab(value: string) {
       console.log(value);
@@ -446,7 +455,7 @@ export default Vue.extend({
     }
     .token_list_ul {
       width: 375px;
-      height: 252px;
+      height: 232px;
       overflow-x: hidden;
       overflow-y: scroll;
       .token_list_li {
@@ -514,6 +523,7 @@ export default Vue.extend({
       letter-spacing: -0.333333px;
       cursor: pointer;
       margin-top: 10px;
+      margin-bottom: 20px;
       .token_list_button_img {
         position: relative;
         bottom: 2px;
@@ -539,6 +549,7 @@ export default Vue.extend({
       }
     }
   }
+
   .content_footer {
     margin-top: 10px;
     .button {

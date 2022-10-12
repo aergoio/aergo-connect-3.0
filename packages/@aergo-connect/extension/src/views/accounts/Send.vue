@@ -123,7 +123,7 @@ export default Vue.extend({
     return {
       optionsModal: false,
       confirmationModal: false,
-      sendFinishModal: true,
+      sendFinishModal: false,
       asset: -1,
       icon: 'aergo',
       balance: this.$store.state.session.aergoBalance,

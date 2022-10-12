@@ -129,7 +129,7 @@ export default Vue.extend({
     .detail_form {
       height: 260px;
       margin-top: 18px;
-      width: 290px;
+      width: 280px;
       .flex-row {
         display: flex;
         justify-content: space-between;

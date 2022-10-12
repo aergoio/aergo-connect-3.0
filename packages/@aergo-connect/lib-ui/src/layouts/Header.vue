@@ -8,8 +8,8 @@
     <h3 v-if="title && !network">{{ title }}</h3>
     <NetworkHeader v-if="network" @networkModalClick="networkModalClick" />
     <div class="header__button right" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
-      <Icon class="refresh" name="refresh" @refreshClick="refreshClick" />
-      <a type="button" class="skip__btn" @skipClick="skipClick">Skip</a>
+      <Icon class="refresh" name="refresh" @click="refreshClick" />
+      <a type="button" class="skip__btn" @click="skipClick">Skip</a>
     </div>
     <slot></slot>
   </div>

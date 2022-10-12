@@ -1,5 +1,5 @@
 <template>
-  <ul class="nav-account-list">
+  <ul class="nav-account-list" v-if="accounts">
     <li
       v-for="account in accounts"
       :key="account.key"
@@ -13,6 +13,15 @@
       </div>
     </li>
   </ul>
+  <div v-else class="nav-account-list">
+    <div class="nav-account-item" @click.capture="$emit('select', account)">
+      <div
+        :class="activeAccount && $store.state.accounts.address === account.address ? 'active' : ''"
+      >
+        <AccountItem :address="account.address" :nickname="account.nick" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <!-- <template>
@@ -29,7 +38,7 @@
         <li
           v-for="account in accounts"
           :key="account.key"
-          class="account-item-li"
+          class="account-item-li"`
           @click.capture="$emit('select', account)"
         >
           <router-link :to="{ name: balanceListRoute, params: account.data.spec }">
@@ -85,6 +94,10 @@ export default Vue.extend({
     accounts: {
       type: Array,
       default: [] as any[],
+    },
+    account: {
+      type: Object,
+      default: { address: '', nick: '', token: '' } as any,
     },
     groupByChain: {
       type: Boolean,

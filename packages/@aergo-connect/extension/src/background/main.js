@@ -26,6 +26,7 @@ async function setupController() {
       controller.state.set('active');
       controller.setupCommunication(portStream);
       controller.uiState.popupOpen = true;
+      console.log(remotePort, 'port');
       endOfStream(portStream, () => {
         controller.uiState.popupOpen = false;
         console.log('Closed connection with', processName);
@@ -37,7 +38,7 @@ async function setupController() {
 
   // Setup idle detection
   // extension.idle.setDetectionInterval(15);
-  extension.idle.onStateChanged.addListener(newState => {
+  extension.idle.onStateChanged.addListener((newState) => {
     console.log('idle onStateChanged : ' + newState);
     if (newState === 'idle' || newState === 'locked') {
       controller.lock();
@@ -57,14 +58,14 @@ if (!extension.runtime.id) {
   extension.contextMenus.create({
     title: 'Open full page',
     contexts: ['browser_action'],
-    onclick: function() {
+    onclick: function () {
       extension.tabs.create({ url: 'index.html' });
     },
   });
   extension.contextMenus.create({
     title: 'Settings',
     contexts: ['browser_action'],
-    onclick: function() {
+    onclick: function () {
       extension.tabs.create({ url: 'index.html#/settings' });
     },
   });

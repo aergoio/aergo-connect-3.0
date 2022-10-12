@@ -1,16 +1,39 @@
 <template>
   <ScrollView>
     <Header button="back" title="Security" @backClick="handleBack" />
-    <div class="security_content">
-      <div class="security_header">Confirm your password</div>
-      <div class="password_wrapper">
-        <div class="password_title">Password</div>
-        <PasswordStrengthField />
+    <div class="security2_content">
+      <div class="security2_autolock_wrapper">
+        <div class="title">Auto Lock Timeout</div>
+        <div class="description">
+          Set the amount of time before the screen locks. After this period of inactivity, you will
+          be prompted to reenter your password.
+        </div>
+        <select class="select">
+          <option>60 seconds</option>
+          <option>30 seconds</option>
+          <option>5 minutes</option>
+          <option>10 minutes</option>
+          <option>Never</option>
+        </select>
+      </div>
+      <div class="security2_password_wrapper">
+        <div class="title">Password</div>
+        <div class="description">
+          This password is used to unlock your wallet and send assets only on this device.
+        </div>
+        <Button type="primary" size="large" @click="handleChangePassword">Change Password</Button>
+      </div>
+      <div class="security2_backup_wrapper">
+        <div class="title">Backup Private Key</div>
+        <div class="description">
+          Protect your accounts by saving your private key in various places like on a piece of
+          paper, password manager and/or the cloud.
+        </div>
+        <Button type="primary" size="large" @click="handleBackupPrivateKey"
+          >Backup Private Key</Button
+        >
       </div>
     </div>
-    <template #footer>
-      <Button type="primary" size="large">Confirm</Button>
-    </template>
   </ScrollView>
 </template>
 
@@ -31,27 +54,72 @@ export default Vue.extend({
     },
   },
   methods: {
-    // handleBack() {
-    //   this.$router
-    //     .push({
-    //       name: 'accounts-list',
-    //       params: { ...this.accountSpec, nick: this.$route.params.nick },
-    //     })
-    //     .catch(() => {});
-    // },
+    handleBack() {
+      this.$router
+        .push({
+          name: 'security',
+        })
+        .catch(() => {});
+    },
+    handleGoStep2() {
+      this.$router
+        .push({
+          name: 'security-2',
+        })
+        .catch(() => {});
+    },
+    handleChangePassword() {
+      this.$router.push({
+        name: 'change-password',
+        params: { address: this.$route.params.address },
+      });
+    },
+    handleBackupPrivateKey() {
+      this.$router.push({
+        name: 'account-backup',
+        params: {
+          address: this.$route.params.address,
+        },
+      });
+    },
   },
 });
 </script>
 
 <style lang="scss">
-.security_content {
+.security2_content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  .security_header {
-    margin-top: 46px;
-    width: 318px;
+  .security2_autolock_wrapper {
+    margin-top: 26px;
+    .select {
+      float: right;
+      width: 133px;
+      height: 36px;
+      background: #ffffff;
+      /* Grey/02 */
+
+      border: 1px solid #d8d8d8;
+      border-radius: 4px;
+      /* Subtitle/S3 */
+
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 20px;
+      letter-spacing: -0.333333px;
+
+      /* Grey/06 */
+
+      color: #686767;
+    }
+  }
+  .title {
+    /* Headline/H3 */
+
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 600;
@@ -63,23 +131,33 @@ export default Vue.extend({
 
     color: #231f20;
   }
-  .password_wrapper {
-    width: 318px;
-    margin-top: 75px;
-    .password_title {
-      font-family: 'Outfit';
-      font-style: normal;
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 20px;
-      letter-spacing: -0.333333px;
+  .description {
+    width: 327px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    /* Subtitle/S3 */
 
-      /* Grey/07 */
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: -0.333333px;
 
-      color: #454344;
+    /* Grey/06 */
+
+    color: #686767;
+  }
+  .security2_password_wrapper {
+    margin-top: 12px;
+    .button {
+      margin-top: 20px;
     }
-    .input-field {
-      width: 327px;
+  }
+  .security2_backup_wrapper {
+    margin-top: 36px;
+    .button {
+      margin-top: 20px;
     }
   }
 }

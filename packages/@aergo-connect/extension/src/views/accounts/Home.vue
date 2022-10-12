@@ -90,10 +90,12 @@
           >
             <div class="token_list_wrapper">
               <!-- <Identicon :text="token.hash" class="list_icon" /> -->
-              <img class="token_list_icon" :src="token.meta.image" alt="404" />
-              <span class="token_list_text"> {{ token.meta.name }} </span>
+              <div class="token_list_row">
+                <img class="token_list_icon" :src="token.meta.image" alt="404" />
+                <span class="token_list_text"> {{ token.meta.name }} </span>
+              </div>
               <div class="token_list_amount">
-                <span class="token_list_balance"> {{ token.balance }} </span>
+                <span class="token_list_balance"> {{ token.balance.toString() }} </span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
             </div>
@@ -217,7 +219,7 @@ export default Vue.extend({
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
       // for test
-      this.$store.commit('ui/setIdleTimeout', 15) ;
+      this.$store.commit('ui/setIdleTimeout', 10000) ;
       console.log('IdleTime', this.$store.state.ui.idleTimeout);
       
       if (this.$store.state.accounts.address) {
@@ -239,6 +241,8 @@ export default Vue.extend({
       this.$store.dispatch('session/updateBalances');
       // OR this.store.dispatch('session/initState') ;
     },
+
+/*
     async autoUpdateBalances(time) {
       try {
         console.log('UpdateBalances');

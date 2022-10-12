@@ -28,7 +28,7 @@
         <TextField
           placeholder="Name / Symbol / Address"
           class="network_textField"
-          @submit="search"
+          @input="search"
         />
 
         <ul class="select_token_content">
@@ -116,8 +116,9 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
+import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import ImportAssetModal from '@aergo-connect/lib-ui/src/modal/ImportAssetModal.vue';
+
 export default Vue.extend({
   components: {
     Header,

@@ -27,6 +27,7 @@ export interface UiState {
   unlocked: boolean;
   idleTimeout: number;
   txTypes: any;
+  initSetupKey: string;
 }
 
 const storeModule: Module<UiState, RootState> = {
@@ -40,20 +41,23 @@ const storeModule: Module<UiState, RootState> = {
       settings: defaultSettings,
     },
     unlocked: false,
+    txTypes: ['TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE', 'DEPLOY', 'REDEPLOY'],
+    initSetupKey: '',
     idleTimeout: 10000,
-    txTypes: [ 'TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE', 'DEPLOY', 'REDEPLOY' ] ,
   },
   getters: {
-    getSetting: state => (keyPath: string): Json => {
-      function getKey<T extends {}>(obj: T, keyPath: string): Json {
-        const [key, rest] = keyPath.split('.', 2);
-        if (!rest) {
-          return (obj[key as keyof T] as unknown) as Json;
+    getSetting:
+      (state) =>
+      (keyPath: string): Json => {
+        function getKey<T extends {}>(obj: T, keyPath: string): Json {
+          const [key, rest] = keyPath.split('.', 2);
+          if (!rest) {
+            return obj[key as keyof T] as unknown as Json;
+          }
+          return getKey(obj[key as keyof T], rest);
         }
-        return getKey(obj[key as keyof T], rest);
-      }
-      return getKey(state.input.settings, keyPath);
-    },
+        return getKey(state.input.settings, keyPath);
+      },
   },
   mutations: {
     setCurrentRoute(state, route: Route) {
@@ -78,6 +82,9 @@ const storeModule: Module<UiState, RootState> = {
     },
     setIdleTimeout(state, time) {
       state.idleTimeout = time;
+    },
+    setInitSetupKey(state, initSetupKey) {
+      state.initSetupKey = initSetupKey;
     },
   },
   actions: {

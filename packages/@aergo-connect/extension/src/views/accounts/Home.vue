@@ -1,4 +1,4 @@
-[200~<template>
+<template>
   <ScrollView>
     <Header
       button="hamburger"
@@ -108,7 +108,12 @@
             <span> {{ $store.state.session.aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" />
           </li> -->
-          <li v-for="token in $store.state.session.tokens" class="token_list_li" :key="token.hash" @click="handleToken">
+          <li
+            v-for="token in $store.state.session.tokens"
+            class="token_list_li"
+            :key="token.hash"
+            @click="handleToken"
+          >
             <div class="token_list_wrapper">
               <!-- <Identicon :text="token.hash" class="list_icon" /> -->
               <div class="token_list_icon">
@@ -195,7 +200,6 @@ export default Vue.extend({
   },
 
   watch: {
-
     $route(to, from) {
       this.initAccount();
     },
@@ -210,43 +214,36 @@ export default Vue.extend({
   },
 
   methods: {
-
     async initAccount() {
-
       console.log('Address', this.$store.state.accounts.address);
       // for test
       this.$store.commit('ui/setIdleTimeout', 15) ;
       console.log('IdleTime', this.$store.state.ui.idleTimeout);
       
       if (this.$store.state.accounts.address) {
-        await this.$store.dispatch('session/initState') ;
+        await this.$store.dispatch('session/initState');
         console.log('aergoBalance', this.$store.state.session.aergoBalance);
-      }
-      else {
+      } else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');
 
         if (!succ) {
           console.log('Need Register');
           this.noAccountModal = true;
-        }
-        else await this.$store.dispatch('session/InitState') ;
+        } else await this.$store.dispatch('session/InitState');
       }
-
     },
 
     refreshClick() {
-      console.log('regresh') ;
-      this.$store.dispatch('session/updateBalances') ;
+      console.log('regresh');
+      this.$store.dispatch('session/updateBalances');
       // OR this.store.dispatch('session/initState') ;
     },
-    
-/*
     async autoUpdateBalances(time) {
       try {
-        console.log('UpdateBalances') ;
-        this.$store.dispatch('session/updateBalances') ;
-        setTimeout(() => this.updateBalances(),time) ;
+        console.log('UpdateBalances');
+        this.$store.dispatch('session/updateBalances');
+        setTimeout(() => this.updateBalances(), time);
       } catch (e) {
         console.error(e);
       }
@@ -294,7 +291,7 @@ export default Vue.extend({
     },
 
     handleToken(token: any) {
-      this.$store.commit('session/setToken', token) ;
+      this.$store.commit('session/setToken', token);
       this.$router
         .push({
           name: 'token-detail',

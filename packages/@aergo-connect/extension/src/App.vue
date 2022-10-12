@@ -33,6 +33,19 @@ export default Vue.extend({
       this.$router.push({ name: 'welcome' }).catch(() => {});
     }
 
+    // request.onsuccess = (e) => {
+    //   const database = e.target.result;
+    //   const transaction = database.transaction(['data']);
+    //   const objectStore = transaction.objectStore('data');
+    //   const index = objectStore.index['data'];
+    //   const request = index.get['chrome'];
+    //   request.onsuccess = (e) => {
+    //     console.info(e.target.result);
+    //   };
+    //   request.onerror = (e) => {
+    //     console.error(e.target.result);
+    //   };
+    // };
     console.log('idleTimeout:' + this.$store.state.ui.idleTimeout);
     extension.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
     extension.idle.onStateChanged.addListener(this.$background.lock());

@@ -20,8 +20,15 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import PasswordStrengthField from '@aergo-connect/lib-ui/src/forms/PasswordStrengthField.vue';
+import { encodePrivateKey } from '@herajs/crypto';
+import { debounce } from 'lodash';
 export default Vue.extend({
   components: { Header, ScrollView, Button, PasswordStrengthField },
+  data() {
+    return {
+      hashedPassword: '',
+    };
+  },
   computed: {
     accountSpec() {
       return {
@@ -40,12 +47,32 @@ export default Vue.extend({
         .catch(() => {});
     },
     handleGoStep2() {
+      console.log(window.indexedDB);
       this.$router
         .push({
           name: 'security-2',
         })
         .catch(() => {});
     },
+  },
+  async mounted() {
+    // const request = indexedDB.open('data');
+    // request.onsuccess = (e) => {
+    //   const database = e.target.result;
+    //   const transaction = database.transaction(['settings']);
+    //   const objectStore = transaction.objectStore('settings');
+    //   // const index = objectStore.index('key');
+    //   const request = objectStore.get('encryptedId');
+    //   request.onsuccess = async (e) => {
+    //     console.log(e.target.result);
+    //     this.hashedPassword = encodePrivateKey(e.target.result.data.value);
+    //     const key = await this.$background.getKey({ account: this.hashedPassword });
+    //     console.log(key, 'key');
+    //   };
+    //   request.onerror = (e) => {
+    //     console.error(e.target.result);
+    //   };
+    // };
   },
 });
 </script>

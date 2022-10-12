@@ -7,7 +7,6 @@ import Background from './plugins/background';
 import IndexedDb from './plugins/indexeddb';
 import extension from 'extensionizer';
 import PortStream from 'extension-port-stream';
-
 import '@aergo-connect/lib-ui/src/styles/base.scss';
 import { enforceRequest } from './router/guards';
 
@@ -58,6 +57,10 @@ async function init(name: string) {
     }
 
   });
+
+  //  console.log('STATE', store.state.accounts);
+  console.log('idleTimeout:' + store.state.ui.idleTimeout);
+  extension.idle.setDetectionInterval(store.state.ui.idleTimeout);
 }
 
 const elem = document.getElementById('app');

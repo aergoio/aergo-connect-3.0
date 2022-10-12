@@ -214,8 +214,10 @@ export default Vue.extend({
     async initAccount() {
 
       console.log('Address', this.$store.state.accounts.address);
-      this.$store.commit('ui/setIdleTimeout', 100000) ;
-
+      // for test
+      this.$store.commit('ui/setIdleTimeout', 15) ;
+      console.log('IdleTime', this.$store.state.ui.idleTimeout);
+      
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState') ;
         console.log('aergoBalance', this.$store.state.session.aergoBalance);
@@ -239,6 +241,7 @@ export default Vue.extend({
       // OR this.store.dispatch('session/initState') ;
     },
     
+/*
     async autoUpdateBalances(time) {
       try {
         console.log('UpdateBalances') ;
@@ -248,6 +251,7 @@ export default Vue.extend({
         console.error(e);
       }
     },
+*/
 
     hamburgerClick() {
       this.hamburgerModal = !this.hamburgerModal;
@@ -284,10 +288,7 @@ export default Vue.extend({
       this.$router
         .push({
           name: 'token-detail-aergo',
-          params: {
-            address: this.$store.state.accounts.address,
-            balance: this.$store.state.session.aergoBalance,
-          },
+          params: { },
         })
         .catch(() => {});
     },
@@ -297,11 +298,7 @@ export default Vue.extend({
       this.$router
         .push({
           name: 'token-detail',
-          params: {
-            address: this.$store.state.accounts.address,
-            token: token,
-            balance: token.balance,
-          },
+          params: { },
         })
         .catch(() => {});
     },

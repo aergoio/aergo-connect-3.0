@@ -40,7 +40,7 @@ const storeModule: Module<UiState, RootState> = {
       settings: defaultSettings,
     },
     unlocked: false,
-    idleTimeout: 1000000000,
+    idleTimeout: 10000,
     txTypes: [ 'TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE', 'DEPLOY', 'REDEPLOY' ] ,
   },
   getters: {

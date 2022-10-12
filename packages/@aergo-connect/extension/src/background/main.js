@@ -34,10 +34,11 @@ async function setupController() {
       });
     }
   }
-  extension.runtime.onConnect.addListener(connectRemote);
 
+  extension.runtime.onConnect.addListener(connectRemote);
   // Setup idle detection
-  // extension.idle.setDetectionInterval(15);
+  extension.idle.setDetectionInterval(60);
+
   extension.idle.onStateChanged.addListener((newState) => {
     console.log('idle onStateChanged : ' + newState);
     if (newState === 'idle' || newState === 'locked') {

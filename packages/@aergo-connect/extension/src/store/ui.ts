@@ -41,9 +41,9 @@ const storeModule: Module<UiState, RootState> = {
       settings: defaultSettings,
     },
     unlocked: false,
-    idleTimeout: 1000000000,
     txTypes: ['TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE', 'DEPLOY', 'REDEPLOY'],
     initSetupKey: '',
+    idleTimeout: 10000,
   },
   getters: {
     getSetting:

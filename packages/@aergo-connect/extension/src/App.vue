@@ -8,6 +8,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import RouteTransition from '@aergo-connect/lib-ui/src/nav/RouteTransition.vue';
+import extension from 'extensionizer';
 
 export default Vue.extend({
   components: {
@@ -18,7 +19,6 @@ export default Vue.extend({
     const unlocked = await this.$background.isUnlocked();
     const isSetup = await this.$background.isSetup();
     const getAccounts = await this.$background.getAccounts();
-    console.log(getAccounts, '1!!!!!!!!!!!!!!!!!');
     this.$store.commit('ui/setUnlocked', unlocked);
 
     const peformAuthCheck = !(
@@ -46,6 +46,9 @@ export default Vue.extend({
     //     console.error(e.target.result);
     //   };
     // };
+    console.log('idleTimeout:' + this.$store.state.ui.idleTimeout);
+    extension.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
+    extension.idle.onStateChanged.addListener(this.$background.lock());
 
     // if (isSetup && unlocked) {
     //   if (getAccounts.length > 0) {

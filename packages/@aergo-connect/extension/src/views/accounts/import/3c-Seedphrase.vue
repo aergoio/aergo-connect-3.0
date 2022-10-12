@@ -151,13 +151,12 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 
       this.$store.dispatch('accounts/addAccount', accountSpec.address);
 
-      this.$router.push({ 
-          name: 'account-imported', 
-          params: { 
-            address: accountSpec.address
-          }, 
+      this.$router.push({
+        name: 'account-imported',
+        params: {
+          address: accountSpec.address,
+        },
       });
-
     } catch (e) {
       console.log(e);
       this.errors.derivationPath = `${e}`;

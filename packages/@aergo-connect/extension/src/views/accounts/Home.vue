@@ -1,4 +1,4 @@
-[200~<template>
+<template>
   <ScrollView>
     <Header
       button="hamburger"
@@ -232,25 +232,21 @@ export default Vue.extend({
       }
     },
 
-<<<<<<< HEAD
-    async updateBalance() {},
-=======
     refreshClick() {
-      console.log('regresh') ;
-      this.$store.dispatch('session/updateBalances') ;
+      console.log('regresh');
+      this.$store.dispatch('session/updateBalances');
       // OR this.store.dispatch('session/initState') ;
     },
-    
+
     async autoUpdateBalances(time) {
       try {
-        console.log('UpdateBalances') ;
-        this.$store.dispatch('session/updateBalances') ;
-        setTimeout(() => this.updateBalances(),time) ;
+        console.log('UpdateBalances');
+        this.$store.dispatch('session/updateBalances');
+        setTimeout(() => this.updateBalances(), time);
       } catch (e) {
         console.error(e);
       }
     },
->>>>>>> 3e2c078429820a2d6351ad000a9e2bdd6630845b
 
     hamburgerClick() {
       this.hamburgerModal = !this.hamburgerModal;

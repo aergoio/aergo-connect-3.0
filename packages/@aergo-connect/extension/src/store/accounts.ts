@@ -18,6 +18,7 @@ export interface AccountsState {
   network: string;
   address: string;
   nick: string;
+  lastSeedPhrase: string;
 }
 
 function getVueInstance(instance: any): Vue {
@@ -33,14 +34,14 @@ const storeModule: Module<AccountsState, RootState> = {
     network: 'aergo.io',
     address: '',
     nick: '',
+    lastSeedPhrase: '',
   },
 
   getters: {},
 
   actions: {
-
     async tokens({ state }) {
-        return state.accounts[state.address]['token'][state.network];
+      return state.accounts[state.address]['token'][state.network];
     },
 
     async loadAccount({ state, commit }) {
@@ -73,12 +74,12 @@ const storeModule: Module<AccountsState, RootState> = {
     },
 
     async addToken({ state, commit }, token: any) {
-      var tokens = state.accounts[state.address]['token'][state.network];
-      
+      let tokens = state.accounts[state.address]['token'][state.network];
+
       if (!tokens) {
-         tokens = {} ;
-      } ;
-      tokens[token.hash] = token ;
+        tokens = {};
+      }
+      tokens[token.hash] = token;
       commit('setTokens', tokens);
       console.log('Add tokens', tokens);
     },
@@ -116,6 +117,9 @@ const storeModule: Module<AccountsState, RootState> = {
       delete state.accounts[state.address];
       state.address = '';
       state.nick = '';
+    },
+    setSeedPhrase(state, phrase: string) {
+      state.lastSeedPhrase = phrase;
     },
 
     addAccount(state, address: string) {

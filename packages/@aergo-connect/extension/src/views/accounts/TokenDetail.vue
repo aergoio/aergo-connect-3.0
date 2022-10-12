@@ -276,7 +276,7 @@ export default Vue.extend({
 */
     handleDelete() {
       console.log('delete');
-      this.$store.dispatch('accounts/deleteToken', this.$route.params.token);
+      this.$store.dispatch('accounts/deleteToken', this.$store.state.session.token);
       this.$router.push({
         name: 'accounts-list',
         params: { address: this.$store.state.accounts.address },

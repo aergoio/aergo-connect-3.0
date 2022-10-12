@@ -22,7 +22,7 @@ const storeModule: Module<SessionState, RootState> = {
 
   state: {
     token: {},
-    tokens: [],
+    tokens: {},
     aergoBalance: 0,
     tokenBalance: 0,
   },
@@ -61,6 +61,7 @@ const storeModule: Module<SessionState, RootState> = {
     async initState({ state, commit }) {
       const tokens = await store.dispatch('accounts/tokens');
       console.log('INIT STATE', tokens);
+      await commit('setTokens', tokens);
 
       console.log(
         'fetch',
@@ -72,7 +73,7 @@ const storeModule: Module<SessionState, RootState> = {
 
       const response = await resp.json();
 
-      await commit('setTokens', response.hits, tokens);
+      await commit('updateTokens', response.hits);
       await store.dispatch('session/updateBalances');
 
       console.log('INIT tokens', state.tokens);
@@ -81,27 +82,32 @@ const storeModule: Module<SessionState, RootState> = {
 
   mutations: {
     setTokenBalance(state, balances: any) {
-      Object.keys(state.tokens).forEach((key) => {
-        const bal = balances.find((element) => element.meta.address == state.tokens[key].hash);
+
+      console.log("TokenB", state.tokens) ;
+
+      Object.keys(state.tokens).forEach((hash) => {
+        const bal = balances.find((element) => element.meta.address == hash);
         if (bal) {
-          state.tokens[key]['balance'] =
+          state.tokens[hash]['balance'] =
             bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals);
         } else {
-          state.tokens[key]['balance'] = 0;
+          state.tokens[hash]['balance'] = 0;
         }
       });
     },
 
-    setTokens(state, balances: any, tokens: any) {
-      console.log('SET TOKENS Balances', tokens, balances);
+    setTokens(state, tokens: any) {
+      console.log('set tokens', tokens);
       if (tokens) state.tokens = tokens;
-      else state.tokens = [];
+    },
 
+    updateTokens(state, balances: any) {
+      console.log('SET TOKENS Balances', state.tokens, balances);
       if (balances)
         balances.forEach((e) => {
           if (e.token.meta.image) {
             console.log('ADD TOKEN', e.token.hash);
-            state.tokens.push(e.token);
+            state.tokens[e.token.hash] = e.token ;
           }
         });
     },

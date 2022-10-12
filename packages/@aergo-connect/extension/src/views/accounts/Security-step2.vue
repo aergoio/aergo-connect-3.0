@@ -8,12 +8,12 @@
           Set the amount of time before the screen locks. After this period of inactivity, you will
           be prompted to reenter your password.
         </div>
-        <select class="select">
-          <option>60 seconds</option>
-          <option>30 seconds</option>
-          <option>5 minutes</option>
-          <option>10 minutes</option>
-          <option>Never</option>
+        <select class="select" @change="handleIdleTimeout()" v-model="idleTimeout">
+          <option :value=30>30 seconds</option>
+          <option :value=60>60 seconds</option>
+          <option :value=300>5 minutes</option>
+          <option :value=600>10 minutes</option>
+          <option :value=1800>30 minutes</option>
         </select>
       </div>
       <div class="security2_password_wrapper">
@@ -45,15 +45,18 @@ import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import PasswordStrengthField from '@aergo-connect/lib-ui/src/forms/PasswordStrengthField.vue';
 export default Vue.extend({
   components: { Header, ScrollView, Button, PasswordStrengthField },
-  computed: {
-    accountSpec() {
-      return {
-        address: this.$route.params.address,
-        chainId: this.$route.params.chainId,
-      };
-    },
+  data() {
+    return {
+      idleTimeout: this.$store.state.ui.idleTimeout,
+    }
   },
+
   methods: {
+    handleIdleTimeout() {
+      console.log("SET_IDLE_TIME",this.idleTimeout) ;
+      this.$store.commit('ui/setIdleTimeout', this.idleTimeout) ;
+      console.log("SET_IDLE_TIME",this.$store.state.ui.idleTimeout) ;
+    },
     handleBack() {
       this.$router
         .push({

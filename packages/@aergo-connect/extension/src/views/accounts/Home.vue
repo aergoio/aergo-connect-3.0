@@ -96,6 +96,7 @@
               </div>
               <div class="token_list_amount">
                 <span class="token_list_balance"> {{ token.balance.toString() }} </span>
+                <span> {{ token.meta.symbol }}</span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
             </div>
@@ -220,8 +221,6 @@ export default Vue.extend({
   methods: {
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
-      // for test
-      this.$store.commit('ui/setIdleTimeout', 10000) ;
       console.log('IdleTime', this.$store.state.ui.idleTimeout);
       
       if (this.$store.state.accounts.address) {

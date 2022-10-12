@@ -42,8 +42,8 @@
         </div>
       </div>
       <div class="token_content_wrapper">
-        <Identicon v-if="!icon" :text="tokenHash" class="token_icon" />
-        <Icon v-else-if="asset == -1" class="token_icon" :name="icon" />
+        <Identicon v-if="!icon" :text="asset" class="token_icon" />
+        <Icon v-else-if="asset == 'AERGO'" class="token_icon" :name="icon" />
         <img v-else class="token_icon" :src="icon" />
 
         <div class="token_amount">{{ balance }}</div>
@@ -53,8 +53,8 @@
         <div class="flex-row">
           <div class="title">Asset</div>
           <select class="select_box" v-model="asset">
-            <option value="-1">AERGO</option>
-            <option v-for="(token, index) in $store.state.session.tokens" :value="index">
+            <option value="AERGO">AERGO</option>
+            <option v-for="token in $store.state.session.tokens" :value="token.hash">
               {{ token.meta.name }}
             </option>
           </select>
@@ -124,7 +124,7 @@ export default Vue.extend({
       optionsModal: false,
       confirmationModal: false,
       sendFinishModal: false,
-      asset: -1,
+      asset: 'AERGO',
       icon: 'aergo',
       balance: this.$store.state.session.aergoBalance,
       tokenType: 'AERGO',
@@ -132,7 +132,6 @@ export default Vue.extend({
       inputAmount: '0',
       inputTo: 'Amh4pmDMvqez6USJaQTs236YXqHVzMzo5cvgrybjthu5aZEpMxsQ',
       txType: 'TRANSFER',
-      tokenHash: '',
 
       txBody: {
         from: this.$store.state.accounts.address,
@@ -154,7 +153,7 @@ export default Vue.extend({
 
   watch: {
     asset: function () {
-      if (this.asset == -1) {
+      if (this.asset == 'AERGO') {
         // default AERGO
         this.balance = this.$store.state.session.aergoBalance;
         this.tokenType = 'AERGO';

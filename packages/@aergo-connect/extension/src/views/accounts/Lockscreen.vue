@@ -14,7 +14,12 @@
           />
         </div>
       </div>
-      <Button class="button_size" @click="unlock" type="primary" size="medium" @keyup.enter="unlock"
+      <Button
+        class="locked_button_size"
+        @click="unlock"
+        type="primary"
+        size="medium"
+        @keyup.enter="unlock"
         >Unlock</Button
       >
       <div class="password-text-wrapper">
@@ -165,6 +170,9 @@ export default class Lockscreen extends mixins() {
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+  }
+  .locked_button_size {
+    width: 303px;
   }
 }
 #app.page-lockscreen {

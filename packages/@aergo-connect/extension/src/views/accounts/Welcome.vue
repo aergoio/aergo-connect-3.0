@@ -6,14 +6,10 @@
         <div class="aergoMainLogo">
           <Icon :name="`aergoMainLogo`" :size="150" />
           <div class="welcome-message-1-group">
-            <span class="welcome-message-1">
-              AERGO Connect is the official wallet of
-            </span>
+            <span class="welcome-message-1"> AERGO Connect is the official wallet of </span>
             <span class="welcome-message-1">AERGO Blockchain.</span>
           </div>
-          <span class="welcome-message-2">
-            The Blockchain For the WORLD.
-          </span>
+          <span class="welcome-message-2"> The Blockchain For the WORLD. </span>
         </div>
       </Appear>
     </div>
@@ -22,7 +18,14 @@
       <div>
         <Appear :delay="0.6">
           <ButtonGroup vertical>
-            <Button type="primary" size="large" :to="{ name: 'setup' }" hover>Get Started</Button>
+            <Button
+              class="welcome_button_size"
+              type="primary"
+              size="large"
+              :to="{ name: 'setup' }"
+              hover
+              >Get Started</Button
+            >
           </ButtonGroup>
         </Appear>
       </div>
@@ -81,6 +84,7 @@ export default Vue.extend({
     font-size: 1em;
   }
 }
+
 #app.page-welcome {
   background: linear-gradient(0deg, #ffffff -10.1%, #ecf8fd 58.85%, #fff1f9 139.14%);
 }

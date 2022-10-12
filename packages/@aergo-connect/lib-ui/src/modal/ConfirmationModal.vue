@@ -57,7 +57,7 @@
       </div>
       <ButtonGroup vertical class="button_wrapper">
         <Button size="medium" type="primary" @click="handleOk">OK</Button>
-        <Button size="medium-outline" type="primary-outline" @click="handleCancel">Cancel</Button>
+        <Button size="medium" type="primary-outline" @click="handleCancel">Cancel</Button>
       </ButtonGroup>
     </div>
   </div>
@@ -239,6 +239,9 @@ export default Vue.extend({
     }
     .button_wrapper {
       margin-top: 15px;
+      .button {
+        width: 289px;
+      }
     }
   }
 }

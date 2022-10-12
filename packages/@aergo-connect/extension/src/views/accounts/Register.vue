@@ -7,9 +7,9 @@
         <span class="pre-header">Import on existing accounts or create a new one.</span>
         <img src="@/assets/img/logo-circle.svg" alt="logo" width="120px" />
       </div>
-      <div>
+      <div class="button_wrapper">
         <Appear :delay="0.6">
-          <ButtonGroup vertical>
+          <ButtonGroup vertical class="button_group_wrapper">
             <Button
               type="primary"
               size="large"
@@ -89,6 +89,15 @@ export default class Create extends mixins(PersistInputsMixin) {
     inline-size: 230px;
     overflow-wrap: break-word;
     margin-bottom: 32px;
+  }
+}
+.button_wrapper {
+  display: flex;
+  justify-content: center;
+  .button_group_wrapper {
+    .button {
+      width: 327px;
+    }
   }
 }
 </style>

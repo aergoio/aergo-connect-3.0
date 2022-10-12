@@ -18,11 +18,11 @@
         <!-- <input class="user_nickname_text" v-model="nick" autofocus /> -->
       </div>
 
-      <ButtonGroup vertical class="buttonGroup-position">
-        <Button type="primary-outline" size="large-outline" hover @click="goBackup">
+      <ButtonGroup vertical class="buttonGroup_position">
+        <Button type="primary-outline" size="large-outline" @click="goBackup">
           Backup Private Key
         </Button>
-        <Button type="primary" size="large" :hover="true" @click="goHome"> Home </Button>
+        <Button type="primary" size="large" @click="goHome"> Home </Button>
       </ButtonGroup>
     </div>
   </ScrollView>
@@ -140,11 +140,15 @@ export default class Create extends mixins() {
       color: #686767;
     }
   }
+  .buttonGroup_position {
+    position: absolute;
+    top: 448px;
+    .button {
+      width: 327px;
+    }
+  }
 }
-.buttonGroup-position {
-  position: absolute;
-  top: 448px;
-}
+
 .flex-row-nick {
   margin-top: 22px;
   display: flex;

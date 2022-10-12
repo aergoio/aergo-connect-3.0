@@ -16,7 +16,15 @@
       @confirm="handleConfirm"
       @cancel="handleCancel"
     />
-    <SendFinishModal v-if="sendFinishModal" />
+    <SendFinishModal 
+      v-if="sendFinishModal" 
+      :asset="asset"
+      :txHash="txHash"
+      :receipt="inputTo"
+      :amount="inputAmount"
+      :symbol="symbol"
+      @close="handleSent"
+    />
     <Header button="back" title="Send" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
@@ -254,12 +262,20 @@ export default Vue.extend({
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         this.setStatus('success', 'Done');
         setTimeout(() => {
-          this.$router.push({ name: 'account-send-success', params: { hash } });
+          this.txHash = hash ;
+          this.statusDialogVisible = false ;
+          this.sendFinishModal = true ;
+//          this.$router.push({ name: 'account-send-success', params: { hash } });
         }, 1000);
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
       }
+    },
+
+    handleSent() {
+      this.sendFinishModal = false;
+      this.inputAmount = 0 ;
     },
 
     async signWithLedger(txBody) {

@@ -40,6 +40,18 @@ const storeModule: Module<AccountsState, RootState> = {
   getters: {},
 
   actions: {
+    async fetchAccounts({ commit }) {
+      const vue = getVueInstance(this);
+      const accounts = await vue.$background.getAccounts();
+      commit('setAccounts', accounts);
+    },
+    async updateAccount({ commit }, { address, chainId }: AccountSpec) {
+      const vue = getVueInstance(this);
+      vue.$background.setActiveAccount({ address, chainId });
+      const account = await vue.$background.syncAccountState({ address, chainId });
+      commit('setAccounts', [account]);
+    },
+
     async tokens({ state }) {
       return state.accounts[state.address]['token'][state.network];
     },

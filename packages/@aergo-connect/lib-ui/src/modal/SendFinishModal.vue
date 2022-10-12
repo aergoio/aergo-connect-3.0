@@ -19,14 +19,14 @@
         <div class="flex-row">
           <div class="title">Hash</div>
           <div class="flex-row">
-            <div class="detail address">AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW</div>
+            <div class="detail address">{{ txHash }}</div>
           </div>
         </div>
         <div class="line" />
         <div class="flex-row">
           <div class="title">Recipient</div>
           <div class="flex-row">
-            <div class="detail address">AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW</div>
+            <div class="detail address">{{ receipt }}</div>
           </div>
         </div>
         <div class="line" />
@@ -34,20 +34,22 @@
         <div class="flex-row">
           <div class="title">Amount</div>
           <div class="flex-row">
-            <div class="detail amount">500 AERGO</div>
+            <div class="detail amount">{{ amount }}</div>
+            <div class="detail amount">{{ symbol }}</div>
           </div>
         </div>
         <div class="line" />
 
         <div class="flex-row">
           <div class="title">Fee</div>
-          <div class="detail fee">0 AERGO</div>
+          <div class="detail fee">0.0006 aergo</div>
         </div>
         <div class="line" />
 
         <div class="flex-row">
           <div class="title balance">Update Balance</div>
-          <div class="detail balance">xxxx AERGO</div>
+          <div v-if="asset === 'AERGO'" class="detail balance"> {{ $store.state.session.aergoBalance }} </div>
+          <div v-else class="detail balance"> {{ $store.state.session.tokens[asset].balance }} </div>
         </div>
         <div class="line" />
       </div>
@@ -65,19 +67,46 @@ export default Vue.extend({
   components: { Icon, Button, ButtonGroup },
 
   props: {
+    txHash: String,
+    receipt: String,
     amount: Number,
-    to: String,
     symbol: String,
-    txType: String,
-    payload: String,
+    asset: String,
+  },
+
+  mounted() {
+    console.log("txHash", this.txHash) ;
+    console.log("network", this.$store.state.accounts.network) ;
+    console.log("asset", this.asset) ;
+    this.$store.dispatch('accounts/updateAccount', { 
+      chainId: this.$store.state.accounts.network,
+      address: this.$store.state.accounts.address,
+    }) ;
+
+/*
+    this.$store.commit('ui/clearInput', { key: 'send' });
+    this.$background
+      .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
+      .then(result => {
+        this.txReceipt = result;
+      });
+    this.$background
+      .getTransaction(this.$store.state.accounts.network, this.txHash)
+      .then(result => {
+        this.txData = result.tx;
+        this.txData.payload = Buffer.from(Object.values(this.txData.payload)).toString();
+      });
+*/
+    this.$store.dispatch('session/updateBalances') ;
   },
 
   methods: {
     handleOk() {
       console.log('ok', this.to);
-      this.$emit('confirm');
+      this.$emit('close');
     },
   },
+  
 });
 </script>
 

@@ -72,9 +72,9 @@ export default Vue.extend({
   props: {
     amount: Number,
     to: String,
-    unit: String,
-    payload: String,
+    symbol: String,
     txType: String,
+    payload: String,
   },
 
   methods: {

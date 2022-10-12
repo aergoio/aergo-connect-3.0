@@ -1,4 +1,4 @@
-<template>
+[200~<template>
   <ScrollView>
     <Header
       button="hamburger"
@@ -7,6 +7,7 @@
       network
       @hamburgerClick="hamburgerClick"
       @networkModalClick="networkModalClick"
+      @refreshClick="refreshClick"
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
@@ -231,7 +232,25 @@ export default Vue.extend({
       }
     },
 
+<<<<<<< HEAD
     async updateBalance() {},
+=======
+    refreshClick() {
+      console.log('regresh') ;
+      this.$store.dispatch('session/updateBalances') ;
+      // OR this.store.dispatch('session/initState') ;
+    },
+    
+    async autoUpdateBalances(time) {
+      try {
+        console.log('UpdateBalances') ;
+        this.$store.dispatch('session/updateBalances') ;
+        setTimeout(() => this.updateBalances(),time) ;
+      } catch (e) {
+        console.error(e);
+      }
+    },
+>>>>>>> 3e2c078429820a2d6351ad000a9e2bdd6630845b
 
     hamburgerClick() {
       this.hamburgerModal = !this.hamburgerModal;

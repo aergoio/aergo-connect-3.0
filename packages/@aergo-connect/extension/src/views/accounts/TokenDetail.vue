@@ -26,7 +26,7 @@
               }}
             </div>
             <Icon
-              v-if="state === 'others' && !$route.params.token.meta.image"
+              v-if="state === 'others' && !$store.state.session.token.meta.image"
               class="account_button"
               :name="`delete2`"
               @click="handleDelete"
@@ -57,9 +57,9 @@
       </div>
 
       <div v-else-if="'others'" class="token_transaction_history_wrapper others">
-        <img class="icon" :src="$route.params.token.meta.image" alt="404" />
-        <div class="balance">{{ $route.params.token.balance }}</div>
-        <div class="token_symbol">{{ $route.params.token.meta.symbol }}</div>
+        <img class="icon" :src="$store.state.session.token.meta.image" alt="404" />
+        <div class="balance">{{ $store.state.session.token.balance }}</div>
+        <div class="token_symbol">{{ $store.state.session.token.meta.symbol }}</div>
       </div>
 
       <div class="transaction_history_wrapper">
@@ -181,6 +181,7 @@ export default Vue.extend({
   },
 
   beforeMount() {
+    console.log("token", this.$store.state.session.token) ;
     if (this.state === 'aergo') this.getAergoHistory();
     else this.getTokenHistory();
   },
@@ -219,7 +220,7 @@ export default Vue.extend({
       ) {
         return 'AERGO';
       }
-      return this.$route.params.token.meta.name;
+      return this.$store.state.session.token.meta.name;
     },
 
     refreshClick() {
@@ -229,10 +230,10 @@ export default Vue.extend({
     },
 
     async getTokenHistory(): Promise<void> {
-      //  console.log("fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`) ;
+      //  console.log("fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`) ;
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$route.params.token.hash}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
       );
 
       const response = await resp.json();

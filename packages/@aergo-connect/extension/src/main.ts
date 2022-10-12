@@ -48,6 +48,7 @@ async function init(name: string) {
     console.log('update from bg', state);
     const isNonAuthPage = router.currentRoute.meta && router.currentRoute.meta.noAuthCheck === true;
     console.log(isNonAuthPage, 'isNonAuthPage');
+
     if (Object.prototype.hasOwnProperty.call(state, 'unlocked')) {
       store.commit('ui/setUnlocked', state.unlocked);
       if (state.unlocked === false && !isNonAuthPage) {
@@ -55,14 +56,6 @@ async function init(name: string) {
       }
     }
 
-    /*
-    if (Object.prototype.hasOwnProperty.call(state, 'accounts')) {
-      store.commit('accounts/setAccounts', state.accounts);
-    }
-    if (Object.prototype.hasOwnProperty.call(state, 'accountsRemoved')) {
-      store.dispatch('accounts/removeAccount', state.accountsRemoved);
-    }
-*/
   });
 
   //  console.log('STATE', store.state.accounts);

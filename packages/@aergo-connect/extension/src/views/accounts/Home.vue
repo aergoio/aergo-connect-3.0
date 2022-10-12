@@ -90,10 +90,12 @@
           >
             <div class="token_list_wrapper">
               <!-- <Identicon :text="token.hash" class="list_icon" /> -->
-              <img class="token_list_icon" :src="token.meta.image" alt="404" />
-              <span class="token_list_text"> {{ token.meta.name }} </span>
+              <div class="token_list_row">
+                <img class="token_list_icon" :src="token.meta.image" alt="404" />
+                <span class="token_list_text"> {{ token.meta.name }} </span>
+              </div>
               <div class="token_list_amount">
-                <span class="token_list_balance"> {{ token.balance }} </span>
+                <span class="token_list_balance"> {{ token.balance.toString() }} </span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
             </div>
@@ -218,8 +220,10 @@ export default Vue.extend({
   methods: {
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
-      this.$store.commit('ui/setIdleTimeout', 100000);
-
+      // for test
+      this.$store.commit('ui/setIdleTimeout', 10000) ;
+      console.log('IdleTime', this.$store.state.ui.idleTimeout);
+      
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
         console.log('aergoBalance', this.$store.state.session.aergoBalance);
@@ -240,6 +244,7 @@ export default Vue.extend({
       // OR this.store.dispatch('session/initState') ;
     },
 
+/*
     async autoUpdateBalances(time) {
       try {
         console.log('UpdateBalances');
@@ -249,6 +254,7 @@ export default Vue.extend({
         console.error(e);
       }
     },
+*/
 
     hamburgerClick() {
       this.hamburgerModal = !this.hamburgerModal;
@@ -285,10 +291,7 @@ export default Vue.extend({
       this.$router
         .push({
           name: 'token-detail-aergo',
-          params: {
-            address: this.$store.state.accounts.address,
-            balance: this.$store.state.session.aergoBalance,
-          },
+          params: { },
         })
         .catch(() => {});
     },
@@ -298,11 +301,7 @@ export default Vue.extend({
       this.$router
         .push({
           name: 'token-detail',
-          params: {
-            address: this.$store.state.accounts.address,
-            token: token,
-            balance: token.balance,
-          },
+          params: { },
         })
         .catch(() => {});
     },

@@ -28,7 +28,6 @@
           <Button
             type="primary"
             size="large"
-            hover
             :disabled="
               checked &&
               password === passwordRepeat &&

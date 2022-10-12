@@ -77,10 +77,6 @@ export default Vue.extend({
       console.log('ok', this.to);
       this.$emit('confirm');
     },
-    handleCancel() {
-      console.log('cancel');
-      this.$emit('cancel');
-    },
   },
 });
 </script>

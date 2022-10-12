@@ -51,7 +51,7 @@
       <NetworkModal v-if="networkModal" @networkModalClick="networkModalClick" />
 
       <div class="token_content_wrapper">
-        <ButtonGroup>
+        <ButtonGroup class="token_nft_button_wrapper">
           <Button
             :class="[tab === `tokens` ? `token-button` : `token-button unclicked`]"
             type="primary"
@@ -444,6 +444,9 @@ export default Vue.extend({
     align-items: center;
     justify-content: center;
     margin-top: 16px;
+    .token_nft_button_wrapper {
+      justify-content: center;
+    }
     .token-button {
       width: 153px;
       height: 39px;

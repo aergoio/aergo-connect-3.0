@@ -14,7 +14,7 @@
           <div class="network">{{ $store.state.accounts.network }}</div>
         </div>
         <div class="account_wrapper">
-          <Identicon :text="$store.state.accounts.address" class="account_icon" />
+          <Identicon :text="$store.state.accounts.address" class="account_icon" /> 
           <div class="account_title">{{ $store.state.accounts.nick }}</div>
           <div class="account_title_wrapper">
             <div class="account">
@@ -64,31 +64,46 @@
 
       <div class="transaction_history_wrapper">
         <div class="title">Transaction History</div>
-        <select class="select">
-          <option class="option" selected>All</option>
-          <option class="option">Received</option>
-          <option class="option">Sent</option>
+        <select class="select" v-model="filter">
+          <option class="option" selected value="All">All</option>
+          <option class="option" value="Received">Received</option>
+          <option class="option" value="Sent">Sent</option>
         </select>
       </div>
 
-      <div v-if="state === 'aergo'" class="token_detail_background">
+      <div v-if="state == 'aergo'" class="token_detail_background">
         <ul class="token_detail_wrapper">
           <li v-for="item in data" class="token_detail_list">
-            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-            <div class="direction_row">
-              <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
-              <div v-else class="sent">Recevied</div>
-              <div class="direction_row">
-                <div class="balance">{{ item.meta.amount_float }}</div>
-                <div class="token_symbol">aergo</div>
+            <div v-if="item.meta.from === $store.state.accounts.address">
+              <div  v-if="filter !== 'Received'"> 
+                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="sent">Sent</div>
+                <div class="direction_row">
+                  <div class="balance">{{ item.meta.amount_float }}</div>
+                  <div class="token_symbol">aergo</div>
+                </div>
+                <div class="direction_row">
+                  <div> To: </div>
+                  <div class="address"> {{ `${item.meta.to.slice(0,6,)}...${item.meta.to.slice(-6)}` }}</div>
+                  <Button :name="'pointer'" />
+                </div>
               </div>
             </div>
-            <div class="direction_row">
-              <div v-if="item.meta.from == $store.state.accounts.address" class="address">
-                {{ item.meta.to }}
+            <div v-else>
+              <div  v-if="filter !== 'Sent'"> 
+                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="received">Recevied</div>
+                <div class="direction_row">
+                  <div class="balance">{{ item.meta.amount_float }}</div>
+                  <div class="token_symbol">aergo</div>
+                </div>
+                <div class="line"></div>
+                <div class="direction_row">
+                  <div> From: </div>
+                  <div class="address">{{ `${item.meta.from.slice(0,6,)}...${item.meta.from.slice(-6)}` }}</div>
+                  <Button :name="'pointer'" />
+                </div>
               </div>
-              <div v-else class="address">{{ item.meta.from }}</div>
-              <Button :name="'pointer'" />
             </div>
           </li>
           <div v-if="data.length === 0" class="token_detail_list_nothing_wrapper aergo">
@@ -96,41 +111,42 @@
             <div class="nothing_text">No Transaction Details.</div>
           </div>
         </ul>
-        <div class="footer aergo">
-          <Appear :delay="0.6">
-            <ButtonGroup>
-              <Button class="button" type="font-gradation" size="small" @click="handleSend"
-                ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
-              >
-              <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-                ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
-              >
-            </ButtonGroup>
-          </Appear>
-        </div>
       </div>
 
-      <div v-else-if="state === 'others'" class="token_detail_background others">
+<!--      <div v-else class="token_detail_background others"> -->
+      <div v-else> 
         <ul class="token_detail_wrapper">
-          <li v-for="item in data" class="token_detail_list">
-            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-            <div class="direction_row">
-              <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div>
-              <div v-else class="sent">Recevied</div>
-              <div class="direction_row">
-                <div class="balance">
-                  {{ getBalance(item.meta.amount, item.token.meta.decimals) }}
+          <li v-for="item in data">
+            <div v-if="item.meta.from === $store.state.accounts.address">
+              <div  v-if="filter !== 'Received'" class="token_detail_background other token_detail_list">
+                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="sent">Sent</div>
+                <div class="direction_row">
+                  <div class="balance"> {{ getBalance(item.meta.amount, item.token.meta.decimals) }} </div>
+                  <div class="token_symbol">{{ item.token.meta.symbol }}</div>
                 </div>
-                <div class="token_symbol">{{ item.token.meta.symbol }}</div>
+                <div class="line"></div>
+                <div class="direction_row">
+                  <div> To: </div>
+                  <div class="address"> {{ `${item.meta.to.slice(0,6,)}...${item.meta.to.slice(-6)}` }}</div>
+                  <Button :name="'pointer'" />
+                </div>
               </div>
             </div>
-            <div class="line"></div>
-            <div class="direction_row">
-              <div v-if="item.meta.from == $store.state.accounts.address" class="address">
-                {{ item.meta.to }}
+            <div v-else>
+              <div  v-if="filter !== 'Sent'" class="token_detail_background other token_detail_list">
+                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="received">Recevied</div>
+                <div class="direction_row">
+                  <div class="balance"> {{ getBalance(item.meta.amount, item.token.meta.decimals) }} </div>
+                  <div class="token_symbol">{{ item.token.meta.symbol }}</div>
+                </div>
+                <div class="direction_row">
+                  <div> From: </div>
+                  <div class="address">{{ `${item.meta.from.slice(0,6,)}...${item.meta.from.slice(-6)}` }}</div>
+                  <Button :name="'pointer'" />
+                </div>
               </div>
-              <div v-else class="address">{{ item.meta.from }}</div>
-              <Button :name="'pointer'" />
             </div>
           </li>
           <div v-if="data.length === 0" class="token_detail_list_nothing_wrapper others">
@@ -185,12 +201,22 @@ export default Vue.extend({
     RemoveModal,
   },
 
+  watch: {
+    filter: function () {
+      if (this.state === 'aergo' || this.$route.params.option === 'aergo') this.getAergoHistory();
+      else this.getTokenHistory();
+      console.log("filter", this.filter) ;
+      this.$forceUpdate();
+    }
+  },
+
   data() {
     return {
       removeModal: false,
       error: '',
       data: [],
       selectedFilterToken: 'all',
+      filter: 'All',
     };
   },
 
@@ -204,8 +230,6 @@ export default Vue.extend({
     state() {
       if (this.getTitle() === 'AERGO') {
         return 'aergo';
-      } else if (this.getTitle() === 'NFT') {
-        return 'nft';
       } else {
         return 'others';
       }

@@ -239,8 +239,7 @@ export default Vue.extend({
 
     refreshClick() {
       console.log('regresh');
-      this.$store.dispatch('session/updateBalances');
-      // OR this.store.dispatch('session/initState') ;
+      this.$store.dispatch('session/initState') ;
       this.$forceUpdate();
     },
 

@@ -19,7 +19,13 @@
         <div class="flex-row">
           <div class="title">Hash</div>
           <div class="flex-row">
-            <div class="detail address">{{ txHash }}</div>
+            <a 
+              class="detail address"
+              :href="`https://${$store.state.accounts.network}.aergoscan.io/transaction/${txHash}`"
+              target="blank"
+            >
+              {{ txHash }}
+            </a>
           </div>
         </div>
         <div class="line" />
@@ -30,7 +36,6 @@
           </div>
         </div>
         <div class="line" />
-
         <div class="flex-row">
           <div class="title">Amount</div>
           <div class="flex-row">
@@ -39,13 +44,15 @@
           </div>
         </div>
         <div class="line" />
-
-        <div class="flex-row">
+        <div v-if="txReceipt" class="flex-row">
           <div class="title">Fee</div>
-          <div class="detail fee">0.0006 aergo</div>
+          <div class="detail fee">{{ txReceipt.fee }}</div>
+        </div>
+        <div v-else class="flex-row">
+          <div class="title">Status</div>
+          <div class="detail fee"> No Receipt </div>
         </div>
         <div class="line" />
-
         <div class="flex-row">
           <div class="title balance">Update Balance</div>
           <div v-if="asset === 'AERGO'" class="detail balance"> {{ $store.state.session.aergoBalance }} </div>
@@ -74,30 +81,39 @@ export default Vue.extend({
     asset: String,
   },
 
-  mounted() {
+  data() {
+    return {
+      txReceipt: null,
+      txData: null,
+    }
+  },
+
+  async mounted() {
     console.log("txHash", this.txHash) ;
     console.log("network", this.$store.state.accounts.network) ;
     console.log("asset", this.asset) ;
-    this.$store.dispatch('accounts/updateAccount', { 
+    await this.$store.dispatch('accounts/updateAccount', { 
       chainId: this.$store.state.accounts.network,
       address: this.$store.state.accounts.address,
     }) ;
 
-/*
     this.$store.commit('ui/clearInput', { key: 'send' });
-    this.$background
+    await this.$background
       .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
       .then(result => {
         this.txReceipt = result;
       });
-    this.$background
+/*
+    await this.$background
       .getTransaction(this.$store.state.accounts.network, this.txHash)
       .then(result => {
         this.txData = result.tx;
         this.txData.payload = Buffer.from(Object.values(this.txData.payload)).toString();
       });
 */
-    this.$store.dispatch('session/updateBalances') ;
+
+    await this.$store.dispatch('session/updateBalances') ;
+    console.log("receipt", this.txReceipt) ;
   },
 
   methods: {

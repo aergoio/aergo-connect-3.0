@@ -138,7 +138,7 @@ export default Vue.extend({
       tokenType: 'AERGO',
       symbol: 'aergo',
       inputAmount: '0',
-      inputTo: 'Amh4pmDMvqez6USJaQTs236YXqHVzMzo5cvgrybjthu5aZEpMxsQ',
+      inputTo: 'AmNxTztiLK7hTkqUg8myHwSkndvrRhq31bKvp9dspGrJpMyHf8dc',
       txType: 'TRANSFER',
 
       txBody: {
@@ -218,16 +218,16 @@ export default Vue.extend({
           this.inputAmount +
           '000000000000000000", ""]}';
 
-        const payload = JSON.parse(this.txBody.payload);
-        this.txBody.payload = JSON.stringify(payload);
-
         this.txType = 'CALL';
       }
 
+      if (this.txBody.payload) {
+        const payload = JSON.parse(this.txBody.payload);
+        this.txBody.payload = JSON.stringify(payload);
+      }
+
       this.txBody.type = Tx.Type[this.txType];
-
       console.log('txBody', this.txBody);
-
       this.confirmationModal = true;
     },
 

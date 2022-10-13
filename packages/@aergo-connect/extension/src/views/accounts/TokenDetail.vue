@@ -73,20 +73,21 @@
 
       <div v-if="state === 'aergo'" class="token_detail_background">
         <ul class="token_detail_wrapper">
-          <li v-if="state === 'aergo'" v-for="item in data" class="token_detail_list">
-            <div class="time">aergo</div>
+          <li v-for="item in data" class="token_detail_list">
+            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
             <div class="direction_row">
               <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
               <div v-else class="sent">Recevied</div>
               <div class="direction_row">
                 <div class="balance">{{ item.meta.amount_float }}</div>
-                <div class="token_symbol">AERGO</div>
+                <div class="token_symbol">aergo</div>
               </div>
             </div>
-            <div class="line"></div>
             <div class="direction_row">
-              <div v-if="$store.state.accounts.address" class="address"></div>
-              <div v-else class="address"></div>
+              <div v-if="item.meta.from == $store.state.accounts.address" class="address">
+                {{ item.meta.to }}
+              </div>
+              <div v-else class="address">{{ item.meta.from }}</div>
               <Button :name="'pointer'" />
             </div>
           </li>
@@ -99,7 +100,7 @@
 
       <div v-else-if="state === 'others'" class="token_detail_background others">
         <ul class="token_detail_wrapper">
-          <li v-if="state === 'others'" v-for="item in data" class="token_detail_list">
+          <li v-for="item in data" class="token_detail_list">
             <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
             <div class="direction_row">
               <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div>

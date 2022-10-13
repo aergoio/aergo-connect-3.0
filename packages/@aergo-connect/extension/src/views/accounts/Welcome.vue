@@ -15,7 +15,7 @@
     </div>
 
     <template #footer>
-      <div>
+      <div class="welcome_footer">
         <Appear :delay="0.6">
           <ButtonGroup vertical>
             <Button
@@ -84,7 +84,13 @@ export default Vue.extend({
     font-size: 1em;
   }
 }
-
+.welcome_footer {
+  .button-group {
+    .button {
+      width: 327px;
+    }
+  }
+}
 #app.page-welcome {
   background: linear-gradient(0deg, #ffffff -10.1%, #ecf8fd 58.85%, #fff1f9 139.14%);
 }

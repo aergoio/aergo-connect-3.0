@@ -16,8 +16,7 @@ import Security from '../views/accounts/Security.vue';
 import Security2 from '../views/accounts/Security-step2.vue';
 import ChangePassword from '../views/accounts/ChangePassword.vue';
 
-import ImportAssetToken from '../views/accounts/ImportAssetToken.vue';
-import ImportAssetNFT from '../views/accounts/ImportAssetNFT.vue';
+import ImportAsset from '../views/accounts/ImportAsset.vue';
 import Send from '../views/accounts/Send.vue';
 import Receive from '../views/accounts/Receive.vue';
 import TokenDetail from '../views/accounts/TokenDetail.vue';
@@ -127,14 +126,9 @@ const routes: RouteConfig[] = [
       //   component: Home,
       // }),
       withMeta(2, {
-        path: 'list/:address/import/asset/token',
-        name: 'import-asset-token',
-        component: ImportAssetToken,
-      }),
-      withMeta(2, {
-        path: 'list/:address/import/asset/nft',
-        name: 'import-asset-nft',
-        component: ImportAssetNFT,
+        path: 'list/:address/importasset/:option',
+        name: 'import-asset',
+        component: ImportAsset,
       }),
       withMeta(2, {
         path: '/list/:address/signmessage',

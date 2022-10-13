@@ -8,13 +8,12 @@
         not need this account anymore.
       </div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover @click="handleGoNext" @cancel="handleCancel">Confirm</ButtonVue>
+        <ButtonVue type="secondary" size="medium" hover @click="handleConfirm">Confirm</ButtonVue>
         <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
           >Cancel</ButtonVue
         >
       </ButtonGroup>
     </div>
-    <RemoveAccountStep2Modal v-if="isNext" @cancel="handleCancel"/>
   </div>
 </template>
 
@@ -23,22 +22,22 @@ import Vue from 'vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import ButtonVue from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import RemoveAccountStep2Modal from './RemoveAccountStep2Modal.vue';
 export default Vue.extend({
-  components: { Icon, ButtonGroup, ButtonVue, RemoveAccountStep2Modal },
+  components: { Icon, ButtonGroup, ButtonVue },
   data() {
-    return {
-      isNext: false,
-    };
+    return {};
   },
-
   methods: {
-    handleCancel() {
-      this.$emit('cancel', 'removeAccountModal');
+    handleConfirm() {
+      console.log('delete');
+      // this.$store.dispatch('accounts/deleteToken', this.$store.state.session.token);
+      // this.$router.push({
+      //   name: 'accounts-list',
+      //   params: { address: this.$store.state.accounts.address },
+      // });
     },
-    handleGoNext() {
-      console.log('next');
-      this.isNext = true;
+    handleCancel() {
+      this.$emit('cancel', false);
     },
   },
 });
@@ -101,6 +100,11 @@ export default Vue.extend({
 
     .button_wrapper {
       margin-top: 53px;
+    }
+    .button-group {
+      .button {
+        width: 289px;
+      }
     }
   }
 }

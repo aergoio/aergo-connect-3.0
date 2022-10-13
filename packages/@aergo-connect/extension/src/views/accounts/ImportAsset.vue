@@ -182,7 +182,7 @@ export default Vue.extend({
       this.token = Object.values(token);
 
       this.$store.dispatch('accounts/addToken', token);
-      this.$store.dispatch('session/initState') ;
+      this.$store.dispatch('session/initState');
 
       this.importAssetModal = true;
     },

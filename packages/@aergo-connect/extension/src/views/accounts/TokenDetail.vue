@@ -29,12 +29,12 @@
               v-if="state === 'others' && !$store.state.session.token.meta.image"
               class="account_button"
               :name="`delete2`"
-              @click="handleDelete"
+              @click="handleDelete(true)"
             />
           </div>
         </div>
       </div>
-
+      <RemoveModal v-if="removeModal" @cancel="handleDelete" />
       <div v-if="state === 'aergo'" class="token_transaction_history_wrapper aergo">
         <div class="flex-row">
           <Icon class="icon" :name="'aergo'" />
@@ -96,6 +96,18 @@
             <div class="nothing_text">No Transaction Details.</div>
           </div>
         </ul>
+        <div class="footer aergo">
+          <Appear :delay="0.6">
+            <ButtonGroup>
+              <Button class="button" type="font-gradation" size="small" @click="handleSend"
+                ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
+              >
+              <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+                ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
+              >
+            </ButtonGroup>
+          </Appear>
+        </div>
       </div>
 
       <div v-else-if="state === 'others'" class="token_detail_background others">
@@ -126,22 +138,20 @@
             <div class="nothing_text">No Transaction Details.</div>
           </div>
         </ul>
+        <div class="footer">
+          <Appear :delay="0.6">
+            <ButtonGroup>
+              <Button class="button" type="font-gradation" size="small" @click="handleSend"
+                ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
+              >
+              <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+                ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
+              >
+            </ButtonGroup>
+          </Appear>
+        </div>
       </div>
     </div>
-    <template #footer>
-      <div class="footer">
-        <Appear :delay="0.6">
-          <ButtonGroup>
-            <Button class="button" type="font-gradation" size="small" @click="handleSend"
-              ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
-            >
-            <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-              ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
-            >
-          </ButtonGroup>
-        </Appear>
-      </div>
-    </template>
   </ScrollView>
 </template>
 
@@ -154,6 +164,7 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
+import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
 import { Amount } from '@herajs/common';
 
 function getVueInstance(instance: any): Vue {
@@ -171,10 +182,12 @@ export default Vue.extend({
     Icon,
     HeaderVue,
     Identicon,
+    RemoveModal,
   },
 
   data() {
     return {
+      removeModal: false,
       error: '',
       data: [],
       selectedFilterToken: 'all',
@@ -182,7 +195,7 @@ export default Vue.extend({
   },
 
   beforeMount() {
-    console.log("token", this.$store.state.session.token) ;
+    console.log('token', this.$store.state.session.token);
     if (this.state === 'aergo') this.getAergoHistory();
     else this.getTokenHistory();
   },
@@ -275,13 +288,8 @@ export default Vue.extend({
       this.state = 'loaded';
     },
 */
-    handleDelete() {
-      console.log('delete');
-      this.$store.dispatch('accounts/deleteToken', this.$store.state.session.token);
-      this.$router.push({
-        name: 'accounts-list',
-        params: { address: this.$store.state.accounts.address },
-      });
+    handleDelete(state: boolean) {
+      state ? (this.removeModal = true) : (this.removeModal = false);
     },
 
     handleSend() {
@@ -359,7 +367,7 @@ export default Vue.extend({
         align-items: center;
         margin-left: 24px;
 
-        width: 105px;
+        width: 120px;
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
@@ -383,7 +391,7 @@ export default Vue.extend({
       }
       .account_button {
         cursor: pointer;
-        margin-left: 48px;
+        margin-left: 40px;
       }
     }
   }
@@ -595,7 +603,7 @@ export default Vue.extend({
         justify-content: center;
         align-items: center;
         &.aergo {
-          margin-bottom: 100px;
+          margin-bottom: 10px;
         }
         &.others {
           margin-bottom: 50px;
@@ -723,6 +731,13 @@ export default Vue.extend({
             height: 22px;
           }
         }
+      }
+    }
+    .footer {
+      position: relative;
+      top: 60px;
+      &.aergo {
+        top: 40px;
       }
     }
   }

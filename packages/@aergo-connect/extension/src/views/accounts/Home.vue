@@ -222,7 +222,7 @@ export default Vue.extend({
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
       console.log('IdleTime', this.$store.state.ui.idleTimeout);
-      
+
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
         console.log('aergoBalance', this.$store.state.session.aergoBalance);
@@ -243,7 +243,7 @@ export default Vue.extend({
       // OR this.store.dispatch('session/initState') ;
     },
 
-/*
+    /*
     async autoUpdateBalances(time) {
       try {
         console.log('UpdateBalances');
@@ -290,7 +290,7 @@ export default Vue.extend({
       this.$router
         .push({
           name: 'token-detail-aergo',
-          params: { },
+          params: {},
         })
         .catch(() => {});
     },
@@ -300,7 +300,7 @@ export default Vue.extend({
       this.$router
         .push({
           name: 'token-detail',
-          params: { },
+          params: {},
         })
         .catch(() => {});
     },
@@ -309,16 +309,16 @@ export default Vue.extend({
       if (to === 'token') {
         this.$router
           .push({
-            name: 'import-asset-token',
-            params: { address: this.$store.state.accounts.address },
+            name: 'import-asset',
+            params: { address: this.$store.state.accounts.address, option: 'token' },
           })
           .catch(() => {});
       }
       if (to === 'nft') {
         this.$router
           .push({
-            name: 'import-asset-nft',
-            params: { address: this.$store.state.accounts.address },
+            name: 'import-asset',
+            params: { address: this.$store.state.accounts.address, option: 'nft' },
           })
           .catch(() => {});
       }
@@ -403,7 +403,7 @@ export default Vue.extend({
         margin-bottom: 8px;
         margin-left: 30px;
         .account_info_nickname_text {
-          margin-right: 76px;
+          margin-right: 65px;
         }
         .account_info_nickname_button {
           cursor: pointer;
@@ -456,17 +456,21 @@ export default Vue.extend({
       }
     }
     .token_list_ul {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       width: 375px;
       height: 232px;
       overflow-x: hidden;
       overflow-y: scroll;
       .token_list_li {
         cursor: pointer;
+        width: 290px;
       }
       .token_list_wrapper {
         height: 62px;
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
         align-items: center;
         .token_list_row {
           display: flex;
@@ -484,11 +488,14 @@ export default Vue.extend({
         .token_list_amount {
           display: flex;
           align-items: center;
+          width: 100px;
+          justify-content: flex-end;
           .token_list_balance {
             margin-right: 4px;
           }
         }
         .token_list_text {
+          width: 120px;
           margin-left: 18px;
         }
         .token_list_balance {
@@ -500,11 +507,9 @@ export default Vue.extend({
       }
       .line {
         /* Grey/01 */
-        width: 311px;
         height: 1px;
         background: #f0f0f0;
         box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
-        margin-left: 32px;
       }
     }
     .token_list_button {

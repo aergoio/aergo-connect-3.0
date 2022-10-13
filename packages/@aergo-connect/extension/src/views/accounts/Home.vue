@@ -204,14 +204,17 @@ export default Vue.extend({
   watch: {
     $route(to, from) {
       this.initAccount();
+      this.$forceUpdate();
     },
 
     '$store.state.accounts.network': function () {
       this.initAccount();
+      this.$forceUpdate();
     },
 
     '$store.state.accounts.address': function () {
       this.initAccount();
+      this.$forceUpdate();
     },
   },
 
@@ -238,6 +241,7 @@ export default Vue.extend({
       console.log('regresh');
       this.$store.dispatch('session/updateBalances');
       // OR this.store.dispatch('session/initState') ;
+      this.$forceUpdate();
     },
 
     /*

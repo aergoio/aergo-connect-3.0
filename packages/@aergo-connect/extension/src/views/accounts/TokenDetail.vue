@@ -26,7 +26,7 @@
               }}
             </div>
             <Icon
-              v-if="state === 'others' && !$store.state.session.token.meta.image"
+              v-if="symbol !== 'aergo' && !$store.state.session.token.meta.image"
               class="account_button"
               :name="`delete2`"
               @click="handleDelete(true)"
@@ -35,19 +35,19 @@
         </div>
       </div>
       <RemoveModal v-if="removeModal" @cancel="handleDelete" />
-      <div v-if="state === 'aergo'" class="token_transaction_history_wrapper aergo">
+      <div v-if="symbol === 'aergo'" class="token_transaction_history_wrapper aergo">
         <div class="flex-row">
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
             <div class="balance">{{ $store.state.session.aergoBalance || '2,000,000.000' }}</div>
             <div class="dollor">$</div>
           </div>
-          <div class="token_symbol">AER</div>
+          <div class="token_symbol">{{ symbol }}</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
           <div class="detail_title">Staked Balance</div>
-          <div class="detail_content">{{ `${aergoStaking()} AERGO` }}</div>
+          <div class="detail_content">{{ `${aergoStaking()} aergo` }}</div>
         </div>
         <div class="line detail" />
         <div class="detail_wrapper">
@@ -55,13 +55,11 @@
           <div class="detail_content">{{ `0` }}</div>
         </div>
       </div>
-
-      <div v-else-if="'others'" class="token_transaction_history_wrapper others">
+      <div v-else class="token_transaction_history_wrapper others">
         <img class="icon" :src="$store.state.session.token.meta.image" alt="404" />
         <div class="balance">{{ $store.state.session.token.balance }}</div>
         <div class="token_symbol">{{ $store.state.session.token.meta.symbol }}</div>
       </div>
-
       <div class="transaction_history_wrapper">
         <div class="title">Transaction History</div>
         <select class="select" v-model="filter">
@@ -70,8 +68,7 @@
           <option class="option" value="Sent">Sent</option>
         </select>
       </div>
-
-      <div v-if="state == 'aergo'" class="token_detail_background">
+      <div :class="[symbol === 'aergo'? 'token_detail_background ': 'token_detail_background others']">
         <ul class="token_detail_wrapper">
           <li v-for="item in data" class="token_detail_list">
             <div v-if="item.meta.from === $store.state.accounts.address">
@@ -79,8 +76,8 @@
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
                 <div class="sent">Sent</div>
                 <div class="direction_row">
-                  <div class="balance">{{ item.meta.amount_float }}</div>
-                  <div class="token_symbol">aergo</div>
+                  <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
+                  <div class="token_symbol">{{ symbol }}</div>
                 </div>
                 <div class="direction_row">
                   <div> To: </div>
@@ -94,8 +91,8 @@
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
                 <div class="received">Recevied</div>
                 <div class="direction_row">
-                  <div class="balance">{{ item.meta.amount_float }}</div>
-                  <div class="token_symbol">aergo</div>
+                  <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
+                  <div class="token_symbol">{{ symbol }}</div>
                 </div>
                 <div class="line"></div>
                 <div class="direction_row">
@@ -112,60 +109,15 @@
           </div>
         </ul>
       </div>
-
-<!--      <div v-else class="token_detail_background others"> -->
-      <div v-else> 
-        <ul class="token_detail_wrapper">
-          <li v-for="item in data">
-            <div v-if="item.meta.from === $store.state.accounts.address">
-              <div  v-if="filter !== 'Received'" class="token_detail_background other token_detail_list">
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="sent">Sent</div>
-                <div class="direction_row">
-                  <div class="balance"> {{ getBalance(item.meta.amount, item.token.meta.decimals) }} </div>
-                  <div class="token_symbol">{{ item.token.meta.symbol }}</div>
-                </div>
-                <div class="line"></div>
-                <div class="direction_row">
-                  <div> To: </div>
-                  <div class="address"> {{ `${item.meta.to.slice(0,6,)}...${item.meta.to.slice(-6)}` }}</div>
-                  <Button :name="'pointer'" />
-                </div>
-              </div>
-            </div>
-            <div v-else>
-              <div  v-if="filter !== 'Sent'" class="token_detail_background other token_detail_list">
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="received">Recevied</div>
-                <div class="direction_row">
-                  <div class="balance"> {{ getBalance(item.meta.amount, item.token.meta.decimals) }} </div>
-                  <div class="token_symbol">{{ item.token.meta.symbol }}</div>
-                </div>
-                <div class="direction_row">
-                  <div> From: </div>
-                  <div class="address">{{ `${item.meta.from.slice(0,6,)}...${item.meta.from.slice(-6)}` }}</div>
-                  <Button :name="'pointer'" />
-                </div>
-              </div>
-            </div>
-          </li>
-          <div v-if="data.length === 0" class="token_detail_list_nothing_wrapper others">
-            <Icon class="nothing_icon" :name="`nothing`" />
-            <div class="nothing_text">No Transaction Details.</div>
-          </div>
-        </ul>
-        <div class="footer">
-          <Appear :delay="0.6">
-            <ButtonGroup>
-              <Button class="button" type="font-gradation" size="small" @click="handleSend"
-                ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
-              >
-              <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-                ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
-              >
-            </ButtonGroup>
-          </Appear>
-        </div>
+      <div class="footer">
+        <Appear :delay="0.6">
+          <ButtonGroup>
+            <Button class="button" type="font-gradation" size="small" @click="handleSend"
+              ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button>
+            <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+              ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button>
+          </ButtonGroup>
+        </Appear>
       </div>
     </div>
   </ScrollView>
@@ -203,10 +155,9 @@ export default Vue.extend({
 
   watch: {
     filter: function () {
-      if (this.state === 'aergo' || this.$route.params.option === 'aergo') this.getAergoHistory();
-      else this.getTokenHistory();
-      console.log("filter", this.filter) ;
+      this.getTokenHistory();
       this.$forceUpdate();
+      console.log("filter", this.filter) ;
     }
   },
 
@@ -215,25 +166,17 @@ export default Vue.extend({
       removeModal: false,
       error: '',
       data: [],
-      selectedFilterToken: 'all',
       filter: 'All',
+      symbol: 'aergo',
     };
   },
 
   beforeMount() {
-    console.log('token', this.$store.state.session.token);
-    if (this.state === 'aergo' || this.$route.params.option === 'aergo') this.getAergoHistory();
-    else this.getTokenHistory();
-  },
+    if (this.$route.params.option === 'aergo') this.symbol = 'aergo' ;
+    else this.symbol = this.$store.state.session.token.meta.symbol ;
 
-  computed: {
-    state() {
-      if (this.getTitle() === 'AERGO') {
-        return 'aergo';
-      } else {
-        return 'others';
-      }
-    },
+    console.log("SYMBOL", this.symbol) ;
+    this.getTokenHistory();
   },
 
   methods: {
@@ -247,48 +190,31 @@ export default Vue.extend({
       else return new Amount(staking.amount).formatNumber('aergo');
     },
 
-    getBalance(value: number, decimals: number) {
-      return value / Math.pow(10, decimals);
+    getBalance(value: number) {
+      if (this.symbol === 'aergo') return value ;
+      else return value / Math.pow(10, this.$store.state.session.token.meta.decimals);
     },
 
     getTitle() {
-      if (
-        this.$store.state.ui.route.currentPath ===
-        `/list/${this.$store.state.accounts.address}/tokendetail/aergo`
-      ) {
-        return 'AERGO';
-      }
-      return this.$store.state.session.token.meta.name;
+      if ( this.symbol === 'aergo') return 'AERGO' ;
+      else return this.$store.state.session.token.meta.name ;
     },
 
     refreshClick() {
       console.log('refresh');
-      if (this.state === 'aergo') this.getAergoHistory();
-      else this.getTokenHistory();
+      this.getTokenHistory();
+      this.$forceUpdate();
     },
 
     async getTokenHistory(): Promise<void> {
-      //  console.log("fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`) ;
 
-      const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
-      );
-
-      const response = await resp.json();
-      if (response.error) this.data = [];
-      else this.data = response.hits;
-    },
-
-    async getAergoHistory(): Promise<void> {
-      console.log(
-        'aergo fetch',
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`,
-      );
-
-      const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`,
-      );
-
+      var resp ;
+      if (this.symbol === 'aergo') {
+        resp = await fetch(`https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`);
+      } else {
+        resp = await fetch(`https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`) ;
+      } ;
+       
       const response = await resp.json();
       if (response.error) this.data = [];
       else this.data = response.hits;

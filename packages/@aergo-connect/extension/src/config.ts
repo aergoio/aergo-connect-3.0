@@ -20,7 +20,7 @@ export const ChainConfigs: ChainConfig[] = [
   },
 ];
 
-export const PublicChainIds = tuple('aergo.io', 'testnet.aergo.io');
+export const PublicChainIds = tuple('mainnet', 'testnet');
 type PublicChainId = typeof PublicChainIds[number];
 
 export function isPublicChainId(chainId: string): chainId is PublicChainId {
@@ -31,12 +31,12 @@ export const PublicChainData: Record<
   PublicChainId,
   { label: string; apiUrl: string; explorerUrl: string }
 > = {
-  'aergo.io': {
+  'mainnet': {
     label: 'Mainnet',
     apiUrl: 'https://api.aergoscan.io/main',
     explorerUrl: 'https://mainnet.aergoscan.io',
   },
-  'testnet.aergo.io': {
+  'testnet': {
     label: 'Testnet',
     apiUrl: 'https://api.aergoscan.io/testnet',
     explorerUrl: 'https://testnet.aergoscan.io',

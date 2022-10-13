@@ -16,7 +16,15 @@
       @confirm="handleConfirm"
       @cancel="handleCancel"
     />
-    <SendFinishModal v-if="sendFinishModal" />
+    <SendFinishModal 
+      v-if="sendFinishModal" 
+      :asset="asset"
+      :txHash="txHash"
+      :receipt="inputTo"
+      :amount="inputAmount"
+      :symbol="symbol"
+      @close="handleSent"
+    />
     <Header button="back" title="Send" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
@@ -42,8 +50,8 @@
         </div>
       </div>
       <div class="token_content_wrapper">
-        <Identicon v-if="!icon" :text="tokenHash" class="token_icon" />
-        <Icon v-else-if="asset == -1" class="token_icon" :name="icon" />
+        <Identicon v-if="!icon" :text="asset" class="token_icon" />
+        <Icon v-else-if="asset == 'AERGO'" class="token_icon" :name="icon" />
         <img v-else class="token_icon" :src="icon" />
 
         <div class="token_amount">{{ balance }}</div>
@@ -53,8 +61,8 @@
         <div class="flex-row">
           <div class="title">Asset</div>
           <select class="select_box" v-model="asset">
-            <option value="-1">AERGO</option>
-            <option v-for="(token, index) in $store.state.session.tokens" :value="index">
+            <option value="AERGO">AERGO</option>
+            <option v-for="token in $store.state.session.tokens" :value="token.hash">
               {{ token.meta.name }}
             </option>
           </select>
@@ -124,15 +132,14 @@ export default Vue.extend({
       optionsModal: false,
       confirmationModal: false,
       sendFinishModal: false,
-      asset: -1,
+      asset: 'AERGO',
       icon: 'aergo',
       balance: this.$store.state.session.aergoBalance,
       tokenType: 'AERGO',
       symbol: 'aergo',
       inputAmount: '0',
-      inputTo: 'Amh4pmDMvqez6USJaQTs236YXqHVzMzo5cvgrybjthu5aZEpMxsQ',
+      inputTo: 'AmNxTztiLK7hTkqUg8myHwSkndvrRhq31bKvp9dspGrJpMyHf8dc',
       txType: 'TRANSFER',
-      tokenHash: '',
 
       txBody: {
         from: this.$store.state.accounts.address,
@@ -154,7 +161,7 @@ export default Vue.extend({
 
   watch: {
     asset: function () {
-      if (this.asset == -1) {
+      if (this.asset == 'AERGO') {
         // default AERGO
         this.balance = this.$store.state.session.aergoBalance;
         this.tokenType = 'AERGO';
@@ -211,16 +218,16 @@ export default Vue.extend({
           this.inputAmount +
           '000000000000000000", ""]}';
 
-        const payload = JSON.parse(this.txBody.payload);
-        this.txBody.payload = JSON.stringify(payload);
-
         this.txType = 'CALL';
       }
 
+      if (this.txBody.payload) {
+        const payload = JSON.parse(this.txBody.payload);
+        this.txBody.payload = JSON.stringify(payload);
+      }
+
       this.txBody.type = Tx.Type[this.txType];
-
       console.log('txBody', this.txBody);
-
       this.confirmationModal = true;
     },
 
@@ -255,12 +262,20 @@ export default Vue.extend({
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         this.setStatus('success', 'Done');
         setTimeout(() => {
-          this.$router.push({ name: 'account-send-success', params: { hash } });
+          this.txHash = hash ;
+          this.statusDialogVisible = false ;
+          this.sendFinishModal = true ;
+//          this.$router.push({ name: 'account-send-success', params: { hash } });
         }, 1000);
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
       }
+    },
+
+    handleSent() {
+      this.sendFinishModal = false;
+      this.inputAmount = 0 ;
     },
 
     async signWithLedger(txBody) {

@@ -17,6 +17,7 @@ class AppState extends EventEmitter {
    * After being inactive for a certain amount of time, switch to idle.
    * @param {string} nextState
    */
+
   set(nextState: string): void {
     if (nextState != 'inactive') {
       if (this.idleTimeout) {

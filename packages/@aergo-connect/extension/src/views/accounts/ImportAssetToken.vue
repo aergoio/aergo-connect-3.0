@@ -180,7 +180,10 @@ export default Vue.extend({
       console.log('Selected', token.meta);
 
       this.token = Object.values(token);
+
       this.$store.dispatch('accounts/addToken', token);
+      this.$store.dispatch('session/initState') ;
+
       this.importAssetModal = true;
     },
 

@@ -167,6 +167,14 @@ export default Vue.extend({
     this.getNftInventory();
   },
 
+  watch: {
+    filter: function () {
+      this.getNftHistory();
+      this.$forceUpdate();
+      console.log("filter", this.filter) ;
+    }
+  },
+
   methods: {
     getTitle() {
       return this.$store.state.session.token.meta.name;

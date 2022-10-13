@@ -1,5 +1,5 @@
 <template>
-  <ScrollView class="page">
+  <ScrollView class="page_style">
     <HeaderVue
       button="back"
       :title="getTitle()"
@@ -42,12 +42,12 @@
             <div class="balance">{{ $store.state.session.aergoBalance || '2,000,000.000' }}</div>
             <div class="dollor">$</div>
           </div>
-          <div class="token_symbol">AER</div>
+          <div class="token_symbol">aergo</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
           <div class="detail_title">Staked Balance</div>
-          <div class="detail_content">{{ `${aergoStaking()} AERGO` }}</div>
+          <div class="detail_content">{{ `${aergoStaking()} aergo` }}</div>
         </div>
         <div class="line detail" />
         <div class="detail_wrapper">
@@ -71,62 +71,102 @@
         </select>
       </div>
 
-      <div v-if="state === 'aergo'" class="token_detail_background">
-        <ul class="token_detail_wrapper">
-          <li v-for="item in data" class="token_detail_list">
-            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-            <div class="direction_row">
-              <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
-              <div v-else class="sent">Recevied</div>
+      <table v-if="state === 'aergo'" class="token_detail_background" >
+        <tbody class="token_detail_wrapper">
+          <tr v-for="item in data" class="token_detail_list">
+            <td>
+              <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
               <div class="direction_row">
-                <div class="balance">{{ item.meta.amount_float }}</div>
-                <div class="token_symbol">aergo</div>
-              </div>
-            </div>
-            <div class="direction_row">
-              <div v-if="item.meta.from == $store.state.accounts.address" class="address">
-                {{ item.meta.to }}
-              </div>
-              <div v-else class="address">{{ item.meta.from }}</div>
-              <Button :name="'pointer'" />
-            </div>
-          </li>
-          <div v-if="data.length === 0" class="token_detail_list_nothing_wrapper aergo">
-            <Icon class="nothing_icon" :name="`nothing`" />
-            <div class="nothing_text">No Transaction Details.</div>
-          </div>
-        </ul>
-      </div>
-
-      <div v-else-if="state === 'others'" class="token_detail_background others">
-        <ul class="token_detail_wrapper">
-          <li v-for="item in data" class="token_detail_list">
-            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-            <div class="direction_row">
-              <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div>
-              <div v-else class="sent">Recevied</div>
-              <div class="direction_row">
-                <div class="balance">
-                  {{ getBalance(item.meta.amount, item.token.meta.decimals) }}
+                <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
+                <div v-else class="sent">Recevied</div>
+                <div class="direction_row">
+                  <div class="balance">{{ item.meta.amount_float }}</div>
+                  <div class="token_symbol">aergo</div>
                 </div>
-                <div class="token_symbol">{{ item.token.meta.symbol }}</div>
               </div>
-            </div>
-            <div class="line"></div>
-            <div class="direction_row">
-              <div v-if="item.meta.from == $store.state.accounts.address" class="address">
-                {{ item.meta.to }}
+              <div class="direction_row">
+                <div v-if="item.meta.from == $store.state.accounts.address" class="address">
+                  <span>To:</span>
+                  <span>
+                  {{
+                    `${item.meta.to.slice(
+                    0,
+                    6,
+                    )}...${item.meta.to.slice(-6)}`
+                  }}
+                  </span>
+                </div>
+                <div v-else class="address">
+                  <span>From:</span>
+                  <span>
+                  {{  
+                    `${item.meta.from.slice(
+                    0,
+                    6,
+                    )}...${item.meta.from.slice(-6)}`
+                  }}
+                  </span>
+                </div>
+                <Button :name="'pointer'" />
               </div>
-              <div v-else class="address">{{ item.meta.from }}</div>
-              <Button :name="'pointer'" />
-            </div>
-          </li>
-          <div v-if="data.length === 0" class="token_detail_list_nothing_wrapper others">
-            <Icon class="nothing_icon" :name="`nothing`" />
-            <div class="nothing_text">No Transaction Details.</div>
-          </div>
-        </ul>
-      </div>
+            </td>
+            <td  v-if="data.length === 0" class="token_detail_list_nothing_wrapper">
+              <Icon class="nothing_icon" :name="`nothing`" />
+              <div class="nothing_text">No Transaction Details.</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table v-else class="token_detail_background others">
+        <tbody class="token_detail_wrapper">
+          <tr v-for="item in data" class="token_detail_list">
+            <td>
+              <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+              <div class="direction_row">
+                <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div>
+                <div v-else class="sent">Recevied</div>
+                <div class="direction_row">
+                  <div class="balance">
+                    {{ getBalance(item.meta.amount, item.token.meta.decimals) }}
+                  </div>
+                  <div class="token_symbol">{{ item.token.meta.symbol }}</div>
+                </div>
+              </div>
+              <div class="line"></div>
+              <div class="direction_row">
+                <div v-if="item.meta.from == $store.state.accounts.address" class="address">
+                  <span>To:</span>
+                  <span>
+                  {{
+                    `${item.meta.to.slice(
+                      0,
+                      6,
+                    )}...${item.meta.to.slice(-6)}`
+                  }}
+                  </span>
+                </div>
+                <div v-else class="address">
+                  <span>From:</span>
+                  <span>
+                  {{  
+                    `${item.meta.from.slice(
+                    0,
+                    6,
+                    )}...${item.meta.from.slice(-6)}`
+                  }}
+                  </span>
+                </div>
+                <Button :name="'pointer'" />
+              </div>
+            </td>
+            <td v-if="data.length === 0" class="token_detail_list_nothing_wrapper others">
+              <Icon class="nothing_icon" :name="`nothing`" />
+              <div class="nothing_text">No Transaction Details.</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <template #footer>
       <div class="footer">
@@ -295,6 +335,9 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+.page_style {
+  background: #eff5f7;
+}
 .token_detail_content_wrapper {
   display: flex;
   flex-direction: column;
@@ -361,7 +404,6 @@ export default Vue.extend({
 
         width: 105px;
         height: 22px;
-        background: #eff5f7;
         border-radius: 25px;
         .account {
           display: flex;
@@ -394,7 +436,7 @@ export default Vue.extend({
     align-items: center;
     flex-direction: column;
     width: 327px;
-    height: 61px;
+    height: 55px;
     background: #ffffff;
     /* Grey/00 */
 
@@ -426,16 +468,16 @@ export default Vue.extend({
     }
 
     .line {
-      margin-top: 12px;
+      margin-top: 10px;
       background: #f0f0f0;
       width: 299px;
       height: 1px;
     }
     &.detail {
-      margin-top: 6px;
+      margin-top: 0px;
     }
     .detail_wrapper {
-      margin-top: 6px;
+      margin-top: 5px;
       width: 100%;
       display: flex;
       align-items: center;
@@ -541,11 +583,13 @@ export default Vue.extend({
   }
   .transaction_history_wrapper {
     display: flex;
-    margin-top: 24px;
+    margin-top: 14px;
+    align-items: end;
     .title {
       margin-left: 24px;
       width: 150px;
       height: 20px;
+      flex-direction: column;
       /* Button/Btn3 */
 
       font-family: 'Outfit';
@@ -568,26 +612,25 @@ export default Vue.extend({
     }
   }
   .token_detail_background {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background: #eff5f7;
     box-shadow: inset 0px 21px 17px -19px rgba(0, 0, 0, 0.05);
     position: absolute;
     width: 375px;
-    height: 260px;
-    bottom: 0px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    height: 180px;
+    bottom: 100px;
     justify-content: center;
     &.others {
-      height: 345px;
+      height: 265px;
     }
     .token_detail_wrapper {
+      overflow-y: scroll ;
       flex-direction: column;
       display: flex;
       justify-content: space-evenly;
       align-items: center;
-      /* overflow-y: scroll; */
-      overflow-y: hidden;
       .token_detail_list_nothing_wrapper {
         height: 100%;
         display: flex;
@@ -780,4 +823,5 @@ export default Vue.extend({
     }
   }
 }
+
 </style>

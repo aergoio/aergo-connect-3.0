@@ -115,7 +115,7 @@
             v-for="token in $store.state.session.tokens"
             class="token_list_li"
             :key="token.hash"
-            @click="handleToken"
+            @click="handleNft(token)"
           >
             <div class="token_list_wrapper">
               <!-- <Identicon :text="token.hash" class="list_icon" /> -->
@@ -289,8 +289,8 @@ export default Vue.extend({
     handleAergo() {
       this.$router
         .push({
-          name: 'token-detail-aergo',
-          params: {},
+          name: 'token-detail',
+          params: { address: this.$store.state.accounts.address, option: 'aergo' },
         })
         .catch(() => {});
     },
@@ -300,11 +300,19 @@ export default Vue.extend({
       this.$router
         .push({
           name: 'token-detail',
-          params: {},
+          params: { address: this.$store.state.accounts.address, option: 'tokens' },
         })
         .catch(() => {});
     },
-
+    handleNft(nft: any) {
+      // this.$store.commit('session/setNft', nft);
+      this.$router
+        .push({
+          name: 'nft-detail',
+          params: { address: this.$store.state.accounts.address },
+        })
+        .catch(() => {});
+    },
     handleImportAsset(to: string) {
       if (to === 'token') {
         this.$router

@@ -20,7 +20,7 @@ import ImportAsset from '../views/accounts/ImportAsset.vue';
 import Send from '../views/accounts/Send.vue';
 import Receive from '../views/accounts/Receive.vue';
 import TokenDetail from '../views/accounts/TokenDetail.vue';
-
+import NftDetail from '../views/accounts/NftDetail.vue';
 // import Import from '../views/accounts/import/1-Network.vue';
 import ImportFormat from '../views/accounts/import/2-Format.vue';
 import ImportKeystore from '../views/accounts/import/3a-Keystore.vue';
@@ -161,14 +161,14 @@ const routes: RouteConfig[] = [
         component: Receive,
       }),
       withMeta(2, {
-        path: '/list/:address/tokendetail',
+        path: '/list/:address/tokendetail/:option',
         name: 'token-detail',
         component: TokenDetail,
       }),
       withMeta(2, {
-        path: '/list/:address/tokendetail/aergo',
-        name: 'token-detail-aergo',
-        component: TokenDetail,
+        path: '/list/:address/nftdetail',
+        name: 'nft-detail',
+        component: NftDetail,
       }),
 
       // withMeta(2, {

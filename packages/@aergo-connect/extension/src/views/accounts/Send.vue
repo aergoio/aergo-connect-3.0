@@ -69,7 +69,11 @@
         </div>
         <div class="flex-row" v-if="tokenType == 'ARC2'">
           <div class="title">Token Id</div>
-          <input v-model="amount" type="text" class="text_box" />
+          <select class="select_box" v-model="inputAmount">
+            <option v-for="item in nftInventory" :value="item.meta.token_id">
+              {{ item.meta.token_id }}
+            </option>
+          </select>
         </div>
         <div class="flex-row" v-else>
           <div class="title">Amount</div>
@@ -138,8 +142,9 @@ export default Vue.extend({
       tokenType: 'AERGO',
       symbol: 'aergo',
       inputAmount: '0',
-      inputTo: 'AmNxTztiLK7hTkqUg8myHwSkndvrRhq31bKvp9dspGrJpMyHf8dc',
+      inputTo: 'AmNBes1nksbz8VhbF6DiXfEqL1dx1YRHFpxZwZABQLqkctmCTFZU',
       txType: 'TRANSFER',
+      nftInventory: [],
 
       txBody: {
         from: this.$store.state.accounts.address,
@@ -173,11 +178,25 @@ export default Vue.extend({
         this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
         this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
         this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
+        if (this.tokenType === 'ARC2') this.getNftInventory() ;
       }
     },
   },
 
   methods: {
+
+    async getNftInventory() {
+      const resp = await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}`,
+      );
+
+      const response = await resp.json();
+      console.log("inventory", response.hit) ;
+
+      if (response.error) this.nftInventory = [];
+      else this.nftInventory = response.hits;
+    },
+
     updateTx(txType, payload) {
       console.log('return option', txType, payload);
       this.txType = txType;
@@ -211,15 +230,29 @@ export default Vue.extend({
         this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
 
+        const amount = Number(this.inputAmount) * Math.pow(10, this.$store.state.session.tokens[this.asset].meta.decimals);
+        this.txBody.payload =
+          '{"Name": "transfer", "Args": ["' +
+          this.inputTo +
+          '", "' +
+          amount.toString() + '", ""]}';
+
+        this.txType = 'CALL';
+      } else { // ARC2
+        this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
+        this.txBody.amount = `0 ${this.txBody.unit}`;
+
         this.txBody.payload =
           '{"Name": "transfer", "Args": ["' +
           this.inputTo +
           '", "' +
           this.inputAmount +
-          '000000000000000000", ""]}';
+          '"]}';
 
         this.txType = 'CALL';
       }
+
+      console.log("payload", this.txBody.payload) ;
 
       if (this.txBody.payload) {
         const payload = JSON.parse(this.txBody.payload);

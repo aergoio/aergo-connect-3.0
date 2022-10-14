@@ -88,8 +88,8 @@ const storeModule: Module<SessionState, RootState> = {
       Object.keys(state.tokens).forEach((hash) => {
         const bal = balances.find((element) => element.meta.address == hash);
         if (bal) {
-          state.tokens[hash]['balance'] =
-            bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals);
+          if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance ;
+          else state.tokens[hash]['balance'] = String(bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals)) ;
         } else {
           state.tokens[hash]['balance'] = 0;
         }

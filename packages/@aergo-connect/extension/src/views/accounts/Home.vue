@@ -94,7 +94,7 @@
                 <span class="token_list_text"> {{ token.meta.name }} </span>
               </div>
               <div class="token_list_amount">
-                <span class="token_list_balance"> {{ token.balance.toString() }} </span>
+                <span class="token_list_balance"> {{ token.balance }} </span>
                 <span> {{ token.meta.symbol }}</span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>

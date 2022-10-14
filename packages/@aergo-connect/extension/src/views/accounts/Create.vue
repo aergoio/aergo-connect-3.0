@@ -52,7 +52,6 @@ export default class Create extends mixins() {
   async beforeMount() {
     this.address = await this.$store.state.accounts.address;
     this.nick = await this.$store.state.accounts.nick;
-    console.log('created in ', this.address);
     console.log('created in ', this.nick);
   }
   async goBackup() {
@@ -65,7 +64,6 @@ export default class Create extends mixins() {
     });
   }
   async goHome() {
-    console.log('created', this.nick);
     console.log('created', this.$store.state.accounts.nick);
     this.$store.commit('accounts/setNick', this.nick);
     this.$router.push({

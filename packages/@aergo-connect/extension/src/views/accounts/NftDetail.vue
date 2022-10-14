@@ -745,6 +745,14 @@ export default Vue.extend({
         }
       }
     }
+    .footer {
+      position: absolute;
+      bottom: 0px;
+      margin-bottom: 35px;
+      &.aergo {
+        top: 40px;
+      }
+    }
   }
 }
 

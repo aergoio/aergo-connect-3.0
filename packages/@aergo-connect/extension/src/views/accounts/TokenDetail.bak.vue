@@ -7,17 +7,17 @@
       :to="{ name: 'accounts-list', params: { address: $store.state.accounts.address } }"
       @refreshClick="refreshClick"
     />
-    <div class="token_detail_content">
-      <div class="account_detail">
+    <div class="token_detail_content_wrapper">
+      <div class="account_detail_wrapper">
         <div class="direction-row">
           <div class="circle" />
           <div class="network">{{ $store.state.accounts.network }}</div>
         </div>
-        <div class="account">
+        <div class="account_wrapper">
           <Identicon :text="$store.state.accounts.address" class="account_icon" /> 
           <div class="account_title">{{ $store.state.accounts.nick }}</div>
           <div class="account_title_wrapper">
-            <div class="account_address">
+            <div class="account">
               {{
                 `${$store.state.accounts.address.slice(
                   0,
@@ -35,7 +35,7 @@
         </div>
       </div>
       <RemoveModal v-if="removeModal" @cancel="handleDelete" />
-      <div v-if="symbol === 'aergo'" class="token_detail aergo">
+      <div v-if="symbol === 'aergo'" class="token_detail_wrapper aergo">
         <div class="flex-row">
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
@@ -55,16 +55,12 @@
           <div class="detail_content">{{ `0` }}</div>
         </div>
       </div>
-      <div v-else class="token_detail others">
-        <div class="flex-row">
-          <img class="icon" :src="$store.state.session.token.meta.image" alt="404" />
-          <div class="balance_wrapper">
-            <div class="balance">{{ $store.state.session.token.balance }}</div>
-          </div>
-          <div class="token_symbol">{{ $store.state.session.token.meta.symbol }}</div>
-        </div>
+      <div v-else class="token_detail_wrapper others">
+        <img class="icon" :src="$store.state.session.token.meta.image" alt="404" />
+        <div class="balance">{{ $store.state.session.token.balance }}</div>
+        <div class="token_symbol">{{ $store.state.session.token.meta.symbol }}</div>
       </div>
-      <div class="select_token">
+      <div class="transaction_history_wrapper">
         <div class="title">Transaction History</div>
         <select class="select" v-model="filter">
           <option class="option" selected value="All">All</option>
@@ -72,45 +68,44 @@
           <option class="option" value="Sent">Sent</option>
         </select>
       </div>
-      <div :class="[symbol === 'aergo'? 'history': 'history others']">
-        <ul class="history_list">
-          <li v-for="item in data" class="item_wrapper">
+      <div :class="[symbol === 'aergo'? 'history_background ': 'history_background others']">
+        <ul class="item_detail_wrapper">
+          <li v-for="item in data" class="item_detail_list">
             <div v-if="item.meta.from === $store.state.accounts.address">
               <div  v-if="filter !== 'Received'"> 
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="sent">Sent</div>
                 <div class="direction_row">
-                  <div class="sent">Sent</div>
                   <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
                   <div class="token_symbol">{{ symbol }}</div>
                 </div>
-                <div class="line"></div>
                 <div class="direction_row">
-                  <div class="address"> To: </div>
+                  <div> To: </div>
                   <div class="address"> {{ `${item.meta.to.slice(0,6,)}...${item.meta.to.slice(-6)}` }}</div>
+                  <Button :name="'pointer'" />
                 </div>
-                <Button :name="'pointer'" />
               </div>
             </div>
             <div v-else>
               <div  v-if="filter !== 'Sent'"> 
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="received">Recevied</div>
                 <div class="direction_row">
-                  <div class="received">Recevied</div>
                   <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
                   <div class="token_symbol">{{ symbol }}</div>
                 </div>
                 <div class="line"></div>
                 <div class="direction_row">
-                  <div class="address"> From: </div>
+                  <div> From: </div>
                   <div class="address">{{ `${item.meta.from.slice(0,6,)}...${item.meta.from.slice(-6)}` }}</div>
+                  <Button :name="'pointer'" />
                 </div>
-                <Button :name="'pointer'" />
               </div>
             </div>
           </li>
-          <div v-if="data.length === 0" class="history_nothing">
-            <Icon class="icon" :name="`nothing`" />
-            <div class="text">No Transaction Details.</div>
+          <div v-if="data.length === 0" class="token_detail_list_nothing_wrapper aergo">
+            <Icon class="nothing_icon" :name="`nothing`" />
+            <div class="nothing_text">No Transaction Details.</div>
           </div>
         </ul>
       </div>
@@ -258,11 +253,11 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-.token_detail_content {
+.token_detail_content_wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  .account_detail {
+  .account_detail_wrapper {
     display: flex;
     flex-direction: column;
     .direction-row {
@@ -292,7 +287,7 @@ export default Vue.extend({
         color: #686767;
       }
     }
-    .account {
+    .account_wrapper {
       display: flex;
       align-items: center;
       margin-top: 8px;
@@ -326,7 +321,7 @@ export default Vue.extend({
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
-        .account_address {
+        .account {
           display: flex;
           align-items: center;
           justify-content: center;
@@ -350,7 +345,7 @@ export default Vue.extend({
       }
     }
   }
-  .token_detail {
+  .token_detail_wrapper {
     margin-top: 10px;
     margin-left: 24px;
     display: flex;
@@ -502,7 +497,7 @@ export default Vue.extend({
       color: #231f20;
     }
   }
-  .select_token {
+  .transaction_history_wrapper {
     display: flex;
     margin-top: 24px;
     .title {
@@ -530,36 +525,40 @@ export default Vue.extend({
       height: 28px;
     }
   }
-  .history {
+  .history_background {
     background: #eff5f7;
     box-shadow: inset 0px 21px 17px -19px rgba(0, 0, 0, 0.05);
     position: absolute;
     width: 375px;
-    height: 150px;
-    bottom: 100px;
+    height: 260px;
+    bottom: 0px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    overflow-y: scroll;
     &.others {
-      height: 285px;
+      height: 345px;
     }
-    .history_list {
+    .token_detail_wrapper {
+      flex-direction: column;
+      display: flex;
       justify-content: space-evenly;
-      height: 100%;
-      ul {
-        overflow-y: scroll;
-        overflow-x: hidden;
-      }
-      .history_nothing {
+      align-items: center;
+      /* overflow-y: scroll; */
+      overflow-y: hidden;
+      .token_detail_list_nothing_wrapper {
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-bottom: 10px;
-        .text {
+        &.aergo {
+          margin-bottom: 10px;
+        }
+        &.others {
+          margin-bottom: 50px;
+        }
+        .nothing_text {
           /* Caption/C1 */
           margin-top: 18.5px;
           font-family: 'Outfit';
@@ -584,7 +583,7 @@ export default Vue.extend({
         height: 1px;
         background: #eff5f7;
       }
-      .item_wrapper {
+      .token_detail_list {
         margin-top: 10px;
         width: 327px;
         height: 88px;
@@ -660,6 +659,7 @@ export default Vue.extend({
           .token_symbol {
             margin-right: 16px;
           }
+
           .address {
             margin-left: 16px;
             /* Caption/C3_line */
@@ -684,8 +684,8 @@ export default Vue.extend({
       }
     }
     .footer {
-      position: fixed;
-      bottom: 360px;
+      position: relative;
+      top: 60px;
       &.aergo {
         top: 40px;
       }

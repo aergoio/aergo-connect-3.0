@@ -139,7 +139,7 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
-import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
+import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import { Amount } from '@herajs/common';
 
 function getVueInstance(instance: any): Vue {

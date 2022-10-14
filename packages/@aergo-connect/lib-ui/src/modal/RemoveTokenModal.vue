@@ -1,20 +1,15 @@
 <template>
-  <div class="removeAccount_backdrop">
-    <div class="removeAccount_modal_wrapper" v-if="!isNext">
-      <Icon :name="`warning`" :size="100" />
-      <div class="removeAccount_title">Remove the current account?</div>
-      <div class="removeAccount_text">
-        This will remove access to this account in this wallet. Make sure you have a backup or do
-        not need this account anymore.
-      </div>
+  <div class="removeToken_backdrop">
+    <div class="removeToken_modal_wrapper">
+      <Icon :name="`warning`" :size="50" />
+      <div class="removeToken_title">Remove {{ $store.state.session.token.meta.name}} ?</div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover @click="handleGoNext" @cancel="handleCancel">Confirm</ButtonVue>
+        <ButtonVue type="secondary" size="medium" hover @click="handleConfirm">Confirm</ButtonVue>
         <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
           >Cancel</ButtonVue
         >
       </ButtonGroup>
     </div>
-    <RemoveAccountStep2Modal v-if="isNext" @cancel="handleCancel"/>
   </div>
 </template>
 
@@ -23,29 +18,29 @@ import Vue from 'vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import ButtonVue from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import RemoveAccountStep2Modal from './RemoveAccountStep2Modal.vue';
 export default Vue.extend({
-  components: { Icon, ButtonGroup, ButtonVue, RemoveAccountStep2Modal },
+  components: { Icon, ButtonGroup, ButtonVue },
   data() {
-    return {
-      isNext: false,
-    };
+    return {};
   },
-
   methods: {
-    handleCancel() {
-      this.$emit('cancel', 'removeAccountModal');
+    handleConfirm() {
+      console.log('delete Token');
+      this.$store.dispatch('accounts/deleteToken', this.$store.state.session.token);
+      this.$router.push({
+        name: 'accounts-list',
+        params: { address: this.$store.state.accounts.address },
+       });
     },
-    handleGoNext() {
-      console.log('next');
-      this.isNext = true;
+    handleCancel() {
+      this.$emit('cancel', false);
     },
   },
 });
 </script>
 
 <style lang="scss">
-.removeAccount_backdrop {
+.removeToken_backdrop {
   position: absolute;
   width: 375px;
   height: 600px;
@@ -53,7 +48,7 @@ export default Vue.extend({
   top: 0px;
   background: rgba(0, 0, 0, 0.3);
   z-index: 1;
-  .removeAccount_modal_wrapper {
+  .removeToken_modal_wrapper {
     width: 317px;
     height: 400px;
     position: absolute;
@@ -66,7 +61,7 @@ export default Vue.extend({
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    .removeAccount_title {
+    .removeToken_title {
       width: 255px;
       font-family: 'Outfit';
       font-style: normal;
@@ -80,7 +75,7 @@ export default Vue.extend({
 
       color: #e4097d;
     }
-    .removeAccount_text {
+    .removeToken_text {
       width: 259px;
       font-family: 'Outfit';
       font-style: normal;
@@ -101,6 +96,11 @@ export default Vue.extend({
 
     .button_wrapper {
       margin-top: 53px;
+    }
+    .button-group {
+      .button {
+        width: 289px;
+      }
     }
   }
 }

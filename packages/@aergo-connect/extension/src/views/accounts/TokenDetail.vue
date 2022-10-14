@@ -73,38 +73,42 @@
           symbol === 'aergo' ? 'token_detail_background ' : 'token_detail_background others',
         ]"
       >
-        <ul class="token_detail_wrapper">
-          <li v-for="item in data" class="token_detail_list">
+        <ul :class="[symbol === 'aergo' ? 'token_detail_wrapper ' : 'token_detail_wrapper others']">
+          <li v-for="item in data" :key="item.meta.tx_id" class="token_detail_list">
             <div v-if="item.meta.from === $store.state.accounts.address">
               <div v-if="filter !== 'Received'">
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="sent">Sent</div>
                 <div class="direction_row">
-                  <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                  <div class="token_symbol">{{ symbol }}</div>
+                  <div class="sent">Sent</div>
+                  <div class="direction_row">
+                    <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
+                    <div class="token_symbol">{{ symbol }}</div>
+                  </div>
                 </div>
                 <div class="direction_row">
                   <div class="address">
-                    To:{{ `${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+                    {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
                   </div>
-                  <Button :name="'pointer'" />
+                  <Icon :name="'pointer'" />
                 </div>
               </div>
             </div>
             <div v-else>
               <div v-if="filter !== 'Sent'">
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="received">Recevied</div>
                 <div class="direction_row">
-                  <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                  <div class="token_symbol">{{ symbol }}</div>
+                  <div class="received">Recevied</div>
+                  <div class="direction_row">
+                    <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
+                    <div class="token_symbol">{{ symbol }}</div>
+                  </div>
                 </div>
                 <div class="line"></div>
                 <div class="direction_row">
                   <div class="address">
-                    From:{{ `${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
+                    {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
                   </div>
-                  <Button :name="'pointer'" />
+                  <Icon :name="'pointer'" />
                 </div>
               </div>
             </div>
@@ -287,7 +291,8 @@ export default Vue.extend({
   .footer {
     position: absolute;
     bottom: 0;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
+
     .button.button-type-font-gradation {
       border: none;
     }
@@ -564,21 +569,22 @@ export default Vue.extend({
     }
   }
   .token_detail_background {
+    margin-top: 10px;
     background: #eff5f7;
     box-shadow: inset 0px 21px 17px -19px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     align-items: center;
     height: 100vh;
-    &.others {
-      height: 345px;
-    }
     .token_detail_wrapper {
       flex-direction: column;
       display: flex;
       align-items: center;
-      height: 23vh;
+      height: 20.5vh;
       overflow-y: scroll;
+      &.others {
+        height: 29vh;
+      }
       .token_detail_list_nothing_wrapper {
         height: 100%;
         display: flex;
@@ -671,9 +677,13 @@ export default Vue.extend({
           display: flex;
           align-items: center;
           justify-content: space-between;
-
+          .icon {
+            cursor: pointer;
+            margin-right: 10px;
+          }
           .balance {
             margin-left: 16px;
+            margin-right: 8px;
             font-family: 'Outfit';
             font-style: normal;
             font-weight: 500;

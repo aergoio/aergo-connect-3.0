@@ -76,7 +76,7 @@
               </div>
               <div class="token_list_amount">
                 <span class="token_list_balance"> {{ $store.state.session.aergoBalance }} </span>
-                <span> AERGO </span>
+                <span> aergo </span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
             </div>
@@ -88,14 +88,13 @@
             :key="token.hash"
             @click="handleToken(token)"
           >
-            <div class="token_list_wrapper">
-              <!-- <Identicon :text="token.hash" class="list_icon" /> -->
+            <div v-if="token.meta.type==='ARC1'" class="token_list_wrapper">
               <div class="token_list_row">
                 <img class="token_list_icon" :src="token.meta.image" alt="404" />
                 <span class="token_list_text"> {{ token.meta.name }} </span>
               </div>
               <div class="token_list_amount">
-                <span class="token_list_balance"> {{ token.balance.toString() }} </span>
+                <span class="token_list_balance"> {{ token.balance }} </span>
                 <span> {{ token.meta.symbol }}</span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
@@ -117,11 +116,9 @@
             :key="token.hash"
             @click="handleNft(token)"
           >
-            <div class="token_list_wrapper">
+            <div v-if="token.meta.type==='ARC2'" class="token_list_wrapper">
               <!-- <Identicon :text="token.hash" class="list_icon" /> -->
-              <div class="token_list_icon">
-                <img :src="token.meta.image" alt="404" />
-              </div>
+              <img class="token_list_icon" :src="token.meta.image" alt="404" />
               <span class="token_list_text"> {{ token.meta.name }} </span>
               <div class="token_list_amount">
                 <span class="token_list_balance"> {{ token.balance }} </span>
@@ -207,14 +204,17 @@ export default Vue.extend({
   watch: {
     $route(to, from) {
       this.initAccount();
+      this.$forceUpdate();
     },
 
     '$store.state.accounts.network': function () {
       this.initAccount();
+      this.$forceUpdate();
     },
 
     '$store.state.accounts.address': function () {
       this.initAccount();
+      this.$forceUpdate();
     },
   },
 
@@ -239,8 +239,8 @@ export default Vue.extend({
 
     refreshClick() {
       console.log('regresh');
-      this.$store.dispatch('session/updateBalances');
-      // OR this.store.dispatch('session/initState') ;
+      this.$store.dispatch('session/initState') ;
+      this.$forceUpdate();
     },
 
     /*
@@ -305,7 +305,7 @@ export default Vue.extend({
         .catch(() => {});
     },
     handleNft(nft: any) {
-      // this.$store.commit('session/setNft', nft);
+      this.$store.commit('session/setToken', nft);
       this.$router
         .push({
           name: 'nft-detail',

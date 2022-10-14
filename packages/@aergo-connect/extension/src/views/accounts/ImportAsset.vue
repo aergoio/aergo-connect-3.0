@@ -173,6 +173,18 @@ export default Vue.extend({
           this.results = data.hits;
         });
 
+      if (this.results) return ;
+
+      await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=*${query}*`,
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          this.results = data.hits;
+        });
+
       console.log('Results', this.results);
     },
 

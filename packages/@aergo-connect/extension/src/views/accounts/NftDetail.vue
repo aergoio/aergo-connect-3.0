@@ -25,7 +25,9 @@
                 )}...${$store.state.accounts.address.slice(-6)}`
               }}
             </div>
-            <Icon class="account_button" :name="`delete2`" @click="handleDelete(true)" />
+            <Icon 
+              v-if="!$store.state.session.token.meta.image"
+              class="account_button" :name="`delete2`" @click="handleDelete(true)" />
           </div>
         </div>
       </div>
@@ -50,173 +52,53 @@
 
       <div class="nft_detail_background">
         <ul v-if="tabState === 'inventory'" class="nft_info_wrapper">
-          <li class="nft_info_list">
-            <div>img</div>
-            <div>2022.03.08 22:56</div>
-            <div>NFT ID</div>
-            <div>button</div>
+          <li v-for="item in data" class="nft_info_list">
+<!--            <Identicon :text="item.meta.token_id"> -->
+            <div class="time">{{ item.meta.ts.slice(0,16) }}</div>
+            <div>{{ item.meta.token_id }}</div>
           </li>
         </ul>
 
-        <ul v-if="tabState === 'tx_history'" class="nft_detail_wrapper">
-          <select v-if="tabState === `tx_history`" class="select">
-            <option class="option" selected>All</option>
-            <option class="option">Received</option>
-            <option class="option">Sent</option>
+
+        <ul v-else class="nft_detail_wrapper">
+          <select v-if="tabState === `tx_history`" class="select" v-model="filter">
+            <option class="option" selected value="All">All</option>
+            <option class="option" value="Received">Received</option>
+            <option class="option" value="Sent">Sent</option>
           </select>
-          <li class="nft_detail_list">
-            <!-- <div class="time">{{ item.meta.ts.slice(0, 16) }}</div> -->
-            <div class="time">2022.03.08 22:56</div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div> -->
-              <div class="recieved">Recevied</div>
-              <div class="direction_row">
-                <!-- <div class="token_symbol">{{ item.token.meta.symbol }}</div> -->
-                <div class="token_symbol">NFT-id</div>
+          <li v-for="item in data">
+            <div v-if="item.meta.from === $store.state.accounts.address">
+              <div  v-if="filter !== 'Received'" class="nft_detail_list">
+                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="sent">Sent</div>
+                <div class="direction_row">
+                  <div class="token_symbol">{{ item.meta.token_id }}</div>
+                </div>
+                <div class="line"></div>
+                <div class="direction_row">
+                  <div> To: </div>
+                  <div class="address"> {{ `${item.meta.to.slice(0,6,)}...${item.meta.to.slice(-6)}` }}</div>
+                  <Button :name="'pointer'" />
+                </div>
               </div>
             </div>
-            <div class="line"></div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="address">
-                {{ item.meta.to }}
-              </div> -->
-              <!-- <div v-else class="address">{{ item.meta.from }}</div> -->
-              <div class="address">From: AmLx...e42f</div>
-              <Button :name="'pointer'" />
-            </div>
-          </li>
-          <li class="nft_detail_list">
-            <select v-if="tabState === `tx_history`" class="select">
-              <option class="option" selected>All</option>
-              <option class="option">Received</option>
-              <option class="option">Sent</option>
-            </select>
-            <!-- <div class="time">{{ item.meta.ts.slice(0, 16) }}</div> -->
-            <div class="time">2022.03.08 22:56</div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div> -->
-              <div class="recieved">Recevied</div>
-              <div class="direction_row">
-                <!-- <div class="token_symbol">{{ item.token.meta.symbol }}</div> -->
-                <div class="token_symbol">NFT-id</div>
+            <div v-else>
+              <div  v-if="filter !== 'Sent'" class="nft_detail_list">
+                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="received">Recevied</div>
+                <div class="direction_row">
+                  <div class="token_symbol">{{ item.meta.token_id }}</div>
+                </div>
+                <div class="direction_row">
+                  <div> From: </div>
+                  <div class="address">{{ `${item.meta.from.slice(0,6,)}...${item.meta.from.slice(-6)}` }}</div>
+                  <Button :name="'pointer'" />
+                </div>
               </div>
-            </div>
-            <div class="line"></div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="address">
-                {{ item.meta.to }}
-              </div> -->
-              <!-- <div v-else class="address">{{ item.meta.from }}</div> -->
-              <div class="address">From: AmLx...e42f</div>
-              <Button :name="'pointer'" />
-            </div>
-          </li>
-          <li class="nft_detail_list">
-            <select v-if="tabState === `tx_history`" class="select">
-              <option class="option" selected>All</option>
-              <option class="option">Received</option>
-              <option class="option">Sent</option>
-            </select>
-            <!-- <div class="time">{{ item.meta.ts.slice(0, 16) }}</div> -->
-            <div class="time">2022.03.08 22:56</div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div> -->
-              <div class="recieved">Recevied</div>
-              <div class="direction_row">
-                <!-- <div class="token_symbol">{{ item.token.meta.symbol }}</div> -->
-                <div class="token_symbol">NFT-id</div>
-              </div>
-            </div>
-            <div class="line"></div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="address">
-                {{ item.meta.to }}
-              </div> -->
-              <!-- <div v-else class="address">{{ item.meta.from }}</div> -->
-              <div class="address">From: AmLx...e42f</div>
-              <Button :name="'pointer'" />
-            </div>
-          </li>
-          <li class="nft_detail_list">
-            <select v-if="tabState === `tx_history`" class="select">
-              <option class="option" selected>All</option>
-              <option class="option">Received</option>
-              <option class="option">Sent</option>
-            </select>
-            <!-- <div class="time">{{ item.meta.ts.slice(0, 16) }}</div> -->
-            <div class="time">2022.03.08 22:56</div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div> -->
-              <div class="recieved">Recevied</div>
-              <div class="direction_row">
-                <!-- <div class="token_symbol">{{ item.token.meta.symbol }}</div> -->
-                <div class="token_symbol">NFT-id</div>
-              </div>
-            </div>
-            <div class="line"></div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="address">
-                {{ item.meta.to }}
-              </div> -->
-              <!-- <div v-else class="address">{{ item.meta.from }}</div> -->
-              <div class="address">From: AmLx...e42f</div>
-              <Button :name="'pointer'" />
-            </div>
-          </li>
-          <li class="nft_detail_list">
-            <select v-if="tabState === `tx_history`" class="select">
-              <option class="option" selected>All</option>
-              <option class="option">Received</option>
-              <option class="option">Sent</option>
-            </select>
-            <!-- <div class="time">{{ item.meta.ts.slice(0, 16) }}</div> -->
-            <div class="time">2022.03.08 22:56</div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div> -->
-              <div class="recieved">Recevied</div>
-              <div class="direction_row">
-                <!-- <div class="token_symbol">{{ item.token.meta.symbol }}</div> -->
-                <div class="token_symbol">NFT-id</div>
-              </div>
-            </div>
-            <div class="line"></div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="address">
-                {{ item.meta.to }}
-              </div> -->
-              <!-- <div v-else class="address">{{ item.meta.from }}</div> -->
-              <div class="address">From: AmLx...e42f</div>
-              <Button :name="'pointer'" />
-            </div>
-          </li>
-          <li class="nft_detail_list">
-            <select v-if="tabState === `tx_history`" class="select">
-              <option class="option" selected>All</option>
-              <option class="option">Received</option>
-              <option class="option">Sent</option>
-            </select>
-            <!-- <div class="time">{{ item.meta.ts.slice(0, 16) }}</div> -->
-            <div class="time">2022.03.08 22:56</div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="sent">Sent</div> -->
-              <div class="recieved">Recevied</div>
-              <div class="direction_row">
-                <!-- <div class="token_symbol">{{ item.token.meta.symbol }}</div> -->
-                <div class="token_symbol">NFT-id</div>
-              </div>
-            </div>
-            <div class="line"></div>
-            <div class="direction_row">
-              <!-- <div v-if="item.meta.from == $store.state.accounts.address" class="address">
-                {{ item.meta.to }}
-              </div> -->
-              <!-- <div v-else class="address">{{ item.meta.from }}</div> -->
-              <div class="address">From: AmLx...e42f</div>
-              <Button :name="'pointer'" />
             </div>
           </li>
           <div
-            v-if="tabState === 'tx_history' && data.length === 0"
+            v-if="data.length === 0"
             class="nft_detail_list_nothing_wrapper"
           >
             <Icon class="nothing_icon" :name="`nothing`" />
@@ -276,104 +158,59 @@ export default Vue.extend({
       removeModal: false,
       error: '',
       data: [],
-      selectedFilterToken: 'all',
+      filter: 'All',
     };
   },
 
   beforeMount() {
     console.log('token', this.$store.state.session.token);
-    if (this.state === 'aergo') this.getAergoHistory();
-    else this.getTokenHistory();
+    this.getNftInventory();
   },
 
-  computed: {
-    state() {
-      if (this.getTitle() === 'AERGO') {
-        return 'aergo';
-      } else if (this.getTitle() === 'NFT') {
-        return 'nft';
-      } else {
-        return 'others';
-      }
-    },
+  watch: {
+    filter: function () {
+      this.getNftHistory();
+      this.$forceUpdate();
+      console.log("filter", this.filter) ;
+    }
   },
 
   methods: {
-    aergoStaking() {
-      return '0';
-      const staking = this.$background.getStaking({
-        chainId: this.$store.state.accounts.network,
-        address: this.$store.state.accounts.address,
-      });
-      if (!staking) return '';
-      else return new Amount(staking.amount).formatNumber('aergo');
-    },
-
-    getBalance(value: number, decimals: number) {
-      return value / Math.pow(10, decimals);
-    },
-
     getTitle() {
-      if (
-        this.$store.state.ui.route.currentPath ===
-        `/list/${this.$store.state.accounts.address}/tokendetail/aergo`
-      ) {
-        return 'AERGO';
-      }
-      //   return this.$store.state.session.token.meta.name;
+      return this.$store.state.session.token.meta.name;
     },
-
     refreshClick() {
       console.log('refresh');
-      if (this.state === 'aergo') this.getAergoHistory();
-      else this.getTokenHistory();
+      if (tabState == 'inventory') this.getNftInventory();
+      else this.getNftHistory();
     },
-
-    async getTokenHistory(): Promise<void> {
-      //  console.log("fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`) ;
+    async getNftHistory(): Promise<void> {
+      console.log("fetch", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`) ;
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
+      );
+      const response = await resp.json();
+      if (response.error) this.data = [];
+      else this.data = response.hits;
+
+      console.log("history", this.data) ;
+    },
+
+    async getNftInventory(): Promise<void> {
+      console.log("nft", `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.$store.state.session.token.hash} AND account:${this.$store.state.accounts.address}`) ;
+
+      const resp = await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.$store.state.session.token.hash} AND account:${this.$store.state.accounts.address}`,
       );
 
       const response = await resp.json();
       if (response.error) this.data = [];
       else this.data = response.hits;
+
+      console.log("inventory", this.data) ;
     },
 
-    async getAergoHistory(): Promise<void> {
-      console.log(
-        'aergo fetch',
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`,
-      );
-
-      const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`,
-      );
-
-      const response = await resp.json();
-      if (response.error) this.data = [];
-      else this.data = response.hits;
-
-      console.log('tx', this.data);
-    },
-
-    /*
-      get stakedFiatBalance(): string {
-        if (!this.tokenPriceInfo || !this.tokenPriceInfo.price || !this.staking || !this.staking.amount) return '';
-        const aergoAmount = new Amount(this.staking.amount).formatNumber('aergo');
-        const balance = Number(aergoAmount) * this.tokenPriceInfo.price;
-        return formatCurrency(balance, this.tokenPriceInfo.currency);
-      },
-  
-      async load() {
-        if (this.state === 'initial') {
-          this.state = 'loading';
-        }
-        this.staking = await this.$background.getStaking(this.accountSpec);
-        this.state = 'loaded';
-      },
-  */
     handleDelete(state: boolean) {
       state ? (this.removeModal = true) : (this.removeModal = false);
     },
@@ -385,6 +222,9 @@ export default Vue.extend({
       console.log('receive');
     },
     handleChangeState(state: string) {
+      if (state == `inventory`) this.getNftInventory() ;
+      else this.getNftHistory() ;
+
       this.tabState = state;
     },
   },

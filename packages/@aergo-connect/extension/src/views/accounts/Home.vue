@@ -564,21 +564,5 @@ export default Vue.extend({
       }
     }
   }
-
-  .content_footer {
-    margin-top: 10px;
-    .button {
-      box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
-      border-radius: 4px;
-      .button-icon {
-        margin-right: 9.49px;
-      }
-      /* &.button-type-font-gradation:hover {
-        background: #ffffff;
-      } */
-    }
-    /* .button:hover {
-    } */
-  }
 }
 </style>

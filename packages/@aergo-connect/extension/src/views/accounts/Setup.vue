@@ -28,7 +28,6 @@
           <Button
             type="primary"
             size="large"
-            hover
             :disabled="
               checked &&
               password === passwordRepeat &&
@@ -66,7 +65,7 @@ import AppearVue from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import ConfirmModal from '@aergo-connect/lib-ui/src/layouts/ConfirmModal.vue';
 import Component, { mixins } from 'vue-class-component';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
-
+import { encodePrivateKey } from '@herajs/crypto';
 @Component({
   components: {
     ScrollView,
@@ -116,6 +115,8 @@ export default class Setup extends mixins() {
       password: this.password,
     });
     if (check) {
+      const hashedKey = await encodePrivateKey(new TextEncoder().encode(this.password));
+      this.$store.commit('ui/setInitSetupKey', hashedKey);
       this.next();
     }
     // Init Network

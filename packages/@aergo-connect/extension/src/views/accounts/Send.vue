@@ -1,13 +1,13 @@
 <template>
   <ScrollView>
-    <SendOptionsModal 
-      v-if="optionsModal" 
+    <SendOptionsModal
+      v-if="optionsModal"
       :txType="txType"
       :payload="txBody.payload"
       @updateTx="updateTx"
     />
-    <ConfirmationModal 
-      v-if="confirmationModal" 
+    <ConfirmationModal
+      v-if="confirmationModal"
       :to="inputTo"
       :amount="inputAmount"
       :symbol="symbol"
@@ -15,6 +15,15 @@
       :payload="txBody.payload"
       @confirm="handleConfirm"
       @cancel="handleCancel"
+    />
+    <SendFinishModal 
+      v-if="sendFinishModal" 
+      :asset="asset"
+      :txHash="txHash"
+      :receipt="inputTo"
+      :amount="inputAmount"
+      :symbol="symbol"
+      @close="handleSent"
     />
     <Header button="back" title="Send" @backClick="handleBack" />
     <div class="send_content_wrapper">
@@ -41,28 +50,32 @@
         </div>
       </div>
       <div class="token_content_wrapper">
-        <Identicon v-if="!icon" :text="tokenHash" class="token_icon" />
-        <Icon v-else-if="asset == -1"  class="token_icon" :name="icon" />
+        <Identicon v-if="!icon" :text="asset" class="token_icon" />
+        <Icon v-else-if="asset == 'AERGO'" class="token_icon" :name="icon" />
         <img v-else class="token_icon" :src="icon" />
 
         <div class="token_amount">{{ balance }}</div>
-        <div class="token_symbol">{{ symbol }} </div>
+        <div class="token_symbol">{{ symbol }}</div>
       </div>
       <div class="send_form_wrapper">
         <div class="flex-row">
           <div class="title">Asset</div>
           <select class="select_box" v-model="asset">
-             <option value=-1> AERGO </option>
-             <option v-for="(token,index) in $store.state.session.tokens" :value="index"> 
-               {{ token.meta.name }} 
-             </option>
+            <option value="AERGO">AERGO</option>
+            <option v-for="token in $store.state.session.tokens" :value="token.hash">
+              {{ token.meta.name }}
+            </option>
           </select>
         </div>
         <div class="flex-row" v-if="tokenType == 'ARC2'">
           <div class="title">Token Id</div>
-          <input v-model="amount" type="text" class="text_box" />
+          <select class="select_box" v-model="inputAmount">
+            <option v-for="item in nftInventory" :value="item.meta.token_id">
+              {{ item.meta.token_id }}
+            </option>
+          </select>
         </div>
-        <div class="flex-row" v-else >
+        <div class="flex-row" v-else>
           <div class="title">Amount</div>
           <input v-model.number="inputAmount" type="text" class="text_box" />
         </div>
@@ -72,14 +85,14 @@
         </div>
       </div>
     </div>
-    <LoadingDialog 
-      :visible="statusDialogVisible" 
-      @close="statusDialogVisible=false" 
-      :title="statusDialogTitle" 
+    <LoadingDialog
+      :visible="statusDialogVisible"
+      @close="statusDialogVisible = false"
+      :title="statusDialogTitle"
       :state="dialogState"
-     >
-      <p v-if="dialogState !== 'error'">{{statusText}}</p>
-      <p v-else class="error">{{statusText}}</p>
+    >
+      <p v-if="dialogState !== 'error'">{{ statusText }}</p>
+      <p v-else class="error">{{ statusText }}</p>
     </LoadingDialog>
     <template #footer class="footer">
       <div class="show_option" @click="handleOptionsModal">Show optional fields</div>
@@ -98,7 +111,7 @@ import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import LoadingDialog from '@aergo-connect/lib-ui/src/layouts/LoadingDialog.vue';
-
+import SendFinishModal from '@aergo-connect/lib-ui/src/modal/SendFinishModal.vue';
 // for TX
 import { timedAsync } from 'timed-async/index.js';
 import Transport from '@ledgerhq/hw-transport-webusb';
@@ -106,33 +119,33 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import { Tx } from '@herajs/client';
 
 export default Vue.extend({
-
-  components: { 
-    ScrollView, 
-    SendOptionsModal, 
-    ConfirmationModal, 
-    Header, 
-    Identicon, 
-    Icon, 
-    Button, 
-    LoadingDialog, 
-    Tx 
+  components: {
+    ScrollView,
+    SendOptionsModal,
+    ConfirmationModal,
+    Header,
+    Identicon,
+    Icon,
+    Button,
+    LoadingDialog,
+    Tx,
+    SendFinishModal,
   },
   data() {
     return {
       optionsModal: false,
       confirmationModal: false,
-
-      asset: -1,
+      sendFinishModal: false,
+      asset: 'AERGO',
       icon: 'aergo',
       balance: this.$store.state.session.aergoBalance,
       tokenType: 'AERGO',
       symbol: 'aergo',
       inputAmount: '0',
-      inputTo: 'Amh4pmDMvqez6USJaQTs236YXqHVzMzo5cvgrybjthu5aZEpMxsQ',
+      inputTo: 'AmNBes1nksbz8VhbF6DiXfEqL1dx1YRHFpxZwZABQLqkctmCTFZU',
       txType: 'TRANSFER',
-      tokenHash: '',
-      
+      nftInventory: [],
+
       txBody: {
         from: this.$store.state.accounts.address,
         to: '',
@@ -143,37 +156,52 @@ export default Vue.extend({
         type: 0,
       },
 
-// for tx 
+      // for tx
       dialogState: '',
       statusText: '',
-      statusDialogVisible : false,
-      statusDialogTitle : 'Sending',
+      statusDialogVisible: false,
+      statusDialogTitle: 'Sending',
     };
   },
 
   watch: {
-    'asset': function() {
-       if (this.asset == -1 ) { // default AERGO
-         this.balance    = this.$store.state.session.aergoBalance ;
-	 this.tokenType  = 'AERGO' ;
-         this.icon       = 'aergo' ;
-	 this.symbol     = 'aergo' ;
-       } else {
-         this.balance =    this.$store.state.session.tokens[this.asset]['balance'] ;
-	 this.tokenType  = this.$store.state.session.tokens[this.asset]['meta']['type'] ;
-         this.icon       = this.$store.state.session.tokens[this.asset]['meta']['image'] ;
-	 this.symbol     = this.$store.state.session.tokens[this.asset]['meta']['symbol'] ;
-	 this.tokenHash  = this.$store.state.session.tokens[this.asset].hash ;
-       }
-    }
+    asset: function () {
+      if (this.asset == 'AERGO') {
+        // default AERGO
+        this.balance = this.$store.state.session.aergoBalance;
+        this.tokenType = 'AERGO';
+        this.icon = 'aergo';
+        this.symbol = 'aergo';
+      } else {
+        this.balance = this.$store.state.session.tokens[this.asset]['balance'];
+        this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
+        this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
+        this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
+        this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
+        if (this.tokenType === 'ARC2') this.getNftInventory() ;
+      }
+    },
   },
 
   methods: {
+
+    async getNftInventory() {
+      const resp = await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}`,
+      );
+
+      const response = await resp.json();
+      console.log("inventory", response.hit) ;
+
+      if (response.error) this.nftInventory = [];
+      else this.nftInventory = response.hits;
+    },
+
     updateTx(txType, payload) {
-      console.log("return option", txType, payload) ;
-      this.txType = txType ;
-      this.txBody.payload = payload ;
-      this.optionsModal = false ;
+      console.log('return option', txType, payload);
+      this.txType = txType;
+      this.txBody.payload = payload;
+      this.optionsModal = false;
     },
 
     handleBack() {
@@ -192,39 +220,52 @@ export default Vue.extend({
       if (this.amount > this.balance) {
         // error 출력 또는 입력 시에 확인
         console.log('insufficent');
-        return ;
-      } 
+        return;
+      }
 
       if (this.tokenType == 'AERGO') {
-        this.txBody.to = this.inputTo ;
-        this.txBody.amount = `${this.inputAmount} ${this.txBody.unit}` ;
-
+        this.txBody.to = this.inputTo;
+        this.txBody.amount = `${this.inputAmount} ${this.txBody.unit}`;
       } else if (this.tokenType == 'ARC1') {
-        this.txBody.to = this.$store.state.session.tokens[this.asset].hash ;
-        this.txBody.amount = `0 ${this.txBody.unit}` ;
+        this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
+        this.txBody.amount = `0 ${this.txBody.unit}`;
+
+        const amount = Number(this.inputAmount) * Math.pow(10, this.$store.state.session.tokens[this.asset].meta.decimals);
+        this.txBody.payload =
+          '{"Name": "transfer", "Args": ["' +
+          this.inputTo +
+          '", "' +
+          amount.toString() + '", ""]}';
+
+        this.txType = 'CALL';
+      } else { // ARC2
+        this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
+        this.txBody.amount = `0 ${this.txBody.unit}`;
 
         this.txBody.payload =
           '{"Name": "transfer", "Args": ["' +
-          this.inputTo + 
-          '", "' + 
-          this.inputAmount + 
-          '000000000000000000", ""]}';
+          this.inputTo +
+          '", "' +
+          this.inputAmount +
+          '"]}';
 
-        const payload = JSON.parse(this.txBody.payload) ;
-        this.txBody.payload = JSON.stringify(payload) ;
+        this.txType = 'CALL';
+      }
 
-        this.txType = 'CALL' ; 
-      };
+      console.log("payload", this.txBody.payload) ;
 
-      this.txBody.type = Tx.Type[this.txType] ;
-      
-      console.log("txBody", this.txBody) ;
+      if (this.txBody.payload) {
+        const payload = JSON.parse(this.txBody.payload);
+        this.txBody.payload = JSON.stringify(payload);
+      }
 
-      this.confirmationModal = true ;
+      this.txBody.type = Tx.Type[this.txType];
+      console.log('txBody', this.txBody);
+      this.confirmationModal = true;
     },
-      
+
     handleCancel() {
-      this.confirmationModal = false ;
+      this.confirmationModal = false;
     },
 
     setStatus(state, text) {
@@ -234,34 +275,47 @@ export default Vue.extend({
     },
 
     async handleConfirm() {
-      this.confirmationModal = false ;
+      this.confirmationModal = false;
 
-// sign
-//      if (!txBody.from) {
-// This shouldn't happen normally
-//        throw new Error('Could not load account, please reload page and try again.');
-//      } ;
+      // sign
+      //      if (!txBody.from) {
+      // This shouldn't happen normally
+      //        throw new Error('Could not load account, please reload page and try again.');
+      //      } ;
 
-// HW Ledger 사용 시에 ...
-//    if (this.account.data.type === 'ledger') {
-//      txBody = await this.signWithLedger(txBody);
-//    } 
+      // HW Ledger 사용 시에 ...
+      //    if (this.account.data.type === 'ledger') {
+      //      txBody = await this.signWithLedger(txBody);
+      //    }
 
-      console.log("txBody", this.txBody) ;
-      
-      // send 
+      console.log('txBody', this.txBody);
+
+      // send
       try {
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         this.setStatus('success', 'Done');
-        setTimeout(() => { this.$router.push({ name: 'account-send-success', params: { hash } }); }, 1000);
-      } catch(e) {
-        const errorMsg = `${e}`.replace("UNDEFINED_ERROR:", "");
+        setTimeout(() => {
+          this.txHash = hash ;
+          this.statusDialogVisible = false ;
+          this.sendFinishModal = true ;
+//          this.$router.push({ name: 'account-send-success', params: { hash } });
+        }, 1000);
+      } catch (e) {
+        const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
-      } 
+      }
     },
 
-    async signWithLedger (txBody) {
-      const { tx } = await this.$background.prepareTransaction(txBody, this.$store.state.accounts.network);
+    handleSent() {
+      this.sendFinishModal = false;
+      this.inputAmount = 0 ;
+    },
+
+    async signWithLedger(txBody) {
+      const { tx } = await this.$background.prepareTransaction(
+        txBody,
+        this.$store.state.accounts.network,
+      );
       tx.payload = txBody.payload;
       this.setStatus('loading', 'Connecting to Ledger device...');
       const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -288,7 +342,10 @@ export default Vue.extend({
     async sendTransaction(txBody) {
       this.setStatus('loading', 'Sending to network...');
       try {
-        const result = await this.$background.sendTransaction(txBody, this.$store.state.accounts.network);
+        const result = await this.$background.sendTransaction(
+          txBody,
+          this.$store.state.accounts.network,
+        );
         if ('tx' in result) {
           return result.tx.hash;
         } else {

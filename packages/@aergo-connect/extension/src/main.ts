@@ -7,7 +7,6 @@ import Background from './plugins/background';
 import IndexedDb from './plugins/indexeddb';
 import extension from 'extensionizer';
 import PortStream from 'extension-port-stream';
-
 import '@aergo-connect/lib-ui/src/styles/base.scss';
 import { enforceRequest } from './router/guards';
 
@@ -49,6 +48,7 @@ async function init(name: string) {
     console.log('update from bg', state);
     const isNonAuthPage = router.currentRoute.meta && router.currentRoute.meta.noAuthCheck === true;
     console.log(isNonAuthPage, 'isNonAuthPage');
+
     if (Object.prototype.hasOwnProperty.call(state, 'unlocked')) {
       store.commit('ui/setUnlocked', state.unlocked);
       if (state.unlocked === false && !isNonAuthPage) {
@@ -56,17 +56,9 @@ async function init(name: string) {
       }
     }
 
-    /*
-    if (Object.prototype.hasOwnProperty.call(state, 'accounts')) {
-      store.commit('accounts/setAccounts', state.accounts);
-    }
-    if (Object.prototype.hasOwnProperty.call(state, 'accountsRemoved')) {
-      store.dispatch('accounts/removeAccount', state.accountsRemoved);
-    }
-*/
   });
 
-//  console.log('STATE', store.state.accounts);
+  //  console.log('STATE', store.state.accounts);
   console.log('idleTimeout:' + store.state.ui.idleTimeout);
   extension.idle.setDetectionInterval(store.state.ui.idleTimeout);
 }

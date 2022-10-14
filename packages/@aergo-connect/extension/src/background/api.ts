@@ -18,7 +18,6 @@ import Controller from './controller';
 import { ChainConfig } from '../config';
 import { promisifySimple } from '../utils/promisify';
 
-
 interface AccountSpec {
   chainId: string;
   address: string;
@@ -50,8 +49,8 @@ export class Api {
     this.controller = controller;
   }
 
-// seo
-/*
+  // seo
+  /*
   async getTokenBalance (chainId: string, address: string, token: string) {
     const contract = await Contract.fromAbi(TokenABI).setAddress(token);
     const result = await this.controller.wallet.getClient(chainId).queryContract(contract.balanceOf(address));
@@ -462,7 +461,7 @@ type DnodeFunction = (...args: any[]) => void;
  * Wraps API call to use with Dnode
  */
 function wrapApiCall<Ret>(fn: ApiFunction<Ret>): DnodeFunction {
-  return async function(...args: any[]) {
+  return async function (...args: any[]) {
     const send = args.pop() as (val: Ret | { error: any }) => void;
     try {
       const result = await fn(...args);
@@ -482,7 +481,7 @@ function wrapApiCall<Ret>(fn: ApiFunction<Ret>): DnodeFunction {
 const getWrapped = (instance: Api): Record<ApiMethodNames, DnodeFunction> => {
   const keys = Object.getOwnPropertyNames(Object.getPrototypeOf(instance)) as ApiMethodNames[];
   return keys.reduce((classAsObj, key) => {
-    classAsObj[key] = wrapApiCall(((instance[key] as unknown) as ApiFunction<any>).bind(instance));
+    classAsObj[key] = wrapApiCall((instance[key] as unknown as ApiFunction<any>).bind(instance));
     return classAsObj;
   }, {} as Record<ApiMethodNames, DnodeFunction>);
 };

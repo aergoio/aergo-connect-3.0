@@ -28,7 +28,7 @@
         <TextField
           placeholder="Name / Symbol / Address"
           class="network_textField"
-          @submit="search"
+          @input="search"
         />
 
         <ul class="select_token_content">
@@ -116,8 +116,9 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
+import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import ImportAssetModal from '@aergo-connect/lib-ui/src/modal/ImportAssetModal.vue';
+
 export default Vue.extend({
   components: {
     Header,
@@ -172,6 +173,18 @@ export default Vue.extend({
           this.results = data.hits;
         });
 
+      if (this.results) return ;
+
+      await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=*${query}*`,
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          this.results = data.hits;
+        });
+
       console.log('Results', this.results);
     },
 
@@ -179,7 +192,10 @@ export default Vue.extend({
       console.log('Selected', token.meta);
 
       this.token = Object.values(token);
+
       this.$store.dispatch('accounts/addToken', token);
+      this.$store.dispatch('session/initState');
+
       this.importAssetModal = true;
     },
 

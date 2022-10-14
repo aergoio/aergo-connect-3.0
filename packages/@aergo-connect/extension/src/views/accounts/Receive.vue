@@ -326,7 +326,6 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 1;
   .show_option {
     margin-bottom: 20px;
     /* Subtitle/S3_line */

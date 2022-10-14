@@ -1,4 +1,4 @@
-[200~<template>
+<template>
   <ScrollView>
     <Header
       button="hamburger"
@@ -51,7 +51,7 @@
       <NetworkModal v-if="networkModal" @networkModalClick="networkModalClick" />
 
       <div class="token_content_wrapper">
-        <ButtonGroup>
+        <ButtonGroup class="token_nft_button_wrapper">
           <Button
             :class="[tab === `tokens` ? `token-button` : `token-button unclicked`]"
             type="primary"
@@ -76,7 +76,7 @@
               </div>
               <div class="token_list_amount">
                 <span class="token_list_balance"> {{ $store.state.session.aergoBalance }} </span>
-                <span> AERGO </span>
+                <span> aergo </span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
             </div>
@@ -88,12 +88,14 @@
             :key="token.hash"
             @click="handleToken(token)"
           >
-            <div class="token_list_wrapper">
-              <!-- <Identicon :text="token.hash" class="list_icon" /> -->
-              <img class="token_list_icon" :src="token.meta.image" alt="404" />
-              <span class="token_list_text"> {{ token.meta.name }} </span>
+            <div v-if="token.meta.type === 'ARC1'" class="token_list_wrapper">
+              <div class="token_list_row">
+                <img class="token_list_icon" :src="token.meta.image" alt="404" />
+                <span class="token_list_text"> {{ token.meta.name }} </span>
+              </div>
               <div class="token_list_amount">
                 <span class="token_list_balance"> {{ token.balance }} </span>
+                <span> {{ token.meta.symbol }}</span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
             </div>
@@ -108,12 +110,15 @@
             <span> {{ $store.state.session.aergoBalance }} </span>
             <Icon class="next" :name="`next_grey`" />
           </li> -->
-          <li v-for="token in $store.state.session.tokens" class="token_list_li" :key="token.hash" @click="handleToken">
-            <div class="token_list_wrapper">
+          <li
+            v-for="token in $store.state.session.tokens"
+            class="token_list_li"
+            :key="token.hash"
+            @click="handleNft(token)"
+          >
+            <div v-if="token.meta.type === 'ARC2'" class="token_list_wrapper">
               <!-- <Identicon :text="token.hash" class="list_icon" /> -->
-              <div class="token_list_icon">
-                <img :src="token.meta.image" alt="404" />
-              </div>
+              <img class="token_list_icon" :src="token.meta.image" alt="404" />
               <span class="token_list_text"> {{ token.meta.name }} </span>
               <div class="token_list_amount">
                 <span class="token_list_balance"> {{ token.balance }} </span>
@@ -133,15 +138,17 @@
           >
         </button>
       </div>
-      <div class="content_footer">
-        <ButtonGroup>
-          <Button class="button" type="font-gradation" size="small" @click="handleSend"
-            ><Icon class="button-icon" :name="`send`" />send</Button
-          >
-          <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-            ><Icon class="button-icon" :name="`send`" />receive</Button
-          >
-        </ButtonGroup>
+      <div class="footer">
+        <Appear :delay="0.6">
+          <ButtonGroup>
+            <Button class="button" type="font-gradation" size="small" @click="handleSend"
+              ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
+            >
+            <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+              ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
+            >
+          </ButtonGroup>
+        </Appear>
       </div>
     </div>
   </ScrollView>
@@ -195,59 +202,58 @@ export default Vue.extend({
   },
 
   watch: {
-
     $route(to, from) {
       this.initAccount();
+      this.$forceUpdate();
     },
 
     '$store.state.accounts.network': function () {
       this.initAccount();
+      this.$forceUpdate();
     },
 
     '$store.state.accounts.address': function () {
       this.initAccount();
+      this.$forceUpdate();
     },
   },
 
   methods: {
-
     async initAccount() {
-
       console.log('Address', this.$store.state.accounts.address);
-      this.$store.commit('ui/setIdleTimeout', 100000) ;
+      console.log('IdleTime', this.$store.state.ui.idleTimeout);
 
       if (this.$store.state.accounts.address) {
-        await this.$store.dispatch('session/initState') ;
+        await this.$store.dispatch('session/initState');
         console.log('aergoBalance', this.$store.state.session.aergoBalance);
-      }
-      else {
+      } else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');
 
         if (!succ) {
           console.log('Need Register');
           this.noAccountModal = true;
-        }
-        else await this.$store.dispatch('session/InitState') ;
+        } else await this.$store.dispatch('session/InitState');
       }
-
     },
 
     refreshClick() {
-      console.log('regresh') ;
-      this.$store.dispatch('session/updateBalances') ;
-      // OR this.store.dispatch('session/initState') ;
+      console.log('regresh');
+      this.$store.dispatch('session/initState');
+      this.$forceUpdate();
     },
-    
+
+    /*
     async autoUpdateBalances(time) {
       try {
-        console.log('UpdateBalances') ;
-        this.$store.dispatch('session/updateBalances') ;
-        setTimeout(() => this.updateBalances(),time) ;
+        console.log('UpdateBalances');
+        this.$store.dispatch('session/updateBalances');
+        setTimeout(() => this.updateBalances(), time);
       } catch (e) {
         console.error(e);
       }
     },
+*/
 
     hamburgerClick() {
       this.hamburgerModal = !this.hamburgerModal;
@@ -283,43 +289,44 @@ export default Vue.extend({
     handleAergo() {
       this.$router
         .push({
-          name: 'token-detail-aergo',
-          params: {
-            address: this.$store.state.accounts.address,
-            balance: this.$store.state.session.aergoBalance,
-          },
+          name: 'token-detail',
+          params: { address: this.$store.state.accounts.address, option: 'aergo' },
         })
         .catch(() => {});
     },
 
     handleToken(token: any) {
-      this.$store.commit('session/setToken', token) ;
+      this.$store.commit('session/setToken', token);
       this.$router
         .push({
           name: 'token-detail',
-          params: {
-            address: this.$store.state.accounts.address,
-            token: token,
-            balance: token.balance,
-          },
+          params: { address: this.$store.state.accounts.address, option: 'tokens' },
         })
         .catch(() => {});
     },
-
+    handleNft(nft: any) {
+      this.$store.commit('session/setToken', nft);
+      this.$router
+        .push({
+          name: 'nft-detail',
+          params: { address: this.$store.state.accounts.address },
+        })
+        .catch(() => {});
+    },
     handleImportAsset(to: string) {
       if (to === 'token') {
         this.$router
           .push({
-            name: 'import-asset-token',
-            params: { address: this.$store.state.accounts.address },
+            name: 'import-asset',
+            params: { address: this.$store.state.accounts.address, option: 'token' },
           })
           .catch(() => {});
       }
       if (to === 'nft') {
         this.$router
           .push({
-            name: 'import-asset-nft',
-            params: { address: this.$store.state.accounts.address },
+            name: 'import-asset',
+            params: { address: this.$store.state.accounts.address, option: 'nft' },
           })
           .catch(() => {});
       }
@@ -335,10 +342,16 @@ export default Vue.extend({
         .catch(() => {});
     },
     handleReceive() {
-      console.log('receive');
+      this.$router
+        .push({
+          name: 'receive',
+          params: {
+            address: this.$store.state.accounts.address,
+          },
+        })
+        .catch(() => {});
     },
     handleChangeTab(value: string) {
-      console.log(value);
       this.tab = value;
     },
   },
@@ -397,7 +410,7 @@ export default Vue.extend({
         margin-bottom: 8px;
         margin-left: 30px;
         .account_info_nickname_text {
-          margin-right: 76px;
+          margin-right: 65px;
         }
         .account_info_nickname_button {
           cursor: pointer;
@@ -436,6 +449,9 @@ export default Vue.extend({
     align-items: center;
     justify-content: center;
     margin-top: 16px;
+    .token_nft_button_wrapper {
+      justify-content: center;
+    }
     .token-button {
       width: 153px;
       height: 39px;
@@ -447,17 +463,21 @@ export default Vue.extend({
       }
     }
     .token_list_ul {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       width: 375px;
-      height: 252px;
+      height: 232px;
       overflow-x: hidden;
       overflow-y: scroll;
       .token_list_li {
         cursor: pointer;
+        width: 290px;
       }
       .token_list_wrapper {
         height: 62px;
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
         align-items: center;
         .token_list_row {
           display: flex;
@@ -475,11 +495,14 @@ export default Vue.extend({
         .token_list_amount {
           display: flex;
           align-items: center;
+          width: 100px;
+          justify-content: flex-end;
           .token_list_balance {
             margin-right: 4px;
           }
         }
         .token_list_text {
+          width: 120px;
           margin-left: 18px;
         }
         .token_list_balance {
@@ -491,11 +514,9 @@ export default Vue.extend({
       }
       .line {
         /* Grey/01 */
-        width: 311px;
         height: 1px;
         background: #f0f0f0;
         box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
-        margin-left: 32px;
       }
     }
     .token_list_button {
@@ -516,6 +537,7 @@ export default Vue.extend({
       letter-spacing: -0.333333px;
       cursor: pointer;
       margin-top: 10px;
+      margin-bottom: 20px;
       .token_list_button_img {
         position: relative;
         bottom: 2px;
@@ -540,21 +562,6 @@ export default Vue.extend({
         flex-grow: 0;
       }
     }
-  }
-  .content_footer {
-    margin-top: 10px;
-    .button {
-      box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
-      border-radius: 4px;
-      .button-icon {
-        margin-right: 9.49px;
-      }
-      /* &.button-type-font-gradation:hover {
-        background: #ffffff;
-      } */
-    }
-    /* .button:hover {
-    } */
   }
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
-  <div class="confirmation_modal_backdrop">
-    <div class="confirmation_modal_wrapper">
+  <div class="sendfinish_modal_backdrop">
+    <div class="sendfinish_modal_wrapper">
       <div class="flex-column">
         <Icon :name="`confirmation`" />
-        <div class="title">Confirmation</div>
+        <div class="title">Transaction Sent!</div>
       </div>
       <div class="detail_form">
         <div class="flex-row">
@@ -17,48 +17,50 @@
         </div>
         <div class="line" />
         <div class="flex-row">
-          <div class="title">Recipient</div>
+          <div class="title">Hash</div>
           <div class="flex-row">
-            <div class="detail address">{{ to }}</div>
+            <a 
+              class="detail address"
+              :href="`https://${$store.state.accounts.network}.aergoscan.io/transaction/${txHash}`"
+              target="blank"
+            >
+              {{ txHash }}
+            </a>
           </div>
         </div>
         <div class="line" />
-
+        <div class="flex-row">
+          <div class="title">Recipient</div>
+          <div class="flex-row">
+            <div class="detail address">{{ receipt }}</div>
+          </div>
+        </div>
+        <div class="line" />
         <div class="flex-row">
           <div class="title">Amount</div>
           <div class="flex-row">
             <div class="detail amount">{{ amount }}</div>
+            <div class="detail amount">{{ symbol }}</div>
           </div>
         </div>
         <div class="line" />
-
-        <div class="flex-row">
-          <div class="title">Type</div>
-          <div class="flex-row">
-            <div class="detail type">{{ txType }}</div>
-          </div>
+        <div v-if="txReceipt" class="flex-row">
+          <div class="title">Fee</div>
+          <div class="detail fee">{{ txReceipt.fee }}</div>
+        </div>
+        <div v-else class="flex-row">
+          <div class="title">Status</div>
+          <div class="detail fee"> No Receipt </div>
         </div>
         <div class="line" />
-
         <div class="flex-row">
-          <div class="title gas">Gas Limit</div>
-          <div class="flex-row">
-            <div class="detail gas">0</div>
-          </div>
+          <div class="title balance">Update Balance</div>
+          <div v-if="asset === 'AERGO'" class="detail balance"> {{ $store.state.session.aergoBalance }} </div>
+          <div v-else class="detail balance"> {{ $store.state.session.tokens[asset].balance }} </div>
         </div>
         <div class="line" />
-
-        <div class="flex-row">
-          <div class="title">Payload</div>
-          <div class="flex-row">
-            <div class="detail payload">{{ payload }}</div>
-          </div>
-        </div>
       </div>
-      <ButtonGroup vertical class="button_wrapper">
-        <Button size="medium" type="primary" @click="handleOk">OK</Button>
-        <Button size="medium" type="primary-outline" @click="handleCancel">Cancel</Button>
-      </ButtonGroup>
+      <Button size="medium" type="primary" @click="handleOk">OK</Button>
     </div>
   </div>
 </template>
@@ -72,28 +74,60 @@ export default Vue.extend({
   components: { Icon, Button, ButtonGroup },
 
   props: {
+    txHash: String,
+    receipt: String,
     amount: Number,
-    to: String,
     symbol: String,
-    txType: String,
-    payload: String,
+    asset: String,
+  },
+
+  data() {
+    return {
+      txReceipt: null,
+      txData: null,
+    }
+  },
+
+  async mounted() {
+    console.log("txHash", this.txHash) ;
+    console.log("network", this.$store.state.accounts.network) ;
+    console.log("asset", this.asset) ;
+    await this.$store.dispatch('accounts/updateAccount', { 
+      chainId: this.$store.state.accounts.network,
+      address: this.$store.state.accounts.address,
+    }) ;
+
+    this.$store.commit('ui/clearInput', { key: 'send' });
+    await this.$background
+      .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
+      .then(result => {
+        this.txReceipt = result;
+      });
+/*
+    await this.$background
+      .getTransaction(this.$store.state.accounts.network, this.txHash)
+      .then(result => {
+        this.txData = result.tx;
+        this.txData.payload = Buffer.from(Object.values(this.txData.payload)).toString();
+      });
+*/
+
+    await this.$store.dispatch('session/updateBalances') ;
+    console.log("receipt", this.txReceipt) ;
   },
 
   methods: {
     handleOk() {
       console.log('ok', this.to);
-      this.$emit('confirm');
-    },
-    handleCancel() {
-      console.log('cancel');
-      this.$emit('cancel');
+      this.$emit('close');
     },
   },
+  
 });
 </script>
 
 <style lang="scss">
-.confirmation_modal_backdrop {
+.sendfinish_modal_backdrop {
   position: absolute;
   width: 375px;
   height: 600px;
@@ -101,7 +135,7 @@ export default Vue.extend({
   top: 0px;
   background: rgba(0, 0, 0, 0.4);
   z-index: 2;
-  .confirmation_modal_wrapper {
+  .sendfinish_modal_wrapper {
     position: absolute;
     width: 313px;
     height: 435px;
@@ -138,13 +172,12 @@ export default Vue.extend({
       }
     }
     .detail_form {
-      height: 200px;
+      height: 260px;
       margin-top: 18px;
-      width: 290px;
-      overflow-y: scroll;
-      overflow-x: hidden;
+      width: 280px;
       .flex-row {
         display: flex;
+        justify-content: space-between;
         &.network {
           align-items: center;
         }
@@ -158,23 +191,15 @@ export default Vue.extend({
           margin-right: 4px;
         }
         .title {
-          &.gas {
-            width: 65px;
-            font-family: 'Outfit';
-            font-style: normal;
-            font-weight: 400;
-            font-size: 15px;
-            line-height: 19px;
-
-            letter-spacing: -0.333333px;
-
-            color: #454344;
+          &.balance {
+            width: 200px;
           }
         }
         .detail {
           width: 178px;
           margin-left: 35px;
           margin-top: 4px;
+          margin-right: 6px;
           text-align: right;
           font-family: 'Outfit';
           font-style: normal;
@@ -184,19 +209,17 @@ export default Vue.extend({
           /* identical to box height */
 
           letter-spacing: -0.333333px;
-
+          justify-content: flex-end;
           /* Grey/06 */
 
           color: #686767;
           &.payload {
             width: 178px;
-            /* overflow-y:scroll; */
-            overflow-x: hidden;
             word-break: break-all;
             text-align: left;
           }
-          &.gas {
-            width: 168px;
+          &.balance {
+            margin-right: 6px;
           }
           &.network {
             display: flex;
@@ -222,8 +245,7 @@ export default Vue.extend({
 
             color: #454344;
           }
-          &.type {
-            margin-left: 56px;
+          &.fee {
           }
         }
       }
@@ -239,9 +261,6 @@ export default Vue.extend({
     }
     .button_wrapper {
       margin-top: 15px;
-      .button {
-        width: 289px;
-      }
     }
   }
 }

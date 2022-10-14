@@ -38,12 +38,12 @@ export default Vue.extend({
   },
 
   beforeMount() {
-      this.iPayload = this.payload ;
-      this.iTxType = this.txType ;
+    this.iPayload = this.payload;
+    this.iTxType = this.txType;
   },
   methods: {
     handleOk() {
-      this.$emit('updateTx', this.iTxType, this.iPayload) ;
+      this.$emit('updateTx', this.iTxType, this.iPayload);
       console.log('ok');
     },
   },

@@ -18,6 +18,7 @@ export interface AccountsState {
   network: string;
   address: string;
   nick: string;
+  lastSeedPhrase: string;
 }
 
 function getVueInstance(instance: any): Vue {
@@ -33,14 +34,26 @@ const storeModule: Module<AccountsState, RootState> = {
     network: 'aergo.io',
     address: '',
     nick: '',
+    lastSeedPhrase: '',
   },
 
   getters: {},
 
   actions: {
+    async fetchAccounts({ commit }) {
+      const vue = getVueInstance(this);
+      const accounts = await vue.$background.getAccounts();
+      commit('setAccounts', accounts);
+    },
+    async updateAccount({ commit }, { address, chainId }: AccountSpec) {
+      const vue = getVueInstance(this);
+      vue.$background.setActiveAccount({ address, chainId });
+      const account = await vue.$background.syncAccountState({ address, chainId });
+      commit('setAccounts', [account]);
+    },
 
     async tokens({ state }) {
-        return state.accounts[state.address]['token'][state.network];
+      return state.accounts[state.address]['token'][state.network];
     },
 
     async loadAccount({ state, commit }) {
@@ -73,13 +86,16 @@ const storeModule: Module<AccountsState, RootState> = {
     },
 
     async addToken({ state, commit }, token: any) {
-      var tokens = state.accounts[state.address]['token'][state.network];
-      
+      let tokens = state.accounts[state.address]['token'][state.network];
+
       if (!tokens) {
-         tokens = {} ;
-      } ;
-      tokens[token.hash] = token ;
+        tokens = {};
+      }
+      tokens[token.hash] = token;
       commit('setTokens', tokens);
+
+      state.dispatch('session/initState') ;
+
       console.log('Add tokens', tokens);
     },
 
@@ -87,6 +103,8 @@ const storeModule: Module<AccountsState, RootState> = {
       const tokens = state.accounts[state.address]['token'][state.network];
       delete tokens[token.hash];
       commit('setTokens', tokens);
+      
+      state.dispatch('session/initState') ;
       console.log('deleteToken', token);
     },
   },
@@ -116,6 +134,9 @@ const storeModule: Module<AccountsState, RootState> = {
       delete state.accounts[state.address];
       state.address = '';
       state.nick = '';
+    },
+    setSeedPhrase(state, phrase: string) {
+      state.lastSeedPhrase = phrase;
     },
 
     addAccount(state, address: string) {

@@ -155,7 +155,7 @@ export default Vue.extend({
         align-items: center;
         margin-left: 24px;
 
-        width: 105px;
+        width: 110px;
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
@@ -179,7 +179,7 @@ export default Vue.extend({
       }
       .account_button {
         cursor: pointer;
-        margin-left: 48px;
+        margin-left: 50px;
       }
     }
   }

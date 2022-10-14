@@ -82,14 +82,16 @@ const storeModule: Module<SessionState, RootState> = {
 
   mutations: {
     setTokenBalance(state, balances: any) {
-
-      console.log("TokenB", state.tokens) ;
+      console.log('TokenB', state.tokens);
 
       Object.keys(state.tokens).forEach((hash) => {
         const bal = balances.find((element) => element.meta.address == hash);
         if (bal) {
-          if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance ;
-          else state.tokens[hash]['balance'] = String(bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals)) ;
+          if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance;
+          else
+            state.tokens[hash]['balance'] = String(
+              bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals),
+            );
         } else {
           state.tokens[hash]['balance'] = 0;
         }
@@ -107,7 +109,7 @@ const storeModule: Module<SessionState, RootState> = {
         balances.forEach((e) => {
           if (e.token.meta.image) {
             console.log('ADD TOKEN', e.token.hash);
-            state.tokens[e.token.hash] = e.token ;
+            state.tokens[e.token.hash] = e.token;
           }
         });
     },

@@ -88,7 +88,7 @@
             :key="token.hash"
             @click="handleToken(token)"
           >
-            <div v-if="token.meta.type==='ARC1'" class="token_list_wrapper">
+            <div v-if="token.meta.type === 'ARC1'" class="token_list_wrapper">
               <div class="token_list_row">
                 <img class="token_list_icon" :src="token.meta.image" alt="404" />
                 <span class="token_list_text"> {{ token.meta.name }} </span>
@@ -116,7 +116,7 @@
             :key="token.hash"
             @click="handleNft(token)"
           >
-            <div v-if="token.meta.type==='ARC2'" class="token_list_wrapper">
+            <div v-if="token.meta.type === 'ARC2'" class="token_list_wrapper">
               <!-- <Identicon :text="token.hash" class="list_icon" /> -->
               <img class="token_list_icon" :src="token.meta.image" alt="404" />
               <span class="token_list_text"> {{ token.meta.name }} </span>
@@ -239,7 +239,7 @@ export default Vue.extend({
 
     refreshClick() {
       console.log('regresh');
-      this.$store.dispatch('session/initState') ;
+      this.$store.dispatch('session/initState');
       this.$forceUpdate();
     },
 
@@ -352,7 +352,6 @@ export default Vue.extend({
         .catch(() => {});
     },
     handleChangeTab(value: string) {
-      console.log(value);
       this.tab = value;
     },
   },

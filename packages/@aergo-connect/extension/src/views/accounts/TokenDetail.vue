@@ -50,7 +50,7 @@
         <div class="line" />
         <div class="detail_wrapper">
           <div class="detail_title">Staked Balance</div>
-          <div class="detail_content">{{ `${aergoStaking()} aergo` }}</div>
+          <div class="detail_content">{{ staking }}</div>
         </div>
         <div class="line detail" />
         <div class="detail_wrapper">
@@ -181,26 +181,35 @@ export default Vue.extend({
       data: [],
       filter: 'All',
       symbol: 'aergo',
+      staking: '0',
     };
   },
 
-  beforeMount() {
-    if (this.$route.params.option === 'aergo') this.symbol = 'aergo' ;
-    else this.symbol = this.$store.state.session.token.meta.symbol ;
+  async beforeMount() {
+    if (this.$route.params.option === 'aergo') {
+      this.symbol = 'aergo' ;
+      await this.aergoStaking() ;
+    }
+    else this.symbol = await this.$store.state.session.token.meta.symbol ;
 
     console.log("SYMBOL", this.symbol) ;
-    this.getTokenHistory();
+    await this.getTokenHistory();
   },
 
   methods: {
-    aergoStaking() {
-      return '0';
-      const staking = this.$background.getStaking({
+
+    async aergoStaking(): Promise<void> {
+      const staking = await this.$background.getStaking({
         chainId: this.$store.state.accounts.network,
         address: this.$store.state.accounts.address,
       });
-      if (!staking) return '';
-      else return new Amount(staking.amount).formatNumber('aergo');
+
+      console.log("staking", staking) ;
+
+      if (!staking) this.staking = '0';
+      else this.staking = staking.amount ; 
+
+//      else return new Amount(staking.amount).formatNumber('aergo');
     },
 
     getBalance(value: number) {
@@ -274,7 +283,7 @@ export default Vue.extend({
   .footer {
     position: absolute;
     bottom: 0;
-    margin-bottom: 15px;
+    margin-bottom: 35px;
     .button.button-type-font-gradation {
       border: none;
     }
@@ -553,12 +562,6 @@ export default Vue.extend({
   .history {
     background: #eff5f7;
     box-shadow: inset 0px 21px 17px -19px rgba(0, 0, 0, 0.05);
-/*
-    position: absolute;
-    width: 375px;
-    height: 150px;
-    bottom: 100px;
-*/
     hight: 100vh;
     display: flex;
     flex-direction: column;

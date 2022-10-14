@@ -39,10 +39,9 @@ export default Vue.extend({
   },
   methods: {
     handleBack() {
-      this.$router
-        .push({
+      this.$router.push({
           name: 'accounts-list',
-          params: { ...this.accountSpec, nick: this.$route.params.nick },
+          params: { address: this.$store.state.accounts.address },
         })
         .catch(() => {});
     },

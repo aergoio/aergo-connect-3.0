@@ -377,7 +377,7 @@ export default Vue.extend({
       }
       .account_button {
         cursor: pointer;
-        margin-left: 40px;
+        margin-left: 50px;
       }
     }
   }

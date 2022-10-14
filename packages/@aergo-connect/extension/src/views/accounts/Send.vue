@@ -16,8 +16,8 @@
       @confirm="handleConfirm"
       @cancel="handleCancel"
     />
-    <SendFinishModal 
-      v-if="sendFinishModal" 
+    <SendFinishModal
+      v-if="sendFinishModal"
       :asset="asset"
       :txHash="txHash"
       :receipt="inputTo"
@@ -178,20 +178,19 @@ export default Vue.extend({
         this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
         this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
         this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
-        if (this.tokenType === 'ARC2') this.getNftInventory() ;
+        if (this.tokenType === 'ARC2') this.getNftInventory();
       }
     },
   },
 
   methods: {
-
     async getNftInventory() {
       const resp = await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}`,
       );
 
       const response = await resp.json();
-      console.log("inventory", response.hit) ;
+      console.log('inventory', response.hit);
 
       if (response.error) this.nftInventory = [];
       else this.nftInventory = response.hits;
@@ -230,29 +229,25 @@ export default Vue.extend({
         this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
 
-        const amount = Number(this.inputAmount) * Math.pow(10, this.$store.state.session.tokens[this.asset].meta.decimals);
+        const amount =
+          Number(this.inputAmount) *
+          Math.pow(10, this.$store.state.session.tokens[this.asset].meta.decimals);
         this.txBody.payload =
-          '{"Name": "transfer", "Args": ["' +
-          this.inputTo +
-          '", "' +
-          amount.toString() + '", ""]}';
+          '{"Name": "transfer", "Args": ["' + this.inputTo + '", "' + amount.toString() + '", ""]}';
 
         this.txType = 'CALL';
-      } else { // ARC2
+      } else {
+        // ARC2
         this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
 
         this.txBody.payload =
-          '{"Name": "transfer", "Args": ["' +
-          this.inputTo +
-          '", "' +
-          this.inputAmount +
-          '"]}';
+          '{"Name": "transfer", "Args": ["' + this.inputTo + '", "' + this.inputAmount + '"]}';
 
         this.txType = 'CALL';
       }
 
-      console.log("payload", this.txBody.payload) ;
+      console.log('payload', this.txBody.payload);
 
       if (this.txBody.payload) {
         const payload = JSON.parse(this.txBody.payload);
@@ -295,10 +290,10 @@ export default Vue.extend({
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         this.setStatus('success', 'Done');
         setTimeout(() => {
-          this.txHash = hash ;
-          this.statusDialogVisible = false ;
-          this.sendFinishModal = true ;
-//          this.$router.push({ name: 'account-send-success', params: { hash } });
+          this.txHash = hash;
+          this.statusDialogVisible = false;
+          this.sendFinishModal = true;
+          //          this.$router.push({ name: 'account-send-success', params: { hash } });
         }, 1000);
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
@@ -308,7 +303,7 @@ export default Vue.extend({
 
     handleSent() {
       this.sendFinishModal = false;
-      this.inputAmount = 0 ;
+      this.inputAmount = 0;
     },
 
     async signWithLedger(txBody) {
@@ -425,7 +420,7 @@ export default Vue.extend({
         align-items: center;
         margin-left: 24px;
 
-        width: 105px;
+        width: 110px;
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;

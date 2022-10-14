@@ -73,7 +73,12 @@
           symbol === 'aergo' ? 'token_detail_background ' : 'token_detail_background others',
         ]"
       >
-        <ul :class="[symbol === 'aergo' ? 'token_detail_wrapper ' : 'token_detail_wrapper others']">
+        <ul
+          :class="[
+            symbol === 'aergo' ? 'token_detail_wrapper ' : 'token_detail_wrapper others',
+            data.length === 0 ? 'token_detail_wrapper nothing' : 'token_detail_wrapper',
+          ]"
+        >
           <li v-for="item in data" :key="item.meta.tx_id" class="token_detail_list">
             <div v-if="item.meta.from === $store.state.accounts.address">
               <div v-if="filter !== 'Received'">
@@ -582,6 +587,9 @@ export default Vue.extend({
       align-items: center;
       height: 20.5vh;
       overflow-y: scroll;
+      &.nothing {
+        overflow: hidden;
+      }
       &.others {
         height: 29vh;
       }
@@ -591,12 +599,7 @@ export default Vue.extend({
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        &.aergo {
-          margin-bottom: 70px;
-        }
-        &.others {
-          margin-bottom: 50px;
-        }
+
         .nothing_text {
           /* Caption/C1 */
           margin-top: 18.5px;

@@ -7,14 +7,14 @@
       :to="{ name: 'accounts-list', params: { address: $store.state.accounts.address } }"
       @refreshClick="refreshClick"
     />
-    <div class="token_detail_content_wrapper">
+    <div class="nft_detail_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
           <div class="circle" />
           <div class="network">{{ $store.state.accounts.network }}</div>
         </div>
         <div class="account_wrapper">
-          <Identicon :text="$store.state.accounts.address" class="account_icon" /> 
+          <Identicon :text="$store.state.accounts.address" class="account_icon" />
           <div class="account_title">{{ $store.state.accounts.nick }}</div>
           <div class="account_title_wrapper">
             <div class="account">
@@ -26,7 +26,7 @@
               }}
             </div>
             <Icon
-              v-if="symbol !== 'aergo' && !$store.state.session.token.meta.image"
+              v-if="!$store.state.session.token.meta.image"
               class="account_button"
               :name="`delete2`"
               @click="handleDelete(true)"
@@ -35,89 +35,96 @@
         </div>
       </div>
       <RemoveModal v-if="removeModal" @cancel="handleDelete" />
-      <div v-if="symbol === 'aergo'" class="token_detail_wrapper aergo">
-        <div class="flex-row">
-          <Icon class="icon" :name="'aergo'" />
-          <div class="balance_wrapper">
-            <div class="balance">{{ $store.state.session.aergoBalance || '2,000,000.000' }}</div>
-            <div class="dollor">$</div>
-          </div>
-          <div class="token_symbol">{{ symbol }}</div>
+
+      <div class="tab_wrapper">
+        <div
+          :class="[tabState === `inventory` ? `tab_active` : `tab_disable`]"
+          @click="handleChangeState('inventory')"
+        >
+          <div class="tab_text">Inventory</div>
+          <div class="tab_line" />
         </div>
-        <div class="line" />
-        <div class="detail_wrapper">
-          <div class="detail_title">Staked Balance</div>
-          <div class="detail_content">{{ `${aergoStaking()} aergo` }}</div>
-        </div>
-        <div class="line detail" />
-        <div class="detail_wrapper">
-          <div class="detail_title">Registered Names</div>
-          <div class="detail_content">{{ `0` }}</div>
+        <div
+          :class="[tabState === `tx_history` ? `tab_active` : `tab_disable`]"
+          @click="handleChangeState('tx_history')"
+        >
+          <div class="tab_text">Tx History</div>
+          <div class="tab_line" />
         </div>
       </div>
-      <div v-else class="token_detail_wrapper others">
-        <img class="icon" :src="$store.state.session.token.meta.image" alt="404" />
-        <div class="balance">{{ $store.state.session.token.balance }}</div>
-        <div class="token_symbol">{{ $store.state.session.token.meta.symbol }}</div>
-      </div>
-      <div class="transaction_history_wrapper">
-        <div class="title">Transaction History</div>
-        <select class="select" v-model="filter">
-          <option class="option" selected value="All">All</option>
-          <option class="option" value="Received">Received</option>
-          <option class="option" value="Sent">Sent</option>
-        </select>
-      </div>
-      <div :class="[symbol === 'aergo'? 'history_background ': 'history_background others']">
-        <ul class="item_detail_wrapper">
-          <li v-for="item in data" class="item_detail_list">
-            <div v-if="item.meta.from === $store.state.accounts.address">
-              <div  v-if="filter !== 'Received'"> 
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="sent">Sent</div>
-                <div class="direction_row">
-                  <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                  <div class="token_symbol">{{ symbol }}</div>
-                </div>
-                <div class="direction_row">
-                  <div> To: </div>
-                  <div class="address"> {{ `${item.meta.to.slice(0,6,)}...${item.meta.to.slice(-6)}` }}</div>
-                  <Button :name="'pointer'" />
-                </div>
-              </div>
-            </div>
-            <div v-else>
-              <div  v-if="filter !== 'Sent'"> 
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="received">Recevied</div>
-                <div class="direction_row">
-                  <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                  <div class="token_symbol">{{ symbol }}</div>
-                </div>
-                <div class="line"></div>
-                <div class="direction_row">
-                  <div> From: </div>
-                  <div class="address">{{ `${item.meta.from.slice(0,6,)}...${item.meta.from.slice(-6)}` }}</div>
-                  <Button :name="'pointer'" />
-                </div>
-              </div>
-            </div>
+
+      <div class="nft_detail_background">
+        <ul v-if="tabState === 'inventory'" class="nft_info_wrapper">
+          <li v-for="item in data" class="nft_info_list">
+            <!--            <Identicon :text="item.meta.token_id"> -->
+            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+            <div>{{ item.meta.token_id }}</div>
           </li>
-          <div v-if="data.length === 0" class="token_detail_list_nothing_wrapper aergo">
+        </ul>
+
+        <ul
+          v-if="tabState === 'tx_history'"
+          :class="[data.length > 0 ? 'nft_detail_wrapper' : 'nft_detail_wrapper noscroll']"
+        >
+          <div v-if="data.length > 0">
+            <select v-if="tabState === `tx_history`" class="select" v-model="filter">
+              <option class="option" selected value="All">All</option>
+              <option class="option" value="Received">Received</option>
+              <option class="option" value="Sent">Sent</option>
+            </select>
+            <li v-for="item in data" :key="item.meta.token_id">
+              <div v-if="item.meta.from === $store.state.accounts.address">
+                <div v-if="filter !== 'Received'" class="nft_detail_list">
+                  <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                  <div class="sent">Sent</div>
+                  <div class="direction_row">
+                    <div class="token_symbol">{{ item.meta.token_id }}</div>
+                  </div>
+                  <div class="line"></div>
+                  <div class="direction_row">
+                    <div>To:</div>
+                    <div class="address">
+                      {{ `${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+                    </div>
+                    <Button :name="'pointer'" />
+                  </div>
+                </div>
+              </div>
+              <div v-else>
+                <div v-if="filter !== 'Sent'" class="nft_detail_list">
+                  <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                  <div class="received">Recevied</div>
+                  <div class="direction_row">
+                    <div class="token_symbol">{{ item.meta.token_id }}</div>
+                  </div>
+                  <div class="direction_row">
+                    <div>From:</div>
+                    <div class="address">
+                      {{ `${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
+                    </div>
+                    <Button :name="'pointer'" />
+                  </div>
+                </div>
+              </div>
+            </li>
+          </div>
+          <div v-if="data.length === 0" class="nft_detail_list_nothing_wrapper">
             <Icon class="nothing_icon" :name="`nothing`" />
             <div class="nothing_text">No Transaction Details.</div>
           </div>
         </ul>
-      </div>
-      <div class="footer">
-        <Appear :delay="0.6">
-          <ButtonGroup>
-            <Button class="button" type="font-gradation" size="small" @click="handleSend"
-              ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button>
-            <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-              ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button>
-          </ButtonGroup>
-        </Appear>
+        <div class="footer">
+          <Appear :delay="0.6">
+            <ButtonGroup>
+              <Button class="button" type="font-gradation" size="small" @click="handleSend"
+                ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
+              >
+              <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+                ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
+              >
+            </ButtonGroup>
+          </Appear>
+        </div>
       </div>
     </div>
   </ScrollView>
@@ -132,7 +139,7 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../../lib-ui/src/content/Identicon.vue';
-import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
+import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import { Amount } from '@herajs/common';
 
 function getVueInstance(instance: any): Vue {
@@ -153,91 +160,71 @@ export default Vue.extend({
     RemoveModal,
   },
 
-  watch: {
-    filter: function () {
-      this.getTokenHistory();
-      this.$forceUpdate();
-      console.log("filter", this.filter) ;
-    }
-  },
-
   data() {
     return {
+      tabState: 'inventory',
       removeModal: false,
       error: '',
       data: [],
       filter: 'All',
-      symbol: 'aergo',
     };
   },
 
   beforeMount() {
-    if (this.$route.params.option === 'aergo') this.symbol = 'aergo' ;
-    else this.symbol = this.$store.state.session.token.meta.symbol ;
+    console.log('token', this.$store.state.session.token);
+    this.getNftInventory();
+  },
 
-    console.log("SYMBOL", this.symbol) ;
-    this.getTokenHistory();
+  watch: {
+    filter: function () {
+      this.getNftHistory();
+      this.$forceUpdate();
+      console.log('filter', this.filter);
+    },
   },
 
   methods: {
-    aergoStaking() {
-      return '0';
-      const staking = this.$background.getStaking({
-        chainId: this.$store.state.accounts.network,
-        address: this.$store.state.accounts.address,
-      });
-      if (!staking) return '';
-      else return new Amount(staking.amount).formatNumber('aergo');
-    },
-
-    getBalance(value: number) {
-      if (this.symbol === 'aergo') return value ;
-      else return value / Math.pow(10, this.$store.state.session.token.meta.decimals);
-    },
-
     getTitle() {
-      if ( this.symbol === 'aergo') return 'AERGO' ;
-      else return this.$store.state.session.token.meta.name ;
+      return this.$store.state.session.token.meta.name;
     },
-
     refreshClick() {
       console.log('refresh');
-      this.getTokenHistory();
-      this.$forceUpdate();
+      if (this.tabState == 'inventory') this.getNftInventory();
+      else this.getNftHistory();
     },
+    async getNftHistory(): Promise<void> {
+      console.log(
+        'fetch',
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
+      );
 
-    async getTokenHistory(): Promise<void> {
-
-      var resp ;
-      if (this.symbol === 'aergo') {
-        resp = await fetch(`https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`);
-      } else {
-        resp = await fetch(`https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`) ;
-      } ;
-       
+      const resp = await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
+      );
       const response = await resp.json();
       if (response.error) this.data = [];
       else this.data = response.hits;
 
-      console.log('tx', this.data);
+      console.log('history', this.data);
     },
 
-    /*
-    get stakedFiatBalance(): string {
-      if (!this.tokenPriceInfo || !this.tokenPriceInfo.price || !this.staking || !this.staking.amount) return '';
-      const aergoAmount = new Amount(this.staking.amount).formatNumber('aergo');
-      const balance = Number(aergoAmount) * this.tokenPriceInfo.price;
-      return formatCurrency(balance, this.tokenPriceInfo.currency);
+    async getNftInventory(): Promise<void> {
+      console.log(
+        'nft',
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.$store.state.session.token.hash} AND account:${this.$store.state.accounts.address}`,
+      );
+
+      const resp = await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.$store.state.session.token.hash} AND account:${this.$store.state.accounts.address}`,
+      );
+
+      const response = await resp.json();
+      if (response.error) this.data = [];
+      else this.data = response.hits;
+
+      console.log('inventory', this.data);
     },
 
-    async load() {
-      if (this.state === 'initial') {
-        this.state = 'loading';
-      }
-      this.staking = await this.$background.getStaking(this.accountSpec);
-      this.state = 'loaded';
-    },
-*/
     handleDelete(state: boolean) {
       state ? (this.removeModal = true) : (this.removeModal = false);
     },
@@ -248,15 +235,64 @@ export default Vue.extend({
     handleReceive() {
       console.log('receive');
     },
+    handleChangeState(state: string) {
+      if (state == `inventory`) this.getNftInventory();
+      else this.getNftHistory();
+
+      this.tabState = state;
+    },
   },
 });
 </script>
 
 <style lang="scss">
-.token_detail_content_wrapper {
+.nft_detail_content_wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  .tab_wrapper {
+    width: 375px;
+    height: 35px;
+    display: flex;
+    cursor: pointer;
+    .tab_active {
+      height: 35px;
+      width: 187px;
+      .tab_text {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 24px;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 7px;
+        color: #279ecc;
+      }
+      .tab_line {
+        width: 187px;
+        align-items: flex-start;
+        border: 2px solid #279ecc;
+      }
+    }
+    .tab_disable {
+      width: 187px;
+      .tab_text {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 24px;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 7px;
+        color: #9c9a9a;
+      }
+      .tab_line {
+        display: none;
+      }
+    }
+  }
   .account_detail_wrapper {
     display: flex;
     flex-direction: column;
@@ -345,7 +381,7 @@ export default Vue.extend({
       }
     }
   }
-  .token_detail_wrapper {
+  .nft_transaction_history_wrapper {
     margin-top: 10px;
     margin-left: 24px;
     display: flex;
@@ -497,84 +533,101 @@ export default Vue.extend({
       color: #231f20;
     }
   }
-  .transaction_history_wrapper {
+
+  .nft_detail_background {
+    background: #eff5f7;
+    box-shadow: inset 0px 21px 17px -19px rgba(0, 0, 0, 0.05);
+    position: absolute;
+    width: 375px;
+    height: 438px;
+    bottom: 0px;
     display: flex;
-    margin-top: 24px;
-    .title {
-      margin-left: 24px;
-      width: 150px;
-      height: 20px;
-      /* Button/Btn3 */
+    flex-direction: column;
+    align-items: center;
+    .select {
+      position: fixed;
+      top: 20%;
+      left: 26.6%;
+      background: #ffffff;
+      /* Grey/02 */
+      width: 80px;
+      height: 28px;
+      border: 1px solid #d8d8d8;
+      border-radius: 4px;
 
       font-family: 'Outfit';
       font-style: normal;
-      font-weight: 500;
-      font-size: 16px;
-      line-height: 20px;
-      display: flex;
-      align-items: center;
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 19px;
+      /* identical to box height */
+
+      letter-spacing: -0.333333px;
 
       /* Grey/06 */
 
       color: #686767;
     }
-    .checkbox {
-      margin-left: 108px;
-      margin-right: 24px;
-      width: 80px;
-      height: 28px;
-    }
-  }
-  .history_background {
-    background: #eff5f7;
-    box-shadow: inset 0px 21px 17px -19px rgba(0, 0, 0, 0.05);
-    position: absolute;
-    width: 375px;
-    height: 260px;
-    bottom: 0px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     &.others {
       height: 345px;
     }
-    .token_detail_wrapper {
+    .nft_info_wrapper {
+      margin-top: 18px;
+      background: #ffffff;
+      border-radius: 8px;
+      width: 327px;
+      height: 78px;
+      border-radius: 8px;
+      .nft_info_list {
+      }
+    }
+    .nft_detail_wrapper {
+      overflow-y: scroll;
+      width: 350px;
+      height: 285px;
+      margin-left: 14px;
+      margin-top: 55px;
       flex-direction: column;
       display: flex;
-      justify-content: space-evenly;
       align-items: center;
-      /* overflow-y: scroll; */
-      overflow-y: hidden;
-      .token_detail_list_nothing_wrapper {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        &.aergo {
-          margin-bottom: 10px;
-        }
-        &.others {
-          margin-bottom: 50px;
-        }
-        .nothing_text {
-          /* Caption/C1 */
-          margin-top: 18.5px;
-          font-family: 'Outfit';
-          font-style: normal;
-          font-weight: 400;
-          font-size: 15px;
-          line-height: 19px;
-          /* identical to box height */
+      &.noscroll {
+        overflow-y: hidden;
+      }
+    }
 
-          text-align: center;
-          letter-spacing: -0.333333px;
+    .nft_detail_list_nothing_wrapper {
+      position: fixed;
+      top: 34%;
+      left: 43%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 19px;
+      text-align: center;
+      letter-spacing: -0.333333px;
+      color: #bababa;
 
-          /* Grey/03 */
+      .nothing_text {
+        /* Caption/C1 */
+        margin-top: 8px;
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 19px;
+        /* identical to box height */
 
-          color: #bababa;
-        }
+        text-align: center;
+        letter-spacing: -0.333333px;
+
+        /* Grey/03 */
+
+        color: #bababa;
       }
       .line {
         margin-left: 16px;
@@ -583,8 +636,8 @@ export default Vue.extend({
         height: 1px;
         background: #eff5f7;
       }
-      .token_detail_list {
-        margin-top: 10px;
+      .nft_detail_list {
+        margin-bottom: 10px;
         width: 327px;
         height: 88px;
         background: #ffffff;
@@ -684,35 +737,13 @@ export default Vue.extend({
       }
     }
     .footer {
-      position: relative;
-      top: 60px;
+      position: fixed;
+      bottom: 360px;
       &.aergo {
         top: 40px;
       }
     }
   }
-}
-.select {
-  margin-left: 98px;
-  background: #ffffff;
-  /* Grey/02 */
-  width: 80px;
-  height: 28px;
-  border: 1px solid #d8d8d8;
-  border-radius: 4px;
-
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 19px;
-  /* identical to box height */
-
-  letter-spacing: -0.333333px;
-
-  /* Grey/06 */
-
-  color: #686767;
 }
 
 .button-group {

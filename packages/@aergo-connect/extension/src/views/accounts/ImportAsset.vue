@@ -162,10 +162,12 @@ export default Vue.extend({
     },
 
     async search(query) {
-      console.log('Search', query);
-      await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=*${query}*`,
-      )
+
+      if (this.$route.params.option === 'token') {
+        console.log('Search', query);
+        await fetch(
+          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=*${query}*`,
+        )
         .then((res) => {
           return res.json();
         })
@@ -173,7 +175,8 @@ export default Vue.extend({
           this.results = data.hits;
         });
 
-      if (this.results) return ;
+        if (this.results) return ;
+      }	
 
       await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=*${query}*`,

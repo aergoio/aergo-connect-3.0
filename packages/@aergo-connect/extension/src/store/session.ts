@@ -9,7 +9,6 @@ export interface SessionState {
   tokens: any;
   token: any;
   aergoBalance: number;
-  tokenBalance: number;
 }
 
 function getVueInstance(instance: any): Vue {
@@ -24,7 +23,6 @@ const storeModule: Module<SessionState, RootState> = {
     token: {},
     tokens: {},
     aergoBalance: 0,
-    tokenBalance: 0,
   },
 
   actions: {
@@ -60,7 +58,6 @@ const storeModule: Module<SessionState, RootState> = {
 
     async initState({ state, commit }) {
       const tokens = await store.dispatch('accounts/tokens');
-      console.log('INIT STATE', tokens);
       await commit('setTokens', tokens);
 
       console.log(
@@ -82,16 +79,12 @@ const storeModule: Module<SessionState, RootState> = {
 
   mutations: {
     setTokenBalance(state, balances: any) {
-      console.log('TokenB', state.tokens);
-
       Object.keys(state.tokens).forEach((hash) => {
         const bal = balances.find((element) => element.meta.address == hash);
         if (bal) {
           if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance;
           else
-            state.tokens[hash]['balance'] = String(
-              bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals),
-            );
+            state.tokens[hash]['balance'] = bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals);
         } else {
           state.tokens[hash]['balance'] = 0;
         }

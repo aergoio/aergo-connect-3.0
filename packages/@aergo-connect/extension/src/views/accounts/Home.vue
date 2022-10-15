@@ -94,7 +94,7 @@
                 <span class="token_list_text"> {{ token.meta.name }} </span>
               </div>
               <div class="token_list_amount">
-                <span class="token_list_balance"> {{ token.balance }} </span>
+                <span class="token_list_balance">{{ token.balance }}</span>
                 <span> {{ token.meta.symbol }}</span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
@@ -104,12 +104,6 @@
         </ul>
 
         <ul class="token_list_ul" v-if="tab === `nft`">
-          <!-- <li class="token_list_li" @click="handleToken">
-            <Icon class="token_list_icon" />
-            <span>CCCV</span>
-            <span> {{ $store.state.session.aergoBalance }} </span>
-            <Icon class="next" :name="`next_grey`" />
-          </li> -->
           <li
             v-for="token in $store.state.session.tokens"
             class="token_list_li"
@@ -117,13 +111,13 @@
             @click="handleNft(token)"
           >
             <div v-if="token.meta.type === 'ARC2'" class="token_list_wrapper">
-              <!-- <Identicon :text="token.hash" class="list_icon" /> -->
               <img class="token_list_icon" :src="token.meta.image" alt="404" />
               <span class="token_list_text"> {{ token.meta.name }} </span>
               <div class="token_list_amount">
-                <span class="token_list_balance"> {{ token.balance }} </span>
+                <span class="token_list_balance">{{ token.balance }}</span>
+                <span> EA </span>
+                <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
-              <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
             <div class="line" />
           </li>
@@ -170,6 +164,7 @@ import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import { AccountSpec } from '@herajs/wallet/dist/types/models/account';
 import { Account } from '@herajs/wallet';
 import { Amount } from '@herajs/common';
+import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 
 export default Vue.extend({
   components: {
@@ -184,6 +179,7 @@ export default Vue.extend({
     List,
     Header,
     ScrollView,
+    Appear,
   },
   data() {
     return {
@@ -204,27 +200,29 @@ export default Vue.extend({
   watch: {
     $route(to, from) {
       this.initAccount();
-      this.$forceUpdate();
     },
 
     '$store.state.accounts.network': function () {
       this.initAccount();
-      this.$forceUpdate();
     },
 
     '$store.state.accounts.address': function () {
       this.initAccount();
-      this.$forceUpdate();
     },
   },
 
   methods: {
+    getB(bal) {
+       console.log("balance", bal) ;
+       return bal ;
+    },
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
       console.log('IdleTime', this.$store.state.ui.idleTimeout);
 
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
+        this.$forceUpdate();
         console.log('aergoBalance', this.$store.state.session.aergoBalance);
       } else {
         console.log('Other Account Loading ..');
@@ -237,9 +235,9 @@ export default Vue.extend({
       }
     },
 
-    refreshClick() {
+    async refreshClick() {
       console.log('regresh');
-      this.$store.dispatch('session/initState');
+      await this.$store.dispatch('session/initState');
       this.$forceUpdate();
     },
 

@@ -43,6 +43,7 @@
     "contextMenus",
     "idle",
     "storage",
-    "system.display"
+    "system.display",
+    "notifications"
   ]
 }

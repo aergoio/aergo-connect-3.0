@@ -12,8 +12,8 @@
           <img v-else src="@aergo-connect/lib-ui/src/icons/img/arrow-up.svg" />
         </div>
         <AccountList
+          :accounts="$store.state.accounts.accounts"
           v-if="isAccountsListOpened"
-          :accounts="accounts"
           canDelete
           @select="handleSelect"
         />

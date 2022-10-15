@@ -465,7 +465,7 @@ export default Vue.extend({
       flex-direction: column;
       align-items: center;
       width: 375px;
-      height: 232px;
+      height: 15.8rem;
       overflow-x: hidden;
       overflow-y: scroll;
       .token_list_li {
@@ -535,7 +535,7 @@ export default Vue.extend({
       letter-spacing: -0.333333px;
       cursor: pointer;
       margin-top: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       .token_list_button_img {
         position: relative;
         bottom: 2px;

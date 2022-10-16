@@ -89,10 +89,10 @@ export default Vue.extend({
     handleListModalOff() {
       this.$emit('listModalOff');
     },
-    handleSelect(account: any) {
-      const address = account.address;
 
-      this.$store.commit('accounts/setActiveAccount', address);
+    async handleSelect(account: any) {
+      const address = account.address;
+      await this.$store.commit('accounts/setActiveAccount', address);
 
       this.$emit('select', account);
 

@@ -198,8 +198,9 @@ export default Vue.extend({
   },
 
   watch: {
+
     $route(to, from) {
-      this.initAccount();
+      this.refreshClick();
     },
 
     '$store.state.accounts.network': function () {
@@ -209,6 +210,7 @@ export default Vue.extend({
     '$store.state.accounts.address': function () {
       this.initAccount();
     },
+
   },
 
   methods: {
@@ -219,6 +221,7 @@ export default Vue.extend({
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
       console.log('IdleTime', this.$store.state.ui.idleTimeout);
+//      console.log("ActiveAccount", this.$background.getActiveAccount());
 
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
@@ -237,7 +240,7 @@ export default Vue.extend({
 
     async refreshClick() {
       console.log('regresh');
-      await this.$store.dispatch('session/initState');
+      await this.$store.dispatch('session/updateBalances');
       this.$forceUpdate();
     },
 

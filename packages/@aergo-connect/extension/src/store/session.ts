@@ -57,7 +57,10 @@ const storeModule: Module<SessionState, RootState> = {
     },
 
     async initState({ state, commit }) {
+
       const tokens = await store.dispatch('accounts/tokens');
+      console.log("> tokens", tokens) ;
+
       await commit('setTokens', tokens);
 
       console.log(
@@ -94,6 +97,7 @@ const storeModule: Module<SessionState, RootState> = {
     setTokens(state, tokens: any) {
       console.log('set tokens', tokens);
       if (tokens) state.tokens = tokens;
+      else state.tokens = [] ;
     },
 
     updateTokens(state, balances: any) {

@@ -161,7 +161,12 @@ export default Vue.extend({
       statusText: '',
       statusDialogVisible: false,
       statusDialogTitle: 'Sending',
+      account: {},
     };
+  },
+
+  beforeMount() {
+    this.account = this.$background.getActiveAccount() ;
   },
 
   watch: {
@@ -272,16 +277,15 @@ export default Vue.extend({
     async handleConfirm() {
       this.confirmationModal = false;
 
-      // sign
-      //      if (!txBody.from) {
-      // This shouldn't happen normally
-      //        throw new Error('Could not load account, please reload page and try again.');
-      //      } ;
+      if (!txBody.from) {
+      //  This shouldn't happen normally
+          throw new Error('Could not load account, please reload page and try again.');
+      } ;
 
       // HW Ledger 사용 시에 ...
-      //    if (this.account.data.type === 'ledger') {
-      //      txBody = await this.signWithLedger(txBody);
-      //    }
+      if (this.account.data.type === 'ledger') {
+            txBody = await this.signWithLedger(txBody);
+      }
 
       console.log('txBody', this.txBody);
 

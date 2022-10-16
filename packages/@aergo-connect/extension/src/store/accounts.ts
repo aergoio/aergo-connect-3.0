@@ -40,20 +40,23 @@ const storeModule: Module<AccountsState, RootState> = {
   getters: {},
 
   actions: {
+
+/*
     async fetchAccounts({ commit }) {
       const vue = getVueInstance(this);
       const accounts = await vue.$background.getAccounts();
       commit('setAccounts', accounts);
     },
+
+*/
+    async tokens({ state }) {
+      return state.accounts[state.address]['token'][state.network];
+    },
+
     async updateAccount({ commit }, { address, chainId }: AccountSpec) {
       const vue = getVueInstance(this);
       vue.$background.setActiveAccount({ address, chainId });
       const account = await vue.$background.syncAccountState({ address, chainId });
-      commit('setAccounts', [account]);
-    },
-
-    async tokens({ state }) {
-      return state.accounts[state.address]['token'][state.network];
     },
 
     async loadAccount({ state, commit }) {
@@ -110,9 +113,8 @@ const storeModule: Module<AccountsState, RootState> = {
   },
 
   mutations: {
-    setActiveAccount(state, address: string) {
-      console.log('setActive in', address);
 
+    setActiveAccount(state, address: string) {
       if (!address) {
         state.address = '';
         state.nick = '';
@@ -122,12 +124,11 @@ const storeModule: Module<AccountsState, RootState> = {
 
       const vue = getVueInstance(this);
       vue.$background.setActiveAccount({ address: address, chainId: 'aergo.io' });
-      state.address = address;
-      console.log('accounts', state.accounts[address]);
 
+      state.address = address;
       state.nick = state.accounts[address]['nick'];
 
-      console.log('SetActiveAccount');
+      console.log('SetActiveAccount', address);
     },
 
     removeAccount(state) {
@@ -143,9 +144,10 @@ const storeModule: Module<AccountsState, RootState> = {
       state.accounts[address] = {
         address: address,
         nick: address.substr(0, 5) + '_nick',
+        wallet: account,
         token: {},
       };
-      console.log('addAccount out', state.accounts[address]['nick']);
+      console.log('addAccount', state.accounts[address]['nick']);
     },
 
     setNick(state, nick: string) {
@@ -161,8 +163,6 @@ const storeModule: Module<AccountsState, RootState> = {
     setNetwork(state, network: string) {
       state.network = network;
     },
-
-    setAccounts(state, accounts: Account[]) {},
   },
 };
 

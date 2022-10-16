@@ -92,12 +92,10 @@ export default Vue.extend({
   },
   props: {
     accounts: {
-      type: Array,
-      default: [] as any[],
+      type: Object,
     },
     account: {
       type: Object,
-      default: { address: '', nick: '', token: '' } as any,
     },
     groupByChain: {
       type: Boolean,

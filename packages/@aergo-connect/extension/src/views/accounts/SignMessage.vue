@@ -73,14 +73,9 @@ export default class RequestSign extends mixins() {
     return { address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network };
   }
 
-/*
   get account(): Account {
-    return this.$store.getters['accounts/getAccount'](this.accountSpec);
+    this.$background.getActiveAccount() ;
   }
-  created() {
-    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
-  }
-*/
 
 /*
   async signWithLedger(message: Buffer, displayAsHex = false) {
@@ -127,11 +122,9 @@ export default class RequestSign extends mixins() {
 
   async confirmHandler() {
 
-/*
     if (!this.account) {
       throw new Error('Could not load account, please reload page and try again.');
     }
-*/
 
     this.setStatus('loading', 'Calculating signature...');
 
@@ -149,14 +142,11 @@ export default class RequestSign extends mixins() {
       }
     }
 
-/*
     if (this.account.data.type === 'ledger') {
-      if (this.isHashed) {
-      }
+      if (this.isHashed) { }
       this.signature = await timedAsync(this.signWithLedger(buf, displayAsHex));
       return
     }
-*/
 
     const { address, chainId } = this.accountSpec;
 

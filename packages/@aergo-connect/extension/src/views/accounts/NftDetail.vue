@@ -200,7 +200,7 @@ export default Vue.extend({
       );
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100`,
       );
       const response = await resp.json();
       if (response.error) this.data = [];

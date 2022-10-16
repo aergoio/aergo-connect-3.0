@@ -165,8 +165,9 @@ export default Vue.extend({
     };
   },
 
-  beforeMount() {
-    this.account = this.$background.getActiveAccount() ;
+  async beforeMount() {
+    this.account = await this.$background.getActiveAccount() ;
+    console.log("Account Info", this.account) ;
   },
 
   watch: {
@@ -277,14 +278,14 @@ export default Vue.extend({
     async handleConfirm() {
       this.confirmationModal = false;
 
-      if (!txBody.from) {
+      if (!this.txBody.from) {
       //  This shouldn't happen normally
           throw new Error('Could not load account, please reload page and try again.');
       } ;
 
       // HW Ledger 사용 시에 ...
       if (this.account.data.type === 'ledger') {
-            txBody = await this.signWithLedger(txBody);
+            this.txBody = await this.signWithLedger(this.txBody);
       }
 
       console.log('txBody', this.txBody);

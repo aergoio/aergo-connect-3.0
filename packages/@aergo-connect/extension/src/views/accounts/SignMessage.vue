@@ -74,7 +74,7 @@ export default class RequestSign extends mixins() {
   }
 
   get account(): Account {
-    this.$background.getActiveAccount() ;
+    return this.$background.getActiveAccount() ;
   }
 
 /*
@@ -122,12 +122,7 @@ export default class RequestSign extends mixins() {
 
   async confirmHandler() {
 
-    if (!this.account) {
-      throw new Error('Could not load account, please reload page and try again.');
-    }
-
     this.setStatus('loading', 'Calculating signature...');
-
     const message = this.message;
 
     let buf = Buffer.from(message);
@@ -142,7 +137,10 @@ export default class RequestSign extends mixins() {
       }
     }
 
-    if (this.account.data.type === 'ledger') {
+    const account = await this.account ;
+
+    console.log("account", account) ;
+    if (account.data.type && account.data.type === 'ledger') {
       if (this.isHashed) { }
       this.signature = await timedAsync(this.signWithLedger(buf, displayAsHex));
       return

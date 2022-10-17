@@ -67,7 +67,7 @@
           </select>
         </div>
         <div class="flex-row" v-if="tokenType == 'ARC2'">
-          <div class="title">Token Id</div>
+          <div class="title">NFT ID</div>
           <select class="select_box" v-model="inputAmount">
             <option v-for="item in nftInventory" :value="item.meta.token_id">
               {{ item.meta.token_id }}
@@ -530,8 +530,9 @@ export default Vue.extend({
       display: flex;
       align-items: center;
       margin-top: 20px;
+      margin-right: 24px;
       .title {
-        margin-left: 26px;
+        margin-left: 20px;
         /* Primary/Blue01 */
         font-family: 'Outfit';
         font-style: normal;

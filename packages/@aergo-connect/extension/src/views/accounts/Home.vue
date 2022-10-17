@@ -437,6 +437,7 @@ export default Vue.extend({
       border-radius: 8px;
       &.unclicked {
         background: #f6f6f6;
+        color:#BABABA;
         box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.05);
       }
     }

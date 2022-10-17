@@ -22,17 +22,14 @@ const storeModule: Module<SessionState, RootState> = {
   state: {
     token: {},
     tokens: {},
-    aergoBalance: 0,
   },
 
   actions: {
-
 /*
     aergoBalance({ state }) {
       return state.aergoBalance;
     },
 */
-
     tokenBalance({ state }, address: string) {
       return state.tokens[address]['balance'];
     },
@@ -85,6 +82,9 @@ const storeModule: Module<SessionState, RootState> = {
 
       await commit('updateTokens', response.hits);
       await store.dispatch('session/updateBalances');
+
+      // Default Token : 'AERGO' 
+      await commit('setToken',state.tokens['AERGO']) ;
 
       console.log('Out tokens', state.tokens);
     },

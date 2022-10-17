@@ -13,8 +13,8 @@
       :symbol="symbol"
       :txType="txType"
       :payload="txBody.payload"
-      @confirm="handleConfirm"
       @cancel="handleCancel"
+      @confirm="handlePassword"
     />
     <SendFinishModal
       v-if="sendFinishModal"
@@ -25,6 +25,7 @@
       :symbol="symbol"
       @close="handleSent"
     />
+    <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <Header button="back" title="Send" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
@@ -116,12 +117,14 @@ import { timedAsync } from 'timed-async/index.js';
 import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import { Tx } from '@herajs/client';
+import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 
 export default Vue.extend({
   components: {
     ScrollView,
     SendOptionsModal,
     ConfirmationModal,
+    PasswordModal,
     Header,
     Identicon,
     Icon,
@@ -153,6 +156,7 @@ export default Vue.extend({
       optionsModal: false,
       confirmationModal: false,
       sendFinishModal: false,
+      passwordModal: false,
 
       txBody: {
         from: this.$store.state.accounts.address,
@@ -270,6 +274,12 @@ export default Vue.extend({
 
     handleCancel() {
       this.confirmationModal = false;
+      this.passwordModal = false;
+    },
+
+    handlePassword() {
+      this.confirmationModal = false;
+      this.passwordModal = true;
     },
 
     setStatus(state, text) {
@@ -279,20 +289,20 @@ export default Vue.extend({
     },
 
     async handleConfirm() {
-      this.confirmationModal = false;
+      console.log('Sending ..', this.txBody);
+      this.passwordModal = false;
 
       if (!this.txBody.from) {
       //  This shouldn't happen normally
           throw new Error('Could not load account, please reload page and try again.');
       } ;
 
+/*
       // HW Ledger 사용 시에 ...
       if (this.account.data.type === 'ledger') {
             this.txBody = await this.signWithLedger(this.txBody);
       }
-
-      console.log('txBody', this.txBody);
-
+*/
       // send
       try {
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });

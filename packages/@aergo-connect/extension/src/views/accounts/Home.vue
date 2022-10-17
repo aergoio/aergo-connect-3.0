@@ -11,6 +11,7 @@
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
+    <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
 
     <div v-if="!noAccountModal" class="home_content">
       <List
@@ -19,6 +20,7 @@
         @removeModalClick="handleRemoveModalClick"
         @select="handleSelect"
         @listModalOff="hamburgerClick"
+        @securityClick="handleSecurity"
       />
       <div class="account_info_wrapper">
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
@@ -150,6 +152,7 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
+import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import { AccountSpec } from '@herajs/wallet/dist/types/models/account';
 import { Account } from '@herajs/wallet';
 import { Amount } from '@herajs/common';
@@ -160,6 +163,7 @@ export default Vue.extend({
     RemoveAccountModal,
     NoAccountModal,
     NetworkModal,
+    PasswordModal,
     Icon,
     Heading,
     Identicon,
@@ -175,6 +179,7 @@ export default Vue.extend({
       hamburgerModal: false,
       removeAccountModal: false,
       networkModal: false,
+      passwordModal: false,
       importAssetModal: false,
       noAccountModal: false,
       network: 'aergo.io',
@@ -254,6 +259,17 @@ export default Vue.extend({
       if (modalEvent === 'removeAccountModal') {
         this.removeAccountModal = false;
       }
+
+      if (modalEvent === 'passwordModal') {
+        this.passwordModal = false;
+        this.hamburgerModal = false;
+      }
+    },
+
+    handleConfirm() {
+      this.passwordModal = false;
+      this.hamburgerModal = false;
+      this.$router .push({ name: 'security-2', }) .catch(() => {});
     },
 
     handleRemoveModalClick() {
@@ -273,6 +289,11 @@ export default Vue.extend({
       console.log('handleDetailAddress');
     },
 
+    handleSecurity() {
+      this.hamburgerModal = false;
+      this.passwordModal = true;
+    },
+      
     handleToken(token: any) {
       this.$store.commit('session/setToken', token);
       this.$router

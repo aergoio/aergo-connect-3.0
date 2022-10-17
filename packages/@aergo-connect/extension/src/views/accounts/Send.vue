@@ -50,8 +50,8 @@
         </div>
       </div>
       <div class="token_content_wrapper">
-        <Identicon v-if="!icon" :text="asset" class="token_icon" />
-        <Icon v-else-if="asset == 'AERGO'" class="token_icon" :name="icon" />
+        <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
+        <Identicon v-else-if="!icon" :text="asset" class="token_icon" />
         <img v-else class="token_icon" :src="icon" />
 
         <div class="token_amount">{{ balance }}</div>
@@ -61,7 +61,6 @@
         <div class="flex-row">
           <div class="title">Asset</div>
           <select class="select_box" v-model="asset">
-            <option value="AERGO">AERGO</option>
             <option v-for="token in $store.state.session.tokens" :value="token.hash">
               {{ token.meta.name }}
             </option>
@@ -131,6 +130,7 @@ export default Vue.extend({
     Tx,
     SendFinishModal,
   },
+
   data() {
     return {
       optionsModal: false,
@@ -138,7 +138,7 @@ export default Vue.extend({
       sendFinishModal: false,
       asset: 'AERGO',
       icon: 'aergo',
-      balance: this.$store.state.session.aergoBalance,
+      balance: this.$store.state.session.tokens['AERGO'].balance,
       tokenType: 'AERGO',
       symbol: 'aergo',
       inputAmount: '0',
@@ -157,11 +157,11 @@ export default Vue.extend({
       },
 
       // for tx
-      dialogState: '',
-      statusText: '',
-      statusDialogVisible: false,
-      statusDialogTitle: 'Sending',
       account: {},
+      statusDialogVisible: false,
+      dialogState: 'loading',
+      statusDialogTitle: 'Sending',
+      statusText : '',
     };
   },
 
@@ -172,20 +172,12 @@ export default Vue.extend({
 
   watch: {
     asset: function () {
-      if (this.asset == 'AERGO') {
-        // default AERGO
-        this.balance = this.$store.state.session.aergoBalance;
-        this.tokenType = 'AERGO';
-        this.icon = 'aergo';
-        this.symbol = 'aergo';
-      } else {
-        this.balance = this.$store.state.session.tokens[this.asset]['balance'];
-        this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
-        this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
-        this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
-        this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
-        if (this.tokenType === 'ARC2') this.getNftInventory();
-      }
+      this.balance = this.$store.state.session.tokens[this.asset]['balance'];
+      this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
+      this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
+      this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
+      this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
+      if (this.tokenType === 'ARC2') this.getNftInventory();
     },
   },
 

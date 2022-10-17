@@ -41,16 +41,30 @@ const storeModule: Module<AccountsState, RootState> = {
 
   actions: {
 
-/*
-    async fetchAccounts({ commit }) {
-      const vue = getVueInstance(this);
-      const accounts = await vue.$background.getAccounts();
-      commit('setAccounts', accounts);
-    },
+    async tokens({ state, commit }) {
 
-*/
-    async tokens({ state }) {
-      return state.accounts[state.address]['token'][state.network];
+      console.log("get tokens", state.accounts[state.address]['token'][state.network]) ;
+
+      if (!state.accounts[state.address]['token'][state.network]) {
+
+        const init_tokens = {} ;
+        init_tokens['AERGO'] = {
+           'hash': 'AERGO',
+           'meta' : {
+               'name'   : 'AERGO',
+               'symbol' : 'aergo',
+               'image'  : '',
+               'type'   : 'AERGO',
+               'decimals' : 0,
+            }
+        } ;
+        
+        commit('setTokens', init_tokens);
+        return state.accounts[state.address]['token'][state.network];
+
+      } else {
+        return state.accounts[state.address]['token'][state.network];
+      }
     },
 
     async updateAccount({ commit }, { address, chainId }: AccountSpec) {
@@ -94,10 +108,10 @@ const storeModule: Module<AccountsState, RootState> = {
       if (!tokens) {
         tokens = {};
       }
+
       tokens[token.hash] = token;
       commit('setTokens', tokens);
-
-      state.dispatch('session/initState') ;
+//      state.dispatch('session/initState') ;
 
       console.log('Add tokens', tokens);
     },
@@ -144,7 +158,6 @@ const storeModule: Module<AccountsState, RootState> = {
       state.accounts[address] = {
         address: address,
         nick: address.substr(0, 5) + '_nick',
-        wallet: account,
         token: {},
       };
       console.log('addAccount', state.accounts[address]['nick']);

@@ -68,29 +68,17 @@
           >
         </ButtonGroup>
         <ul class="token_list_ul" v-if="tab === `tokens`">
-          <li class="token_list_li" @click="handleAergo">
-            <div class="token_list_wrapper">
-              <div class="token_list_row">
-                <Icon :name="`aergo`" class="token_list_icon" />
-                <span class="token_list_text">AERGO</span>
-              </div>
-              <div class="token_list_amount">
-                <span class="token_list_balance"> {{ $store.state.session.aergoBalance }} </span>
-                <span> aergo </span>
-                <Icon class="token_list_nextbutton" :name="`next_grey`" />
-              </div>
-            </div>
-            <div class="line" />
-          </li>
           <li
             v-for="token in $store.state.session.tokens"
             class="token_list_li"
             :key="token.hash"
             @click="handleToken(token)"
           >
-            <div v-if="token.meta.type === 'ARC1'" class="token_list_wrapper">
+            <div v-if="token.meta.type !== 'ARC2'" class="token_list_wrapper"> 
               <div class="token_list_row">
-                <img class="token_list_icon" :src="token.meta.image" alt="404" />
+                <Icon v-if="token.meta.type === 'AERGO'" class="token_list_icon" :name="`aergo`"/>
+                <img v-else-if="token.meta.image" class="token_list_icon" :src="token.meta.image" alt="404" />
+                <Identicon v-else class="token_list_icon" :text="token.hash"/>
                 <span class="token_list_text"> {{ token.meta.name }} </span>
               </div>
               <div class="token_list_amount">
@@ -111,7 +99,8 @@
             @click="handleNft(token)"
           >
             <div v-if="token.meta.type === 'ARC2'" class="token_list_wrapper">
-              <img class="token_list_icon" :src="token.meta.image" alt="404" />
+              <img v-if="token.meta.image" class="token_list_icon" :src="token.meta.image" alt="404" />
+              <Identicon v-else class="token_list_icon" :text="token.hash"/>
               <span class="token_list_text"> {{ token.meta.name }} </span>
               <div class="token_list_amount">
                 <span class="token_list_balance">{{ token.balance }}</span>
@@ -190,6 +179,7 @@ export default Vue.extend({
       noAccountModal: false,
       network: 'aergo.io',
       tab: 'tokens',
+      tokens: [],
     };
   },
 
@@ -214,19 +204,15 @@ export default Vue.extend({
   },
 
   methods: {
-    getB(bal) {
-       console.log("balance", bal) ;
-       return bal ;
-    },
+
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
       console.log('IdleTime', this.$store.state.ui.idleTimeout);
-//      console.log("ActiveAccount", this.$background.getActiveAccount());
 
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
-        this.$forceUpdate();
-        console.log('aergoBalance', this.$store.state.session.aergoBalance);
+        await this.$forceUpdate();
+
       } else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');
@@ -239,9 +225,10 @@ export default Vue.extend({
     },
 
     async refreshClick() {
-      console.log('regresh');
       await this.$store.dispatch('session/updateBalances');
       this.$forceUpdate();
+
+      console.log('regresh', this.$store.state.session.tokens);
     },
 
     /*
@@ -287,21 +274,12 @@ export default Vue.extend({
       console.log('handleDetailAddress');
     },
 
-    handleAergo() {
-      this.$router
-        .push({
-          name: 'token-detail',
-          params: { address: this.$store.state.accounts.address, option: 'aergo' },
-        })
-        .catch(() => {});
-    },
-
     handleToken(token: any) {
       this.$store.commit('session/setToken', token);
       this.$router
         .push({
           name: 'token-detail',
-          params: { address: this.$store.state.accounts.address, option: 'tokens' },
+          params: { address: this.$store.state.accounts.address },
         })
         .catch(() => {});
     },

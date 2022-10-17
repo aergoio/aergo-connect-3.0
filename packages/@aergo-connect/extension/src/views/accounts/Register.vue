@@ -23,7 +23,7 @@
               type="primary"
               disabled
               size="large"
-              :to="{ name: 'accounts', params: { next: 'account-import' } }"
+              :to="{ name: 'account-connect-hw-accounts', params: { next: 'account-import' } }"
             >
               Connect Ledger
             </Button>

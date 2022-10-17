@@ -3,7 +3,7 @@
     <template #header>
       <div class="content">
         <section class="dialog-header">
-          <BackButton :to="{ name: 'account-connect-hw' }" />
+          <BackButton :to="{ name: 'account-list' }" />
         </section>
         <Heading animated>Select Account</Heading>
         <p style="margin-bottom: 0">

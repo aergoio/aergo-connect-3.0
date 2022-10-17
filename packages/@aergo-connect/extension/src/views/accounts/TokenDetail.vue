@@ -39,7 +39,7 @@
         <div class="flex-row">
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
-            <div class="balance">{{ $store.state.session.aergoBalance || '2,000,000.000' }}</div>
+            <div class="balance">{{ $store.state.session.tokens['AERGO'].balance || '2,000,000.000' }}</div>
             <div class="dollor">$</div>
           </div>
           <div class="token_symbol">{{ symbol }}</div>
@@ -174,7 +174,6 @@ export default Vue.extend({
   watch: {
     filter: function () {
       this.getTokenHistory();
-      // this.$forceUpdate();
       console.log('filter', this.filter);
     },
   },
@@ -191,12 +190,7 @@ export default Vue.extend({
   },
 
   async beforeMount() {
-    if (this.$route.params.option === 'aergo') {
-      this.symbol = 'aergo' ;
-      await this.aergoStaking() ;
-    }
-    else this.symbol = await this.$store.state.session.token.meta.symbol ;
-
+    this.symbol = await this.$store.state.session.token.meta.symbol ;
     console.log("SYMBOL", this.symbol) ;
     await this.getTokenHistory();
   },
@@ -214,17 +208,15 @@ export default Vue.extend({
       if (!staking) this.staking = '0';
       else this.staking = staking.amount ; 
 
-//      else return new Amount(staking.amount).formatNumber('aergo');
+//    else return new Amount(staking.amount).formatNumber('aergo');
     },
 
     getBalance(value: number) {
-      if (this.symbol === 'aergo') return value;
-      else return value / Math.pow(10, this.$store.state.session.token.meta.decimals);
+      return value / Math.pow(10, this.$store.state.session.token.meta.decimals);
     },
 
     getTitle() {
-      if (this.symbol === 'aergo') return 'AERGO';
-      else return this.$store.state.session.token.meta.name;
+      return this.$store.state.session.token.meta.name;
     },
 
     refreshClick() {

@@ -14,8 +14,8 @@
         <Icon :name="`edit`" @click="handleEdit" />
       </div>
       <div class="user_nickname_wrapper">
-        <div class="user_nickname_text">{{ nick }}</div>
-        <!-- <input class="user_nickname_text" v-model="nick" autofocus /> -->
+        <div v-if="!editNick" class="user_nickname_text">{{ nick }}</div>
+        <input v-else class="user_nickname_text" v-model="nick" autofocus />
       </div>
 
       <ButtonGroup vertical class="buttonGroup_position">
@@ -49,6 +49,8 @@ export default class Create extends mixins() {
   address = '';
   nick = '';
   key = '';
+  editNick = false ;
+
   async beforeMount() {
     this.address = await this.$store.state.accounts.address;
     this.nick = await this.$store.state.accounts.nick;
@@ -74,6 +76,8 @@ export default class Create extends mixins() {
     });
   }
   handleEdit() {
+    this.editNick = true ;
+    this.$forceUpdate() ;
     console.log('edit nick');
   }
 }

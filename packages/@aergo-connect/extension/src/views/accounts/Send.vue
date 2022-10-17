@@ -133,18 +133,26 @@ export default Vue.extend({
 
   data() {
     return {
-      optionsModal: false,
-      confirmationModal: false,
-      sendFinishModal: false,
+      asset: '',
+      icon: '',
+      balance: 0,
+      tokenType: '',
+      symbol: '',
+/*
       asset: 'AERGO',
       icon: 'aergo',
       balance: this.$store.state.session.tokens['AERGO'].balance,
       tokenType: 'AERGO',
       symbol: 'aergo',
+*/
       inputAmount: '0',
+
       inputTo: 'AmNBes1nksbz8VhbF6DiXfEqL1dx1YRHFpxZwZABQLqkctmCTFZU',
       txType: 'TRANSFER',
       nftInventory: [],
+      optionsModal: false,
+      confirmationModal: false,
+      sendFinishModal: false,
 
       txBody: {
         from: this.$store.state.accounts.address,
@@ -168,6 +176,9 @@ export default Vue.extend({
   async beforeMount() {
     this.account = await this.$background.getActiveAccount() ;
     console.log("Account Info", this.account) ;
+
+    if (this.$store.state.session.token) this.asset = this.$store.state.session.token.hash ;
+    else this.asset = 'AERGO' ;
   },
 
   watch: {

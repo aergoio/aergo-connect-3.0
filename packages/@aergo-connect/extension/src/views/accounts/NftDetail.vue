@@ -231,9 +231,25 @@ export default Vue.extend({
     },
 
     handleSend() {
+      this.$router
+        .push({
+          name: 'send',
+          params: {
+            address: this.$store.state.accounts.address,
+          },
+        })
+        .catch(() => {});
       console.log('send');
     },
     handleReceive() {
+      this.$router
+        .push({
+          name: 'receive',
+          params: {
+            address: this.$store.state.accounts.address,
+          },
+        })
+        .catch(() => {});
       console.log('receive');
     },
     handleChangeState(state: string) {

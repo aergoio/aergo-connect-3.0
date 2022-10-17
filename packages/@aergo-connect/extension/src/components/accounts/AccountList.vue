@@ -215,7 +215,7 @@ export default Vue.extend({
 .nav-account-list {
   max-height: 160px;
   /* overflow-y: scroll; Hide scrollbars */
-  overflow: hidden;
+  overflow: scroll;
 }
 </style>
 

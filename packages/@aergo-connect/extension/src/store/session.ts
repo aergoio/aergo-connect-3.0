@@ -26,9 +26,12 @@ const storeModule: Module<SessionState, RootState> = {
   },
 
   actions: {
+
+/*
     aergoBalance({ state }) {
       return state.aergoBalance;
     },
+*/
 
     tokenBalance({ state }, address: string) {
       return state.tokens[address]['balance'];
@@ -89,9 +92,11 @@ const storeModule: Module<SessionState, RootState> = {
 
   mutations: {
 
+/*
     setAergoBalance(state, val: number) {
       state.aergoBalance = val;
     },
+*/
 
     setTokenBalance(state, balances: any) {
 
@@ -126,9 +131,11 @@ const storeModule: Module<SessionState, RootState> = {
           }
         });
     },
+
     setToken(state, token: any) {
       state.token = token;
     },
+
   },
 };
 

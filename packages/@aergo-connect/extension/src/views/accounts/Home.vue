@@ -179,7 +179,6 @@ export default Vue.extend({
       noAccountModal: false,
       network: 'aergo.io',
       tab: 'tokens',
-      tokens: [],
     };
   },
 

@@ -103,8 +103,7 @@ export default class Setup extends mixins() {
     }
   }
 
-  async mounted(): Promise<void> {
-  }
+  async mounted(): Promise<void> {}
 
   async setup() {
     const check = await this.$background.setup({

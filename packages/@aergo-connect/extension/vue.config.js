@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
 const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     'popup-request': 'src/main.ts',
     background: 'src/background/main.js',
   },
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     config.module.rules.delete('eslint');
     if (process.env.npm_lifecycle_event === 'build-dev') {
       config.plugin('extension-reloader').use(ChromeExtensionReloader, [
@@ -48,15 +48,12 @@ module.exports = {
       .rule('images')
       .use('url-loader')
       .loader('url-loader')
-      .tap(options => Object.assign(options, { limit: 1 }));
+      .tap((options) => Object.assign(options, { limit: 1 }));
 
     // Add content-script entry
-    config
-      .entry('content-script')
-      .add('./src/content-script.js')
-      .end();
+    config.entry('content-script').add('./src/content-script.js').end();
 
-    config.optimization.minimizer('terser').tap(args => {
+    config.optimization.minimizer('terser').tap((args) => {
       const { terserOptions } = args[0];
       terserOptions.output = { ...terserOptions.output, ascii_only: true };
       return args;

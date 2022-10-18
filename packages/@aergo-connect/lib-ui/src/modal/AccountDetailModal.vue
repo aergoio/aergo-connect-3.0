@@ -3,15 +3,15 @@
     <div class="account_detail_wrapper">
       <div class="title">Account Address</div>
       <div class="flex-row">
-        <Identicon text="AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW" />
-        <div>ACCOUNT 1</div>
+        <Identicon :text="$store.state.accounts.address" />
+        <div>{{ $store.state.accounts.nick }}</div>
       </div>
       <VueQRCodeComponent
-        :text="`AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW`"
+        :text="$store.state.accounts.address"
         :size="100"
       ></VueQRCodeComponent>
       <div class="address_wrapper">
-        <div class="address">AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW</div>
+        <div class="address">{{ $store.state.accounts.address }}</div>
       </div>
       <Button type="primary" @click="handleOK">OK</Button>
     </div>
@@ -28,7 +28,7 @@ export default Vue.extend({
   methods: {
     handleOK() {
       console.log('ok');
-      this.$emit('click');
+      this.$emit('cancel','accountDetailModal');
     },
   },
 });

@@ -12,7 +12,7 @@
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
-    <AccountDetailModal v-if="accountDetailModal" />
+    <AccountDetailModal v-if="accountDetailModal" @cancel="handleCancel" />
     <div v-if="!noAccountModal" class="home_content">
       <List
         v-if="hamburgerModal"
@@ -26,7 +26,7 @@
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
-            <input v-model="nick" :disabled="!editNick" class="account_info_nickname_text" @blur="changeNick" />
+            <input v-model="nick" :disabled="!editNick" class="account_info_nickname_text" @blur="changeNick" @keyup.enter="changeNick" />
             <Icon
               class="account_info_nickname_button"
               :name="`edit`"
@@ -287,6 +287,10 @@ export default Vue.extend({
       if (modalEvent === 'passwordModal') {
         this.passwordModal = false;
         this.hamburgerModal = false;
+      }
+
+      if (modalEvent === 'accountDetailModal') {
+        this.accountDetailModal = false;
       }
     },
 

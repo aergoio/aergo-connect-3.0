@@ -2,7 +2,7 @@
   <div class="password_backdrop">
     <div class="password_modal_wrapper">
       <Icon :name="`password`" />
-      <div class="password_title">Type the password.</div>
+      <div class="password_title">Confirm your password.</div>
       <PasswordStrengthField
         class="password_textField"
         v-model="password"
@@ -11,8 +11,8 @@
         @submit="handlePassword"
       />
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="primary-outline" size="large" @click="handlePassword">Confirm</ButtonVue>
-        <ButtonVue type="primary-outline" size="large" @click="handleCancel">Cancel</ButtonVue>
+        <ButtonVue type="primary-outline" size="medium" @click="handlePassword">Confirm</ButtonVue>
+        <ButtonVue type="primary-outline" size="medium" @click="handleCancel">Cancel</ButtonVue>
       </ButtonGroup>
     </div>
   </div>
@@ -94,13 +94,13 @@ export default Vue.extend({
       height: 28.36px;
     }
     .password_title {
-      width: 255px;
+      width: 275px;
       /* Headline/H2 */
 
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 600;
-      font-size: 24px;
+      font-size: 20px;
       line-height: 30px;
       text-align: center;
       letter-spacing: -0.333333px;
@@ -115,12 +115,12 @@ export default Vue.extend({
       width: 213px;
       height: 48px;
       .input-field {
-        width: 213px;
+        width: 274px;
       }
     }
 
     .password_text {
-      width: 259px;
+      width: 274px;
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 400;
@@ -141,7 +141,7 @@ export default Vue.extend({
     .button_wrapper {
       margin-top: 53px;
       .button {
-        width: 289px;
+        width: 280px;
       }
       .button:hover {
         background: #279ecc;

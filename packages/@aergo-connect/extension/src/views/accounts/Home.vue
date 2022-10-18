@@ -26,7 +26,7 @@
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
-            <span class="account_info_nickname_text">{{ $store.state.accounts.nick }}</span>
+            <input v-model="nick" :disabled="!editNick" class="account_info_nickname_text" @blur="changeNick" />
             <Icon
               class="account_info_nickname_button"
               :name="`edit`"
@@ -182,8 +182,10 @@ export default Vue.extend({
       passwordModal: false,
       importAssetModal: false,
       noAccountModal: false,
-      network: 'aergo.io',
+//      network: 'aergo.io',
       tab: 'tokens',
+      editNick: false,
+      nick: this.$store.state.accounts.nick,
     };
   },
 
@@ -209,13 +211,18 @@ export default Vue.extend({
 
   methods: {
 
+    async changeNick() {
+      this.$store.commit('accounts/setNick',this.nick) ;
+      this.editNick = false ;
+    },
+
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
       console.log('IdleTime', this.$store.state.ui.idleTimeout);
 
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
-        await this.$forceUpdate();
+        this.nick = await this.$store.state.accounts.nick ;
 
       } else {
         console.log('Other Account Loading ..');
@@ -353,6 +360,11 @@ export default Vue.extend({
     handleChangeTab(value: string) {
       this.tab = value;
     },
+    handleEdit() {
+      this.editNick = true ;
+      this.$forceUpdate() ;
+      console.log('edit nick');
+    }
   },
 });
 </script>
@@ -407,9 +419,9 @@ export default Vue.extend({
         font-size: 18px;
         line-height: 24px;
         margin-bottom: 8px;
-        margin-left: 30px;
+        margin-left: 25px;
         .account_info_nickname_text {
-          margin-right: 65px;
+          margin-right: 5px;
         }
         .account_info_nickname_button {
           cursor: pointer;

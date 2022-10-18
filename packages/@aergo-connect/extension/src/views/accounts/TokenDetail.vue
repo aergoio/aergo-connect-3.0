@@ -39,7 +39,9 @@
         <div class="flex-row">
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
-            <div class="balance">{{ $store.state.session.tokens['AERGO'].balance || '2,000,000.000' }}</div>
+            <div class="balance">
+              {{ $store.state.session.tokens['AERGO'].balance || '2,000,000.000' }}
+            </div>
             <div class="dollor">$</div>
           </div>
           <div class="token_symbol">{{ symbol }}</div>
@@ -190,25 +192,24 @@ export default Vue.extend({
   },
 
   async beforeMount() {
-    this.symbol = await this.$store.state.session.token.meta.symbol ;
-    console.log("SYMBOL", this.symbol) ;
+    this.symbol = await this.$store.state.session.token.meta.symbol;
+    console.log('SYMBOL', this.symbol);
     await this.getTokenHistory();
   },
 
   methods: {
-
     async aergoStaking(): Promise<void> {
       const staking = await this.$background.getStaking({
         chainId: this.$store.state.accounts.network,
         address: this.$store.state.accounts.address,
       });
 
-      console.log("staking", staking) ;
+      console.log('staking', staking);
 
       if (!staking) this.staking = '0';
-      else this.staking = staking.amount ; 
+      else this.staking = staking.amount;
 
-//    else return new Amount(staking.amount).formatNumber('aergo');
+      //    else return new Amount(staking.amount).formatNumber('aergo');
     },
 
     getBalance(value: number) {
@@ -591,7 +592,7 @@ export default Vue.extend({
         overflow: hidden;
       }
       &.others {
-        height: 17rem;
+        height: 16rem;
       }
       .history_nothing {
         height: 100%;

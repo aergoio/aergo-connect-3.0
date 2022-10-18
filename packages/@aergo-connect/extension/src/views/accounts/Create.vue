@@ -14,8 +14,7 @@
         <Icon :name="`edit`" @click="handleEdit" />
       </div>
       <div class="user_nickname_wrapper">
-        <div v-if="!editNick" class="user_nickname_text">{{ nick }}</div>
-        <input v-else class="user_nickname_text" v-model="nick" autofocus />
+        <input :disabled="!editNick" class="user_nickname_text" v-model="nick" @blur="changeNick" />
       </div>
 
       <ButtonGroup vertical class="buttonGroup_position">
@@ -65,6 +64,17 @@ export default class Create extends mixins() {
       },
     });
   }
+
+  handleEdit() {
+    this.editNick = true ;
+    console.log('edit nick');
+  }
+
+  async changeNick() {
+      this.$store.commit('accounts/setNick',this.nick) ;
+      this.editNick = false ;
+  }
+
   async goHome() {
     console.log('created', this.$store.state.accounts.nick);
     this.$store.commit('accounts/setNick', this.nick);

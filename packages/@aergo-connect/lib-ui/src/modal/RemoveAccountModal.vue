@@ -8,13 +8,15 @@
         not need this account anymore.
       </div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover @click="handleGoNext" @cancel="handleCancel">Confirm</ButtonVue>
+        <ButtonVue type="secondary" size="medium" hover @click="handleGoNext" @cancel="handleCancel"
+          >Confirm</ButtonVue
+        >
         <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
           >Cancel</ButtonVue
         >
       </ButtonGroup>
     </div>
-    <RemoveAccountStep2Modal v-if="isNext" @cancel="handleCancel"/>
+    <!-- <RemoveAccountStep2Modal v-if="isNext" @cancel="handleCancel" /> -->
   </div>
 </template>
 
@@ -23,9 +25,9 @@ import Vue from 'vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import ButtonVue from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import RemoveAccountStep2Modal from './RemoveAccountStep2Modal.vue';
+
 export default Vue.extend({
-  components: { Icon, ButtonGroup, ButtonVue, RemoveAccountStep2Modal },
+  components: { Icon, ButtonGroup, ButtonVue },
   data() {
     return {
       isNext: false,

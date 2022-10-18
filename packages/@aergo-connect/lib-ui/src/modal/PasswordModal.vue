@@ -1,26 +1,18 @@
 <template>
-  <div className="removeAccount_backdrop">
-    <div class="removeAccount_modal_wrapper">
-      <Icon :name="`warning2`" />
-      <div class="removeAccount_title">Type the password.</div>
+  <div class="password_backdrop">
+    <div class="password_modal_wrapper">
+      <Icon :name="`password`" />
+      <div class="password_title">Type the password.</div>
       <PasswordStrengthField
-          class="removeAccount_textField"
-          v-model="password"
-          :error="errors.password"
-          :state="errors.password ? `invalid` : `default`"
-          @submit="handlePassword"
+        class="password_textField"
+        v-model="password"
+        :error="errors.password"
+        :state="errors.password ? `invalid` : `default`"
+        @submit="handlePassword"
       />
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue
-          type="secondary"
-          size="medium"
-          hover
-          @click="handlePassword" 
-          >Confirm</ButtonVue
-        >
-        <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
-          >Cancel</ButtonVue
-        >
+        <ButtonVue type="primary-outline" size="large" @click="handlePassword">Confirm</ButtonVue>
+        <ButtonVue type="primary-outline" size="large" @click="handleCancel">Cancel</ButtonVue>
       </ButtonGroup>
     </div>
   </div>
@@ -37,13 +29,13 @@ export default Vue.extend({
   components: { Icon, ButtonGroup, ButtonVue, TextField, PasswordStrengthField },
   data() {
     return {
-    password : '',
-      errors : {
+      password: '',
+      errors: {
         password: '',
       },
     };
   },
-/*
+  /*
   computed: {
     async disabled() {
       try {
@@ -75,15 +67,15 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-.removeAccount_backdrop {
+.password_backdrop {
   position: absolute;
   width: 375px;
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1;
-  .removeAccount_modal_wrapper {
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 2;
+  .password_modal_wrapper {
     width: 317px;
     height: 400px;
     position: absolute;
@@ -101,28 +93,33 @@ export default Vue.extend({
       width: 31px;
       height: 28.36px;
     }
-    .removeAccount_title {
+    .password_title {
       width: 255px;
+      /* Headline/H2 */
+
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 600;
-      font-size: 20px;
-      line-height: 25px;
+      font-size: 24px;
+      line-height: 30px;
       text-align: center;
       letter-spacing: -0.333333px;
 
-      /* Primary/Pink01 */
+      /* Grey/08 */
 
-      color: #e4097d;
+      color: #231f20;
     }
 
-    .removeAccount_textField {
+    .password_textField {
       margin-top: 20px;
       width: 213px;
       height: 48px;
+      .input-field {
+        width: 213px;
+      }
     }
 
-    .removeAccount_text {
+    .password_text {
       width: 259px;
       font-family: 'Outfit';
       font-style: normal;
@@ -143,6 +140,13 @@ export default Vue.extend({
 
     .button_wrapper {
       margin-top: 53px;
+      .button {
+        width: 289px;
+      }
+      .button:hover {
+        background: #279ecc;
+        color: #ffffff;
+      }
     }
   }
 }

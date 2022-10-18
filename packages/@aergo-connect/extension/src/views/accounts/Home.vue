@@ -216,6 +216,11 @@ export default Vue.extend({
       this.editNick = false ;
     },
 
+    handleEdit() {
+      this.editNick = true ;
+      console.log('edit nick');
+    },
+
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
       console.log('IdleTime', this.$store.state.ui.idleTimeout);
@@ -360,11 +365,6 @@ export default Vue.extend({
     handleChangeTab(value: string) {
       this.tab = value;
     },
-    handleEdit() {
-      this.editNick = true ;
-      this.$forceUpdate() ;
-      console.log('edit nick');
-    }
   },
 });
 </script>

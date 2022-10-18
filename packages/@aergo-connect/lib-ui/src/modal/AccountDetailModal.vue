@@ -8,7 +8,7 @@
       </div>
       <VueQRCodeComponent
         :text="$store.state.accounts.address"
-        :size="100"
+        :size="123"
       ></VueQRCodeComponent>
       <div class="address_wrapper">
         <div class="address">{{ $store.state.accounts.address }}</div>
@@ -76,8 +76,8 @@ export default Vue.extend({
       align-items: center;
     }
     .address_wrapper {
-      margin-top: 22px;
-      margin-bottom: 32px;
+      margin-top: 20px;
+      margin-bottom: 25px;
       width: 251px;
       height: 60px;
       /* Primary/Blue02 */

@@ -55,8 +55,9 @@
 
       <div class="nft_detail_background">
         <ul v-if="tabState === 'inventory'" class="nft_info_wrapper">
-          <li v-for="item in data" class="nft_info_list">
+          <li v-for="item in data" class="nft_info_list" :key="item.meta.token_id">
             <!--            <Identicon :text="item.meta.token_id"> -->
+            <img :src="item.meta.ts.image" alt="404" />
             <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
             <div>{{ item.meta.token_id }}</div>
           </li>
@@ -199,7 +200,7 @@ export default Vue.extend({
       );
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100`,
       );
       const response = await resp.json();
       if (response.error) this.data = [];
@@ -230,9 +231,25 @@ export default Vue.extend({
     },
 
     handleSend() {
+      this.$router
+        .push({
+          name: 'send',
+          params: {
+            address: this.$store.state.accounts.address,
+          },
+        })
+        .catch(() => {});
       console.log('send');
     },
     handleReceive() {
+      this.$router
+        .push({
+          name: 'receive',
+          params: {
+            address: this.$store.state.accounts.address,
+          },
+        })
+        .catch(() => {});
       console.log('receive');
     },
     handleChangeState(state: string) {
@@ -353,7 +370,7 @@ export default Vue.extend({
         align-items: center;
         margin-left: 24px;
 
-        width: 120px;
+        width: 110px;
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
@@ -377,7 +394,7 @@ export default Vue.extend({
       }
       .account_button {
         cursor: pointer;
-        margin-left: 40px;
+        margin-left: 50px;
       }
     }
   }
@@ -544,6 +561,17 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     align-items: center;
+    .footer {
+      position: absolute;
+      bottom: 0;
+      margin-bottom: 15px;
+      .button.button-type-font-gradation {
+        border: none;
+      }
+      &.aergo {
+        top: 40px;
+      }
+    }
     .select {
       position: fixed;
       top: 20%;
@@ -584,21 +612,18 @@ export default Vue.extend({
     .nft_detail_wrapper {
       overflow-y: scroll;
       width: 350px;
-      height: 285px;
-      margin-left: 14px;
-      margin-top: 55px;
+      height: 21rem;
+      margin-top: 15px;
       flex-direction: column;
       display: flex;
       align-items: center;
+      justify-content: center;
       &.noscroll {
         overflow-y: hidden;
       }
     }
 
     .nft_detail_list_nothing_wrapper {
-      position: fixed;
-      top: 34%;
-      left: 43%;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -737,8 +762,9 @@ export default Vue.extend({
       }
     }
     .footer {
-      position: fixed;
-      bottom: 360px;
+      position: absolute;
+      bottom: 0px;
+      margin-bottom: 35px;
       &.aergo {
         top: 40px;
       }

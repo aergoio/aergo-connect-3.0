@@ -139,7 +139,7 @@ export default Vue.extend({
       },
       value: '',
       check: false,
-      token: [],
+      token: {},
     };
   },
   watch: {
@@ -194,8 +194,7 @@ export default Vue.extend({
     async select(token) {
       console.log('Selected', token.meta);
 
-      this.token = Object.values(token);
-
+      this.token = token ;
       this.$store.dispatch('accounts/addToken', token);
       this.$store.dispatch('session/initState');
 

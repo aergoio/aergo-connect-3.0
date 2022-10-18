@@ -96,7 +96,7 @@ export default class Lockscreen extends mixins() {
       this.$router.push(nextPath).catch(() => {});
     } catch (e) {
       // this.errors.password = `${e}`;
-      this.errors.password = `Please check the seed phrase again.`;
+      this.errors.password = `Please check the password again.`;
     }
   }
 }

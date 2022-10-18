@@ -92,12 +92,10 @@ export default Vue.extend({
   },
   props: {
     accounts: {
-      type: Array,
-      default: [] as any[],
+      type: Object,
     },
     account: {
       type: Object,
-      default: { address: '', nick: '', token: '' } as any,
     },
     groupByChain: {
       type: Boolean,
@@ -217,7 +215,7 @@ export default Vue.extend({
 .nav-account-list {
   max-height: 160px;
   /* overflow-y: scroll; Hide scrollbars */
-  overflow: hidden;
+  overflow: scroll;
 }
 </style>
 

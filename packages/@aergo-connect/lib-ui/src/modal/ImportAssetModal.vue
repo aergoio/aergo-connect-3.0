@@ -3,9 +3,10 @@
     <div class="import_asset_wrapper">
       <div class="import_asset_header">Imported Asset Successfully!</div>
       <div class="import_asset_icon_wrapper">
-        <Icon class="import_asset_icon" :src="token[1].image || 'imgsrc'" alt="'noImg'" />
+        <img v-if="token.meta.image" class="import_asset_icon" :src="token.meta.image"/>
+        <Identicon v-else class="import_asset_icon" text="token.hash" />
         <div class="import_asset_title">
-          {{ `${token[1].name}` + ' ' + '(' + `${token[1].symbol}` + ')' }}
+          {{ `${token.meta.name}` + ' ' + '(' + `${token.meta.symbol}` + ')' }}
         </div>
       </div>
 
@@ -21,21 +22,21 @@
         <div class="token_type_detail_wrapper">
           <div>
             <div class="title">Type</div>
-            <div class="content">{{ token[1].type }}</div>
+            <div class="content">{{ token.meta.type }}</div>
           </div>
           <div>
             <div class="title">Symbol</div>
-            <div class="content">{{ token[1].symbol }}</div>
+            <div class="content">{{ token.meta.symbol }}</div>
           </div>
           <div>
             <div class="title">Decimal</div>
-            <div class="content">{{ token[1].decimals }}</div>
+            <div class="content">{{ token.meta.decimals }}</div>
           </div>
         </div>
 
         <div class="address_wrapper">
           <div class="address_title">Address</div>
-          <div class="address_content">{{ token[0] }}</div>
+          <div class="address_content">{{ token.hash }}</div>
         </div>
       </div>
 
@@ -48,8 +49,9 @@
 import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import Button from '../buttons/Button.vue';
+import Identicon from '../content/Identicon.vue';
 export default Vue.extend({
-  components: { Icon, Button },
+  components: { Icon, Button, Identicon },
   props: {
     token: {
       type: Object,

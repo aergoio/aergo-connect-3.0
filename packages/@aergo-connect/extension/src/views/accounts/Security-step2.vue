@@ -53,14 +53,14 @@ export default Vue.extend({
 
   methods: {
     handleIdleTimeout() {
-      console.log("SET_IDLE_TIME",this.idleTimeout) ;
       this.$store.commit('ui/setIdleTimeout', this.idleTimeout) ;
       console.log("SET_IDLE_TIME",this.$store.state.ui.idleTimeout) ;
     },
     handleBack() {
       this.$router
         .push({
-          name: 'security',
+          name: 'accounts-list',
+          params: { address: this.$store.state.accounts.address },
         })
         .catch(() => {});
     },

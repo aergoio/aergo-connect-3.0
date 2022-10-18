@@ -5,11 +5,17 @@
       <div class="security_header">Confirm your password</div>
       <div class="password_wrapper">
         <div class="password_title">Password</div>
-        <PasswordStrengthField />
+        <PasswordStrengthField 
+            class=""
+            v-model="password"
+            :error="errors.password"
+            :state="errors.password ? `invalid` : `default`"
+            @submit="handleGoStep2"
+        />
       </div>
     </div>
     <template #footer>
-      <Button type="primary" size="large" @click="handleGoStep2">Confirm</Button>
+      <Button type="primary" size="large" @click="handleGoStep2" @keyup.enter="unlock">Confirm</Button>
     </template>
   </ScrollView>
 </template>
@@ -27,6 +33,10 @@ export default Vue.extend({
   data() {
     return {
       hashedPassword: '',
+      password : '',
+      errors : {
+        password: '',
+      },
     };
   },
   computed: {
@@ -39,20 +49,20 @@ export default Vue.extend({
   },
   methods: {
     handleBack() {
-      this.$router
-        .push({
-          name: 'accounts-list',
-          params: { ...this.accountSpec, nick: this.$route.params.nick },
+      this.$router.push({
+          name: this.$route.params.back,
         })
         .catch(() => {});
     },
-    handleGoStep2() {
-      console.log(window.indexedDB);
-      this.$router
-        .push({
-          name: 'security-2',
-        })
-        .catch(() => {});
+    async handleGoStep2() {
+      try {
+        await this.$background.unlock({ password: this.password });
+        this.$router
+          .push({ name: this.$route.params.next, }) .catch(() => {});
+      } catch (e) {
+        // this.errors.password = `${e}`;
+        this.errors.password = `Please check the password again.`;
+      }
     },
   },
   async mounted() {

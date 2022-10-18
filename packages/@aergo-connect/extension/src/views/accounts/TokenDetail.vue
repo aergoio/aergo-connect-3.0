@@ -39,7 +39,7 @@
         <div class="flex-row">
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
-            <div class="balance">{{ $store.state.session.aergoBalance || '2,000,000.000' }}</div>
+            <div class="balance">{{ $store.state.session.tokens['AERGO'].balance || '2,000,000.000' }}</div>
             <div class="dollor">$</div>
           </div>
           <div class="token_symbol">{{ symbol }}</div>
@@ -47,7 +47,7 @@
         <div class="line" />
         <div class="detail_wrapper">
           <div class="detail_title">Staked Balance</div>
-          <div class="detail_content">{{ `${aergoStaking()} aergo` }}</div>
+          <div class="detail_content">{{ staking }}</div>
         </div>
         <div class="line detail" />
         <div class="detail_wrapper">
@@ -174,7 +174,6 @@ export default Vue.extend({
   watch: {
     filter: function () {
       this.getTokenHistory();
-      // this.$forceUpdate();
       console.log('filter', this.filter);
     },
   },
@@ -186,36 +185,38 @@ export default Vue.extend({
       data: [],
       filter: 'All',
       symbol: 'aergo',
+      staking: '0',
     };
   },
 
-  beforeMount() {
-    if (this.$route.params.option === 'aergo') this.symbol = 'aergo';
-    else this.symbol = this.$store.state.session.token.meta.symbol;
-
-    console.log('SYMBOL', this.symbol);
-    this.getTokenHistory();
+  async beforeMount() {
+    this.symbol = await this.$store.state.session.token.meta.symbol ;
+    console.log("SYMBOL", this.symbol) ;
+    await this.getTokenHistory();
   },
 
   methods: {
-    aergoStaking() {
-      return '0';
-      const staking = this.$background.getStaking({
+
+    async aergoStaking(): Promise<void> {
+      const staking = await this.$background.getStaking({
         chainId: this.$store.state.accounts.network,
         address: this.$store.state.accounts.address,
       });
-      if (!staking) return '';
-      else return new Amount(staking.amount).formatNumber('aergo');
+
+      console.log("staking", staking) ;
+
+      if (!staking) this.staking = '0';
+      else this.staking = staking.amount ; 
+
+//    else return new Amount(staking.amount).formatNumber('aergo');
     },
 
     getBalance(value: number) {
-      if (this.symbol === 'aergo') return value;
-      else return value / Math.pow(10, this.$store.state.session.token.meta.decimals);
+      return value / Math.pow(10, this.$store.state.session.token.meta.decimals);
     },
 
     getTitle() {
-      if (this.symbol === 'aergo') return 'AERGO';
-      else return this.$store.state.session.token.meta.name;
+      return this.$store.state.session.token.meta.name;
     },
 
     refreshClick() {
@@ -228,11 +229,11 @@ export default Vue.extend({
       var resp;
       if (this.symbol === 'aergo') {
         resp = await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})`,
+          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=100`,
         );
       } else {
         resp = await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
+          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100`,
         );
       }
 
@@ -265,9 +266,25 @@ export default Vue.extend({
     },
 
     handleSend() {
+      this.$router
+        .push({
+          name: 'send',
+          params: {
+            address: this.$store.state.accounts.address,
+          },
+        })
+        .catch(() => {});
       console.log('send');
     },
     handleReceive() {
+      this.$router
+        .push({
+          name: 'receive',
+          params: {
+            address: this.$store.state.accounts.address,
+          },
+        })
+        .catch(() => {});
       console.log('receive');
     },
   },
@@ -282,7 +299,7 @@ export default Vue.extend({
   .footer {
     position: absolute;
     bottom: 0;
-    margin-bottom: 15px;
+    margin-bottom: 35px;
     .button.button-type-font-gradation {
       border: none;
     }

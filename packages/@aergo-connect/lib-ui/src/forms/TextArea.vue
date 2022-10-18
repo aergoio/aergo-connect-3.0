@@ -1,10 +1,12 @@
 <template>
   <div class="inputContainer" :class="[`state-${state}`]">
-       <textarea class="textarea" :placeholder="placeholder" @input="handleInput"
+       <textarea v-if="readonly" class="textarea" readonly :placeholder="placeholder">
+       </textarea>
+       <textarea v-else class="textarea" :placeholder="placeholder" @input="handleInput"
           @change="handleFileInput"
           @blur="handleBlur"
           @keyup.enter="handleEnter">
-        </textarea>
+       </textarea>
      </div>
    </label>
  </template>
@@ -24,7 +26,8 @@
      placeholder: {
       type: String,
       default: ""
-     }
+     },
+     readonly: false,
    },
    computed: {},
    methods: {handleInput(event: InputEvent): void {

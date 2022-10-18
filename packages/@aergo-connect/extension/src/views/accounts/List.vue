@@ -12,8 +12,8 @@
           <img v-else src="@aergo-connect/lib-ui/src/icons/img/arrow-up.svg" />
         </div>
         <AccountList
+          :accounts="$store.state.accounts.accounts"
           v-if="isAccountsListOpened"
-          :accounts="accounts"
           canDelete
           @select="handleSelect"
         />
@@ -30,7 +30,7 @@
           <SideNavButton
             img="security"
             title="Security"
-            :to="{ name: 'security', params: { address: $store.state.accounts.address } }"
+            @click="handleSecurity"
           />
           <SideNavButton img="lock" title="Lock" @click="handleLock" />
         </div>
@@ -78,7 +78,6 @@ export default Vue.extend({
 
   methods: {
     handleAccountsDropDown(event: any) {
-      // TODO : dropdown 버튼 눌렀을때 accounts list 중 하나만 추출하기
       event.stopPropagation();
       this.isAccountsListOpened = !this.isAccountsListOpened;
     },
@@ -89,10 +88,10 @@ export default Vue.extend({
     handleListModalOff() {
       this.$emit('listModalOff');
     },
-    handleSelect(account: any) {
-      const address = account.address;
 
-      this.$store.commit('accounts/setActiveAccount', address);
+    async handleSelect(account: any) {
+      const address = account.address;
+      await this.$store.commit('accounts/setActiveAccount', address);
 
       this.$emit('select', account);
 
@@ -108,6 +107,10 @@ export default Vue.extend({
 
     handleLock() {
       this.$background.lock();
+    },
+
+    handleSecurity() {
+      this.$emit('securityClick');
     },
   },
   mounted() {

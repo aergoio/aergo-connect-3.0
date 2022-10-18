@@ -227,7 +227,7 @@ export default Vue.extend({
     },
 
     async getTokenHistory(): Promise<void> {
-      var resp;
+      let resp;
       if (this.symbol === 'aergo') {
         resp = await fetch(
           `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=100`,
@@ -586,7 +586,7 @@ export default Vue.extend({
       flex-direction: column;
       display: flex;
       align-items: center;
-      height: 12rem;
+      height: 11rem;
       overflow-y: scroll;
       &.nothing {
         overflow: hidden;

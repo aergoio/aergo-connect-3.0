@@ -73,8 +73,8 @@ export default Vue.extend({
     },
     handleChangePassword() {
       this.$router.push({
-        name: 'change-password',
-        params: { address: this.$route.params.address },
+        name: 'setup',
+        params: { nextPage: 'accounts-list' },
       });
     },
     handleBackupPrivateKey() {

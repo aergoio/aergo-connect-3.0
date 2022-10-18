@@ -1,12 +1,12 @@
 <template>
   <ScrollView class="page">
     <AppearVue :delay="0.6">
-      <ConfirmModal v-if="modal" title="Your password has been set!" to="register" />
+      <ConfirmModal v-if="modal" title="Your password has been set!" :to="$route.params.nextPage" />
     </AppearVue>
-    <Header button="back" title="Set Password" :to="{ name: 'welcome' }" />
+    <Header button="back" title="Set Password" :to="{ name: 'accounts-list' }" />
     <div class="simple-content">
       <p class="simple-phrase">This passphrase will be used to secure all your accounts.</p>
-      <div class="field-title">New Password</div>
+      <div v-if="$route.params.nextPage === 'register'" class="field-title">New Password</div>
       <PasswordStrengthField variant="default" v-model="password" autofocus :setting="setting" />
       <div class="field-title">Confirm Password</div>
       <PasswordRepeatField
@@ -18,7 +18,7 @@
     </div>
     <template #footer>
       <div v-if="!modal" class="footer">
-        <div class="check">
+        <div v-if="$route.params.nextPage === 'register'" class="check">
           <CheckboxButton :checked="checked" @check="checkFunc" @enterKeyup="handleModal" />
           <div class="check-text">
             I understand that this wallet cannot recover this password for me.
@@ -29,7 +29,7 @@
             type="primary"
             size="large"
             :disabled="
-              checked &&
+              (checked || $route.params.nextPage !== 'register') &&
               password === passwordRepeat &&
               password.length > 0 &&
               passwordRepeat.length > 0
@@ -104,10 +104,6 @@ export default class Setup extends mixins() {
   }
 
   async mounted(): Promise<void> {
-    const isSetup = await this.$background.isSetup();
-    if (isSetup) {
-      this.next();
-    }
   }
 
   async setup() {
@@ -119,9 +115,6 @@ export default class Setup extends mixins() {
       this.$store.commit('ui/setInitSetupKey', hashedKey);
       this.next();
     }
-    // Init Network
-    // localStorage.setItem("Network","testnet");
-    this.$store.commit('accounts/setNetwork', 'testnet');
   }
 }
 </script>

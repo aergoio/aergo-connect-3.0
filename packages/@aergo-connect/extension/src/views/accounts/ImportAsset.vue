@@ -143,6 +143,7 @@ export default Vue.extend({
     };
   },
   watch: {
+/*
     value() {
       if (this.value === this.$store.state.accounts.address) {
         this.error = { state: false, value: '' };
@@ -150,6 +151,7 @@ export default Vue.extend({
         this.error = { state: true, value: 'Please check the address again.' };
       }
     },
+*/
   },
   methods: {
     handleBack() {

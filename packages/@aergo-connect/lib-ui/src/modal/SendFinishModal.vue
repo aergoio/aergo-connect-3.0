@@ -37,10 +37,11 @@
         </div>
         <div class="line" />
         <div class="flex-row">
-          <div class="title">Amount</div>
+          <div v-if="tokenType !== 'ARC2'" class="title">Amount</div>
+          <div v-else class="title">Token_ID</div>
           <div class="flex-row">
             <div class="detail amount">{{ amount }}</div>
-            <div class="detail amount">{{ symbol }}</div>
+            <div v-if="tokenType !== 'ARC2'" class="detail amount">{{ symbol }}</div>
           </div>
         </div>
         <div class="line" />
@@ -76,9 +77,10 @@ export default Vue.extend({
   props: {
     txHash: String,
     receipt: String,
-    amount: Number,
+    amount: String,
     symbol: String,
     asset: String,
+    tokenType: String,
   },
 
   data() {

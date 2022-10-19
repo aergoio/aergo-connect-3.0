@@ -12,6 +12,7 @@
       :amount="inputAmount"
       :symbol="symbol"
       :txType="txType"
+      :tokenType="tokenType"
       :payload="txBody.payload"
       @cancel="handleCancel"
       @confirm="handlePassword"
@@ -23,6 +24,7 @@
       :receipt="inputTo"
       :amount="inputAmount"
       :symbol="symbol"
+      :tokenType="tokenType"
       @close="handleSent"
     />
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
@@ -69,11 +71,20 @@
         </div>
         <div class="flex-row" v-if="tokenType == 'ARC2'">
           <div class="title">NFT ID</div>
-          <select class="select_box" v-model="inputAmount">
-            <option v-for="item in nftInventory" :value="item.meta.token_id">
-              {{ item.meta.token_id }}
-            </option>
-          </select>
+          <TextField
+            class="text_box"
+            placeholder="Type ID"
+            v-model="inputAmount"
+            @input="searchNFT"
+          />
+          <ul v-if="searchResult.length">
+            <li
+              v-for="item in searchResult"
+              @click="selectNFT(item)"
+              >
+                <span class="list_text"> {{ item.meta.token_id }} </span>
+            </li>
+          </ul>
         </div>
         <div class="flex-row" v-else>
           <div class="title">Amount</div>
@@ -112,6 +123,7 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import LoadingDialog from '@aergo-connect/lib-ui/src/layouts/LoadingDialog.vue';
 import SendFinishModal from '@aergo-connect/lib-ui/src/modal/SendFinishModal.vue';
+import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 // for TX
 import { timedAsync } from 'timed-async/index.js';
 import Transport from '@ledgerhq/hw-transport-webusb';
@@ -132,6 +144,7 @@ export default Vue.extend({
     LoadingDialog,
     Tx,
     SendFinishModal,
+    TextField,
   },
 
   data() {
@@ -141,15 +154,7 @@ export default Vue.extend({
       balance: 0,
       tokenType: '',
       symbol: '',
-/*
-      asset: 'AERGO',
-      icon: 'aergo',
-      balance: this.$store.state.session.tokens['AERGO'].balance,
-      tokenType: 'AERGO',
-      symbol: 'aergo',
-*/
       inputAmount: '0',
-
       inputTo: 'AmNBes1nksbz8VhbF6DiXfEqL1dx1YRHFpxZwZABQLqkctmCTFZU',
       txType: 'TRANSFER',
       nftInventory: [],
@@ -157,6 +162,7 @@ export default Vue.extend({
       confirmationModal: false,
       sendFinishModal: false,
       passwordModal: false,
+      searchResult: [],
 
       txBody: {
         from: this.$store.state.accounts.address,
@@ -197,6 +203,18 @@ export default Vue.extend({
   },
 
   methods: {
+    async selectNFT(item) {
+      this.inputAmount =  item.meta.token_id ;
+      this.searchResult = '' ;
+    },
+
+    async searchNFT(query) {
+      console.log("quary", query) ;
+      let result = [] ;
+      this.nftInventory.forEach((item) => { if (item.meta.token_id.indexOf(query) != -1) result.push(item)}) ;
+      this.searchResult = result ;
+    },
+
     async getNftInventory() {
       const resp = await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}`,

@@ -64,5 +64,6 @@ export const iconNames = tuple(
   'nothing',
   'confirmation',
   'password',
+  'nftIcon',
 );
 export type IconName = typeof iconNames[number];

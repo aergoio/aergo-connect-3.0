@@ -55,11 +55,14 @@
 
       <div class="nft_detail_background">
         <ul v-if="tabState === 'inventory'" class="nft_info_wrapper">
-          <li v-for="item in data" class="nft_info_list" :key="item.meta.token_id">
-            <!--            <Identicon :text="item.meta.token_id"> -->
-            <img :src="item.meta.ts.image" alt="404" />
-            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-            <div>{{ item.meta.token_id }}</div>
+          <li v-for="item in data" class="nft_info_list" :key="item.meta.tx_id">
+            <img class="img" :src="item.token.meta.image" alt="404" />
+            <div class="nft_name_wrapper">
+              <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+              <div class="id">{{ item.token.meta.symbol }}</div>
+              <!-- <div class="id">{{ item.meta.token_id }}</div> -->
+            </div>
+            <Icon class="icon" :name="`nftIcon`" />
           </li>
         </ul>
 
@@ -67,48 +70,46 @@
           v-if="tabState === 'tx_history'"
           :class="[data.length > 0 ? 'nft_detail_wrapper' : 'nft_detail_wrapper noscroll']"
         >
-          <div v-if="data.length > 0">
-            <select v-if="tabState === `tx_history`" class="select" v-model="filter">
-              <option class="option" selected value="All">All</option>
-              <option class="option" value="Received">Received</option>
-              <option class="option" value="Sent">Sent</option>
-            </select>
-            <li v-for="item in data" :key="item.meta.token_id">
-              <div v-if="item.meta.from === $store.state.accounts.address">
-                <div v-if="filter !== 'Received'" class="nft_detail_list">
-                  <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+          <!-- <div v-if="data.length > 0"> -->
+          <select v-if="tabState === `tx_history`" class="select" v-model="filter">
+            <option class="option" selected value="All">All</option>
+            <option class="option" value="Received">Received</option>
+            <option class="option" value="Sent">Sent</option>
+          </select>
+          <li class="nft_detail_list" v-for="item in data" :key="item.meta.token_id">
+            <div v-if="item.meta.from === $store.state.accounts.address">
+              <div v-if="filter !== 'Received'">
+                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="direction_row">
                   <div class="sent">Sent</div>
-                  <div class="direction_row">
-                    <div class="token_symbol">{{ item.meta.token_id }}</div>
+                  <div class="token_symbol">{{ item.token.meta.symbol }}</div>
+                </div>
+                <div class="line"></div>
+                <div class="direction_row">
+                  <div class="address">
+                    {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
                   </div>
-                  <div class="line"></div>
-                  <div class="direction_row">
-                    <div>To:</div>
-                    <div class="address">
-                      {{ `${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
-                    </div>
-                    <Button :name="'pointer'" />
-                  </div>
+                  <Button :name="'pointer'" />
                 </div>
               </div>
-              <div v-else>
-                <div v-if="filter !== 'Sent'" class="nft_detail_list">
-                  <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+            </div>
+            <div v-else>
+              <div v-if="filter !== 'Sent'">
+                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="direction_row">
                   <div class="received">Recevied</div>
-                  <div class="direction_row">
-                    <div class="token_symbol">{{ item.meta.token_id }}</div>
+                  <div class="token_symbol">{{ item.token.meta.symbol }}</div>
+                </div>
+                <div class="direction_row">
+                  <div class="address">
+                    {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
                   </div>
-                  <div class="direction_row">
-                    <div>From:</div>
-                    <div class="address">
-                      {{ `${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
-                    </div>
-                    <Button :name="'pointer'" />
-                  </div>
+                  <Button :name="'pointer'" />
                 </div>
               </div>
-            </li>
-          </div>
+            </div>
+          </li>
+          <!-- </div> -->
           <div v-if="data.length === 0" class="nft_detail_list_nothing_wrapper">
             <Icon class="nothing_icon" :name="`nothing`" />
             <div class="nothing_text">No Transaction Details.</div>
@@ -578,7 +579,7 @@ export default Vue.extend({
       left: 26.6%;
       background: #ffffff;
       /* Grey/02 */
-      width: 80px;
+      width: 90px;
       height: 28px;
       border: 1px solid #d8d8d8;
       border-radius: 4px;
@@ -600,67 +601,62 @@ export default Vue.extend({
       height: 345px;
     }
     .nft_info_wrapper {
-      margin-top: 18px;
-      background: #ffffff;
-      border-radius: 8px;
-      width: 327px;
-      height: 78px;
-      border-radius: 8px;
+      height: 21.5rem;
+      overflow-y: scroll;
+      overflow-x: hidden;
       .nft_info_list {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        width: 327px;
+        height: 78px;
+        background: #ffffff;
+        border-radius: 8px;
+        .img {
+          width: 32px;
+          height: 32px;
+        }
+        .nft_name_wrapper {
+          width: 10rem;
+          display: flex;
+          flex-direction: column;
+          .time {
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 300;
+            font-size: 12px;
+            line-height: 15px;
+            letter-spacing: -0.333333px;
+
+            /* Grey/04 */
+
+            color: #9c9a9a;
+          }
+          .id {
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 24px;
+            /* or 133% */
+
+            /* Grey/07 */
+
+            color: #454344;
+          }
+        }
       }
     }
     .nft_detail_wrapper {
+      overflow-x: hidden;
       overflow-y: scroll;
       width: 350px;
-      height: 21rem;
-      margin-top: 15px;
+      height: 18rem;
+      margin-top: 60px;
       flex-direction: column;
       display: flex;
       align-items: center;
-      justify-content: center;
-      &.noscroll {
-        overflow-y: hidden;
-      }
-    }
-
-    .nft_detail_list_nothing_wrapper {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Outfit';
-      font-style: normal;
-      font-weight: 400;
-      font-size: 15px;
-      line-height: 19px;
-      text-align: center;
-      letter-spacing: -0.333333px;
-      color: #bababa;
-
-      .nothing_text {
-        /* Caption/C1 */
-        margin-top: 8px;
-        font-family: 'Outfit';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 15px;
-        line-height: 19px;
-        /* identical to box height */
-
-        text-align: center;
-        letter-spacing: -0.333333px;
-
-        /* Grey/03 */
-
-        color: #bababa;
-      }
-      .line {
-        margin-left: 16px;
-        margin-top: 6px;
-        width: 295px;
-        height: 1px;
-        background: #eff5f7;
-      }
       .nft_detail_list {
         margin-bottom: 10px;
         width: 327px;
@@ -683,13 +679,14 @@ export default Vue.extend({
 
           color: #9c9a9a;
         }
+
         .direction_row {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          .recieved {
+          margin-top: 4px;
+          .received {
             margin-left: 16px;
-            margin-top: 4px;
             width: 68px;
             height: 21px;
             /* Button/Btn2 */
@@ -706,7 +703,6 @@ export default Vue.extend({
           }
           .sent {
             margin-left: 16px;
-            margin-top: 4px;
             width: 35px;
             height: 21px;
             font-family: 'Outfit';
@@ -759,6 +755,49 @@ export default Vue.extend({
             height: 22px;
           }
         }
+      }
+      &.noscroll {
+        overflow-y: hidden;
+      }
+    }
+
+    .nft_detail_list_nothing_wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 19px;
+      text-align: center;
+      letter-spacing: -0.333333px;
+      color: #bababa;
+
+      .nothing_text {
+        /* Caption/C1 */
+        margin-top: 8px;
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 19px;
+        /* identical to box height */
+
+        text-align: center;
+        letter-spacing: -0.333333px;
+
+        /* Grey/03 */
+
+        color: #bababa;
+      }
+      .line {
+        margin-left: 16px;
+        margin-top: 6px;
+        width: 295px;
+        height: 1px;
+        background: #eff5f7;
       }
     }
     .footer {

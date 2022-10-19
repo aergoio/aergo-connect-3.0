@@ -187,8 +187,13 @@ export default Vue.extend({
     this.account = await this.$background.getActiveAccount();
     console.log('Account Info', this.account);
 
-    if (this.$store.state.session.token) this.asset = this.$store.state.session.token.hash;
+    if (this.$store.state.session.token) this.asset = await this.$store.state.session.token.hash;
     else this.asset = 'AERGO';
+
+    if (this.$route.params.nft && this.$store.state.session.token.meta.type == 'ARC2') {
+      this.inputAmount = this.$route.params.nft;
+      this.searchResult = '';
+    }
   },
 
   watch: {

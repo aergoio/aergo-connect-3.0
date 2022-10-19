@@ -43,6 +43,7 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import PasswordStrengthField from '@aergo-connect/lib-ui/src/forms/PasswordStrengthField.vue';
+
 export default Vue.extend({
   components: { Header, ScrollView, Button, PasswordStrengthField },
   data() {
@@ -64,6 +65,7 @@ export default Vue.extend({
         })
         .catch(() => {});
     },
+
     handleGoStep2() {
       this.$router
         .push({
@@ -71,17 +73,18 @@ export default Vue.extend({
         })
         .catch(() => {});
     },
+
     handleChangePassword() {
       this.$router.push({
         name: 'setup',
         params: { nextPage: 'accounts-list' },
       });
     },
+
     handleBackupPrivateKey() {
       this.$router.push({
         name: 'account-backup',
         params: {
-          address: this.$route.params.address,
         },
       });
     },

@@ -116,78 +116,78 @@ const routes: RouteConfig[] = [
       }),
 
       // withMeta(1, {
-      //   path: 'list/:address',
+      //   path: 'list/',
       //   name: 'accounts-list-address',
       //   component: Home,
       // }),
       withMeta(2, {
-        path: 'list/:address/importasset/:option',
+        path: 'list/importasset/:option',
         name: 'import-asset',
         component: ImportAsset,
       }),
       withMeta(2, {
-        path: '/list/:address/signmessage',
+        path: '/list/signmessage',
         name: 'sign-message',
         component: SignMessage,
       }),
       withMeta(2, {
-        path: '/list/:address/security/2',
+        path: '/list/security/2',
         name: 'security-2',
         component: Security2,
       }),
       withMeta(2, {
-        path: '/list/:address/send',
+        path: '/list/send',
         name: 'send',
         component: Send,
       }),
       withMeta(2, {
-        path: '/list/:address/receive',
+        path: '/list/receive',
         name: 'receive',
         component: Receive,
       }),
       withMeta(2, {
-        path: '/list/:address/tokendetail/:option',
+        path: '/list/tokendetail/:option',
         name: 'token-detail',
         component: TokenDetail,
       }),
       withMeta(2, {
-        path: '/list/:address/nftdetail',
+        path: '/list/nftdetail',
         name: 'nft-detail',
         component: NftDetail,
       }),
 
       // withMeta(2, {
-      //   path: 'balance/:chainId/:address/:nick',
+      //   path: 'balance/:chainId//:nick',
       //   name: 'balance-list',
       //   component: BalanceList,
       // }), // 시연용
 
       withMeta(2, {
-        path: '/account/:address/create',
+        path: '/account/create',
         name: 'account-create',
         component: Create,
       }),
 
       withMeta(3, {
-        path: '/account/:address/backup ',
+        path: '/account/backup ',
         name: 'account-backup',
         component: BackupPrivateKey,
       }),
 
       withMeta(4, {
-        path: '/account/:address/backup/mnemonic ',
+        path: '/account/backup/mnemonic ',
         name: 'account-backup-mnemonic',
         component: MnemonicSeedPhrase,
       }),
 
       withMeta(4, {
-        path: '/account/:address/backup/encrypted ',
+        path: '/account/backup/encrypted ',
         name: 'account-backup-encrypted',
         component: ExportWif,
       }),
 
       withMeta(4, {
-        path: '/account/:address/backup/keystore ',
+        path: '/account/backup/keystore ',
         name: 'account-backup-keystore',
         component: Keystore,
       }),
@@ -248,7 +248,7 @@ const routes: RouteConfig[] = [
     ],
   },
   {
-    path: '/account/:address/:from/:contract/',
+    path: '/account/:from/:contract/',
     component: AccountContainer,
     children: [
       {
@@ -325,7 +325,7 @@ const routes: RouteConfig[] = [
         component: VerifySeedPhrase,
       }),
       {
-        path: 'import/:address',
+        path: 'import/',
         name: 'account-imported',
         component: Create,
       },
@@ -347,7 +347,7 @@ const routes: RouteConfig[] = [
         component: RequestAccountList,
       },
       {
-        path: 'account/testnet.aergo.io/:address/',
+        path: 'account/testnet.aergo.io/',
         component: RequestAccountContainer,
         children: [
           {

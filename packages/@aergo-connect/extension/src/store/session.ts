@@ -8,7 +8,7 @@ import store from '../store';
 export interface SessionState {
   tokens: any;
   token: any;
-  aergoBalance: number;
+//  aergoBalance: number;
 }
 
 function getVueInstance(instance: any): Vue {

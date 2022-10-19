@@ -25,9 +25,11 @@
         <div class="line" />
 
         <div class="flex-row">
-          <div class="title">Amount</div>
+          <div v-if="tokenType !== 'ARC2'" class="title">Amount</div>
+          <div v-else class="title">Token_ID</div>
           <div class="flex-row">
-            <div class="detail amount">{{ amount }}</div>
+            <div v-if="tokenType !== 'ARC2'" class="detail amount">{{ amount }}</div>
+            <div v-else class="detail amount">{{ amount }}</div>
           </div>
         </div>
         <div class="line" />
@@ -72,11 +74,12 @@ export default Vue.extend({
   components: { Icon, Button, ButtonGroup },
 
   props: {
-    amount: Number,
+    amount: String,
     to: String,
     symbol: String,
     txType: String,
     payload: String,
+    tokenType: String,
   },
 
   methods: {

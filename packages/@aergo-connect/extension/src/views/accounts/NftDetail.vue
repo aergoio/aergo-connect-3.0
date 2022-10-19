@@ -54,7 +54,10 @@
       </div>
 
       <div class="nft_detail_background">
-        <ul v-if="tabState === 'inventory'" class="nft_info_wrapper">
+        <ul
+          v-if="tabState === 'inventory'"
+          :class="[data.length > 0 ? 'nft_info_wrapper' : 'nft_info_wrapper noscroll']"
+        >
           <li v-for="item in data" class="nft_info_list" :key="item.meta.tx_id">
             <img class="img" :src="item.token.meta.image" alt="404" />
             <div class="nft_name_wrapper">
@@ -62,8 +65,12 @@
               <!-- <div class="id">{{ item.token.meta.symbol }}</div> -->
               <div class="id">{{ `${item.meta.token_id.slice(0, 10)}...` }}</div>
             </div>
-            <Icon class="icon" :name="`nftIcon`" @click="gotoSend(item)"/>
+            <Icon class="icon" :name="`nftIcon`" @click="gotoSend(item)" />
           </li>
+          <div v-if="data.length === 0" class="nft_detail_list_nothing_wrapper">
+            <Icon class="nothing_icon" :name="`nothing`" />
+            <div class="nothing_text">No Inventory.</div>
+          </div>
         </ul>
 
         <ul
@@ -71,7 +78,11 @@
           :class="[data.length > 0 ? 'nft_detail_wrapper' : 'nft_detail_wrapper noscroll']"
         >
           <!-- <div v-if="data.length > 0"> -->
-          <select v-if="tabState === `tx_history`" class="select" v-model="filter">
+          <select
+            v-if="tabState === `tx_history` && data.length > 0"
+            class="select"
+            v-model="filter"
+          >
             <option class="option" selected value="All">All</option>
             <option class="option" value="Received">Received</option>
             <option class="option" value="Sent">Sent</option>
@@ -89,7 +100,7 @@
                   <div class="address">
                     {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
                   </div>
-                  <Button :name="'pointer'" @click="gotoScan(item)"/>
+                  <Button :name="'pointer'" @click="gotoScan(item)" />
                 </div>
               </div>
             </div>
@@ -104,7 +115,7 @@
                   <div class="address">
                     {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
                   </div>
-                  <Button :name="'pointer'" @click="gotoScan(item)"/>
+                  <Button :name="'pointer'" @click="gotoScan(item)" />
                 </div>
               </div>
             </div>
@@ -198,8 +209,8 @@ export default Vue.extend({
     },
 
     gotoScan(item: object) {
-      var url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
-      window.open(url, "" ,"width=1000,height=800");
+      const url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
+      window.open(url, '', 'width=1000,height=800');
     },
 
     getTitle() {
@@ -590,16 +601,14 @@ export default Vue.extend({
       }
     }
     .select {
-      position: fixed;
-      top: 20%;
-      left: 26.6%;
+      margin-left: 0;
       background: #ffffff;
       /* Grey/02 */
       width: 90px;
       height: 28px;
       border: 1px solid #d8d8d8;
       border-radius: 4px;
-
+      margin-bottom: 12px;
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 400;
@@ -617,9 +626,13 @@ export default Vue.extend({
       height: 345px;
     }
     .nft_info_wrapper {
+      width: 350px;
       height: 21.5rem;
       overflow-y: scroll;
       overflow-x: hidden;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
       .nft_info_list {
         margin-top: 10px;
         display: flex;
@@ -663,16 +676,18 @@ export default Vue.extend({
           }
         }
       }
+      &.noscroll {
+        overflow-y: hidden;
+      }
     }
     .nft_detail_wrapper {
       overflow-x: hidden;
       overflow-y: scroll;
       width: 350px;
-      height: 18rem;
-      margin-top: 60px;
+      height: 21rem;
+      margin-top: 10px;
       flex-direction: column;
       display: flex;
-      align-items: center;
       .nft_detail_list {
         margin-bottom: 10px;
         width: 327px;
@@ -774,6 +789,7 @@ export default Vue.extend({
       }
       &.noscroll {
         overflow-y: hidden;
+        justify-content: center;
       }
     }
 

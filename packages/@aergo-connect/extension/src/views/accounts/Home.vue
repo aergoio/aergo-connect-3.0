@@ -26,7 +26,8 @@
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
-            <input v-model="nick" :disabled="!editNick" class="account_info_nickname_text" @blur="changeNick" @keyup.enter="changeNick" />
+            <div class="account_info_nickname_text">{{ $store.state.accounts.nick }}</div>
+            <!-- <input v-model="nick" :disabled="!editNick"  @blur="changeNick" @keyup.enter="changeNick" /> -->
             <Icon
               class="account_info_nickname_button"
               :name="`edit`"
@@ -221,14 +222,13 @@ export default Vue.extend({
   },
 
   methods: {
-
     async changeNick() {
-      this.$store.commit('accounts/setNick',this.nick) ;
-      this.editNick = false ;
+      this.$store.commit('accounts/setNick', this.nick);
+      this.editNick = false;
     },
 
     handleEdit() {
-      this.editNick = true ;
+      this.editNick = true;
       console.log('edit nick');
     },
 
@@ -239,8 +239,7 @@ export default Vue.extend({
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
         await this.$forceUpdate();
-        this.nick = await this.$store.state.accounts.nick ;
-
+        this.nick = await this.$store.state.accounts.nick;
       } else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');

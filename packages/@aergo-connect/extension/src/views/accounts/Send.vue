@@ -65,7 +65,8 @@
           <div class="title">Asset</div>
           <select class="select_box" v-model="asset">
             <option v-for="token in $store.state.session.tokens" :value="token.hash">
-              {{ token.meta.name }}
+              <img :src="token.meta.image" alt="404" />
+              <span>{{ token.meta.name }}</span>
             </option>
           </select>
         </div>
@@ -585,6 +586,7 @@ export default Vue.extend({
         color: #279ecc;
       }
       .select_box {
+        padding: 8px;
         margin-left: 38px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 3px;

@@ -62,7 +62,7 @@
               <!-- <div class="id">{{ item.token.meta.symbol }}</div> -->
               <div class="id">{{ `${item.meta.token_id.slice(0, 10)}...` }}</div>
             </div>
-            <Icon class="icon" :name="`nftIcon`" />
+            <Icon class="icon" :name="`nftIcon`" @click="gotoSend(item)"/>
           </li>
         </ul>
 
@@ -89,7 +89,7 @@
                   <div class="address">
                     {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
                   </div>
-                  <Button :name="'pointer'" />
+                  <Button :name="'pointer'" @click="gotoScan(item)"/>
                 </div>
               </div>
             </div>
@@ -104,7 +104,7 @@
                   <div class="address">
                     {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
                   </div>
-                  <Button :name="'pointer'" />
+                  <Button :name="'pointer'" @click="gotoScan(item)"/>
                 </div>
               </div>
             </div>
@@ -186,6 +186,22 @@ export default Vue.extend({
   },
 
   methods: {
+    gotoSend(item: object) {
+      this.$router
+        .push({
+          name: 'send',
+          params: {
+            nft: item.meta.token_id,
+          },
+        })
+        .catch(() => {});
+    },
+
+    gotoScan(item: object) {
+      var url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
+      window.open(url, "" ,"width=1000,height=800");
+    },
+
     getTitle() {
       return this.$store.state.session.token.meta.name;
     },

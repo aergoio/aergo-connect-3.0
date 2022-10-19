@@ -59,8 +59,8 @@
             <img class="img" :src="item.token.meta.image" alt="404" />
             <div class="nft_name_wrapper">
               <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-              <div class="id">{{ item.token.meta.symbol }}</div>
-              <!-- <div class="id">{{ item.meta.token_id }}</div> -->
+              <!-- <div class="id">{{ item.token.meta.symbol }}</div> -->
+              <div class="id">{{ `${item.meta.token_id.slice(0, 10)}...` }}</div>
             </div>
             <Icon class="icon" :name="`nftIcon`" />
           </li>
@@ -82,7 +82,7 @@
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
                 <div class="direction_row">
                   <div class="sent">Sent</div>
-                  <div class="token_symbol">{{ item.token.meta.symbol }}</div>
+                  <div class="token_symbol">{{ `${item.meta.token_id.slice(0, 10)}...` }}</div>
                 </div>
                 <div class="line"></div>
                 <div class="direction_row">
@@ -98,7 +98,7 @@
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
                 <div class="direction_row">
                   <div class="received">Recevied</div>
-                  <div class="token_symbol">{{ item.token.meta.symbol }}</div>
+                  <div class="token_symbol">{{ `${item.meta.token_id.slice(0, 10)}...` }}</div>
                 </div>
                 <div class="direction_row">
                   <div class="address">

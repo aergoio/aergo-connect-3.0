@@ -60,7 +60,6 @@ export default class Create extends mixins() {
     this.$router.push({
       name: 'account-backup',
       params: {
-        address: this.address,
       },
     });
   }

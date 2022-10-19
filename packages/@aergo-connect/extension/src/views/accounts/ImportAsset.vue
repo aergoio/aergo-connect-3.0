@@ -77,15 +77,15 @@
             <div v-if="check">
               <div class="custom_element_wrapper">
                 <div>Asset Type</div>
-                <TextField placeholder="Token" class="asset_type" />
+                <TextField :disabled=true :placeholder="token.meta.type" class="asset_type"/>
               </div>
               <div class="custom_element_wrapper">
                 <div>Symbol</div>
-                <TextField placeholder="BAL" class="asset_type" />
+                <TextField v-model="token.meta.symbol" class="asset_type" />
               </div>
-              <div class="custom_element_wrapper">
+              <div v-if="token.meta.type !== 'ARC2'" class="custom_element_wrapper">
                 <div>Decimal</div>
-                <TextField placeholder="18" class="asset_type" />
+                <TextField :disabled=true :placeholder="token.meta.decimals" class="asset_type" />
               </div>
             </div>
           </div>
@@ -197,8 +197,8 @@ export default Vue.extend({
       console.log('Selected', token.meta);
 
       this.token = token ;
-      this.$store.dispatch('accounts/addToken', token);
-      this.$store.dispatch('session/initState');
+      await this.$store.dispatch('accounts/addToken', token);
+      await this.$store.dispatch('session/initState');
 
       this.importAssetModal = true;
     },
@@ -215,17 +215,36 @@ export default Vue.extend({
     handleInput(value) {
       this.value = value;
     },
-    handleCheck() {
-      if (!this.error.state) {
-        this.check = true;
-      } else {
-        console.log('Please check the address again.');
-      }
+
+    async handleCheck() {
+
+      let results = {} ;
+      console.log('fetch', this.value);
+
+      if (this.$route.params.option === 'token') {
+        await fetch(
+          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=_id:${this.value}`,
+        )
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          results = data.hits;
+        });
+     }
+
+     console.log("custum result",results) ;
+
+     this.token = results[0] ;
+     this.check = true ;
+     
     },
-    // customSubmit() {
-    //   console.log(this.value, 'submit');
-    //   this.importAssetModal = true;
-    // },
+    async customSubmit () {
+      await this.$store.dispatch('accounts/addToken', this.token);
+      await this.$store.dispatch('session/initState');
+
+      this.importAssetModal = true;
+    },
   },
 });
 </script>

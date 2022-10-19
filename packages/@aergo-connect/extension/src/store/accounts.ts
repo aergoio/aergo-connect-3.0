@@ -111,7 +111,7 @@ const storeModule: Module<AccountsState, RootState> = {
 
       tokens[token.hash] = token;
       commit('setTokens', tokens);
-//      state.dispatch('session/initState') ;
+//      store.dispatch('session/initState') ;
 
       console.log('Add tokens', tokens);
     },
@@ -121,7 +121,7 @@ const storeModule: Module<AccountsState, RootState> = {
       delete tokens[token.hash];
       commit('setTokens', tokens);
       
-      state.dispatch('session/initState') ;
+      store.state.dispatch('session/initState') ;
       console.log('deleteToken', token);
     },
   },

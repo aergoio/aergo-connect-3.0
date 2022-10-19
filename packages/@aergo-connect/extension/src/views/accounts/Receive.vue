@@ -1,7 +1,12 @@
 <template>
   <ScrollView>
-    <SendOptionsModal v-if="optionsModal" />
-    <ConfirmationModal v-if="confirmationModal" />
+    <ReceiveModal 
+      v-if="receiveModal" 
+      :amount="inputAmount"
+      :symbol="symbol"
+      :asset="asset"
+      @confirm="handleConfirm"
+    />
     <Header button="back" title="Recieve" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
@@ -28,63 +33,80 @@
       </div>
 
       <div class="token_content_wrapper">
-        <Icon class="token_icon" :name="'aergo'" />
-        <div class="token_amount">2,000,000.000</div>
-        <div class="token_name">AERGO</div>
+        <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
+        <Identicon v-else-if="!icon" :text="asset" class="token_icon" />
+        <img v-else class="token_icon" :src="icon" />
+        <div class="token_amount">{{balance}}</div>
+        <div class="token_symbol">{{symbol}}</div>
       </div>
 
       <div class="send_form_wrapper">
         <div class="flex-row">
           <div class="title">Asset</div>
-          <select class="select_box">
-            <option>AERGO</option>
-            <option>AERGO GEM</option>
-            <option>TOKEN</option>
+          <select class="select_box" v-model="asset">
+            <option v-for="token in $store.state.session.tokens" :value="token.hash">
+              {{ token.meta.name }}
+            </option>
           </select>
         </div>
-        <div class="flex-row">
+        <div class="flex-row" v-if="tokenType!=='ARC2'">
           <div class="title">Amount</div>
-          <input type="text" class="text_box" />
+          <input v-model.number="inputAmount" type="text" class="text_box" />
         </div>
       </div>
     </div>
     <template #footer class="footer">
-      <Button type="primary" size="large" @click="handleShowQRClick">Show QR</Button>
+      <Button v-if="!receiveModal" type="primary" size="large" @click="handleShowQRClick">Show QR</Button>
     </template>
   </ScrollView>
 </template>
 
 <script>
 import Vue from 'vue';
-import SendOptionsModal from '@aergo-connect/lib-ui/src/modal/SendOptionsModal.vue';
-import ConfirmationModal from '@aergo-connect/lib-ui/src/modal/ConfirmationModal.vue';
+import ReceiveModal from '@aergo-connect/lib-ui/src/modal/ReceiveModal.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
+
 export default Vue.extend({
-  components: { ScrollView, SendOptionsModal, ConfirmationModal, Header, Identicon, Icon, Button },
+  components: { ScrollView, ReceiveModal, Header, Identicon, Icon, Button },
   data() {
     return {
-      optionsModal: false,
-      confirmationModal: false,
+      receiveModal: false,
+      asset: '',
+      icon: '',
+      balance: 0,
+      tokenType: '',
+      symbol: '',
+      inputAmount: '0',
     };
   },
+
+  async beforeMount() {
+    if (this.$store.state.session.token) this.asset = this.$store.state.session.token.hash ;
+    else this.asset = 'AERGO' ;
+  },
+
+  watch: {
+    asset: function () {
+      this.balance = this.$store.state.session.tokens[this.asset]['balance'];
+      this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
+      this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
+      this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
+    },
+  },
+
   methods: {
     handleBack() {
-      this.$router.push({
-        name: 'accounts-list',
-        params: {
-          address: this.$store.state.accounts.address,
-        },
-      });
+      this.$router.push({ name: 'accounts-list', });
     },
-    handleOptionsModal() {
-      this.optionsModal = true;
+    handleShowQRClick() {
+      this.receiveModal = true;
     },
-    handleSendClick() {
-      console.log('click');
+    handleConfirm() {
+      this.receiveModal = false;
     },
   },
 });
@@ -226,7 +248,7 @@ export default Vue.extend({
 
       color: #231f20;
     }
-    .token_name {
+    .token_symbol {
       margin-left: 48px;
       /* Subtitle/S3 */
 

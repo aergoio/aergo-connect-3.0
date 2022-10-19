@@ -3,15 +3,15 @@
     <div class="account_detail_wrapper">
       <div class="title">Account Address</div>
       <div class="flex-row">
-        <Identicon text="AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW" />
-        <div>ACCOUNT 1</div>
+        <Identicon :text="$store.state.accounts.address" />
+        <div>{{ $store.state.accounts.nick }}</div>
       </div>
       <VueQRCodeComponent
-        :text="`AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW`"
-        :size="100"
+        :text="$store.state.accounts.address"
+        :size="123"
       ></VueQRCodeComponent>
       <div class="address_wrapper">
-        <div class="address">AmNx7zKkcrzd2hA9TBKhrs446DM1zYYSNcAHfhfKXkKtE6FCvSYAW</div>
+        <div class="address">{{ $store.state.accounts.address }}</div>
       </div>
       <Button type="primary" @click="handleOK">OK</Button>
     </div>
@@ -28,7 +28,7 @@ export default Vue.extend({
   methods: {
     handleOK() {
       console.log('ok');
-      this.$emit('click');
+      this.$emit('cancel','accountDetailModal');
     },
   },
 });
@@ -76,8 +76,8 @@ export default Vue.extend({
       align-items: center;
     }
     .address_wrapper {
-      margin-top: 22px;
-      margin-bottom: 32px;
+      margin-top: 20px;
+      margin-bottom: 25px;
       width: 251px;
       height: 60px;
       /* Primary/Blue02 */

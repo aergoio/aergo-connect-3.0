@@ -228,7 +228,9 @@ export default Vue.extend({
       this.optionsModal = true;
     },
     handleSendClick() {
-      console.log('click');
+
+      console.log('Send', this.txBody);
+
       if (this.amount > this.balance) {
         // error 출력 또는 입력 시에 확인
         console.log('insufficent');
@@ -238,6 +240,7 @@ export default Vue.extend({
       if (this.tokenType == 'AERGO') {
         this.txBody.to = this.inputTo;
         this.txBody.amount = `${this.inputAmount} ${this.txBody.unit}`;
+
       } else if (this.tokenType == 'ARC1') {
         this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
@@ -260,15 +263,17 @@ export default Vue.extend({
         this.txType = 'CALL';
       }
 
-      console.log('payload', this.txBody.payload);
+      console.log('Init txBody', this.txBody);
 
+      // TODO: try catch
       if (this.txBody.payload) {
-        const payload = JSON.parse(this.txBody.payload);
-        this.txBody.payload = JSON.stringify(payload);
+          const payload = JSON.parse(this.txBody.payload);
+          this.txBody.payload = JSON.stringify(payload);
       }
 
       this.txBody.type = Tx.Type[this.txType];
       console.log('txBody', this.txBody);
+
       this.confirmationModal = true;
     },
 
@@ -305,13 +310,18 @@ export default Vue.extend({
 */
       // send
       try {
+
+        console.log("account", this.account) ;
+        console.log("network", this.$store.state.accounts.network) ;
+        console.log("txBody", this.txBody) ;
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
+        console.log("hash", hash);
+
         this.setStatus('success', 'Done');
         setTimeout(() => {
           this.txHash = hash;
           this.statusDialogVisible = false;
           this.sendFinishModal = true;
-          //          this.$router.push({ name: 'account-send-success', params: { hash } });
         }, 1000);
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
@@ -359,6 +369,7 @@ export default Vue.extend({
           txBody,
           this.$store.state.accounts.network,
         );
+
         if ('tx' in result) {
           return result.tx.hash;
         } else {
@@ -368,6 +379,7 @@ export default Vue.extend({
       } catch (e) {
         throw new Error(`Node response: ${e.message || e}`);
       }
+
     },
   },
 });

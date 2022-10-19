@@ -97,7 +97,7 @@
                   <div class="address">
                     {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
                   </div>
-                  <Icon :name="'pointer'" />
+                  <Icon :name="'pointer'" @click="gotoScan(item)"/>
                 </div>
               </div>
             </div>
@@ -116,7 +116,7 @@
                   <div class="address">
                     {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
                   </div>
-                  <Icon :name="'pointer'" />
+                  <Icon :name="'pointer'" @click="gotoScan(item)"/>
                 </div>
               </div>
             </div>
@@ -208,8 +208,11 @@ export default Vue.extend({
 
       if (!staking) this.staking = '0';
       else this.staking = staking.amount;
+    },
 
-      //    else return new Amount(staking.amount).formatNumber('aergo');
+    gotoScan(item: object) {
+      var url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
+      window.open(url, "" ,"width=1000,height=800"); 
     },
 
     getBalance(value: number) {

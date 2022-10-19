@@ -65,31 +65,32 @@
           <div class="title">Asset</div>
           <select class="select_box" v-model="asset">
             <option v-for="token in $store.state.session.tokens" :value="token.hash">
-              {{ token.meta.name }}
+              <img :src="token.meta.image" alt="404" />
+              <span>{{ token.meta.name }}</span>
             </option>
           </select>
         </div>
         <div class="flex-row" v-if="tokenType == 'ARC2'">
           <div class="title">NFT ID</div>
-          <TextField
-            class="text_box"
-            placeholder="Type ID"
-            v-model="inputAmount"
-            @input="searchNFT"
-          />
-          <ul v-if="searchResult.length">
-            <li
-              v-for="item in searchResult"
-              @click="selectNFT(item)"
+          <div class="flex-column-searchbox">
+            <TextField placeholder="Type ID" v-model="inputAmount" @input="searchNFT" />
+            <ul class="search_list_wrapper" v-if="searchResult.length">
+              <li
+                class="search_list"
+                v-for="item in searchResult"
+                @click="selectNFT(item)"
+                :key="item.meta.token_id"
               >
-                <span class="list_text"> {{ item.meta.token_id }} </span>
-            </li>
-          </ul>
+                <img class="img" :src="item.token.meta.image" alt="404" />
+                <span class="text"> {{ `${item.meta.token_id}` }} </span>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="flex-row" v-else>
+        <!-- <div class="flex-row" v-else>
           <div class="title">Amount</div>
           <input v-model.number="inputAmount" type="text" class="text_box" />
-        </div>
+        </div> -->
         <div class="flex-column">
           <div class="title">Send to</div>
           <input v-model="inputTo" type="text" class="text_box" />
@@ -179,16 +180,21 @@ export default Vue.extend({
       statusDialogVisible: false,
       dialogState: 'loading',
       statusDialogTitle: 'Sending',
-      statusText : '',
+      statusText: '',
     };
   },
 
   async beforeMount() {
-    this.account = await this.$background.getActiveAccount() ;
-    console.log("Account Info", this.account) ;
+    this.account = await this.$background.getActiveAccount();
+    console.log('Account Info', this.account);
 
-    if (this.$store.state.session.token) this.asset = this.$store.state.session.token.hash ;
-    else this.asset = 'AERGO' ;
+    if (this.$store.state.session.token) this.asset = await this.$store.state.session.token.hash;
+    else this.asset = 'AERGO';
+
+    if (this.$route.params.nft && this.$store.state.session.token.meta.type == 'ARC2') {
+      this.inputAmount = this.$route.params.nft;
+      this.searchResult = '';
+    }
   },
 
   watch: {
@@ -204,15 +210,17 @@ export default Vue.extend({
 
   methods: {
     async selectNFT(item) {
-      this.inputAmount =  item.meta.token_id ;
-      this.searchResult = '' ;
+      this.inputAmount = item.meta.token_id;
+      this.searchResult = '';
     },
 
     async searchNFT(query) {
-      console.log("quary", query) ;
-      let result = [] ;
-      this.nftInventory.forEach((item) => { if (item.meta.token_id.indexOf(query) != -1) result.push(item)}) ;
-      this.searchResult = result ;
+      console.log('quary', query);
+      const result = [];
+      this.nftInventory.forEach((item) => {
+        if (item.meta.token_id.indexOf(query) != -1) result.push(item);
+      });
+      this.searchResult = result;
     },
 
     async getNftInventory() {
@@ -246,7 +254,6 @@ export default Vue.extend({
       this.optionsModal = true;
     },
     handleSendClick() {
-
       console.log('Send', this.txBody);
 
       if (this.amount > this.balance) {
@@ -258,7 +265,6 @@ export default Vue.extend({
       if (this.tokenType == 'AERGO') {
         this.txBody.to = this.inputTo;
         this.txBody.amount = `${this.inputAmount} ${this.txBody.unit}`;
-
       } else if (this.tokenType == 'ARC1') {
         this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
@@ -285,8 +291,8 @@ export default Vue.extend({
 
       // TODO: try catch
       if (this.txBody.payload) {
-          const payload = JSON.parse(this.txBody.payload);
-          this.txBody.payload = JSON.stringify(payload);
+        const payload = JSON.parse(this.txBody.payload);
+        this.txBody.payload = JSON.stringify(payload);
       }
 
       this.txBody.type = Tx.Type[this.txType];
@@ -316,11 +322,11 @@ export default Vue.extend({
       this.passwordModal = false;
 
       if (!this.txBody.from) {
-      //  This shouldn't happen normally
-          throw new Error('Could not load account, please reload page and try again.');
-      } ;
+        //  This shouldn't happen normally
+        throw new Error('Could not load account, please reload page and try again.');
+      }
 
-/*
+      /*
       // HW Ledger 사용 시에 ...
       if (this.account.data.type === 'ledger') {
             this.txBody = await this.signWithLedger(this.txBody);
@@ -328,12 +334,11 @@ export default Vue.extend({
 */
       // send
       try {
-
-        console.log("account", this.account) ;
-        console.log("network", this.$store.state.accounts.network) ;
-        console.log("txBody", this.txBody) ;
+        console.log('account', this.account);
+        console.log('network', this.$store.state.accounts.network);
+        console.log('txBody', this.txBody);
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
-        console.log("hash", hash);
+        console.log('hash', hash);
 
         this.setStatus('success', 'Done');
         setTimeout(() => {
@@ -397,7 +402,6 @@ export default Vue.extend({
       } catch (e) {
         throw new Error(`Node response: ${e.message || e}`);
       }
-
     },
   },
 });
@@ -582,10 +586,11 @@ export default Vue.extend({
         color: #279ecc;
       }
       .select_box {
+        padding: 8px;
         margin-left: 38px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 3px;
-        width: 245px;
+        width: 243px;
         height: 40px;
         /* White */
 
@@ -606,6 +611,65 @@ export default Vue.extend({
         border-radius: 4px;
         width: 240px;
         height: 36px;
+      }
+      .text-field {
+        margin-left: 26px;
+        /* White */
+
+        background: #ffffff;
+        /* Primary/Blue01 */
+
+        border: 1px solid #279ecc;
+        border-radius: 4px;
+        width: 246px;
+        height: 36px;
+      }
+      .flex-column-searchbox {
+        display: flex;
+        flex-direction: column;
+        .search_list_wrapper {
+          height: 129px;
+          position: absolute;
+          left: 105px;
+          bottom: 123px;
+          border-radius: 3px;
+          border: 1px solid #279ecc;
+          overflow-y: scroll;
+          overflow-x: hidden;
+          .search_list {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            width: 228px;
+            height: 43px;
+            /* Grey/White */
+
+            background: #ffffff;
+            border-radius: 3px;
+            .img {
+              width: 24px;
+              height: 24px;
+            }
+            .text {
+              /* Button/Btn3 */
+
+              font-family: 'Outfit';
+              font-style: normal;
+              font-weight: 500;
+              font-size: 16px;
+              line-height: 20px;
+              display: flex;
+              align-items: center;
+
+              /* Grey/07 */
+
+              color: #454344;
+            }
+          }
+          .search_list:hover {
+            background: #f6f6f6;
+          }
+        }
       }
     }
     .flex-column {

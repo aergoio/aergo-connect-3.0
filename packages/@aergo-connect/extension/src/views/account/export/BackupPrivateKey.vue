@@ -1,6 +1,6 @@
 <template>
   <div :visible="visible" title="Export Account" @close="$emit('close')">
-    <Header button="back" title="Backup Private Key" :to="routing" />
+    <Header button="back" title="Backup Private Key" :to="{name: 'accounts-list' }" />
     <section class="exportAccountDialog-contents">
       <div class="btn-p-wrapper">
         <Button
@@ -52,13 +52,14 @@ export default Vue.extend({
   props: {
     visible: { type: Boolean, default: false },
   },
+
+  beforeMount() {
+    console.log("back", this.$route.params.back) ;
+  },
+
   computed: {
-    routing() {
-      if (this.$store.state.ui.route.previousPath.split('/')[3] === 'security') {
-        return { name: 'security' };
-      } else {
-        return { name: 'account-create' };
-      }
+    backPage() {
+      this.$router.push({ name: this.$route.params.back }).catch(() => {});
     },
   },
 });

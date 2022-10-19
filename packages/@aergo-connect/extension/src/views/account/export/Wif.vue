@@ -93,23 +93,29 @@ export default class AccountExportWif extends Vue {
   }
 
   async createWif() {
+
     if (!this.password) {
       this.errors.password = 'Cannot be empty';
       return;
     }
+
     this.loading = true;
+
     try {
       const result = await this.$background.exportAccount({
-        address: this.$route.params.address,
-        chainId: this.$route.params.chainId,
+        address: this.$store.state.accounts.address,
+        chainId: this.$store.state.accounts.network,
         password: this.password,
         format: 'wif',
       });
+
       console.log(result);
       this.wif = result.privateKey;
+
     } catch (e) {
       this.errors.password = `${e}`;
       console.error(e);
+
     } finally {
       this.loading = false;
     }

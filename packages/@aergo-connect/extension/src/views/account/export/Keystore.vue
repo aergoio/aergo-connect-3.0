@@ -3,7 +3,7 @@
     <Header button="back" title="Keystore FIle" :to="{ name: 'account-backup' }" />
     <ConfirmModal
       v-if="modal"
-      title="Your private key has been saved in account.txt!"
+      :title="modalTitle" 
       to="account-backup"
     />
     <div class="content" style="padding-bottom: 0">
@@ -19,7 +19,7 @@
       </div>
       <p class="title">Keyfile Name</p>
       <div class="keystorefile_wrapper">
-        <p class="text">{{ account }}.txt</p>
+        <p class="text">{{ fileName }}.txt</p>
       </div>
     </div>
     <template #footer>
@@ -82,8 +82,12 @@ export default class AccountExportKeystore extends Vue {
     return 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.keystore);
   }
   get fileName(): string {
-    const address = this.$route.params.address;
-    return `${address}__keystore.txt`;
+    const address = this.$store.state.accounts.address;
+    return `${address.slice(0,9)}_key.txt`;
+  }
+
+  get modalTitle(): string {
+    return  "Your private key has been saved in " + this.fileName + "!" ;
   }
 
   async createKeystore() {
@@ -94,8 +98,8 @@ export default class AccountExportKeystore extends Vue {
     this.loading = true;
     try {
       const result = await this.$background.exportAccount({
-        address: this.$route.params.address,
-        chainId: this.$route.params.chainId,
+        address: this.$store.state.accounts.address,
+        chainId: this.$store.state.accounts.network,
         password: this.password,
         format: 'keystore',
       });

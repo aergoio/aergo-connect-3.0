@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/zxcvbn": "^4.4.0",
     "jdenticon": "^2.2.0",
+    "vue-qrcode-component": "^2.1.1",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {

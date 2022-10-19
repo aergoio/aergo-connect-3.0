@@ -31,7 +31,7 @@ const storeModule: Module<AccountsState, RootState> = {
 
   state: {
     accounts: {},
-    network: 'aergo.io',
+    network: 'testnet',
     address: '',
     nick: '',
     lastSeedPhrase: '',

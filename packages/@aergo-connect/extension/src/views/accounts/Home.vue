@@ -12,7 +12,7 @@
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
-
+    <AccountDetailModal v-if="accountDetailModal" @cancel="handleCancel" />
     <div v-if="!noAccountModal" class="home_content">
       <List
         v-if="hamburgerModal"
@@ -26,7 +26,7 @@
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
-            <span class="account_info_nickname_text">{{ $store.state.accounts.nick }}</span>
+            <input v-model="nick" :disabled="!editNick" class="account_info_nickname_text" @blur="changeNick" @keyup.enter="changeNick" />
             <Icon
               class="account_info_nickname_button"
               :name="`edit`"
@@ -35,7 +35,7 @@
             />
           </div>
           <div class="account_info_address_wrapper">
-            <span class="account_info_address_text">{{
+            <span class="account_info_address_text" @click="handleDetailAddress">{{
               `${$store.state.accounts.address.slice(
                 0,
                 15,
@@ -76,11 +76,16 @@
             :key="token.hash"
             @click="handleToken(token)"
           >
-            <div v-if="token.meta.type !== 'ARC2'" class="token_list_wrapper"> 
+            <div v-if="token.meta.type !== 'ARC2'" class="token_list_wrapper">
               <div class="token_list_row">
-                <Icon v-if="token.meta.type === 'AERGO'" class="token_list_icon" :name="`aergo`"/>
-                <img v-else-if="token.meta.image" class="token_list_icon" :src="token.meta.image" alt="404" />
-                <Identicon v-else class="token_list_icon" :text="token.hash"/>
+                <Icon v-if="token.meta.type === 'AERGO'" class="token_list_icon" :name="`aergo`" />
+                <img
+                  v-else-if="token.meta.image"
+                  class="token_list_icon"
+                  :src="token.meta.image"
+                  alt="404"
+                />
+                <Identicon v-else class="token_list_icon" :text="token.hash" />
                 <span class="token_list_text"> {{ token.meta.name }} </span>
               </div>
               <div class="token_list_amount">
@@ -101,8 +106,13 @@
             @click="handleNft(token)"
           >
             <div v-if="token.meta.type === 'ARC2'" class="token_list_wrapper">
-              <img v-if="token.meta.image" class="token_list_icon" :src="token.meta.image" alt="404" />
-              <Identicon v-else class="token_list_icon" :text="token.hash"/>
+              <img
+                v-if="token.meta.image"
+                class="token_list_icon"
+                :src="token.meta.image"
+                alt="404"
+              />
+              <Identicon v-else class="token_list_icon" :text="token.hash" />
               <span class="token_list_text"> {{ token.meta.name }} </span>
               <div class="token_list_amount">
                 <span class="token_list_balance">{{ token.balance }}</span>
@@ -153,6 +163,7 @@ import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
+import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
 import { AccountSpec } from '@herajs/wallet/dist/types/models/account';
 import { Account } from '@herajs/wallet';
 import { Amount } from '@herajs/common';
@@ -164,6 +175,7 @@ export default Vue.extend({
     NoAccountModal,
     NetworkModal,
     PasswordModal,
+    AccountDetailModal,
     Icon,
     Heading,
     Identicon,
@@ -182,8 +194,11 @@ export default Vue.extend({
       passwordModal: false,
       importAssetModal: false,
       noAccountModal: false,
+      accountDetailModal: false,
       network: 'aergo.io',
       tab: 'tokens',
+      editNick: false,
+      nick: this.$store.state.accounts.nick,
     };
   },
 
@@ -192,7 +207,6 @@ export default Vue.extend({
   },
 
   watch: {
-
     $route(to, from) {
       this.refreshClick();
     },
@@ -204,10 +218,19 @@ export default Vue.extend({
     '$store.state.accounts.address': function () {
       this.initAccount();
     },
-
   },
 
   methods: {
+
+    async changeNick() {
+      this.$store.commit('accounts/setNick',this.nick) ;
+      this.editNick = false ;
+    },
+
+    handleEdit() {
+      this.editNick = true ;
+      console.log('edit nick');
+    },
 
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
@@ -216,6 +239,7 @@ export default Vue.extend({
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
         await this.$forceUpdate();
+        this.nick = await this.$store.state.accounts.nick ;
 
       } else {
         console.log('Other Account Loading ..');
@@ -264,12 +288,16 @@ export default Vue.extend({
         this.passwordModal = false;
         this.hamburgerModal = false;
       }
+
+      if (modalEvent === 'accountDetailModal') {
+        this.accountDetailModal = false;
+      }
     },
 
     handleConfirm() {
       this.passwordModal = false;
       this.hamburgerModal = false;
-      this.$router .push({ name: 'security-2', }) .catch(() => {});
+      this.$router.push({ name: 'security-2' }).catch(() => {});
     },
 
     handleRemoveModalClick() {
@@ -287,13 +315,14 @@ export default Vue.extend({
     },
     handleDetailAddress() {
       console.log('handleDetailAddress');
+      this.accountDetailModal = true;
     },
 
     handleSecurity() {
       this.hamburgerModal = false;
       this.passwordModal = true;
     },
-      
+
     handleToken(token: any) {
       this.$store.commit('session/setToken', token);
       this.$router
@@ -407,9 +436,9 @@ export default Vue.extend({
         font-size: 18px;
         line-height: 24px;
         margin-bottom: 8px;
-        margin-left: 30px;
+        margin-left: 25px;
         .account_info_nickname_text {
-          margin-right: 65px;
+          margin-right: 5px;
         }
         .account_info_nickname_button {
           cursor: pointer;
@@ -458,7 +487,7 @@ export default Vue.extend({
       border-radius: 8px;
       &.unclicked {
         background: #f6f6f6;
-        color:#BABABA;
+        color: #bababa;
         box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.05);
       }
     }

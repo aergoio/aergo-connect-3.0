@@ -19,7 +19,8 @@
     "build-dev": "vue-cli-service build --dest dist-dev --mode development --watch --no-clean",
     "build": "vue-cli-service build --dest dist",
     "package": "mkdir -p release && cd dist && zip -r ../release/aergo-connect_${npm_package_version}.zip *",
-    "lint": "vue-cli-service lint eslint --ext .js,.vue src"
+    "lint": "vue-cli-service lint eslint --ext .js,.vue src",
+    "devtools": "vue-devtools"
   },
   "dependencies": {
     "@aergo-connect/lib-ui": "*",
@@ -36,6 +37,7 @@
     "lodash": "^4.17.21",
     "pump": "^3.0.0",
     "timed-async": "^0.3.1",
+    "vue": "3",
     "vuex-persist": "^2.2.0"
   },
   "devDependencies": {

@@ -26,7 +26,6 @@ async function init(name: string) {
 
   Vue.use(Background, { background });
   Vue.use(IndexedDb);
-
   const requestId = getRequestId();
 
   if (requestId) {
@@ -55,7 +54,6 @@ async function init(name: string) {
         router.push({ name: 'lockscreen' });
       }
     }
-
   });
 
   //  console.log('STATE', store.state.accounts);

@@ -82,25 +82,25 @@
           ]"
         >
           <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
-            <div v-if="item.meta.from === $store.state.accounts.address">
-              <div v-if="filter !== 'Received'">
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+            <!-- <div v-if="item.meta.from === $store.state.accounts.address"> -->
+            <div v-if="filter !== 'Received'">
+              <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+              <div class="direction_row">
+                <div class="sent">Sent</div>
                 <div class="direction_row">
-                  <div class="sent">Sent</div>
-                  <div class="direction_row">
-                    <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                    <div class="token_symbol">{{ symbol }}</div>
-                  </div>
-                </div>
-                <div class="line"></div>
-                <div class="direction_row">
-                  <div class="address">
-                    {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
-                  </div>
-                  <Icon :name="'pointer'" @click="gotoScan(item)"/>
+                  <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
+                  <div class="token_symbol">{{ symbol }}</div>
                 </div>
               </div>
+              <div class="line"></div>
+              <div class="direction_row">
+                <div class="address">
+                  {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+                </div>
+                <Icon :name="'pointer'" @click="gotoScan(item)" />
+              </div>
             </div>
+            <!-- </div> -->
             <div v-else>
               <div v-if="filter !== 'Sent'">
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
@@ -116,7 +116,7 @@
                   <div class="address">
                     {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
                   </div>
-                  <Icon :name="'pointer'" @click="gotoScan(item)"/>
+                  <Icon :name="'pointer'" @click="gotoScan(item)" />
                 </div>
               </div>
             </div>
@@ -161,7 +161,6 @@ function getVueInstance(instance: any): Vue {
 }
 
 export default Vue.extend({
-
   components: {
     ScrollView,
     Button,
@@ -199,7 +198,6 @@ export default Vue.extend({
   },
 
   methods: {
-
     async aergoStaking(): Promise<void> {
       const staking = await this.$background.getStaking({
         chainId: this.$store.state.accounts.network,
@@ -213,8 +211,8 @@ export default Vue.extend({
     },
 
     gotoScan(item: object) {
-      var url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
-      window.open(url, "" ,"width=1000,height=800"); 
+      const url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
+      window.open(url, '', 'width=1000,height=800');
     },
 
     getBalance(value: number) {
@@ -247,7 +245,7 @@ export default Vue.extend({
       if (response.error) this.data = [];
       else this.data = response.hits;
 
-//      console.log('tx', this.data);
+      //      console.log('tx', this.data);
     },
 
     /*
@@ -272,15 +270,11 @@ export default Vue.extend({
     },
 
     handleSend() {
-      this.$router
-        .push({ name: 'send' })
-        .catch(() => {});
+      this.$router.push({ name: 'send' }).catch(() => {});
       console.log('send');
     },
     handleReceive() {
-      this.$router
-        .push({ name: 'receive' })
-        .catch(() => {});
+      this.$router.push({ name: 'receive' }).catch(() => {});
       console.log('receive');
     },
   },
@@ -626,6 +620,9 @@ export default Vue.extend({
         height: 88px;
         background: #ffffff;
         border-radius: 8px;
+        &.hide {
+          display: none;
+        }
         .time {
           margin-left: 16px;
           margin-top: 8px;

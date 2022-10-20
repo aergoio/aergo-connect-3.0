@@ -59,11 +59,19 @@
           :class="[data.length > 0 ? 'nft_info_wrapper' : 'nft_info_wrapper noscroll']"
         >
           <li v-for="item in data" class="nft_info_list" :key="item.meta.tx_id">
-            <img class="img" :src="item.token.meta.image" alt="404" />
+            <!-- <img class="img" :src="item.token.meta.image" alt="404" /> -->
             <div class="nft_name_wrapper">
               <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
               <!-- <div class="id">{{ item.token.meta.symbol }}</div> -->
-              <div class="id">{{ `${item.meta.token_id.slice(0, 10)}...` }}</div>
+              <div class="id">
+                {{
+                  `${
+                    item.meta.token_id.length > 15
+                      ? `${item.meta.token_id.slice(0, 15)}...`
+                      : item.meta.token_id
+                  }`
+                }}
+              </div>
             </div>
             <Icon class="icon" :name="`nftIcon`" @click="gotoSend(item)" />
           </li>
@@ -88,34 +96,51 @@
             <option class="option" value="Sent">Sent</option>
           </select>
           <li class="nft_detail_list" v-for="item in data" :key="item.meta.token_id">
-            <div v-if="item.meta.from === $store.state.accounts.address">
-              <div v-if="filter !== 'Received'">
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="direction_row">
-                  <div class="sent">Sent</div>
-                  <div class="token_symbol">{{ `${item.meta.token_id.slice(0, 10)}...` }}</div>
-                </div>
-                <div class="line"></div>
-                <div class="direction_row">
-                  <div class="address">
-                    {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
-                  </div>
-                  <Button :name="'pointer'" @click="gotoScan(item)" />
+            <!-- <div v-if="item.meta.from === $store.state.accounts.address"> -->
+            <div v-if="filter !== 'Received'">
+              <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+              <div class="direction_row">
+                <div class="sent">Sent</div>
+
+                <div class="token_symbol">
+                  {{
+                    `${
+                      item.meta.token_id.length > 15
+                        ? `${item.meta.token_id.slice(0, 15)}...`
+                        : item.meta.token_id
+                    }`
+                  }}
                 </div>
               </div>
+              <div class="line"></div>
+              <div class="direction_row">
+                <div class="address">
+                  {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+                </div>
+                <Icon :name="'pointer'" @click="gotoScan(item)" />
+              </div>
             </div>
+            <!-- </div> -->
             <div v-else>
               <div v-if="filter !== 'Sent'">
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
                 <div class="direction_row">
                   <div class="received">Recevied</div>
-                  <div class="token_symbol">{{ `${item.meta.token_id.slice(0, 10)}...` }}</div>
+                  <div class="token_symbol">
+                    {{
+                      `${
+                        item.meta.token_id.length > 15
+                          ? `${item.meta.token_id.slice(0, 15)}...`
+                          : item.meta.token_id
+                      }`
+                    }}
+                  </div>
                 </div>
                 <div class="direction_row">
                   <div class="address">
                     {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
                   </div>
-                  <Button :name="'pointer'" @click="gotoScan(item)" />
+                  <Icon :name="'pointer'" @click="gotoScan(item)" />
                 </div>
               </div>
             </div>
@@ -259,15 +284,11 @@ export default Vue.extend({
     },
 
     handleSend() {
-      this.$router
-        .push({ name: 'send', })
-        .catch(() => {});
+      this.$router.push({ name: 'send' }).catch(() => {});
       console.log('send');
     },
     handleReceive() {
-      this.$router
-        .push({ name: 'receive', })
-        .catch(() => {});
+      this.$router.push({ name: 'receive' }).catch(() => {});
       console.log('receive');
     },
     handleChangeState(state: string) {
@@ -627,11 +648,14 @@ export default Vue.extend({
         margin-top: 10px;
         display: flex;
         align-items: center;
-        justify-content: space-evenly;
+        justify-content: space-around;
         width: 327px;
         height: 78px;
         background: #ffffff;
         border-radius: 8px;
+        .icon {
+          cursor: pointer;
+        }
         .img {
           width: 32px;
           height: 32px;
@@ -652,6 +676,7 @@ export default Vue.extend({
 
             color: #9c9a9a;
           }
+
           .id {
             font-family: 'Outfit';
             font-style: normal;
@@ -706,6 +731,9 @@ export default Vue.extend({
           align-items: center;
           justify-content: space-between;
           margin-top: 4px;
+          .icon {
+            cursor: pointer;
+          }
           .received {
             margin-left: 16px;
             width: 68px;

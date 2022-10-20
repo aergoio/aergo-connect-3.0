@@ -10,7 +10,7 @@
       @refreshClick="refreshClick"
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
-    <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
+    <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <AccountDetailModal v-if="accountDetailModal" @cancel="handleCancel" />
     <div v-if="!noAccountModal" class="home_content">
@@ -165,9 +165,6 @@ import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountMod
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
-import { AccountSpec } from '@herajs/wallet/dist/types/models/account';
-import { Account } from '@herajs/wallet';
-import { Amount } from '@herajs/common';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 
 export default Vue.extend({
@@ -360,8 +357,7 @@ export default Vue.extend({
       this.$router
         .push({
           name: 'send',
-          params: {
-          },
+          params: {},
         })
         .catch(() => {});
     },
@@ -369,8 +365,7 @@ export default Vue.extend({
       this.$router
         .push({
           name: 'receive',
-          params: {
-          },
+          params: {},
         })
         .catch(() => {});
     },
@@ -424,7 +419,7 @@ export default Vue.extend({
       flex-direction: column;
       .account_info_nickname_wrapper {
         display: flex;
-        flex-direction: row;
+        justify-content: space-between;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 500;

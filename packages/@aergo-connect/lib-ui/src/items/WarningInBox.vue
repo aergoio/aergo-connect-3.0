@@ -31,7 +31,7 @@ export default Vue.extend({
   min-height: 60px;
   background: $Pink03;
   border-radius: 4px;
-  padding: 16px;
+  padding: 10px;
   box-sizing: border-box;
   img {
     margin: 0px 10px;

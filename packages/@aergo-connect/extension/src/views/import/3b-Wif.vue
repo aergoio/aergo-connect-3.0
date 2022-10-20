@@ -93,7 +93,6 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 
       this.$store.dispatch('accounts/addAccount', accountSpec.address);
       this.$router.push({ name: 'account-imported' });
-
     } catch (e) {
       console.log(e);
       if (`${e}`.match(/invalid mac value/)) {
@@ -133,5 +132,9 @@ export default class Keystore extends mixins(PersistInputsMixin) {
 }
 .import-wif-textField {
   margin-top: 32px;
+}
+.warningInBox-wrapper {
+  margin-left: 24px;
+  margin-top: 14px;
 }
 </style>

@@ -52,15 +52,15 @@ import AccountExportKeystore from '../views/export/Keystore.vue';
 //import AccountRemove from '../views/account/Remove.vue';
 //import AccountSign from '../views/account/Sign.vue';
 
-//import RequestContainer from '../views/request/Container.vue';
-//import RequestSelectAccount from '../views/request/SelectAccount.vue';
-//import RequestSelectAction from '../views/request/SelectAction.vue';
-//import RequestAccountContainer from '../views/request/AccountContainer.vue';
-//import RequestAccountList from '../views/request/AccountList.vue';
-//import RequestAddress from '../views/request/Address.vue';
-//import RequestSign from '../views/request/Sign.vue';
-//import RequestSendTx from '../views/request/Send.vue';
-//import RequestSignTx from '../views/request/SignTx.vue';
+import RequestContainer from '../views/request/Container.vue';
+import RequestSelectAccount from '../views/request/SelectAccount.vue';
+import RequestSelectAction from '../views/request/SelectAction.vue';
+import RequestAccountContainer from '../views/request/AccountContainer.vue';
+import RequestAccountList from '../views/request/AccountList.vue';
+import RequestAddress from '../views/request/Address.vue';
+import RequestSign from '../views/request/Sign.vue';
+import RequestSendTx from '../views/request/Send.vue';
+import RequestSignTx from '../views/request/SignTx.vue';
 
 enum R {
   None = 0,
@@ -237,88 +237,6 @@ const routes: RouteConfig[] = [
       },
     ],
   },
-/*
-  {
-    path: '/account/:from/:contract/',
-    component: AccountContainer,
-    children: [
-      {
-        path: '',
-        component: TabContainer,
-        children: [
-          {
-            path: 'details',
-            component: AccountDetailsContainer,
-            alias: '',
-            children: [
-              { path: '', name: 'account-details', component: AccountDetails },
-              {
-                path: 'export/keystore',
-                name: 'account-export-keystore',
-                component: AccountExportKeystore,
-              },
-              {
-                path: 'export/wif',
-                name: 'account-export-wif',
-                component: AccountExportWif,
-              },
-              {
-                path: 'name/create',
-                name: 'account-name-create',
-                component: AccountNameCreate,
-              },
-              {
-                path: 'name/:name/update',
-                name: 'account-name-update',
-                component: AccountNameUpdate,
-              },
-            ],
-          },
-          {
-            path: 'send',
-            component: AccountDetailsContainer,
-            alias: '',
-            children: [
-              { path: '', name: 'account-send', component: AccountSend },
-              {
-                path: 'confirm',
-                name: 'account-send-confirm',
-                component: AccountSendConfirm,
-              },
-            ],
-          },
-          {
-            path: 'history',
-            name: 'account-history',
-            component: AccountHistory,
-          },
-          { path: 'sign', name: 'account-sign', component: AccountSign },
-        ],
-      },
-      {
-        path: 'send/success/:hash',
-        name: 'account-send-success',
-        component: AccountSendSuccess,
-      },
-      // withMeta(1, {
-      //   path: 'created',
-      //   name: 'account-created',
-      //   component: AccountCreated,
-      // }),
-      withMeta(2, {
-        path: 'seedphrase',
-        name: 'account-seedphrase-view',
-        component: ViewSeedPhrase,
-      }),
-      withMeta(3, {
-        path: 'seedphrase-verify',
-        name: 'account-seedphrase-verify',
-        component: VerifySeedPhrase,
-      }),
-      { path: 'remove', name: 'account-remove', component: AccountRemove },
-    ],
-  },
-/*
   {
     path: '/request',
     component: RequestContainer,
@@ -358,7 +276,6 @@ const routes: RouteConfig[] = [
       },
     ],
   },
-*/
 ];
 
 Vue.use(VueRouter);

@@ -1,7 +1,7 @@
 <template>
   <ScrollView>
-    <ReceiveModal 
-      v-if="receiveModal" 
+    <ReceiveModal
+      v-if="receiveModal"
       :amount="inputAmount"
       :symbol="symbol"
       :asset="asset"
@@ -36,8 +36,8 @@
         <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
         <Identicon v-else-if="!icon" :text="asset" class="token_icon" />
         <img v-else class="token_icon" :src="icon" />
-        <div class="token_amount">{{balance}}</div>
-        <div class="token_symbol">{{symbol}}</div>
+        <div class="token_amount">{{ balance }}</div>
+        <div class="token_symbol">{{ symbol }}</div>
       </div>
 
       <div class="send_form_wrapper">
@@ -49,14 +49,16 @@
             </option>
           </select>
         </div>
-        <div class="flex-row" v-if="tokenType!=='ARC2'">
+        <div class="flex-row" v-if="tokenType !== 'ARC2'">
           <div class="title">Amount</div>
           <input v-model.number="inputAmount" type="text" class="text_box" />
         </div>
       </div>
     </div>
     <template #footer class="footer">
-      <Button v-if="!receiveModal" type="primary" size="large" @click="handleShowQRClick">Show QR</Button>
+      <Button v-if="!receiveModal" type="primary" size="large" @click="handleShowQRClick"
+        >Show QR</Button
+      >
     </template>
   </ScrollView>
 </template>
@@ -85,8 +87,8 @@ export default Vue.extend({
   },
 
   async beforeMount() {
-    if (this.$store.state.session.token) this.asset = this.$store.state.session.token.hash ;
-    else this.asset = 'AERGO' ;
+    if (this.$store.state.session.token) this.asset = this.$store.state.session.token.hash;
+    else this.asset = 'AERGO';
   },
 
   watch: {
@@ -100,7 +102,7 @@ export default Vue.extend({
 
   methods: {
     handleBack() {
-      this.$router.push({ name: 'accounts-list', });
+      this.$router.push({ name: 'accounts-list' });
     },
     handleShowQRClick() {
       this.receiveModal = true;
@@ -313,7 +315,7 @@ export default Vue.extend({
         border: 1px solid #279ecc;
         border-radius: 4px;
         width: 240px;
-        height: 36px;
+        height: 33px;
       }
     }
     .flex-column {
@@ -333,8 +335,8 @@ export default Vue.extend({
       }
       .text_box {
         margin-top: 9px;
-        width: 320px;
-        height: 36px;
+        width: 303px;
+        height: 33px;
         background: #ffffff;
         /* Primary/Blue01 */
 

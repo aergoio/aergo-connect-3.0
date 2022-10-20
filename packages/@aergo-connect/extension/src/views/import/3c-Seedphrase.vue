@@ -3,8 +3,8 @@
     <Header button="back" title="Mnemonic Seed Phrase" :to="{ name: 'account-import' }" />
     <div class="simple-content">
       <span class="simple-preheader">Enter your Mnemonic Seed Phrase.</span>
+      <div class="import-seedphrase-preheader">Seed Phrase</div>
       <div class="simple-center">
-        <div class="import-seedphrase-preheader">Seed Phrase</div>
         <TextArea
           v-model="seedPhrase"
           placeholder="Seed phrase is a set of twelve words. Add one space between each word."
@@ -174,17 +174,20 @@ export default class Keystore extends mixins(PersistInputsMixin) {
   letter-spacing: -0.333333px;
   color: #454344;
   margin-top: 30px;
+  margin-left: 26px;
   margin-bottom: 10px;
 }
-
+.inputContainer {
+  width: 327px;
+}
 .import-seedphrase-validation {
   display: flex;
   font-weight: 300;
   font-size: 18px;
   line-height: 18px;
-  display: flex;
   letter-spacing: -0.333333px;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-left: 24px;
   &.invalid {
     color: #e4097d;
   }

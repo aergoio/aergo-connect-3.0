@@ -87,10 +87,10 @@
             </ul>
           </div>
         </div>
-        <!-- <div class="flex-row" v-else>
+        <div class="flex-row" v-else>
           <div class="title">Amount</div>
           <input v-model.number="inputAmount" type="text" class="text_box" />
-        </div> -->
+        </div>
         <div class="flex-column">
           <div class="title">Send to</div>
           <input v-model="inputTo" type="text" class="text_box" />
@@ -107,7 +107,9 @@
       <p v-else class="error">{{ statusText }}</p>
     </LoadingDialog>
     <template #footer class="footer">
-      <div class="show_option" @click="handleOptionsModal">Show optional fields</div>
+      <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
+        Show optional fields
+      </div>
       <Button type="primary" size="large" @click="handleSendClick">Send</Button>
     </template>
   </ScrollView>
@@ -155,8 +157,8 @@ export default Vue.extend({
       balance: 0,
       tokenType: '',
       symbol: '',
-      inputAmount: '0',
-      inputTo: 'AmNBes1nksbz8VhbF6DiXfEqL1dx1YRHFpxZwZABQLqkctmCTFZU',
+      inputAmount: '',
+      inputTo: '',
       txType: 'TRANSFER',
       nftInventory: [],
       optionsModal: false,
@@ -196,7 +198,9 @@ export default Vue.extend({
       this.searchResult = '';
     }
   },
-
+  updated() {
+    console.log(this.asset, 'asset');
+  },
   watch: {
     asset: function () {
       this.balance = this.$store.state.session.tokens[this.asset]['balance'];
@@ -598,6 +602,7 @@ export default Vue.extend({
         border-radius: 4px;
       }
       .text_box {
+        padding-left: 10px;
         margin-left: 19px;
         /* White */
 
@@ -607,7 +612,7 @@ export default Vue.extend({
         border: 1px solid #279ecc;
         border-radius: 4px;
         width: 240px;
-        height: 36px;
+        height: 33px;
       }
       .text-field {
         margin-left: 26px;
@@ -624,11 +629,13 @@ export default Vue.extend({
       .flex-column-searchbox {
         display: flex;
         flex-direction: column;
+        .input-field {
+          margin-top: 0;
+        }
         .search_list_wrapper {
-          height: 129px;
           position: absolute;
           left: 105px;
-          bottom: 123px;
+          top: 125px;
           border-radius: 3px;
           border: 1px solid #279ecc;
           overflow-y: scroll;
@@ -685,9 +692,23 @@ export default Vue.extend({
         color: #279ecc;
       }
       .text_box {
+        /* Caption/C3 */
+        word-break: break-all;
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 18px;
+        letter-spacing: -0.333333px;
+
+        /* Grey/07 */
+
+        color: #454344;
+        padding-left: 10px;
+        padding-right: 10px;
         margin-top: 9px;
-        width: 320px;
-        height: 36px;
+        width: 303px;
+        height: 33px;
         background: #ffffff;
         /* Primary/Blue01 */
 

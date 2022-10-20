@@ -43,10 +43,6 @@ const storeModule: Module<SessionState, RootState> = {
       });
 
       const aergoBalance = await new Amount(val.balance).formatNumber('aergo');
-/*
-      await commit('setAergoBalance', result);
-*/
-
       const resp = await fetch(
         `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
       );
@@ -69,7 +65,6 @@ const storeModule: Module<SessionState, RootState> = {
 
       const tokens = await store.dispatch('accounts/tokens');
       await commit('setTokens', tokens);
-
       console.log(
         'fetch',
         `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
@@ -85,6 +80,7 @@ const storeModule: Module<SessionState, RootState> = {
 
       // Default Token : 'AERGO' 
       await commit('setToken',state.tokens['AERGO']) ;
+      await store.commit('accounts/setSeedPhrase','');
 
       console.log('Out tokens', state.tokens);
     },

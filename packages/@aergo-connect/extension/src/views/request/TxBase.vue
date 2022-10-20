@@ -13,7 +13,7 @@
       </div>
     </template>
 
-    <div class="content" style="padding-top: 0;" v-if="request">
+    <div class="content" style="padding-top: 0" v-if="request">
       <TxConfirm :txBody="txDataDisplay" />
     </div>
 

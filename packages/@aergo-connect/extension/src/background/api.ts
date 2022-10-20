@@ -30,15 +30,6 @@ interface TokenPriceInfo {
 }
 const tokenPriceCache: Record<string, TokenPriceInfo> = {};
 
-/*
-const TokenABI = {
-  "language": "lua",
-  "version": "0.2",
-  "state_variables":[ {"name":"Value","type":"value"} ],
-  "functions": [ { "name": "balanceOf", "arguments": [ { "name": "owner" } ] }]
-};
-*/
-
 /**
  * RPC API to be consumed by clients.
  * This interface matches the object returned by client.connectToBackground.
@@ -48,15 +39,6 @@ export class Api {
   constructor(controller: Controller) {
     this.controller = controller;
   }
-
-  // seo
-  /*
-  async getTokenBalance (chainId: string, address: string, token: string) {
-    const contract = await Contract.fromAbi(TokenABI).setAddress(token);
-    const result = await this.controller.wallet.getClient(chainId).queryContract(contract.balanceOf(address));
-    return result._bignum;
-  }
-*/
 
   async unlock({ password }: { password: string }) {
     await this.controller.unlock(password);

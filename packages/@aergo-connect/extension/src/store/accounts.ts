@@ -111,7 +111,7 @@ const storeModule: Module<AccountsState, RootState> = {
 
       tokens[token.hash] = token;
       commit('setTokens', tokens);
-//      state.dispatch('session/initState') ;
+//      store.dispatch('session/initState') ;
 
       console.log('Add tokens', tokens);
     },
@@ -121,7 +121,7 @@ const storeModule: Module<AccountsState, RootState> = {
       delete tokens[token.hash];
       commit('setTokens', tokens);
       
-      state.dispatch('session/initState') ;
+      store.state.dispatch('session/initState') ;
       console.log('deleteToken', token);
     },
   },
@@ -138,7 +138,6 @@ const storeModule: Module<AccountsState, RootState> = {
 
       const vue = getVueInstance(this);
       vue.$background.setActiveAccount({ address: address, chainId: 'aergo.io' });
-
       state.address = address;
       state.nick = state.accounts[address]['nick'];
 

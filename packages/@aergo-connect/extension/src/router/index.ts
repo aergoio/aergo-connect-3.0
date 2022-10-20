@@ -2,58 +2,55 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import { loadPersistedRoute, allowedToExitLockscreen, persistRoute, updateTitle } from './guards';
 
-import AccountsContainer from '../views/accounts/Container.vue';
-import Lockscreen from '../views/accounts/Lockscreen.vue';
-import Welcome from '../views/accounts/Welcome.vue';
-import Register from '../views/accounts/Register.vue';
-import Setup from '../views/accounts/Setup.vue';
-import Create from '../views/accounts/Create.vue';
-import Home from '../views/accounts/Home.vue';
-import SignMessage from '../views/accounts/SignMessage.vue';
-import Security2 from '../views/accounts/Security-step2.vue';
-import ImportAsset from '../views/accounts/ImportAsset.vue';
-import Send from '../views/accounts/Send.vue';
-import Receive from '../views/accounts/Receive.vue';
-import TokenDetail from '../views/accounts/TokenDetail.vue';
-import NftDetail from '../views/accounts/NftDetail.vue';
-// import Import from '../views/accounts/import/1-Network.vue';
-import ImportFormat from '../views/accounts/import/2-Format.vue';
-import ImportKeystore from '../views/accounts/import/3a-Keystore.vue';
-import ImportWif from '../views/accounts/import/3b-Wif.vue';
-import ImportSeedphrase from '../views/accounts/import/3c-Seedphrase.vue';
+import AccountsContainer from '../views/Container.vue';
+import Lockscreen from '../views/Lockscreen.vue';
+import Welcome from '../views/Welcome.vue';
+import Register from '../views/Register.vue';
+import Setup from '../views/Setup.vue';
+import Create from '../views/Create.vue';
+import Home from '../views/Home.vue';
+import SignMessage from '../views/SignMessage.vue';
+import Security from '../views/Security.vue';
+import ImportAsset from '../views/ImportAsset.vue';
+import Send from '../views/Send.vue';
+import Receive from '../views/Receive.vue';
+import TokenDetail from '../views/TokenDetail.vue';
+import NftDetail from '../views/NftDetail.vue';
+import ImportFormat from '../views/import/2-Format.vue';
+import ImportKeystore from '../views/import/3a-Keystore.vue';
+import ImportWif from '../views/import/3b-Wif.vue';
+import ImportSeedphrase from '../views/import/3c-Seedphrase.vue';
 
-import ConnectHw from '../views/accounts/connect-hw/1-Network.vue';
-import ConnectHwAccounts from '../views/accounts/connect-hw/2-Accounts.vue';
-// import AccountsList from '../views/accounts/List.vue';
-// import BalanceList from '../views/accounts/balance/List.vue';
-import Settings from '../views/accounts/Settings.vue';
-import NetworksList from '../views/accounts/networks/List.vue';
-import NetworksUpdate from '../views/accounts/networks/Update.vue';
+import ConnectHw from '../views/connect-hw/1-Network.vue';
+import ConnectHwAccounts from '../views/connect-hw/2-Accounts.vue';
+import Settings from '../views/Settings.vue';
+import NetworksList from '../views/networks/List.vue';
+import NetworksUpdate from '../views/networks/Update.vue';
 
-import BackupPrivateKey from '../views/account/export/BackupPrivateKey.vue';
-import MnemonicSeedPhrase from '../views/account/export/MnemonicSeedPhrase.vue';
-// import EncryptedPrivateKey from '../views/account/export/EncryptedPrivateKey.vue';
-import Keystore from '../views/account/export/Keystore.vue';
-import ExportWif from '../views/account/export/Wif.vue';
+import BackupPrivateKey from '../views/export/BackupPrivateKey.vue';
+import MnemonicSeedPhrase from '../views/export/MnemonicSeedPhrase.vue';
+import Keystore from '../views/export/Keystore.vue';
+import ExportWif from '../views/export/Wif.vue';
 
+/*
 import AccountContainer from '../views/account/Container.vue';
-// import AccountCreated from '../views/account/Created.vue';
-import ViewSeedPhrase from '../views/account/seedphrase/View.vue';
-import VerifySeedPhrase from '../views/account/seedphrase/Verify.vue';
-// import AccountImported from '../views/account/Imported.vue';
 import TabContainer from '../views/account/TabContainer.vue';
-import AccountSend from '../views/account/send/1-Send.vue';
-import AccountSendConfirm from '../views/account/send/2-Confirm.vue';
-import AccountSendSuccess from '../views/account/send/3-Success.vue';
-import AccountHistory from '../views/account/History.vue';
 import AccountDetailsContainer from '../views/account/details/Container.vue';
 import AccountDetails from '../views/account/details/Details.vue';
-import AccountExportKeystore from '../views/account/export/Keystore.vue';
-import AccountExportWif from '../views/account/export/Wif.vue';
-import AccountNameCreate from '../views/account/name/Create.vue';
-import AccountNameUpdate from '../views/account/name/Update.vue';
-import AccountRemove from '../views/account/Remove.vue';
-import AccountSign from '../views/account/Sign.vue';
+import AccountExportKeystore from '../views/export/Keystore.vue';
+*/
+
+//import ViewSeedPhrase from '../views/account/seedphrase/View.vue';
+//import VerifySeedPhrase from '../views/account/seedphrase/Verify.vue';
+//import AccountSend from '../views/account/send/1-Send.vue';
+//import AccountSendConfirm from '../views/account/send/2-Confirm.vue';
+//import AccountSendSuccess from '../views/account/send/3-Success.vue';
+//import AccountHistory from '../views/account/History.vue';
+//import AccountExportWif from '../views/account/export/Wif.vue';
+//import AccountNameCreate from '../views/account/name/Create.vue';
+//import AccountNameUpdate from '../views/account/name/Update.vue';
+//import AccountRemove from '../views/account/Remove.vue';
+//import AccountSign from '../views/account/Sign.vue';
 
 import RequestContainer from '../views/request/Container.vue';
 import RequestSelectAccount from '../views/request/SelectAccount.vue';
@@ -114,12 +111,6 @@ const routes: RouteConfig[] = [
         name: 'accounts-list',
         component: Home,
       }),
-
-      // withMeta(1, {
-      //   path: 'list/',
-      //   name: 'accounts-list-address',
-      //   component: Home,
-      // }),
       withMeta(2, {
         path: 'list/importasset/:option',
         name: 'import-asset',
@@ -131,9 +122,9 @@ const routes: RouteConfig[] = [
         component: SignMessage,
       }),
       withMeta(2, {
-        path: '/list/security/2',
-        name: 'security-2',
-        component: Security2,
+        path: '/list/security',
+        name: 'security',
+        component: Security,
       }),
       withMeta(2, {
         path: '/list/send',
@@ -156,12 +147,6 @@ const routes: RouteConfig[] = [
         component: NftDetail,
       }),
 
-      // withMeta(2, {
-      //   path: 'balance/:chainId//:nick',
-      //   name: 'balance-list',
-      //   component: BalanceList,
-      // }), // 시연용
-
       withMeta(2, {
         path: '/account/create',
         name: 'account-create',
@@ -169,25 +154,25 @@ const routes: RouteConfig[] = [
       }),
 
       withMeta(3, {
-        path: '/account/backup ',
+        path: '/export/BackupPrivateKey',
         name: 'account-backup',
         component: BackupPrivateKey,
       }),
 
       withMeta(4, {
-        path: '/account/backup/mnemonic ',
+        path: '/export/MnemonicSeedPhrase ',
         name: 'account-backup-mnemonic',
         component: MnemonicSeedPhrase,
       }),
 
       withMeta(4, {
-        path: '/account/backup/encrypted ',
+        path: '/export/Wif ',
         name: 'account-backup-encrypted',
         component: ExportWif,
       }),
 
       withMeta(4, {
-        path: '/account/backup/keystore ',
+        path: '/export/keystore ',
         name: 'account-backup-keystore',
         component: Keystore,
       }),
@@ -245,91 +230,11 @@ const routes: RouteConfig[] = [
         },
         R.NoTracking,
       ),
-    ],
-  },
-  {
-    path: '/account/:from/:contract/',
-    component: AccountContainer,
-    children: [
-      {
-        path: '',
-        component: TabContainer,
-        children: [
-          {
-            path: 'details',
-            component: AccountDetailsContainer,
-            alias: '',
-            children: [
-              { path: '', name: 'account-details', component: AccountDetails },
-              {
-                path: 'export/keystore',
-                name: 'account-export-keystore',
-                component: AccountExportKeystore,
-              },
-              {
-                path: 'export/wif',
-                name: 'account-export-wif',
-                component: AccountExportWif,
-              },
-              {
-                path: 'name/create',
-                name: 'account-name-create',
-                component: AccountNameCreate,
-              },
-              {
-                path: 'name/:name/update',
-                name: 'account-name-update',
-                component: AccountNameUpdate,
-              },
-            ],
-          },
-          {
-            path: 'send',
-            component: AccountDetailsContainer,
-            alias: '',
-            children: [
-              { path: '', name: 'account-send', component: AccountSend },
-              {
-                path: 'confirm',
-                name: 'account-send-confirm',
-                component: AccountSendConfirm,
-              },
-            ],
-          },
-          {
-            path: 'history',
-            name: 'account-history',
-            component: AccountHistory,
-          },
-          { path: 'sign', name: 'account-sign', component: AccountSign },
-        ],
-      },
-      {
-        path: 'send/success/:hash',
-        name: 'account-send-success',
-        component: AccountSendSuccess,
-      },
-      // withMeta(1, {
-      //   path: 'created',
-      //   name: 'account-created',
-      //   component: AccountCreated,
-      // }),
-      withMeta(2, {
-        path: 'seedphrase',
-        name: 'account-seedphrase-view',
-        component: ViewSeedPhrase,
-      }),
-      withMeta(3, {
-        path: 'seedphrase-verify',
-        name: 'account-seedphrase-verify',
-        component: VerifySeedPhrase,
-      }),
       {
         path: 'import/',
         name: 'account-imported',
         component: Create,
       },
-      { path: 'remove', name: 'account-remove', component: AccountRemove },
     ],
   },
   {

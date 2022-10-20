@@ -4,26 +4,26 @@
       <div class="network_modal_title">Select Network</div>
       <div class="network_modal_line" />
       <ul class="network_modal_ul">
-        <li class="network_modal_li">
+        <li class="network_modal_li" @click="setNetwork('mainnet')">
           <div class="network_modal_circle1" />
-          <span class="network_modal_name" @click="setNetwork('mainnet')">AERGO Mainnet</span>
-          <Icon class="network_modal_icon" />
+          <span class="network_modal_name">AERGO Mainnet</span>
+          <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
         </li>
         <div class="list_line" />
-        <li class="network_modal_li">
+        <li class="network_modal_li" @click="setNetwork('testnet')">
           <div class="network_modal_circle2" />
-          <span class="network_modal_name" @click="setNetwork('testnet')">AERGO Testnet</span>
-          <Icon class="network_modal_icon" />
+          <span class="network_modal_name">AERGO Testnet</span>
+          <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
         </li>
         <div class="list_line" />
-        <li class="network_modal_li">
+        <li class="network_modal_li" @click="setNetwork('alpha')">
           <div class="network_modal_circle3" />
-          <span class="network_modal_name" @click="setNetwork('alpha')">AERGO alpha</span>
-          <Icon class="network_modal_icon" />
+          <span class="network_modal_name">AERGO alpha</span>
+          <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
         </li>
         <div class="list_line" />
       </ul>
-      <Button type="primary" size="x-large">Add a network</Button>
+      <!-- <Button type="primary" size="x-large">Add a network</Button> -->
     </div>
   </div>
 </template>
@@ -107,8 +107,8 @@ export default Vue.extend({
         box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
       }
       .network_modal_li {
-        margin-top: 18px;
-        margin-bottom: 18px;
+        height: 50px;
+        cursor: pointer;
         display: flex;
         align-items: center;
 
@@ -151,6 +151,11 @@ export default Vue.extend({
         .network_modal_icon {
           margin-left: 158px;
         }
+      }
+      .network_modal_li:hover {
+        /* Grey/00 */
+
+        background: #f6f6f6;
       }
     }
   }

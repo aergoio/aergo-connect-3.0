@@ -6,9 +6,7 @@
           <HeaderLogo />
         </Header>
         <div class="account-list-header">
-          <Heading tag="h2">
-            Select account to use
-          </Heading>
+          <Heading tag="h2"> Select account to use </Heading>
         </div>
       </template>
       <div class="account-list-wrap">

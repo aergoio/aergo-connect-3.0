@@ -1,14 +1,11 @@
 <template>
-  <div class="content">
-    Redirecting...
-  </div>
+  <div class="content">Redirecting...</div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { ExternalRequest } from '../../background/request';
-
 @Component
 export default class RequestSelect extends Vue {
   mounted() {

@@ -14,11 +14,24 @@
         <Icon :name="`edit`" @click="handleEdit" />
       </div>
       <div class="user_nickname_wrapper">
-        <input :disabled="!editNick" class="user_nickname_text" v-model="nick" @blur="changeNick" />
+        <div v-if="!editNick" class="user_nickname_text">{{ nick }}</div>
+        <input
+          v-if="editNick"
+          class="user_nickname_text"
+          v-model="nick"
+          autofocus
+          @blur="changeNick"
+          @keyup.enter="changeNick"
+        />
       </div>
 
       <ButtonGroup vertical class="buttonGroup_position">
-        <Button :disabled="!$store.state.accounts.lastSeedPhrase" type="primary-outline" size="large-outline" @click="goBackup">
+        <Button
+          :disabled="!$store.state.accounts.lastSeedPhrase"
+          type="primary-outline"
+          size="large-outline"
+          @click="goBackup"
+        >
           Backup Private Key
         </Button>
         <Button type="primary" size="large" @click="goHome"> Home </Button>
@@ -48,39 +61,39 @@ export default class Create extends mixins() {
   address = '';
   nick = '';
   key = '';
-  editNick = false ;
+  editNick = false;
 
   async beforeMount() {
     this.address = await this.$store.state.accounts.address;
     this.nick = await this.$store.state.accounts.nick;
-    
+
     console.log('created in ', this.nick, this.address);
   }
   async goBackup() {
     this.$store.commit('accounts/setNick', this.nick);
-    this.$router.push({ name: 'account-backup', });
+    this.$router.push({ name: 'account-backup' });
   }
 
   handleEdit() {
-    this.editNick = true ;
-    console.log('edit nick');
+    this.editNick = true;
   }
 
   async changeNick() {
-      this.$store.commit('accounts/setNick',this.nick) ;
-      this.editNick = false ;
+    this.$store.commit('accounts/setNick', this.nick);
+    this.editNick = false;
   }
 
   async goHome() {
     console.log('created', this.$store.state.accounts.nick);
     this.$store.commit('accounts/setNick', this.nick);
-    this.$router.push({ name: 'accounts-list', });
+    this.$router.push({ name: 'accounts-list' });
   }
-  handleEdit() {
-    this.editNick = true ;
-    this.$forceUpdate() ;
-    console.log('edit nick');
-  }
+
+  // handleEdit() {
+  //   this.editNick = true;
+  //   this.$forceUpdate();
+  //   console.log('edit nick');
+  // }
 }
 </script>
 

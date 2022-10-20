@@ -47,6 +47,8 @@ export default Vue.extend({
   display: flex;
   width: 233px;
   padding: 8px 10px 8px 10px;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 
   cursor: pointer;

@@ -22,10 +22,10 @@
         @keyup.enter="unlock"
         >Unlock</Button
       >
-      <div class="password-text-wrapper">
+      <!-- <div class="password-text-wrapper">
         <span> Wallet won't unlock? You can DELETE your current wallet and setup a new one. </span>
         <a href="#">Reset Wallet</a>
-      </div>
+      </div> -->
     </div>
   </ScrollView>
 </template>
@@ -71,13 +71,12 @@ export default class Lockscreen extends mixins() {
 
       await this.$store.dispatch('session/initState');
 
-//      const getAccounts = await this.$background.getAccounts();
+      //      const getAccounts = await this.$background.getAccounts();
 
       if (!nextPath || nextPath === '/' || nextPath === '/locked') {
         nextPath = {
           name: 'accounts-list',
-          params: {
-          },
+          params: {},
         };
       }
 

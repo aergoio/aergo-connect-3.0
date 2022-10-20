@@ -96,11 +96,7 @@ export default Vue.extend({
       this.$emit('select', account);
 
       this.$router
-        .push({
-          name: 'accounts-list',
-          params: {
-          },
-        })
+        .push({ name: 'accounts-list', })
         .catch(() => {});
     },
 

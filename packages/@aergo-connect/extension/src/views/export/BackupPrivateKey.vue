@@ -6,6 +6,7 @@
         <Button
           type="gradation"
           size="large"
+          :disabled="!$store.state.accounts.lastSeedPhrase"
           :to="{ name: 'account-backup-mnemonic', params: { next: 'account-backup-mnemonic' } }"
         >
           Mnemonic Seed Phrase

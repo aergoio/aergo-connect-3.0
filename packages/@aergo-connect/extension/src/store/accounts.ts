@@ -138,7 +138,6 @@ const storeModule: Module<AccountsState, RootState> = {
 
       const vue = getVueInstance(this);
       vue.$background.setActiveAccount({ address: address, chainId: 'aergo.io' });
-
       state.address = address;
       state.nick = state.accounts[address]['nick'];
 

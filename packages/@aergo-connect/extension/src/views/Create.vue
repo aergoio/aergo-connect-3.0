@@ -18,7 +18,7 @@
       </div>
 
       <ButtonGroup vertical class="buttonGroup_position">
-        <Button type="primary-outline" size="large-outline" @click="goBackup">
+        <Button :disabled="!$store.state.accounts.lastSeedPhrase" type="primary-outline" size="large-outline" @click="goBackup">
           Backup Private Key
         </Button>
         <Button type="primary" size="large" @click="goHome"> Home </Button>

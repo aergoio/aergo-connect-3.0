@@ -61,7 +61,6 @@ export default class Create extends mixins(PersistInputsMixin) {
     console.log(mnemonic, 'mnemonic');
     await this.$store.dispatch('accounts/addAccount', account.address);
     await this.$store.commit('accounts/setSeedPhrase', mnemonic);
-    await this.$store.dispatch('accounts/loadAccount');
     this.$router.push({
       name: 'account-create',
       params: {

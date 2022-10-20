@@ -80,7 +80,7 @@ export default Vue.extend({
     },
 
     handleBackupPrivateKey() {
-      this.$router.push({ name: 'account-backup'});
+      this.$router.push({ name: 'account-backup', });
     },
   },
 });

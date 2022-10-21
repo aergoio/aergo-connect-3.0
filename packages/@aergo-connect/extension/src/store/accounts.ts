@@ -85,7 +85,7 @@ const storeModule: Module<AccountsState, RootState> = {
     async removeAccount({ state, commit }, address: string) {
       console.log(address);
       const vue = getVueInstance(this);
-      vue.$background.removeAccount({ address: state.address, chainId: state.network });
+      vue.$background.removeAccount({ address: state.address, chainId: 'aergo.io' });
       commit('removeAccount');
 
       const accounts = vue.$background.getAccounts();

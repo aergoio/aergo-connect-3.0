@@ -50,24 +50,13 @@ export default Vue.extend({
       console.log('cancel', '1');
       this.$emit('cancel', 'removeAccountModal');
     },
+
     async handleDeleteAccount() {
-      const nativeCheck = confirm(
-        `Are you really sure you want to remove the account ${this.$store.state.accounts.address} from this wallet?`,
+      await this.$store.dispatch('accounts/removeAccount') ;
+      alert(
+        `${this.$store.state.accounts.address} has been removed!`,
       );
-      if (!nativeCheck) return;
-      const removeAccountFunc = await this.$background.removeAccount({
-        chainId: this.$store.state.accounts.network,
-        address: this.$store.state.accounts.address,
-      });
-      if (removeAccountFunc) {
-        this.$store.commit('accounts/removeAccount', this.$store.state.accounts.address);
-        this.$router
-          .push({
-            name: 'accounts-list',
-          })
-          .catch(() => {});
-        // this.$emit('cancel', 'removeAccountModal');
-      }
+      this.$emit('cancel');
     },
   },
 });

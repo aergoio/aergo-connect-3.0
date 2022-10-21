@@ -64,6 +64,7 @@ export default Vue.extend({
       navigator.clipboard.writeText(this.mnemonic);
       this.copy = 'Copied';
       this.imageName = '@aergo-connect/lib-ui/src/icons/img/copy.svg';
+      this.$store.commit('accounts/setBackup',true);
     },
   },
 

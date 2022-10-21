@@ -45,8 +45,10 @@ export default Vue.extend({
   box-sizing: border-box;
   border-radius: 4px;
   display: flex;
-  width: 233px;
+  width: 240px;
   padding: 8px 10px 8px 10px;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 
   cursor: pointer;

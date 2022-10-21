@@ -28,7 +28,6 @@ export default Vue.extend({
       type: [String, Object] as PropType<RawLocation>,
     },
   },
-  computed: {},
   methods: {
     navigate() {
       if (this.to) {

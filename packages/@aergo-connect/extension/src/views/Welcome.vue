@@ -22,7 +22,7 @@
               class="welcome_button_size"
               type="primary"
               size="large"
-              :to="{ name: 'setup', params: {nextPage: 'register', }, }"
+              :to="{ name: 'setup', params: { nextPage: 'register' } }"
               hover
               >Get Started</Button
             >

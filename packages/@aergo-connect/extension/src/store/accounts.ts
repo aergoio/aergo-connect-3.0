@@ -40,28 +40,24 @@ const storeModule: Module<AccountsState, RootState> = {
   getters: {},
 
   actions: {
-
     async tokens({ state, commit }) {
-
-      console.log("get tokens", state.accounts[state.address]['token'][state.network]) ;
+      console.log('get tokens', state.accounts[state.address]['token'][state.network]);
 
       if (!state.accounts[state.address]['token'][state.network]) {
-
-        const init_tokens = {} ;
+        const init_tokens = {};
         init_tokens['AERGO'] = {
-           'hash': 'AERGO',
-           'meta' : {
-               'name'   : 'AERGO',
-               'symbol' : 'aergo',
-               'image'  : '',
-               'type'   : 'AERGO',
-               'decimals' : 0,
-            }
-        } ;
-        
+          hash: 'AERGO',
+          meta: {
+            name: 'AERGO',
+            symbol: 'aergo',
+            image: '',
+            type: 'AERGO',
+            decimals: 0,
+          },
+        };
+
         commit('setTokens', init_tokens);
         return state.accounts[state.address]['token'][state.network];
-
       } else {
         return state.accounts[state.address]['token'][state.network];
       }
@@ -86,7 +82,8 @@ const storeModule: Module<AccountsState, RootState> = {
       }
     },
 
-    async removeAccount({ state, commit }) {
+    async removeAccount({ state, commit }, address: string) {
+      console.log(address);
       const vue = getVueInstance(this);
       vue.$background.removeAccount({ address: state.address, chainId: 'aergo.io' });
       commit('removeAccount');
@@ -111,7 +108,7 @@ const storeModule: Module<AccountsState, RootState> = {
 
       tokens[token.hash] = token;
       commit('setTokens', tokens);
-//      store.dispatch('session/initState') ;
+      //      store.dispatch('session/initState') ;
 
       console.log('Add tokens', tokens);
     },
@@ -120,14 +117,13 @@ const storeModule: Module<AccountsState, RootState> = {
       const tokens = state.accounts[state.address]['token'][state.network];
       delete tokens[token.hash];
       commit('setTokens', tokens);
-      
-      store.state.dispatch('session/initState') ;
+
+      store.state.dispatch('session/initState');
       console.log('deleteToken', token);
     },
   },
 
   mutations: {
-
     setActiveAccount(state, address: string) {
       if (!address) {
         state.address = '';
@@ -174,6 +170,10 @@ const storeModule: Module<AccountsState, RootState> = {
 
     setNetwork(state, network: string) {
       state.network = network;
+    },
+
+    setBackup(state, value: boolean) {
+      state.accounts[state.address]['backup'] = value;
     },
   },
 };

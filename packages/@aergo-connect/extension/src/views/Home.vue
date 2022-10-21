@@ -10,7 +10,7 @@
       @refreshClick="refreshClick"
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
-    <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
+    <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <AccountDetailModal v-if="accountDetailModal" @cancel="handleCancel" />
     <div v-if="!noAccountModal" class="home_content">
@@ -26,8 +26,17 @@
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
-            <div class="account_info_nickname_text">{{ $store.state.accounts.nick }}</div>
-            <!-- <input v-model="nick" :disabled="!editNick"  @blur="changeNick" @keyup.enter="changeNick" /> -->
+            <div v-if="!editNick" class="account_info_nickname_text">
+              {{ $store.state.accounts.nick }}
+            </div>
+            <input
+              v-if="editNick"
+              class="account_info_nickname_input"
+              v-model="nick"
+              autofocus
+              @blur="changeNick"
+              @keyup.enter="changeNick"
+            />
             <Icon
               class="account_info_nickname_button"
               :name="`edit`"
@@ -306,9 +315,6 @@ export default Vue.extend({
     networkModalClick() {
       this.networkModal = !this.networkModal;
     },
-    handleEdit() {
-      console.log('edit');
-    },
     handleDetailAddress() {
       console.log('handleDetailAddress');
       this.accountDetailModal = true;
@@ -427,8 +433,11 @@ export default Vue.extend({
         line-height: 24px;
         margin-bottom: 8px;
         margin-left: 25px;
+        width: 191px;
         .account_info_nickname_text {
           margin-right: 5px;
+        }
+        .account_info_nickname_input {
         }
         .account_info_nickname_button {
           cursor: pointer;

@@ -1,14 +1,18 @@
 <template>
-  <div class="removeAccount_backdrop">
-    <div class="removeAccount_modal_wrapper" v-if="!isNext">
-      <Icon :name="`warning`" :size="100" />
-      <div class="removeAccount_title">Remove the current account?</div>
-      <div class="removeAccount_text">
-        This will remove access to this account in this wallet. Make sure you have a backup or do
-        not need this account anymore.
+  <div className="removeAccount_backdrop">
+    <div class="removeAccount_modal_wrapper">
+      <Icon :name="`warning2`" />
+      <div class="removeAccount_title">Type 'delete' to confirm deleting this account.</div>
+      <div class="removeAccount_textField">
+        <TextField type="text" v-model="value" @submit="handleDeleteAccount" />
       </div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover @click="handleGoNext" @cancel="handleCancel"
+        <ButtonVue
+          type="secondary"
+          size="medium"
+          hover
+          :disabled="!disabled"
+          @click="handleDeleteAccount"
           >Confirm</ButtonVue
         >
         <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
@@ -16,7 +20,6 @@
         >
       </ButtonGroup>
     </div>
-    <RemoveAccountStep2Modal v-if="isNext" @cancel="handleCancel" />
   </div>
 </template>
 
@@ -25,22 +28,36 @@ import Vue from 'vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import ButtonVue from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import RemoveAccountStep2Modal from './RemoveAccountStep2Modal.vue';
+import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 export default Vue.extend({
-  components: { Icon, ButtonGroup, ButtonVue, RemoveAccountStep2Modal },
+  components: { Icon, ButtonGroup, ButtonVue, TextField },
   data() {
     return {
-      isNext: false,
+      value: '',
     };
   },
-
+  computed: {
+    disabled() {
+      if (this.value === 'delete') {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
   methods: {
     handleCancel() {
+      console.log('cancel', '1');
       this.$emit('cancel', 'removeAccountModal');
     },
-    handleGoNext() {
-      console.log('next');
-      this.isNext = true;
+
+    async handleDeleteAccount() {
+      alert(
+        `${this.$store.state.accounts.address} has been removed!`,
+      );
+
+      await this.$store.dispatch('accounts/removeAccount') ;
+      this.$emit('cancel');
     },
   },
 });
@@ -63,13 +80,17 @@ export default Vue.extend({
     top: 110px;
     background: #ffffff;
     border-radius: 8px;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    .icon_size {
+      border: solid;
+      width: 31px;
+      height: 28.36px;
+    }
     .removeAccount_title {
-      margin-bottom: 17px;
+      width: 255px;
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 600;
@@ -77,10 +98,12 @@ export default Vue.extend({
       line-height: 25px;
       text-align: center;
       letter-spacing: -0.333333px;
-
       /* Primary/Pink01 */
-
       color: #e4097d;
+    }
+    .removeAccount_textField {
+      width: 213px;
+      height: 48px;
     }
     .removeAccount_text {
       width: 259px;
@@ -91,21 +114,14 @@ export default Vue.extend({
       line-height: 20px;
       text-align: center;
       letter-spacing: -0.333333px;
-
       /* Grey/07 */
-
       color: #454344;
-
       .highlight {
         color: #e4097d;
       }
     }
-
     .button_wrapper {
       margin-top: 33px;
-      .button {
-        width: 289px;
-      }
     }
   }
 }

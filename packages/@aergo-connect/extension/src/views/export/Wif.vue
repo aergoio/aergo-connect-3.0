@@ -43,9 +43,7 @@
         Show
       </Button>
       <div v-else>
-        <Button type="gradation" size="large" :to="{ name: 'account-backup' }">
-          OK
-        </Button>
+        <Button type="gradation" size="large" :to="{ name: 'account-backup' }"> OK </Button>
       </div>
     </template>
   </ScrollView>
@@ -90,11 +88,10 @@ export default class AccountExportWif extends Vue {
     navigator.clipboard.writeText(this.wif);
     this.copy = 'Copied';
     this.imageName = '@aergo-connect/lib-ui/src/icons/img/copy.svg';
-    this.$store.commit('accounts/setBackup',true);
+    this.$store.commit('accounts/setBackup', true);
   }
 
   async createWif() {
-
     if (!this.password) {
       this.errors.password = 'Cannot be empty';
       return;
@@ -112,11 +109,9 @@ export default class AccountExportWif extends Vue {
 
       console.log(result);
       this.wif = result.privateKey;
-
     } catch (e) {
       this.errors.password = `${e}`;
       console.error(e);
-
     } finally {
       this.loading = false;
     }
@@ -160,13 +155,14 @@ export default class AccountExportWif extends Vue {
   }
   .export-wif-note {
     width: 327px;
-    margin: 32px 0px 74px 0px;
+    margin: 32px 0px 74px 24px;
   }
   .password-field {
     display: flex;
     flex-direction: column;
-    margin-left: 24px;
+
     span {
+      margin-left: 24px;
       margin-bottom: 4px;
     }
   }

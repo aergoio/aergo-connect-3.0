@@ -31,8 +31,6 @@
         </Appear>
       </div>
     </Appear>
-
-    <template #footer> </template>
   </ScrollView>
 </template>
 
@@ -62,8 +60,8 @@ export default class Create extends mixins(PersistInputsMixin) {
 
     await this.$store.dispatch('accounts/addAccount', account.address);
     await this.$store.commit('accounts/setSeedPhrase', mnemonic);
-    await this.$store.commit('accounts/setBackup',false);
-    console.log(this.$store.state.accounts[this.$store.state.accounts.address]) ;
+    await this.$store.commit('accounts/setBackup', false);
+    console.log(this.$store.state.accounts[this.$store.state.accounts.address]);
 
     this.$router.push({
       name: 'account-create',

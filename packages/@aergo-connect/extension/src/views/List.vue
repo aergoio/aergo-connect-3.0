@@ -1,5 +1,5 @@
 <template>
-  <div class="side-nav-backdrop" @click="handleListModalOff">
+  <div class="side-nav-backdrop" @click="(event) => handleListModalOff(event)">
     <div class="side-nav-wrap">
       <section class="side-nav-accounts">
         <img class="side-nav-logo" src="@aergo-connect/lib-ui/src/icons/img/nav-logo.svg" />
@@ -22,16 +22,23 @@
           :account="$store.state.accounts.accounts[$store.state.accounts.address]"
         />
         <SideNavButton img="add" title="Add Account" :to="{ name: 'register' }" />
-        <SideNavButton :disabled="!$store.state.accounts.accounts[$store.state.accounts.address].backup" img="delete" title="Remove Account"  @click="handleRemoveModal"/> 
+        <SideNavButton
+          :disabled="!$store.state.accounts.accounts[$store.state.accounts.address].backup"
+          img="delete"
+          title="Remove Account"
+          @click="
+            [
+              $store.state.accounts.accounts[$store.state.accounts.address].backup
+                ? handleRemoveModal()
+                : handleAlert(),
+            ]
+          "
+        />
       </section>
       <section class="nav-footer">
         <div>
           <SideNavButton img="sign-message" title="Sign Message" :to="{ name: 'sign-message' }" />
-          <SideNavButton
-            img="security"
-            title="Security"
-            @click="handleSecurity"
-          />
+          <SideNavButton img="security" title="Security" @click="handleSecurity" />
           <SideNavButton img="lock" title="Lock" @click="handleLock" />
         </div>
         <div class="side-nav-version">
@@ -50,7 +57,6 @@
 import AccountList from '../components/accounts/AccountList.vue';
 import { SideNavButton } from '@aergo-connect/lib-ui/src/buttons';
 import Vue from 'vue';
-import { Account } from '@herajs/wallet';
 
 export default Vue.extend({
   components: { AccountList, SideNavButton },
@@ -77,6 +83,10 @@ export default Vue.extend({
   },
 
   methods: {
+    handleListModalOff(event: any) {
+      event.stopPropagation();
+      this.$emit('listModalOff');
+    },
     handleAccountsDropDown(event: any) {
       event.stopPropagation();
       this.isAccountsListOpened = !this.isAccountsListOpened;
@@ -85,9 +95,8 @@ export default Vue.extend({
     handleRemoveModal() {
       this.$emit('removeModalClick');
     },
-
-    handleListModalOff() {
-      this.$emit('listModalOff');
+    handleAlert() {
+      alert('needs to backup private key');
     },
 
     async handleSelect(account: any) {
@@ -96,9 +105,7 @@ export default Vue.extend({
 
       this.$emit('select', account);
 
-      this.$router
-        .push({ name: 'accounts-list', })
-        .catch(() => {});
+      this.$router.push({ name: 'accounts-list' }).catch(() => {});
     },
 
     handleLock() {

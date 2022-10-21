@@ -10,7 +10,7 @@
       @refreshClick="refreshClick"
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
-    <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
+    <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> 
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <AccountDetailModal v-if="accountDetailModal" @cancel="handleCancel" />
     <div v-if="!noAccountModal" class="home_content">

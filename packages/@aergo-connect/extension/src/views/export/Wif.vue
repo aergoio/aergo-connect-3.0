@@ -90,6 +90,7 @@ export default class AccountExportWif extends Vue {
     navigator.clipboard.writeText(this.wif);
     this.copy = 'Copied';
     this.imageName = '@aergo-connect/lib-ui/src/icons/img/copy.svg';
+    this.$store.commit('accounts/setBackup',true);
   }
 
   async createWif() {

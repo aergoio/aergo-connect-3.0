@@ -49,7 +49,6 @@ import AccountExportKeystore from '../views/export/Keystore.vue';
 //import AccountExportWif from '../views/account/export/Wif.vue';
 //import AccountNameCreate from '../views/account/name/Create.vue';
 //import AccountNameUpdate from '../views/account/name/Update.vue';
-//import AccountRemove from '../views/account/Remove.vue';
 //import AccountSign from '../views/account/Sign.vue';
 
 import RequestContainer from '../views/request/Container.vue';

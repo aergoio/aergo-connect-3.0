@@ -1,15 +1,16 @@
 <template>
   <ScrollView class="page">
     <Header button="back" title="Keystore FIle" :to="{ name: 'account-backup' }" />
-    <ConfirmModal
-      v-if="modal"
-      :title="modalTitle" 
-      to="account-backup"
-    />
+    <ConfirmModal v-if="modal" :title="modalTitle" to="account-backup" />
     <div class="content" style="padding-bottom: 0">
       <p class="text">Choose a passphrase to encrypt your keystore file.</p>
       <p class="title">Passphrase</p>
-      <PasswordStrengthField v-model="password" @submit="createKeystore" autofocus />
+      <PasswordStrengthField
+        class="password"
+        v-model="password"
+        @submit="createKeystore"
+        autofocus
+      />
       {{ errors.password }}
       <div class="warningbox_wrapper">
         <WarningInBox
@@ -83,11 +84,11 @@ export default class AccountExportKeystore extends Vue {
   }
   get fileName(): string {
     const address = this.$store.state.accounts.address;
-    return `${address.slice(0,9)}_key.txt`;
+    return `${address.slice(0, 9)}_key.txt`;
   }
 
   get modalTitle(): string {
-    return  "Your private key has been saved in " + this.fileName + "!" ;
+    return 'Your private key has been saved in ' + this.fileName + '!';
   }
 
   async createKeystore() {
@@ -108,7 +109,7 @@ export default class AccountExportKeystore extends Vue {
         (this.$refs.downloadButton as HTMLElement).click();
         this.modal = true;
       }, 150);
-      await this.$store.commit('accounts/setBackup',true);
+      await this.$store.commit('accounts/setBackup', true);
     } catch (e) {
       this.errors.password = `${e}`;
       console.error(e);
@@ -136,8 +137,15 @@ export default class AccountExportKeystore extends Vue {
     color: #454344;
     margin: 0 0 10px 0;
   }
+  .password {
+    margin-right: 24px;
+  }
+
   .warningbox_wrapper {
     margin: 16px 0 34px 0;
+    .warningInBox-wrapper {
+      margin-left: 0;
+    }
   }
   .keystorefile_wrapper {
     display: flex;
@@ -166,6 +174,11 @@ export default class AccountExportKeystore extends Vue {
     line-height: 3em;
     padding: 0.5em 2.5em;
     height: 48px;
+  }
+}
+.button-group {
+  .button {
+    width: 327px;
   }
 }
 </style>

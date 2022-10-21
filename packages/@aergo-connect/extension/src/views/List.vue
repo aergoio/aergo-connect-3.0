@@ -23,6 +23,7 @@
         />
         <SideNavButton img="add" title="Add Account" :to="{ name: 'register' }" />
         <SideNavButton
+          class="remove"
           :disabled="!$store.state.accounts.accounts[$store.state.accounts.address].backup"
           img="delete"
           title="Remove Account"
@@ -162,6 +163,19 @@ export default Vue.extend({
 
     .side-nav-accounts {
       margin-top: 26px;
+      .remove {
+        color: red;
+        font-size: smaller;
+        rect {
+          fill: red;
+        }
+        &:hover {
+          svg {
+            filter: invert(20%) sepia(68%) saturate(6664%) hue-rotate(355deg) brightness(97%)
+              contrast(126%);
+          }
+        }
+      }
     }
 
     .nav-footer {

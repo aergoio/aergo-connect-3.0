@@ -26,7 +26,7 @@
           <div class="network_text">{{ $store.state.accounts.network }}</div>
         </div>
         <TextField
-          placeholder="Name / Symbol / Address"
+          placeholder="Name / Symbol"
           class="network_textField"
           @input="search"
         />
@@ -179,17 +179,19 @@ export default Vue.extend({
         if (this.results) return ;
       }	
 
-      await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=*${query}*`,
-      )
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          this.results = data.hits;
-        });
+      else {
+        await fetch(
+          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=*${query}*`,
+        )
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => {
+            this.results = data.hits;
+          });
 
-      console.log('Results', this.results);
+         console.log('Results', this.results);
+       }
     },
 
     async select(token) {

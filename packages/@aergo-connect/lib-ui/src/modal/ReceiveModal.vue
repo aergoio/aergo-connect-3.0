@@ -1,19 +1,15 @@
 <template>
-  <div class="account_detail_backdrop">
-    <div class="account_detail_wrapper">
-      <div class="title">Account Address</div>
-      <div class="flex-row">
-        <Identicon :text="$store.state.accounts.address" />
-        <div>{{ $store.state.accounts.nick }}</div>
+  <div class="receive_backdrop">
+    <div class="receive_wrapper">
+      <VueQRCodeComponent class="qr" :text="inputText" :size="123"></VueQRCodeComponent>
+      <div class="amount_wrapper">
+        <span>{{ `${amount} ${symbol}` }}</span>
       </div>
-      <VueQRCodeComponent
-        :text="inputText"
-        :size="123"
-      ></VueQRCodeComponent>
-      <div class="address_wrapper">
-        <div class="address">{{ $store.state.accounts.address }}</div>
+      <div class="description">
+        Show the above QR code to the sender. The sender can scan this QR code in the AERGO Connect
+        APP to send a transaction.
       </div>
-      <Button type="primary" @click="handleOK">OK</Button>
+      <Button type="gradation" @click="handleOK">OK</Button>
     </div>
   </div>
 </template>
@@ -25,7 +21,7 @@ import Identicon from '../content/Identicon.vue';
 import Button from '../buttons/Button.vue';
 export default Vue.extend({
   components: { Identicon, Button, VueQRCodeComponent },
-  
+
   props: {
     amount: Number,
     symbol: String,
@@ -34,25 +30,26 @@ export default Vue.extend({
 
   data() {
     return {
-      inputText:'',
+      inputText: '',
     };
   },
 
   async beforeMount() {
-    this.inputText = this.asset + " " + this.$store.state.session.address + " " + Number(this.amount) ;
+    this.inputText =
+      this.asset + ' ' + this.$store.state.session.address + ' ' + Number(this.amount);
   },
 
   methods: {
     handleOK() {
       console.log('ok');
-      this.$emit('confirm','receiveModal');
+      this.$emit('confirm', 'receiveModal');
     },
   },
 });
 </script>
 
 <style lang="scss">
-.account_detail_backdrop {
+.receive_backdrop {
   position: absolute;
   width: 375px;
   height: 600px;
@@ -61,7 +58,7 @@ export default Vue.extend({
   background: rgba(0, 0, 0, 0.3);
   z-index: 1;
 
-  .account_detail_wrapper {
+  .receive_wrapper {
     width: 317px;
     height: 400px;
     position: absolute;
@@ -73,6 +70,41 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     align-items: center;
+    .qr {
+      margin-top: 46px;
+      margin-bottom: 24px;
+    }
+    .description {
+      margin-top: 15px;
+      margin-bottom: 41px;
+      /* Headline/H3 */
+      width: 277px;
+      word-break: break-all;
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 18px;
+      text-align: center;
+      letter-spacing: -0.333333px;
+
+      /* Grey/06 */
+
+      color: #686767;
+    }
+    .amount_wrapper {
+      /* Headline/H3 */
+
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 25px;
+      text-align: center;
+      letter-spacing: -0.333333px;
+
+      color: #363636;
+    }
     .title {
       margin-top: 20px;
       font-family: 'Outfit';

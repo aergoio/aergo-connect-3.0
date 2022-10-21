@@ -88,12 +88,6 @@ export default class Create extends mixins() {
     this.$store.commit('accounts/setNick', this.nick);
     this.$router.push({ name: 'accounts-list' });
   }
-
-  // handleEdit() {
-  //   this.editNick = true;
-  //   this.$forceUpdate();
-  //   console.log('edit nick');
-  // }
 }
 </script>
 

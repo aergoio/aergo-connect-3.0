@@ -69,7 +69,7 @@ export default class Lockscreen extends mixins() {
       let nextPath = this.$store.state.ui.route.currentPath;
       console.log(nextPath, 'nextPath');
 
-      await this.$store.dispatch('session/initState');
+     if (this.$store.state.accounts.address)  await this.$store.dispatch('session/initState');
 
       //      const getAccounts = await this.$background.getAccounts();
 

@@ -83,7 +83,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
     await waitFor(150);
 
     try {
-      const encryptedBytes = decodePrivateKey(this.encryptedKey);
+      const encryptedBytes = await decodePrivateKey(this.encryptedKey);
       const decryptedBytes = await decryptPrivateKey(encryptedBytes, this.password);
       const identity = await identityFromPrivateKey(decryptedBytes);
       const accountSpec = await this.$background.importAccount({
@@ -91,7 +91,9 @@ export default class Keystore extends mixins(PersistInputsMixin) {
         chainId: 'aergo.io',
       });
 
-      this.$store.dispatch('accounts/addAccount', accountSpec.address);
+      await this.$store.dispatch('accounts/addAccount', accountSpec.address);
+      await this.$store.commit('accounts/setBackup',true);
+
       this.$router.push({ name: 'account-imported' });
     } catch (e) {
       console.log(e);

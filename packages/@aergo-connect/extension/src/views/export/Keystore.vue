@@ -108,6 +108,7 @@ export default class AccountExportKeystore extends Vue {
         (this.$refs.downloadButton as HTMLElement).click();
         this.modal = true;
       }, 150);
+      await this.$store.commit('accounts/setBackup',true);
     } catch (e) {
       this.errors.password = `${e}`;
       console.error(e);

@@ -175,6 +175,11 @@ const storeModule: Module<AccountsState, RootState> = {
     setNetwork(state, network: string) {
       state.network = network;
     },
+
+    setBackup(state, value: boolean) {
+      state.accounts[state.address]['backup'] = value ;
+    },
+
   },
 };
 

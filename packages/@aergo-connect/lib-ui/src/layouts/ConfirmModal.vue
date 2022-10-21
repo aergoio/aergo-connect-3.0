@@ -52,7 +52,6 @@ export default Vue.extend({
 .confirmModal-wrapper {
   background: white;
   max-width: 317px;
-  height: 335px;
   box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
   border-radius: 8px;
   @include flex__column__center;

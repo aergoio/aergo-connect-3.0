@@ -306,7 +306,7 @@ export default Vue.extend({
   .footer {
     position: absolute;
     bottom: 0;
-    margin-bottom: 35px;
+    margin-bottom: 25px;
     .button.button-type-font-gradation {
       border: none;
     }

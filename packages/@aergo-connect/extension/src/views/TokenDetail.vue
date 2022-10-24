@@ -85,30 +85,28 @@
           ]"
         >
           <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
-            <!-- <div v-if="item.meta.from === $store.state.accounts.address"> -->
-            <div v-if="filter !== 'Received'">
-              <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-              <div class="direction_row">
-                <div class="sent">Sent</div>
+            <div v-if="item.meta.from === $store.state.accounts.address"> 
+              <div v-if="filter !== 'Received'">
+                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
                 <div class="direction_row">
-                  <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                  <div class="token_symbol">{{ symbol }}</div>
+                  <div class="sent">Sent</div>
+                  <div class="direction_row">
+                    <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
+                    <div class="token_symbol">{{ symbol }}</div>
+                  </div>
+                </div>
+                <div class="line"></div>
+                <div class="direction_row">
+                  <div class="address" @click="gotoScanAccount(item.meta.to)">
+                    {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+                  </div>
+                  <div v-if="symbol==='aergo'" class="address">
+                    {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}`}}
+                  </div>
+                  <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" /> 
                 </div>
               </div>
-              <div class="line"></div>
-              <div class="direction_row">
-                <div class="address">
-                  {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
-                </div>
-<!--
-                <div class="address">
-                  {{ `Type: ${item.meta.type}`}}
-                </div>
--->
-                <Icon :name="'pointer'" @click="gotoScan(item)" />
-              </div>
-            </div>
-            <!-- </div> -->
+            </div> 
             <div v-else>
               <div v-if="filter !== 'Sent'">
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
@@ -121,10 +119,13 @@
                 </div>
                 <div class="line"></div>
                 <div class="direction_row">
-                  <div class="address">
+                  <div class="address" @click="gotoScanAccount(item.meta.from)">
                     {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
                   </div>
-                  <Icon :name="'pointer'" @click="gotoScan(item)" />
+                  <div v-if="symbol==='aergo'" class="address">
+                    {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}`}}
+                  </div>
+                  <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" /> 
                 </div>
               </div>
             </div>
@@ -224,11 +225,15 @@ async  beforeMount() {
       else this.staking = staking.amount;
     },
 
-    gotoScan(item: object) {
-      const url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
+    gotoScanTx(hash: string) {
+      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${hash.split('-')[0]}/`;
       window.open(url, '', 'width=1000,height=800');
     },
 
+    gotoScanAccount(address: string) {
+      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
+      window.open(url, '', 'width=1000,height=800');
+    },
 /*
     aergoPrice() {
       this.$background.getTokenPrice('aergo.io').then(priceInfo => {
@@ -258,11 +263,11 @@ async  beforeMount() {
       let resp;
       if (this.symbol === 'aergo') {
         resp = await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=100`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=100&sort=ts:desc`,
         );
       } else {
         resp = await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100&sort=ts:desc`,
         );
       }
 
@@ -270,7 +275,7 @@ async  beforeMount() {
       if (response.error) this.data = [];
       else this.data = response.hits;
 
-      //      console.log('tx', this.data);
+      console.log('tx', this.data);
     },
 
     /*

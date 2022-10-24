@@ -47,9 +47,11 @@ export default Vue.extend({
     };
   },
   methods: {
-    selectAccount(account: any) {
+
+  async  selectAccount(account: any) {
       console.log('clicked ', account);
-      this.$background.setActiveAccount({ chainId: 'aergo.io', address: account.address });
+      await this.$store.commit('accounts/setActiveAccount', address);
+      await this.$background.setActiveAccount({ chainId: 'aergo.io', address: account.address });
     },
   },
 });

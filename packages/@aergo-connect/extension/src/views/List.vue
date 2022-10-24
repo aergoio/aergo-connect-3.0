@@ -106,7 +106,6 @@ export default Vue.extend({
       await this.$store.commit('accounts/setActiveAccount', address);
 
       this.$emit('select', account);
-
       this.$router.push({ name: 'accounts-list' }).catch(() => {});
     },
 

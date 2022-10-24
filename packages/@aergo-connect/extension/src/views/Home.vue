@@ -11,6 +11,7 @@
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
+    <NotificationModal v-if="notificationModal" @cancel="handleCancel" />
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <AccountDetailModal v-if="accountDetailModal" @cancel="handleCancel" />
     <div v-if="!noAccountModal" class="home_content">
@@ -21,6 +22,7 @@
         @select="handleSelect"
         @listModalOff="hamburgerClick"
         @securityClick="handleSecurity"
+        @notificationModalClick="handleNotificationModalClick"
       />
       <div class="account_info_wrapper">
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
@@ -174,6 +176,7 @@ import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountMod
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
+import NotificationModal from '@aergo-connect/lib-ui/src/modal/NotificationModal.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 
 export default Vue.extend({
@@ -183,6 +186,7 @@ export default Vue.extend({
     NetworkModal,
     PasswordModal,
     AccountDetailModal,
+    NotificationModal,
     Icon,
     Heading,
     Identicon,
@@ -202,6 +206,7 @@ export default Vue.extend({
       importAssetModal: false,
       noAccountModal: false,
       accountDetailModal: false,
+      notificationModal: false,
       network: 'aergo.io',
       tab: 'tokens',
       editNick: false,
@@ -281,6 +286,7 @@ export default Vue.extend({
     },
 
     handleCancel(modalEvent: string) {
+      console.log(modalEvent);
       if (modalEvent === 'noAccountModal') {
         this.$background.lock();
       }
@@ -296,6 +302,9 @@ export default Vue.extend({
 
       if (modalEvent === 'accountDetailModal') {
         this.accountDetailModal = false;
+      }
+      if (modalEvent === 'notificationModal') {
+        this.notificationModal = false;
       }
     },
 
@@ -314,6 +323,9 @@ export default Vue.extend({
     },
     networkModalClick() {
       this.networkModal = !this.networkModal;
+    },
+    handleNotificationModalClick() {
+      this.notificationModal = true;
     },
     handleDetailAddress() {
       console.log('handleDetailAddress');

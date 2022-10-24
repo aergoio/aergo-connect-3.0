@@ -97,7 +97,8 @@ export default Vue.extend({
       this.$emit('removeModalClick');
     },
     handleAlert() {
-      alert('needs to backup private key');
+      console.log('notification');
+      this.$emit('notificationModalClick');
     },
 
     async handleSelect(account: any) {

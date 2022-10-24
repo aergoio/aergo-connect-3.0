@@ -59,17 +59,22 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
     Heading,
     Icon,
     TxConfirm,
+    account: {},
   },
 })
+
 export default class TxBase extends mixins(RequestMixin) {
   actionVerb = 'send';
+
+  async beforeMount() {
+    this.account = await this.$background.getActiveAccount();
+    console.log('Account Info', this.account);
+  }
 
   get accountSpec() {
     return { address: this.$route.params.address, chainId: this.$route.params.chainId };
   }
-  get account(): Account {
-    return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  }
+
   get txDataDisplay() {
     if (!this.request) return {};
     return {

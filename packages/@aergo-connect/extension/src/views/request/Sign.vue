@@ -64,18 +64,22 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
     ButtonGroup,
     Heading,
     Icon,
+    account: {},
   },
 })
+
+
 export default class RequestSign extends mixins(RequestMixin) {
+
+  async beforeMount() {
+    this.account = await this.$background.getActiveAccount();
+    console.log('Account Info', this.account);
+  }
+
   get accountSpec() {
     return { address: this.$route.params.address, chainId: this.$route.params.chainId };
   }
-  get account(): Account {
-    return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  }
-  created() {
-    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
-  }
+
   async signWithLedger(message: Buffer, displayAsHex = false) {
     this.setStatus('loading', 'Connecting to Ledger device...');
     const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });

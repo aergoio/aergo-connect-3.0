@@ -42,13 +42,16 @@
             <div class="balance">
               {{ $store.state.session.tokens['AERGO'].balance || '2,000,000.000' }}
             </div>
-            <div class="dollor">$</div>
+            <div class="dollor">
+               <span>$ </span>
+               <span>{{ aergoPrice }} </span>
+            </div>
           </div>
           <div class="token_symbol">{{ symbol }}</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
-          <div class="detail_title">Staked Balance</div>
+          <a class="detail_title" href="https://voting.aergo.io/about" target="_blank">Staked Balance</a>
           <div class="detail_content">{{ staking }}</div>
         </div>
         <div class="line detail" />
@@ -181,6 +184,7 @@ export default Vue.extend({
       filter: 'All',
       symbol: 'aergo',
       staking: '0',
+      aergoPrice: 0,
     };
   },
 
@@ -188,6 +192,10 @@ export default Vue.extend({
     this.symbol = this.$store.state.session.token.meta.symbol;
     console.log('SYMBOL', this.symbol);
     this.getTokenHistory();
+    this.$background.getTokenPrice('aergo.io').then(priceInfo => {
+      console.log("priceInfo", this.$store.state.session.tokens['AERGO'].balance*priceInfo.price) ;
+      this.aergoPrice = this.$store.state.session.tokens['AERGO'].balance*priceInfo.price ;
+    });
   },
 
   watch: {
@@ -214,6 +222,15 @@ export default Vue.extend({
       const url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
       window.open(url, '', 'width=1000,height=800');
     },
+
+/*
+    aergoPrice() {
+      this.$background.getTokenPrice('aergo.io').then(priceInfo => {
+        console.log("priceInfo", this.$store.state.session.tokens['AERGO'].balance*priceInfo.price) ;
+        return this.$store.state.session.tokens['AERGO'].balance*priceInfo.price ;
+      });
+    },
+*/
 
     getBalance(value: number) {
       return value / Math.pow(10, this.$store.state.session.token.meta.decimals);
@@ -289,7 +306,7 @@ export default Vue.extend({
   .footer {
     position: absolute;
     bottom: 0;
-    margin-bottom: 35px;
+    margin-bottom: 25px;
     .button.button-type-font-gradation {
       border: none;
     }

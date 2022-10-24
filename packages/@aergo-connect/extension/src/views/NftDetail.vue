@@ -58,7 +58,7 @@
           v-if="tabState === 'inventory'"
           :class="[data.length > 0 ? 'nft_info_wrapper' : 'nft_info_wrapper noscroll']"
         >
-          <li v-for="item in data" class="nft_info_list" :key="item.meta.tx_id">
+          <li v-for="item in data" class="nft_info_list" >
             <!-- <img class="img" :src="item.token.meta.image" alt="404" /> -->
             <div class="nft_name_wrapper">
               <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
@@ -95,7 +95,7 @@
             <option class="option" value="Received">Received</option>
             <option class="option" value="Sent">Sent</option>
           </select>
-          <li class="nft_detail_list" v-for="item in data" :key="item.meta.token_id">
+          <li class="nft_detail_list" v-for="item in data">
             <!-- <div v-if="item.meta.from === $store.state.accounts.address"> -->
             <div v-if="filter !== 'Received'">
               <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
@@ -603,7 +603,7 @@ export default Vue.extend({
     .footer {
       position: absolute;
       bottom: 0;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       .button.button-type-font-gradation {
         border: none;
       }
@@ -810,7 +810,6 @@ export default Vue.extend({
         justify-content: center;
       }
     }
-
     .nft_detail_list_nothing_wrapper {
       display: flex;
       flex-direction: column;
@@ -853,7 +852,7 @@ export default Vue.extend({
     .footer {
       position: absolute;
       bottom: 0px;
-      margin-bottom: 35px;
+      margin-bottom: 25px;
       &.aergo {
         top: 40px;
       }

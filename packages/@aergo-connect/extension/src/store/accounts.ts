@@ -85,10 +85,10 @@ const storeModule: Module<AccountsState, RootState> = {
     async removeAccount({ state, commit }, address: string) {
       console.log(address);
       const vue = getVueInstance(this);
-      vue.$background.removeAccount({ address: state.address, chainId: 'aergo.io' });
+      await vue.$background.removeAccount({ address: state.address, chainId: 'aergo.io' });
       commit('removeAccount');
 
-      const accounts = vue.$background.getAccounts();
+      const accounts = await vue.$background.getAccounts();
       if (accounts.length !== 0) commit('setActiveAccount', accounts[0]?.data.spec.address);
       else commit('setActiveAccount', '');
     },
@@ -145,6 +145,7 @@ const storeModule: Module<AccountsState, RootState> = {
       state.address = '';
       state.nick = '';
     },
+
     setSeedPhrase(state, phrase: string) {
       state.lastSeedPhrase = phrase;
     },

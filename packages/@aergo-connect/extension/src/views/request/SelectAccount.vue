@@ -17,7 +17,7 @@ export default class RequestSelectAccount extends Vue {
       return this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
     }
     this.$router
-      .push({ name: 'request-select-action', params: activeAccount.data.spec })
+      .push({ name: 'request-select-action', params: { chainId: this.$store.state.accounts.network, address: activeAccount.data.spec.address })
       .catch(() => {});
   }
 }

@@ -49,10 +49,11 @@ import { RequestMixin } from './mixin';
     Icon,
   },
 })
+
 export default class RequestAddress extends mixins(RequestMixin) {
   async confirmHandler() {
     const address = this.$store.state.accounts.address;
-    const chainId = `${this.$store.state.accounts.network}.aergo.io`;
+    const chainId = this.$store.state.accounts.network;
     return {
       account: {
         address,

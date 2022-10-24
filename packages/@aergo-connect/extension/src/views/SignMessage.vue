@@ -137,6 +137,7 @@ export default class RequestSign extends mixins() {
       }
     }
 
+/*
     const account = await this.account ;
 
     console.log("account", account) ;
@@ -146,6 +147,7 @@ export default class RequestSign extends mixins() {
       return
     }
 
+*/
     const { address, chainId } = this.accountSpec;
 
     const callData: {

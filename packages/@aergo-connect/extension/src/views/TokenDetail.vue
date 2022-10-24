@@ -43,8 +43,8 @@
               {{ $store.state.session.tokens['AERGO'].balance || '2,000,000.000' }}
             </div>
             <div class="dollor">
+               <span>$ </span>
                <span>{{ aergoPrice }} </span>
-               <span>$</span>
             </div>
           </div>
           <div class="token_symbol">{{ symbol }}</div>

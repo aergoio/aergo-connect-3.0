@@ -43,21 +43,20 @@ const storeModule: Module<SessionState, RootState> = {
       });
 
       const aergoBalance = await new Amount(val.balance).formatNumber('aergo');
-      const resp = await fetch(
-        `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
-      );
 
+      let resp = {} ;
+      if (store.state.accounts.network === 'alpha') 
+        resp = await fetch( `https://api-alpha.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
+      else resp = await fetch( `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
+      
       const response = await resp.json();
 
-//      if (response.error) return;
-//      await commit('setTokenBalance', response.hits);
+      if (!response) return;
 
       const balances = { 'aergo':aergoBalance, 'others':response.hits } ;
-
       console.log('UPDATE BAL', balances);
 
       await commit('setTokenBalance', balances);
-
       console.log('UPDATE BAL', state.tokens);
     },
 
@@ -65,22 +64,27 @@ const storeModule: Module<SessionState, RootState> = {
 
       const tokens = await store.dispatch('accounts/tokens');
       await commit('setTokens', tokens);
+
       console.log(
         'fetch',
         `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
       );
-      const resp = await fetch(
-        `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
-      );
+
+      let resp = {} ;
+
+      if (store.state.accounts.network === 'alpha') resp = await fetch(`https://api-alpha.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
+      else resp = await fetch(`https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
 
       const response = await resp.json();
+
+      console.log("resp", response) ; 
 
       await commit('updateTokens', response.hits);
       await store.dispatch('session/updateBalances');
 
       // Default Token : 'AERGO' 
-      await commit('setToken',state.tokens['AERGO']) ;
-      await store.commit('accounts/setSeedPhrase','');
+//      await commit('setToken',state.tokens['AERGO']) ;
+//      await store.commit('accounts/setSeedPhrase','');
 
       console.log('Out tokens', state.tokens);
     },

@@ -100,6 +100,11 @@
                 <div class="address">
                   {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
                 </div>
+<!--
+                <div class="address">
+                  {{ `Type: ${item.meta.type}`}}
+                </div>
+-->
                 <Icon :name="'pointer'" @click="gotoScan(item)" />
               </div>
             </div>
@@ -188,12 +193,13 @@ export default Vue.extend({
     };
   },
 
-  beforeMount() {
+async  beforeMount() {
+
     this.symbol = this.$store.state.session.token.meta.symbol;
-    console.log('SYMBOL', this.symbol);
-    this.getTokenHistory();
-    this.$background.getTokenPrice('aergo.io').then(priceInfo => {
-      console.log("priceInfo", this.$store.state.session.tokens['AERGO'].balance*priceInfo.price) ;
+    await this.$store.dispatch('session/updateBalance') ;
+    await this.getTokenHistory();
+    await this.$background.getTokenPrice('aergo.io').then(priceInfo => {
+//      console.log("priceInfo", this.$store.state.session.tokens['AERGO'].balance*priceInfo.price) ;
       this.aergoPrice = this.$store.state.session.tokens['AERGO'].balance*priceInfo.price ;
     });
   },
@@ -247,14 +253,16 @@ export default Vue.extend({
     },
 
     async getTokenHistory(): Promise<void> {
+
+      const prefix = (this.$store.state.accounts.network==='alpha')? 'api-alpha':'api' ;
       let resp;
       if (this.symbol === 'aergo') {
         resp = await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=100`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=100`,
         );
       } else {
         resp = await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100`,
         );
       }
 

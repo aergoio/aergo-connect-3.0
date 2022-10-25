@@ -89,7 +89,7 @@
         </div>
         <div class="flex-row" v-else>
           <div class="title">Amount</div>
-          <input v-model.number="inputAmount" type="text" class="text_box" />
+          <input v-model="inputAmount" type="text" class="text_box" />
         </div>
         <div class="flex-column">
           <div class="title">Send to</div>

@@ -19,7 +19,7 @@
         <div class="flex-row">
           <div class="title">Hash</div>
           <div class="flex-row">
-            <a 
+            <a
               class="detail address"
               :href="`https://${$store.state.accounts.network}.aergoscan.io/transaction/${txHash}`"
               target="blank"
@@ -47,17 +47,22 @@
         <div class="line" />
         <div v-if="txReceipt" class="flex-row">
           <div class="title">Fee</div>
-          <div class="detail fee">{{ txReceipt.fee }}</div>
+          <div class="detail fee">{{ `${txReceipt} aergo` }}</div>
+          <!-- <div class="detail fee">
+            {{ bigIntToString(BigInt(txReceipt.fee.split(' ')[0]), 18) || 0 }}
+          </div> -->
         </div>
         <div v-else class="flex-row">
           <div class="title">Status</div>
-          <div class="detail fee"> No Receipt </div>
+          <div class="detail fee">No Receipt</div>
         </div>
         <div class="line" />
         <div class="flex-row">
           <div class="title balance">Update Balance</div>
-          <div v-if="asset === 'AERGO'" class="detail balance"> {{ $store.state.session.aergoBalance }} </div>
-          <div v-else class="detail balance"> {{ $store.state.session.tokens[asset].balance }} </div>
+          <div v-if="asset === 'AERGO'" class="detail balance">
+            {{ $store.state.session.aergoBalance }}
+          </div>
+          <div v-else class="detail balance">{{ $store.state.session.tokens[asset].balance }}</div>
         </div>
         <div class="line" />
       </div>
@@ -71,6 +76,7 @@ import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import ButtonGroup from '../buttons/ButtonGroup.vue';
 import Button from '../buttons/Button.vue';
+import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
 export default Vue.extend({
   components: { Icon, Button, ButtonGroup },
 
@@ -87,25 +93,25 @@ export default Vue.extend({
     return {
       txReceipt: null,
       txData: null,
-    }
+    };
   },
 
   async mounted() {
-    console.log("txHash", this.txHash) ;
-    console.log("network", this.$store.state.accounts.network) ;
-    console.log("asset", this.asset) ;
-    await this.$store.dispatch('accounts/updateAccount', { 
+    console.log('txHash', this.txHash);
+    console.log('network', this.$store.state.accounts.network);
+    console.log('asset', this.asset);
+    await this.$store.dispatch('accounts/updateAccount', {
       chainId: this.$store.state.accounts.network,
       address: this.$store.state.accounts.address,
-    }) ;
+    });
 
     this.$store.commit('ui/clearInput', { key: 'send' });
     await this.$background
       .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
-      .then(result => {
-        this.txReceipt = result;
+      .then((result) => {
+        this.txReceipt = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
       });
-/*
+    /*
     await this.$background
       .getTransaction(this.$store.state.accounts.network, this.txHash)
       .then(result => {
@@ -114,8 +120,8 @@ export default Vue.extend({
       });
 */
 
-    await this.$store.dispatch('session/updateBalances') ;
-    console.log("receipt", this.txReceipt) ;
+    await this.$store.dispatch('session/updateBalances');
+    console.log('receipt', this.txReceipt);
   },
 
   methods: {
@@ -124,7 +130,6 @@ export default Vue.extend({
       this.$emit('close');
     },
   },
-  
 });
 </script>
 

@@ -22,7 +22,7 @@
           :account="$store.state.accounts.accounts[$store.state.accounts.address]"
         />
         <SideNavButton img="add" title="Add Account" :to="{ name: 'register' }" />
-        <SideNavButton
+        <!-- <SideNavButton
           class="remove"
           :disabled="!$store.state.accounts.accounts[$store.state.accounts.address].backup"
           img="delete"
@@ -34,7 +34,7 @@
                 : handleAlert(),
             ]
           "
-        />
+        /> -->
       </section>
       <section class="nav-footer">
         <div>
@@ -93,13 +93,13 @@ export default Vue.extend({
       this.isAccountsListOpened = !this.isAccountsListOpened;
     },
 
-    handleRemoveModal() {
-      this.$emit('removeModalClick');
-    },
-    handleAlert() {
-      console.log('notification');
-      this.$emit('notificationModalClick');
-    },
+    // handleRemoveModal() {
+    //   this.$emit('removeModalClick');
+    // },
+    // handleAlert() {
+    //   console.log('notification');
+    //   this.$emit('notificationModalClick');
+    // },
 
     async handleSelect(account: any) {
       const address = account.address;

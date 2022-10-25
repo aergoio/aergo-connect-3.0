@@ -92,7 +92,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
       });
 
       await this.$store.dispatch('accounts/addAccount', accountSpec.address);
-      await this.$store.commit('accounts/setBackup',true);
+      await this.$store.commit('accounts/setBackup', true);
 
       this.$router.push({ name: 'account-imported' });
     } catch (e) {

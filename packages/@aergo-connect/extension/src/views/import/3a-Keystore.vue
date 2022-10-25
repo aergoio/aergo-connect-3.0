@@ -100,9 +100,8 @@ export default class Keystore extends mixins(PersistInputsMixin) {
       });
 
       await this.$store.dispatch('accounts/addAccount', accountSpec.address);
-      await this.$store.commit('accounts/setBackup',true);
+      await this.$store.commit('accounts/setBackup', true);
       this.$router.push({ name: 'account-imported' });
-
     } catch (e) {
       console.log(e);
       if (`${e}`.match(/invalid mac value/)) {
@@ -124,6 +123,9 @@ export default class Keystore extends mixins(PersistInputsMixin) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  .simple-left {
+    margin-left: 0;
+  }
   .import-keystore-note {
     width: 327px;
     margin-bottom: 49px;

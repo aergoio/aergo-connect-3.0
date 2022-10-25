@@ -12,7 +12,8 @@
 
   "icons": {
     "17": "{{./assets/img/icon-17.png}}",
-    "102": "{{./assets/img/icon-102.png}}"
+    "102": "{{./assets/img/icon-102.png}}",
+    "128": "{{./assets/img/icon-128.png}}"
   },
 
   "background": {

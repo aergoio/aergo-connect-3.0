@@ -58,7 +58,7 @@
           v-if="tabState === 'inventory'"
           :class="[data.length > 0 ? 'nft_info_wrapper' : 'nft_info_wrapper noscroll']"
         >
-          <li v-for="item in data" class="nft_info_list" >
+          <li v-for="item in data" class="nft_info_list">
             <!-- <img class="img" :src="item.token.meta.image" alt="404" /> -->
             <div class="nft_name_wrapper">
               <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
@@ -279,7 +279,7 @@ export default Vue.extend({
 
       const response = await resp.json();
       if (response.error) this.data = [];
-      else this.data = response.hits;
+      else this.data = response.hits.reverse();
 
       console.log('inventory', this.data);
     },

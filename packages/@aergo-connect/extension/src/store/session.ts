@@ -8,7 +8,7 @@ import store from '../store';
 export interface SessionState {
   tokens: any;
   token: any;
-//  aergoBalance: number;
+  //  aergoBalance: number;
 }
 
 function getVueInstance(instance: any): Vue {
@@ -25,13 +25,16 @@ const storeModule: Module<SessionState, RootState> = {
   },
 
   actions: {
-
+    /*
+    aergoBalance({ state }) {
+      return state.aergoBalance;
+    },
+*/
     tokenBalance({ state }, address: string) {
       return state.tokens[address]['balance'];
     },
 
     async updateBalances({ state, commit }) {
-
       const vue = getVueInstance(this);
       const val = await vue.$background.getAccountState({
         address: store.state.accounts.address,
@@ -40,14 +43,18 @@ const storeModule: Module<SessionState, RootState> = {
 
       const aergoBalance = await new Amount(val.balance).formatNumber('aergo');
 
-      const prefix = (store.state.accounts.network==='alpha')? 'api-alpha':'api' ;
-      const resp = await fetch( `https://${prefix}.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
-      
+      const prefix = store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
+      const resp = await fetch(
+        `https://${prefix}.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
+      );
+
       const response = await resp.json();
 
-      if (!response) return;
+      //      if (response.error) return;
+      //      await commit('setTokenBalance', response.hits);
 
-      const balances = { 'aergo':aergoBalance, 'others':response.hits } ;
+      const balances = { aergo: aergoBalance, others: response.hits };
+
       console.log('UPDATE BAL', balances);
 
       await commit('setTokenBalance', balances);
@@ -55,7 +62,6 @@ const storeModule: Module<SessionState, RootState> = {
     },
 
     async initState({ state, commit }) {
-
       const tokens = await store.dispatch('accounts/tokens');
       await commit('setTokens', tokens);
 
@@ -64,48 +70,57 @@ const storeModule: Module<SessionState, RootState> = {
         `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
       );
 
-      const prefix = (store.state.accounts.network==='alpha')? 'api-alpha':'api' ;
+      const prefix = store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
 
-      const resp = await fetch(`https://${prefix}.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
+      const resp = await fetch(
+        `https://${prefix}.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
+      );
 
       const response = await resp.json();
 
-      console.log("resp", response) ; 
+      console.log('resp', response);
 
       await commit('updateTokens', response.hits);
       await store.dispatch('session/updateBalances');
 
-      // Default Token : 'AERGO' 
-      await commit('setToken',state.tokens['AERGO']) ;
-      await store.commit('accounts/setSeedPhrase','');
+      // Default Token : 'AERGO'
+      await commit('setToken', state.tokens['AERGO']);
+      await store.commit('accounts/setSeedPhrase', '');
+      //      await commit('setToken',state.tokens['AERGO']) ;
+      //      await store.commit('accounts/setSeedPhrase','');
 
       console.log('Out tokens', state.tokens);
     },
   },
 
   mutations: {
+    /*
+    setAergoBalance(state, val: number) {
+      state.aergoBalance = val;
+    },
+*/
 
     setTokenBalance(state, balances: any) {
-
       // others
       Object.keys(state.tokens).forEach((hash) => {
         const bal = balances.others.find((element) => element.meta.address == hash);
         if (bal) {
           if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance;
           else
-            state.tokens[hash]['balance'] = bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals);
+            state.tokens[hash]['balance'] =
+              bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals);
         } else {
           state.tokens[hash]['balance'] = 0;
         }
       });
 
-      state.tokens['AERGO']['balance'] = balances['aergo'] ;
+      state.tokens['AERGO']['balance'] = balances['aergo'];
     },
 
     setTokens(state, tokens: any) {
       console.log('set tokens', tokens);
       if (tokens) state.tokens = tokens;
-      else state.tokens = {} ;
+      else state.tokens = {};
     },
 
     updateTokens(state, balances: any) {
@@ -122,7 +137,6 @@ const storeModule: Module<SessionState, RootState> = {
     setToken(state, token: any) {
       state.token = token;
     },
-
   },
 };
 

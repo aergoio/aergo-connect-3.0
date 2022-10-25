@@ -11,7 +11,10 @@ import '@aergo-connect/lib-ui/src/styles/base.scss';
 import { enforceRequest } from './router/guards';
 
 Vue.config.productionTip = false;
-
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+  history.go(1);
+};
 function getRequestId() {
   const urlParams = new URLSearchParams(window.location.search);
   const requestId = urlParams.get('request');

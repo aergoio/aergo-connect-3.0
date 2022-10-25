@@ -46,19 +46,14 @@
               @click="handleEdit"
             />
           </div>
-          <div class="account_info_address_wrapper">
-            <span class="account_info_address_text" @click="handleDetailAddress">{{
+          <div class="account_info_address_wrapper" @click="handleDetailAddress">
+            <span class="account_info_address_text">{{
               `${$store.state.accounts.address.slice(
                 0,
                 15,
               )}...${$store.state.accounts.address.slice(-5)}`
             }}</span>
-            <Icon
-              class="account_info_address_button"
-              :name="`next`"
-              :size="50"
-              @click="handleDetailAddress"
-            />
+            <Icon class="account_info_address_button" :name="`next`" :size="50" />
           </div>
         </div>
       </div>
@@ -97,11 +92,13 @@
                   :src="token.meta.image"
                   alt="404"
                 />
-                <Identicon v-else class="token_list_icon" :text="token.hash" />
+                <Icon v-else class="token_list_icon" :name="`defaultToken`" />
                 <span class="token_list_text"> {{ token.meta.name }} </span>
               </div>
               <div class="token_list_amount">
-                <span class="token_list_balance">{{ token.balance }}</span>
+                <span class="token_list_balance">{{
+                  token.balance ? Number(token.balance).toFixed(3) : '0'
+                }}</span>
                 <span> {{ token.meta.symbol }}</span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
@@ -127,7 +124,9 @@
               <Identicon v-else class="token_list_icon" :text="token.hash" />
               <span class="token_list_text"> {{ token.meta.name }} </span>
               <div class="token_list_amount">
-                <span class="token_list_balance">{{ token.balance }}</span>
+                <span class="token_list_balance">{{
+                  token.balance ? Number(token.balance).toFixed(3) : '0'
+                }}</span>
                 <span> EA </span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
@@ -456,6 +455,7 @@ export default Vue.extend({
         }
       }
       .account_info_address_wrapper {
+        cursor: pointer;
         width: 191px;
         height: 24px;
         background: #ecf8fd;

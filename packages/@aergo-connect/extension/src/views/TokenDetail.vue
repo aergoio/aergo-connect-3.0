@@ -40,18 +40,20 @@
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
             <div class="balance">
-              {{ $store.state.session.tokens['AERGO'].balance || '2,000,000.000' }}
+              {{ $store.state.session.tokens['AERGO'].balance }}
             </div>
             <div class="dollor">
-               <span>$ </span>
-               <span>{{ aergoPrice }} </span>
+              <span>$ </span>
+              <span>{{ aergoPrice }} </span>
             </div>
           </div>
           <div class="token_symbol">{{ symbol }}</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
-          <a class="detail_title" href="https://voting.aergo.io/about" target="_blank">Staked Balance</a>
+          <a class="detail_title" href="https://voting.aergo.io/about" target="_blank"
+            >Staked Balance</a
+          >
           <div class="detail_content">{{ staking }}</div>
         </div>
         <div class="line detail" />
@@ -81,53 +83,27 @@
         <ul
           :class="[
             symbol === 'aergo' ? 'history_list ' : 'history_list others',
-            data.length === 0 ? 'history_list nothing' : 'history_list',
+            data.length === 0 ? 'history _list nothing' : 'history_list',
           ]"
         >
           <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
-            <div v-if="item.meta.from === $store.state.accounts.address"> 
-              <div v-if="filter !== 'Received'">
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="direction_row">
-                  <div class="sent">Sent</div>
-                  <div class="direction_row">
-                    <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                    <div class="token_symbol">{{ symbol }}</div>
-                  </div>
-                </div>
-                <div class="line"></div>
-                <div class="direction_row">
-                  <div class="address" @click="gotoScanAccount(item.meta.to)">
-                    {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
-                  </div>
-                  <div v-if="symbol==='aergo'" class="address">
-                    {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}`}}
-                  </div>
-                  <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" /> 
-                </div>
+            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+            <div class="direction_row">
+              <div :class="[filter === 'Received' ? 'received' : 'sent']">{{ filter }}</div>
+              <div class="direction_row">
+                <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
+                <div class="token_symbol">{{ symbol }}</div>
               </div>
-            </div> 
-            <div v-else>
-              <div v-if="filter !== 'Sent'">
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="direction_row">
-                  <div class="received">Recevied</div>
-                  <div class="direction_row">
-                    <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                    <div class="token_symbol">{{ symbol }}</div>
-                  </div>
-                </div>
-                <div class="line"></div>
-                <div class="direction_row">
-                  <div class="address" @click="gotoScanAccount(item.meta.from)">
-                    {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
-                  </div>
-                  <div v-if="symbol==='aergo'" class="address">
-                    {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}`}}
-                  </div>
-                  <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" /> 
-                </div>
+            </div>
+            <div class="line"></div>
+            <div class="direction_row">
+              <div class="address" @click="gotoScanAccount(item.meta.to)">
+                {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
               </div>
+              <div v-if="symbol === 'aergo'" class="address">
+                {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}` }}
+              </div>
+              <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
             </div>
           </li>
           <div v-if="data.length === 0" class="history_nothing aergo">
@@ -163,7 +139,7 @@ import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import { Amount } from '@herajs/common';
-
+import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
 function getVueInstance(instance: any): Vue {
   // @ts-ignore
   return instance._vm as Vue;
@@ -186,6 +162,7 @@ export default Vue.extend({
     return {
       removeModal: false,
       error: '',
+      allData: [],
       data: [],
       filter: 'All',
       symbol: 'aergo',
@@ -194,21 +171,34 @@ export default Vue.extend({
     };
   },
 
-async  beforeMount() {
-
+  async beforeMount() {
     this.symbol = this.$store.state.session.token.meta.symbol;
-    await this.$store.dispatch('session/updateBalance') ;
-    await this.getTokenHistory();
-    await this.$background.getTokenPrice('aergo.io').then(priceInfo => {
-//      console.log("priceInfo", this.$store.state.session.tokens['AERGO'].balance*priceInfo.price) ;
-      this.aergoPrice = this.$store.state.session.tokens['AERGO'].balance*priceInfo.price ;
+    console.log('SYMBOL', this.symbol);
+    this.getTokenHistory();
+    this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
+      console.log('priceInfo', this.$store.state.session.tokens['AERGO'].balance * priceInfo.price);
+      this.aergoPrice = this.$store.state.session.tokens['AERGO'].balance * priceInfo.price;
     });
+    this.aergoStaking();
   },
 
   watch: {
     filter: function () {
-      this.getTokenHistory();
-      console.log('filter', this.filter);
+      if (this.filter === 'All') {
+        this.getTokenHistory();
+      } else if (this.filter === 'Sent') {
+        this.data = this.allData.filter((item) => {
+          if (item.meta.from === this.$store.state.accounts.address) {
+            return item;
+          }
+        });
+      } else if (this.filter === 'Received') {
+        this.data = this.allData.filter((item) => {
+          if (item.meta.from !== this.$store.state.accounts.address) {
+            return item;
+          }
+        });
+      }
     },
   },
 
@@ -222,11 +212,13 @@ async  beforeMount() {
       console.log('staking', staking);
 
       if (!staking) this.staking = '0';
-      else this.staking = staking.amount;
+      else this.staking = `${bigIntToString(BigInt(staking.amount.split(' ')[0]), 18) || 0} aergo`;
     },
 
     gotoScanTx(hash: string) {
-      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${hash.split('-')[0]}/`;
+      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
+        hash.split('-')[0]
+      }/`;
       window.open(url, '', 'width=1000,height=800');
     },
 
@@ -234,7 +226,7 @@ async  beforeMount() {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
       window.open(url, '', 'width=1000,height=800');
     },
-/*
+    /*
     aergoPrice() {
       this.$background.getTokenPrice('aergo.io').then(priceInfo => {
         console.log("priceInfo", this.$store.state.session.tokens['AERGO'].balance*priceInfo.price) ;
@@ -258,8 +250,7 @@ async  beforeMount() {
     },
 
     async getTokenHistory(): Promise<void> {
-
-      const prefix = (this.$store.state.accounts.network==='alpha')? 'api-alpha':'api' ;
+      const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
       let resp;
       if (this.symbol === 'aergo') {
         resp = await fetch(
@@ -273,9 +264,10 @@ async  beforeMount() {
 
       const response = await resp.json();
       if (response.error) this.data = [];
-      else this.data = response.hits;
-
-      console.log('tx', this.data);
+      else {
+        this.data = response.hits;
+        this.allData = response.hits;
+      }
     },
 
     /*
@@ -751,7 +743,7 @@ async  beforeMount() {
   padding: 3px;
   background: #ffffff;
   /* Grey/02 */
-  width: 80px;
+  width: 85px;
   border: 1px solid #d8d8d8;
   border-radius: 4px;
 

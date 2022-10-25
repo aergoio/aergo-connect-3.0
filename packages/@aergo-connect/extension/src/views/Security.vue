@@ -1,5 +1,7 @@
 <template>
   <ScrollView>
+    <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
+    <NotificationModal v-if="notificationModal" @cancel="handleCancel" />
     <Header button="back" title="Security" @backClick="handleBack" />
     <div class="security2_content">
       <div class="security2_autolock_wrapper">
@@ -9,11 +11,11 @@
           be prompted to reenter your password.
         </div>
         <select class="select" @change="handleIdleTimeout()" v-model="idleTimeout">
-          <option :value=30>30 seconds</option>
-          <option :value=60>60 seconds</option>
-          <option :value=300>5 minutes</option>
-          <option :value=600>10 minutes</option>
-          <option :value=1800>30 minutes</option>
+          <option :value="30">30 seconds</option>
+          <option :value="60">60 seconds</option>
+          <option :value="300">5 minutes</option>
+          <option :value="600">10 minutes</option>
+          <option :value="1800">30 minutes</option>
         </select>
       </div>
       <div class="security2_password_wrapper">
@@ -33,6 +35,17 @@
           >Backup Private Key</Button
         >
       </div>
+      <div
+        @click="
+          [
+            $store.state.accounts.accounts[$store.state.accounts.address].backup
+              ? handleRemoveModal()
+              : handleAlert(),
+          ]
+        "
+      >
+        Remove Account
+      </div>
     </div>
   </ScrollView>
 </template>
@@ -43,19 +56,27 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import PasswordStrengthField from '@aergo-connect/lib-ui/src/forms/PasswordStrengthField.vue';
-
+import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
+import NotificationModal from '@aergo-connect/lib-ui/src/modal/NotificationModal.vue';
 export default Vue.extend({
-  components: { Header, ScrollView, Button, PasswordStrengthField },
+  components: {
+    Header,
+    ScrollView,
+    Button,
+    PasswordStrengthField,
+    RemoveAccountModal,
+    NotificationModal,
+  },
   data() {
     return {
       idleTimeout: this.$store.state.ui.idleTimeout,
-    }
+    };
   },
 
   methods: {
     handleIdleTimeout() {
-      this.$store.commit('ui/setIdleTimeout', this.idleTimeout) ;
-      console.log("SET_IDLE_TIME",this.$store.state.ui.idleTimeout) ;
+      this.$store.commit('ui/setIdleTimeout', this.idleTimeout);
+      console.log('SET_IDLE_TIME', this.$store.state.ui.idleTimeout);
     },
     handleBack() {
       this.$router
@@ -80,7 +101,14 @@ export default Vue.extend({
     },
 
     handleBackupPrivateKey() {
-      this.$router.push({ name: 'account-backup', });
+      this.$router.push({ name: 'account-backup' });
+    },
+    handleRemoveModal() {
+      this.$emit('removeModalClick');
+    },
+    handleAlert() {
+      console.log('notification');
+      this.$emit('notificationModalClick');
     },
   },
 });

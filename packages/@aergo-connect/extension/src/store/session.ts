@@ -25,11 +25,7 @@ const storeModule: Module<SessionState, RootState> = {
   },
 
   actions: {
-/*
-    aergoBalance({ state }) {
-      return state.aergoBalance;
-    },
-*/
+
     tokenBalance({ state }, address: string) {
       return state.tokens[address]['balance'];
     },
@@ -44,10 +40,8 @@ const storeModule: Module<SessionState, RootState> = {
 
       const aergoBalance = await new Amount(val.balance).formatNumber('aergo');
 
-      let resp = {} ;
-      if (store.state.accounts.network === 'alpha') 
-        resp = await fetch( `https://api-alpha.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
-      else resp = await fetch( `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
+      const prefix = (store.state.accounts.network==='alpha')? 'api-alpha':'api' ;
+      const resp = await fetch( `https://${prefix}.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
       
       const response = await resp.json();
 
@@ -70,10 +64,9 @@ const storeModule: Module<SessionState, RootState> = {
         `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
       );
 
-      let resp = {} ;
+      const prefix = (store.state.accounts.network==='alpha')? 'api-alpha':'api' ;
 
-      if (store.state.accounts.network === 'alpha') resp = await fetch(`https://api-alpha.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
-      else resp = await fetch(`https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
+      const resp = await fetch(`https://${prefix}.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,);
 
       const response = await resp.json();
 
@@ -83,20 +76,14 @@ const storeModule: Module<SessionState, RootState> = {
       await store.dispatch('session/updateBalances');
 
       // Default Token : 'AERGO' 
-//      await commit('setToken',state.tokens['AERGO']) ;
-//      await store.commit('accounts/setSeedPhrase','');
+      await commit('setToken',state.tokens['AERGO']) ;
+      await store.commit('accounts/setSeedPhrase','');
 
       console.log('Out tokens', state.tokens);
     },
   },
 
   mutations: {
-
-/*
-    setAergoBalance(state, val: number) {
-      state.aergoBalance = val;
-    },
-*/
 
     setTokenBalance(state, balances: any) {
 

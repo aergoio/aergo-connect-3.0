@@ -96,31 +96,31 @@
             <option class="option" value="Sent">Sent</option>
           </select>
           <li class="nft_detail_list" v-for="item in data">
-            <!-- <div v-if="item.meta.from === $store.state.accounts.address"> -->
-            <div v-if="filter !== 'Received'">
-              <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-              <div class="direction_row">
-                <div class="sent">Sent</div>
+            <div v-if="item.meta.from === $store.state.accounts.address">
+              <div v-if="filter !== 'Received'">
+                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+                <div class="direction_row">
+                  <div class="sent">Sent</div>
 
-                <div class="token_symbol">
-                  {{
-                    `${
-                      item.meta.token_id.length > 15
-                        ? `${item.meta.token_id.slice(0, 15)}...`
-                        : item.meta.token_id
-                    }`
-                  }}
+                  <div class="token_symbol">
+                    {{
+                      `${
+                        item.meta.token_id.length > 15
+                          ? `${item.meta.token_id.slice(0, 15)}...`
+                          : item.meta.token_id
+                      }`
+                    }}
+                  </div>
                 </div>
-              </div>
-              <div class="line"></div>
-              <div class="direction_row">
-                <div class="address">
-                  {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+                <div class="line"></div>
+                <div class="direction_row">
+                  <div class="address" @click="gotoScanAccount(item.meta.to)">
+                    {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+                  </div>
+                  <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
                 </div>
-                <Icon :name="'pointer'" @click="gotoScan(item)" />
               </div>
             </div>
-            <!-- </div> -->
             <div v-else>
               <div v-if="filter !== 'Sent'">
                 <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
@@ -137,10 +137,10 @@
                   </div>
                 </div>
                 <div class="direction_row">
-                  <div class="address">
+                  <div class="address" @click="gotoScanAccount(item.meta.from)">
                     {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
                   </div>
-                  <Icon :name="'pointer'" @click="gotoScan(item)" />
+                  <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
                 </div>
               </div>
             </div>
@@ -233,8 +233,13 @@ export default Vue.extend({
         .catch(() => {});
     },
 
-    gotoScan(item: object) {
-      const url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
+    gotoScanTx(hash: string) {
+      const url = `https://testnet.aergoscan.io/transaction/${hash.split('-')[0]}/`;
+      window.open(url, '', 'width=1000,height=800');
+    },
+
+    gotoScanAccount(address: string) {
+      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
       window.open(url, '', 'width=1000,height=800');
     },
 
@@ -253,7 +258,7 @@ export default Vue.extend({
       );
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100&sort=ts:desc`,
       );
       const response = await resp.json();
       if (response.error) this.data = [];

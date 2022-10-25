@@ -70,6 +70,8 @@ export default Vue.extend({
   data() {
     return {
       idleTimeout: this.$store.state.ui.idleTimeout,
+      removeAccountModal: false,
+      notificationModal: false,
     };
   },
 
@@ -97,6 +99,7 @@ export default Vue.extend({
     handleChangePassword() {
       this.$router.push({
         name: 'setup',
+        params: { nextPage: 'accounts-list', backPage: 'security' }
       });
     },
 
@@ -104,11 +107,16 @@ export default Vue.extend({
       this.$router.push({ name: 'account-backup' });
     },
     handleRemoveModal() {
-      this.$emit('removeModalClick');
+      console.log('Remove Account') ;
+      this.removeAccountModal = true;
     },
     handleAlert() {
       console.log('notification');
-      this.$emit('notificationModalClick');
+      this.notificationModal = true;
+    },
+    handleCancel() {
+      this.removeAccountModal = false ;
+      this.notificationModal = false ;
     },
   },
 });

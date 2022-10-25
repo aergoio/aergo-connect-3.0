@@ -51,9 +51,9 @@
         </div>
         <div class="line" />
         <div class="detail_wrapper">
-          <a class="detail_title" href="https://voting.aergo.io/about" target="_blank"
-            >Staked Balance</a
-          >
+          <div class="detail_title" @click="gotoStake()">
+            Staked Balance
+          </div>
           <div class="detail_content">{{ staking }}</div>
         </div>
         <div class="line detail" />
@@ -215,6 +215,9 @@ export default Vue.extend({
       else this.staking = `${bigIntToString(BigInt(staking.amount.split(' ')[0]), 18) || 0} aergo`;
     },
 
+    gotoStake() {
+      window.open('https://voting.aergo.io/about','', 'width=1000,height=800');
+    },
     gotoScanTx(hash: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
         hash.split('-')[0]

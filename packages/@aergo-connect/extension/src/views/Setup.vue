@@ -3,7 +3,7 @@
     <AppearVue :delay="0.6">
       <ConfirmModal v-if="modal" title="Your password has been set!" :to="$route.params.nextPage" />
     </AppearVue>
-    <Header button="back" title="Set Password" :to="{ name: 'welcome' }" />
+    <Header button="back" title="Set Password" :to="{ name: `${$route.params.backPage}` }" />
     <div class="simple-content">
       <p class="simple-phrase">This passphrase will be used to secure all your accounts.</p>
       <div v-if="$route.params.nextPage === 'register'" class="field-title">New Password</div>
@@ -93,7 +93,6 @@ export default class Setup extends mixins() {
   next() {
     this.modal = true;
   }
-
   checkFunc(checked: boolean) {
     this.checked = checked;
   }

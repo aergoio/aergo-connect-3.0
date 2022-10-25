@@ -71,10 +71,7 @@ export default class Lockscreen extends mixins() {
 
       console.log(nextPath, 'nextPath');
 
-      console.log("address", this.$store.state.accounts.address) ;
-      console.log("network", this.$store.state.accounts.network) ;
-
-      if (this.$store.state.accounts.address)  await this.$store.dispatch('session/initState');
+//      if (this.$store.state.accounts.address)  await this.$store.dispatch('session/initState');
 
       if (!nextPath || nextPath === '/' || nextPath === '/locked') {
         nextPath = { name: 'accounts-list', }; }

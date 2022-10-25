@@ -98,18 +98,22 @@ export default class AccountExportKeystore extends Vue {
     }
     this.loading = true;
     try {
+
       const result = await this.$background.exportAccount({
         address: this.$store.state.accounts.address,
-        chainId: this.$store.state.accounts.network,
+        chainId: 'aergo.io',
         password: this.password,
         format: 'keystore',
       });
+
       this.keystore = result.privateKey;
       setTimeout(() => {
         (this.$refs.downloadButton as HTMLElement).click();
         this.modal = true;
       }, 150);
+
       await this.$store.commit('accounts/setBackup', true);
+
     } catch (e) {
       this.errors.password = `${e}`;
       console.error(e);

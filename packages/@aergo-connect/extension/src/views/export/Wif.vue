@@ -102,7 +102,7 @@ export default class AccountExportWif extends Vue {
     try {
       const result = await this.$background.exportAccount({
         address: this.$store.state.accounts.address,
-        chainId: this.$store.state.accounts.network,
+        chainId: 'aergo.io',
         password: this.password,
         format: 'wif',
       });

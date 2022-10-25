@@ -244,7 +244,7 @@ export default Vue.extend({
 
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
-      console.log('IdleTime', this.$store.state.ui.idleTimeout);
+//      console.log("List", this.$background.getAccounts()) ;
 
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');

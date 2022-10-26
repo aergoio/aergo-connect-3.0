@@ -96,9 +96,7 @@
                 <span class="token_list_text"> {{ token.meta.name }} </span>
               </div>
               <div class="token_list_amount">
-                <span class="token_list_balance">{{
-                  token.balance ? Number(token.balance).toFixed(3) : '0'
-                }}</span>
+                <span class="token_list_balance">{{ tokenBalanceFormat(token) }}</span>
                 <span> {{ token.meta.symbol }}</span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
@@ -121,12 +119,10 @@
                 :src="token.meta.image"
                 alt="404"
               />
-              <Identicon v-else class="token_list_icon" :text="token.hash" />
+              <Icon v-else class="token_list_icon" :name="`defaultToken`" />
               <span class="token_list_text"> {{ token.meta.name }} </span>
               <div class="token_list_amount">
-                <span class="token_list_balance">{{
-                  token.balance ? Number(token.balance).toFixed(3) : '0'
-                }}</span>
+                <span class="token_list_balance">{{ tokenBalanceFormat(token) }}</span>
                 <span> EA </span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
@@ -244,7 +240,7 @@ export default Vue.extend({
 
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
-//      console.log("List", this.$background.getAccounts()) ;
+      //      console.log("List", this.$background.getAccounts()) ;
 
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
@@ -388,6 +384,18 @@ export default Vue.extend({
     },
     handleChangeTab(value: string) {
       this.tab = value;
+    },
+    tokenBalanceFormat(token) {
+      console.log('token', token);
+      if (token.balance) {
+        if (Number.isInteger(+token.balance)) {
+          return token.balance;
+        } else {
+          return Number(+token.balance).toFixed(3);
+        }
+      } else {
+        return '0';
+      }
     },
   },
 });

@@ -59,7 +59,15 @@
           :class="[data.length > 0 ? 'nft_info_wrapper' : 'nft_info_wrapper noscroll']"
         >
           <li v-for="item in data" class="nft_info_list">
-            <!-- <img class="img" :src="item.token.meta.image" alt="404" /> -->
+            <div>
+              <!-- <img
+                v-if="item.token.meta.image"
+                class="img"
+                :src="item.token.meta.image"
+                alt="404"
+              /> -->
+              <Icon class="img" :name="`defaultNft`" />
+            </div>
             <div class="nft_name_wrapper">
               <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
               <!-- <div class="id">{{ item.token.meta.symbol }}</div> -->
@@ -153,6 +161,7 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
+
 import { Amount } from '@herajs/common';
 
 function getVueInstance(instance: any): Vue {
@@ -642,13 +651,12 @@ export default Vue.extend({
       overflow-y: scroll;
       overflow-x: hidden;
       display: flex;
-      justify-content: center;
       flex-direction: column;
       .nft_info_list {
         margin-top: 10px;
         display: flex;
         align-items: center;
-        justify-content: space-around;
+        justify-content: space-evenly;
         width: 327px;
         height: 78px;
         background: #ffffff;
@@ -657,11 +665,11 @@ export default Vue.extend({
           cursor: pointer;
         }
         .img {
-          width: 32px;
-          height: 32px;
+          width: 46px;
+          height: 46px;
         }
         .nft_name_wrapper {
-          width: 10rem;
+          width: 11.5rem;
           display: flex;
           flex-direction: column;
           .time {
@@ -693,6 +701,7 @@ export default Vue.extend({
       }
       &.noscroll {
         overflow-y: hidden;
+        justify-content: center;
       }
     }
     .nft_detail_wrapper {

@@ -39,8 +39,7 @@
               >
                 <div class="token_list_wrapper">
                   <img v-if="result.meta.image" class="list_icon" :src="result.meta.image" />
-                  <Identicon v-else :text="result.hash" class="list_icon" /> 
-                  <!-- <Icon v-else class="list_icon" :name="`defaultToken`" :size="12" /> -->
+                  <Icon v-else class="list_icon" :name="`defaultToken`" />
                   <span class="list_text">
                     {{ result.meta.name + '    ' + result.meta.symbol }}
                   </span>
@@ -282,8 +281,8 @@ export default Vue.extend({
         display: flex;
         align-items: center;
         .list_icon {
-          width: 42px;
-          height: 42px;
+          width: 46px;
+          height: 46px;
           border-radius: 50%;
         }
         .list_text {

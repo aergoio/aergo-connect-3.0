@@ -54,11 +54,13 @@
           <div class="detail_title" @click="gotoStake()">Staked Balance</div>
           <div class="detail_content">{{ staking }}</div>
         </div>
+<!--
         <div class="line detail" />
         <div class="detail_wrapper">
           <div class="detail_title">Registered Names</div>
           <div class="detail_content">{{ `0` }}</div>
         </div>
+-->
       </div>
       <div v-else class="token_detail others">
         <div class="flex-row">

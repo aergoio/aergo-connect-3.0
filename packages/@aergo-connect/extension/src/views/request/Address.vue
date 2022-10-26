@@ -1,6 +1,6 @@
 <template>
   <ScrollView class="page">
-    <div class="content">
+    <div class="content" style="margin-left: 10px">
       <div class="icon-header">
         <Icon :name="`title-request`" :size="36" />
       </div>
@@ -49,12 +49,11 @@ import { RequestMixin } from './mixin';
     Icon,
   },
 })
-
 export default class RequestAddress extends mixins(RequestMixin) {
   async confirmHandler() {
     const address = this.$store.state.accounts.address;
     const chainId = `${this.$store.state.accounts.network}.aergo.io`;
-//    const chainId = this.$store.state.accounts.network;
+    //    const chainId = this.$store.state.accounts.network;
     return {
       account: {
         address,

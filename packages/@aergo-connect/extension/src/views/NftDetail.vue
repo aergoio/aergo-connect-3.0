@@ -227,12 +227,12 @@ export default Vue.extend({
 
     gotoScanTx(hash: string) {
       const url = `https://testnet.aergoscan.io/transaction/${hash.split('-')[0]}/`;
-      window.open(url, '', 'width=1000,height=800');
+      window.open(url, '', 'width=1000,height=1000');
     },
 
     gotoScanAccount(address: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
-      window.open(url, '', 'width=1000,height=800');
+      window.open(url, '', 'width=1000,height=1000');
     },
 
     getTitle() {

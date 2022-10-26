@@ -51,9 +51,7 @@
         </div>
         <div class="line" />
         <div class="detail_wrapper">
-          <div class="detail_title" @click="gotoStake()">
-            Staked Balance
-          </div>
+          <div class="detail_title" @click="gotoStake()">Staked Balance</div>
           <div class="detail_content">{{ staking }}</div>
         </div>
         <div class="line detail" />
@@ -73,7 +71,7 @@
       </div>
       <div class="select_token">
         <div class="title">Transaction History</div>
-        <select class="select" v-model="filter">
+        <select class="select_tokenDetail" v-model="filter">
           <option class="option" selected value="All">All</option>
           <option class="option" value="Received">Received</option>
           <option class="option" value="Sent">Sent</option>
@@ -216,7 +214,7 @@ export default Vue.extend({
     },
 
     gotoStake() {
-      window.open('https://voting.aergo.io/about','', 'width=1000,height=800');
+      window.open('https://voting.aergo.io/about', '', 'width=1000,height=800');
     },
     gotoScanTx(hash: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
@@ -741,7 +739,7 @@ export default Vue.extend({
     }
   }
 }
-.select {
+.select_tokenDetail {
   margin-left: 98px;
   padding: 3px;
   background: #ffffff;

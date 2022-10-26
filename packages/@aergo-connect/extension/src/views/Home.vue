@@ -10,8 +10,8 @@
       @refreshClick="refreshClick"
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
-    <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
-    <NotificationModal v-if="notificationModal" @cancel="handleCancel" />
+    <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
+    <!-- <NotificationModal v-if="notificationModal" @cancel="handleCancel" /> -->
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <AccountDetailModal v-if="accountDetailModal" @cancel="handleCancel" />
     <div v-if="!noAccountModal" class="home_content">
@@ -171,21 +171,21 @@ import Identicon from '../../../lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
-import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
+// import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
+// import NotificationModal from '@aergo-connect/lib-ui/src/modal/NotificationModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
-import NotificationModal from '@aergo-connect/lib-ui/src/modal/NotificationModal.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 
 export default Vue.extend({
   components: {
-    RemoveAccountModal,
+    // RemoveAccountModal,
+    // NotificationModal,
     NoAccountModal,
     NetworkModal,
     PasswordModal,
     AccountDetailModal,
-    NotificationModal,
     Icon,
     Heading,
     Identicon,
@@ -199,13 +199,13 @@ export default Vue.extend({
   data() {
     return {
       hamburgerModal: false,
-      removeAccountModal: false,
+      // removeAccountModal: false,
+      // notificationModal: false,
       networkModal: false,
       passwordModal: false,
       importAssetModal: false,
       noAccountModal: false,
       accountDetailModal: false,
-      notificationModal: false,
       network: 'aergo.io',
       tab: 'tokens',
       editNick: false,

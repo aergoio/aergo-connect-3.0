@@ -6,15 +6,15 @@
     <div class="security2_content">
       <div class="security2_autolock_wrapper">
         <div class="title">Auto Lock Timeout</div>
-        <select class="select" @change="handleIdleTimeout()" v-model="idleTimeout">
-          <option :value="30">30 seconds</option>
-          <option :value="60">60 seconds</option>
-          <option :value="300">5 minutes</option>
-          <option :value="600">10 minutes</option>
-          <option :value="1800">30 minutes</option>
-        </select>
-        <div class="description">
-          Set the amount of time before the screen locks. 
+        <div class="flex-row">
+          <div class="description">Set the amount of time before the screen locks.</div>
+          <select class="select" @change="handleIdleTimeout()" v-model="idleTimeout">
+            <option :value="30">30 seconds</option>
+            <option :value="60">60 seconds</option>
+            <option :value="300">5 minutes</option>
+            <option :value="600">10 minutes</option>
+            <option :value="1800">30 minutes</option>
+          </select>
         </div>
       </div>
       <div class="security2_password_wrapper">
@@ -26,19 +26,17 @@
       </div>
       <div class="security2_backup_wrapper">
         <div class="title">Backup Private Key</div>
-        <div class="description">
-          Protect your accounts by saving your private key. 
-        </div>
+        <div class="description">Protect your accounts by saving your private key.</div>
         <Button type="primary" size="large" @click="handleBackupPrivateKey"
           >Backup Private Key</Button
         >
       </div>
       <div class="security2_backup_wrapper">
         <div class="title">Remove Account</div>
-        <div class="description">
-          This will remove access to this account in this wallet.
-        </div>
-        <Button type="primary" size="large" 
+        <div class="description">This will remove access to this account in this wallet.</div>
+        <Button
+          type="primary"
+          size="large"
           @click="
             [
               $store.state.accounts.accounts[$store.state.accounts.address].backup
@@ -102,7 +100,7 @@ export default Vue.extend({
     handleChangePassword() {
       this.$router.push({
         name: 'setup',
-        params: { nextPage: 'accounts-list', backPage: 'security' }
+        params: { nextPage: 'accounts-list', backPage: 'security' },
       });
     },
 
@@ -110,16 +108,21 @@ export default Vue.extend({
       this.$router.push({ name: 'account-backup' });
     },
     handleRemoveModal() {
-      console.log('Remove Account') ;
       this.removeAccountModal = true;
+      // this.$emit('removeModalClick');
     },
     handleAlert() {
-      console.log('notification');
       this.notificationModal = true;
+      // console.log('notification');
+      // this.$emit('notificationModalClick');
     },
-    handleCancel() {
-      this.removeAccountModal = false ;
-      this.notificationModal = false ;
+    handleCancel(modalEvent) {
+      if (modalEvent === 'removeAccountModal') {
+        this.removeAccountModal = false;
+      }
+      if (modalEvent === 'notificationModal') {
+        this.notificationModal = false;
+      }
     },
   },
 });
@@ -132,10 +135,10 @@ export default Vue.extend({
   align-items: center;
   justify-content: center;
   .security2_autolock_wrapper {
-    margin-top: 26px;
+    margin-top: 25px;
     .select {
       float: right;
-      width: 133px;
+      width: 105px;
       height: 36px;
       background: #ffffff;
       /* Grey/02 */
@@ -154,6 +157,12 @@ export default Vue.extend({
       /* Grey/06 */
 
       color: #686767;
+    }
+  }
+  .flex-row {
+    display: flex;
+    .description {
+      width: 220px;
     }
   }
   .title {
@@ -188,15 +197,15 @@ export default Vue.extend({
     color: #686767;
   }
   .security2_password_wrapper {
-    margin-top: 10px;
+    margin-top: 25px;
     .button {
-      margin-top: 20px;
+      margin-top: 10px;
     }
   }
   .security2_backup_wrapper {
     margin-top: 25px;
     .button {
-      margin-top: 20px;
+      margin-top: 10px;
     }
   }
 }

@@ -126,9 +126,12 @@
                 <span> EA </span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
+              <div class="line" />
             </div>
-            <div class="line" />
           </li>
+          <div v-else>
+            <Icon :name="`nothing`" />
+          </div>
         </ul>
 
         <button

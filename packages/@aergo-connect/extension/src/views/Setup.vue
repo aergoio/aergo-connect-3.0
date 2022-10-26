@@ -19,8 +19,8 @@
     <template #footer>
       <div v-if="!modal" class="footer">
         <div v-if="$route.params.nextPage === 'register'" class="check">
-          <CheckboxButton :checked="checked" @check="checkFunc" @enterKeyup="handleModal" />
-          <div class="check-text">
+          <CheckboxButton :checked="checked" @check="checkFunc(checked)" />
+          <div class="check-text" @click="checkFunc(checked)">
             I understand that this wallet cannot recover this password for me.
           </div>
         </div>
@@ -94,7 +94,7 @@ export default class Setup extends mixins() {
     this.modal = true;
   }
   checkFunc(checked: boolean) {
-    this.checked = checked;
+    this.checked = !checked;
   }
   async handleModal() {
     if (this.passwordRepeat === this.password) {
@@ -158,6 +158,7 @@ export default class Setup extends mixins() {
 .check {
   display: flex;
   .check-text {
+    cursor: pointer;
     margin-left: 11px;
     margin-bottom: 28px;
     width: 292px;

@@ -179,11 +179,12 @@ export default Vue.extend({
         align-items: center;
         margin-left: 24px;
 
-        width: 110px;
+        width: 120px;
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
         .account {
+          padding: 6px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -194,8 +195,6 @@ export default Vue.extend({
           line-height: 15px;
           text-align: right;
           letter-spacing: -0.333333px;
-          position: relative;
-          left: 6px;
           /* Primary/Blue01 */
 
           color: #279ecc;

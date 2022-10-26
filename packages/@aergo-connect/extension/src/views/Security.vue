@@ -6,10 +6,6 @@
     <div class="security2_content">
       <div class="security2_autolock_wrapper">
         <div class="title">Auto Lock Timeout</div>
-        <div class="description">
-          Set the amount of time before the screen locks. After this period of inactivity, you will
-          be prompted to reenter your password.
-        </div>
         <select class="select" @change="handleIdleTimeout()" v-model="idleTimeout">
           <option :value="30">30 seconds</option>
           <option :value="60">60 seconds</option>
@@ -17,6 +13,9 @@
           <option :value="600">10 minutes</option>
           <option :value="1800">30 minutes</option>
         </select>
+        <div class="description">
+          Set the amount of time before the screen locks. 
+        </div>
       </div>
       <div class="security2_password_wrapper">
         <div class="title">Password</div>
@@ -28,23 +27,27 @@
       <div class="security2_backup_wrapper">
         <div class="title">Backup Private Key</div>
         <div class="description">
-          Protect your accounts by saving your private key in various places like on a piece of
-          paper, password manager and/or the cloud.
+          Protect your accounts by saving your private key. 
         </div>
         <Button type="primary" size="large" @click="handleBackupPrivateKey"
           >Backup Private Key</Button
         >
       </div>
-      <div
-        @click="
-          [
-            $store.state.accounts.accounts[$store.state.accounts.address].backup
-              ? handleRemoveModal()
-              : handleAlert(),
-          ]
-        "
-      >
-        Remove Account
+      <div class="security2_backup_wrapper">
+        <div class="title">Remove Account</div>
+        <div class="description">
+          This will remove access to this account in this wallet.
+        </div>
+        <Button type="primary" size="large" 
+          @click="
+            [
+              $store.state.accounts.accounts[$store.state.accounts.address].backup
+                ? handleRemoveModal()
+                : handleAlert(),
+            ]
+          "
+          >Remove Account</Button
+        >
       </div>
     </div>
   </ScrollView>
@@ -170,14 +173,14 @@ export default Vue.extend({
   .description {
     width: 327px;
     margin-top: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     /* Subtitle/S3 */
 
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 400;
-    font-size: 16px;
-    line-height: 20px;
+    font-size: 14px;
+    line-height: 18px;
     letter-spacing: -0.333333px;
 
     /* Grey/06 */
@@ -185,13 +188,13 @@ export default Vue.extend({
     color: #686767;
   }
   .security2_password_wrapper {
-    margin-top: 12px;
+    margin-top: 10px;
     .button {
       margin-top: 20px;
     }
   }
   .security2_backup_wrapper {
-    margin-top: 36px;
+    margin-top: 25px;
     .button {
       margin-top: 20px;
     }

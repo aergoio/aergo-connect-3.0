@@ -89,8 +89,8 @@
           <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
             <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
             <div class="direction_row">
-	      <div v-if="item.meta.from === $store.state.accounts.address">Sent</div>
-              <div v-else>Received</div>
+	      <div v-if="item.meta.from === $store.state.accounts.address" class="sent" >Sent</div>
+              <div v-else class="received">Received</div>
 <!--              <div :class="[filter === 'Received' ? 'received' : 'sent']">{{ filter }}</div>
 -->
               <div class="direction_row">

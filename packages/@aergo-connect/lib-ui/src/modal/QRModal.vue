@@ -84,6 +84,7 @@ export default Vue.extend({
       background: #ecf8fd;
       border-radius: 8px;
       .address {
+        padding: 10px;
         word-break: break-all;
         /* Caption/C1_line */
 

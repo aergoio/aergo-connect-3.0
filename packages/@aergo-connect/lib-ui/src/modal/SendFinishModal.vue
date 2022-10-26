@@ -32,7 +32,7 @@
         <div class="flex-row">
           <div class="title">Recipient</div>
           <div class="flex-row">
-            <div class="detail address">{{ receipt }}</div>
+            <div class="detail address nounderline">{{ receipt }}</div>
           </div>
         </div>
         <div class="line" />
@@ -235,11 +235,16 @@ export default Vue.extend({
             width: 175px;
           }
           &.address {
+            text-decoration: underline;
             margin-left: 28px;
             width: 178px;
             text-align: right;
             word-break: break-all;
+            &.nounderline {
+              text-decoration: none;
+            }
           }
+
           &.amount {
             width: 178px;
             font-family: 'Outfit';

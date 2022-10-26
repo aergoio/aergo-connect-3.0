@@ -54,7 +54,7 @@
           <div class="detail_title" @click="gotoStake()">Staked Balance</div>
           <div class="detail_content">{{ staking }}</div>
         </div>
-<!--
+        <!--
         <div class="line detail" />
         <div class="detail_wrapper">
           <div class="detail_title">Registered Names</div>
@@ -89,9 +89,9 @@
           <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
             <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
             <div class="direction_row">
-	      <div v-if="item.meta.from === $store.state.accounts.address" class="sent" >Sent</div>
+              <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
               <div v-else class="received">Received</div>
-<!--              <div :class="[filter === 'Received' ? 'received' : 'sent']">{{ filter }}</div>
+              <!--              <div :class="[filter === 'Received' ? 'received' : 'sent']">{{ filter }}</div>
 -->
               <div class="direction_row">
                 <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
@@ -103,10 +103,12 @@
               <div class="address" @click="gotoScanAccount(item.meta.to)">
                 {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
               </div>
-              <div v-if="symbol === 'aergo'" class="address">
-                {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}` }}
+              <div class="direction_row">
+                <div v-if="symbol === 'aergo'" class="address">
+                  {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}` }}
+                </div>
+                <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
               </div>
-              <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
             </div>
           </li>
           <div v-if="data.length === 0" class="history_nothing aergo">
@@ -430,7 +432,7 @@ export default Vue.extend({
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     &.aergo {
-      height: 143px;
+      height: 110px;
     }
     &.others {
       flex-direction: row;
@@ -603,7 +605,7 @@ export default Vue.extend({
       flex-direction: column;
       display: flex;
       align-items: center;
-      height: 11rem;
+      height: 13.5rem;
       overflow-y: scroll;
       &.nothing {
         overflow: hidden;
@@ -726,7 +728,7 @@ export default Vue.extend({
             font-family: 'Outfit';
             font-style: normal;
             font-weight: 400;
-            font-size: 14px;
+            font-size: 13px;
             line-height: 18px;
             letter-spacing: -0.333333px;
             text-decoration-line: underline;

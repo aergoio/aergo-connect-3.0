@@ -19,7 +19,6 @@ export default Vue.extend({
     const isSetup = await this.$background.isSetup();
     const unlocked = await this.$background.isUnlocked();
 
-
     if (!isSetup) {
       this.$router.push({ name: 'welcome' }).catch(() => {});
     }

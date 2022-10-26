@@ -7,7 +7,7 @@
         <div class="sign_message_text">Sign Message</div>
         <TextArea class="textarea_size" v-model="message" />
         <div class="sign_message_confirm">
-          <CheckboxButton v-model="isHashed" />
+          <CheckboxButton @check="checked" />
           <div class="sign_message_hash_text">This is a message hash</div>
           <Button type="primary-outline" class="button_size" @click="confirm">OK</Button>
         </div>
@@ -101,6 +101,10 @@ export default class RequestSign extends mixins() {
   }
 */
 
+  checked () {
+   this.isHashed = !this.isHashed ;
+  }
+
   async handleBack() {
     this.$router.push({ name: 'accounts-list' });
   }
@@ -161,8 +165,10 @@ export default class RequestSign extends mixins() {
     };
 
     if (!this.isHashed) {
+      console.log("hash check no") ;
       callData.message = Array.from(Uint8Array.from(buf));
     } else {
+      console.log("hash check yes") ;
       callData.hash = Array.from(Uint8Array.from(buf));
     }
     const result = await timedAsync(this.$background.signMessage(callData));

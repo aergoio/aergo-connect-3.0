@@ -64,7 +64,12 @@
       </div>
       <div v-else class="token_detail others">
         <div class="flex-row">
-          <img class="icon" :src="$store.state.session.token.meta.image" alt="404" />
+          <img
+            v-if="$store.state.session.token.meta.image"
+            class="icon"
+            :src="$store.state.session.token.meta.image"
+          />
+          <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
             <div class="balance">{{ $store.state.session.token.balance }}</div>
           </div>
@@ -230,12 +235,12 @@ export default Vue.extend({
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
         hash.split('-')[0]
       }/`;
-      window.open(url, '', 'width=1000,height=800');
+      window.open(url, '', 'width=1000,height=1000');
     },
 
     gotoScanAccount(address: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
-      window.open(url, '', 'width=1000,height=800');
+      window.open(url, '', 'width=1000,height=1000');
     },
     /*
     aergoPrice() {
@@ -453,6 +458,10 @@ export default Vue.extend({
       .token_symbol {
         margin-right: 13px;
       }
+      .icon_center {
+        justify-content: center;
+        align-items: center;
+      }
     }
 
     .line {
@@ -509,8 +518,8 @@ export default Vue.extend({
       margin-top: 14px;
       margin-left: 8px;
       border: 1px solid #d8d8d8;
-      width: 41px;
-      height: 41px;
+      width: 46px;
+      height: 46px;
       display: flex;
       justify-content: center;
       align-items: center;

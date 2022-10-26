@@ -105,8 +105,11 @@
             </div>
             <div class="line"></div>
             <div class="direction_row">
-              <div class="address" @click="gotoScanAccount(item.meta.to)">
+              <div v-if="item.meta.from === $store.state.accounts.address" class="address" @click="gotoScanAccount(item.meta.to)">
                 {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+              </div>
+              <div v-else class="address" @click="gotoScanAccount(item.meta.to)">
+                {{ `From: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
               </div>
               <div class="direction_row">
                 <div v-if="symbol === 'aergo'" class="address">

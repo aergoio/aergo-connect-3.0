@@ -38,9 +38,9 @@
                 @click="select(result)"
               >
                 <div class="token_list_wrapper">
-                  <!-- <Identicon :text="result.hash" class="list_icon" /> -->
-                  <v-img v-if="result.meta.image" class="list_icon" :src="result.meta.image" />
-                  <Icon v-else class="list_icon" :name="`defaultToken`" :size="12" />
+                  <img v-if="result.meta.image" class="list_icon" :src="result.meta.image" />
+                  <Identicon v-else :text="result.hash" class="list_icon" /> 
+                  <!-- <Icon v-else class="list_icon" :name="`defaultToken`" :size="12" /> -->
                   <span class="list_text">
                     {{ result.meta.name + '    ' + result.meta.symbol }}
                   </span>

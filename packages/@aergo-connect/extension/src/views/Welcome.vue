@@ -22,7 +22,7 @@
               class="welcome_button_size"
               type="primary"
               size="large"
-              :to="{ name: 'setup', params: { nextPage: 'register' } }"
+              :to="{ name: 'setup', params: { nextPage: 'register', backPage: 'welcome' }}"
               hover
               >Get Started</Button
             >
@@ -50,7 +50,11 @@ export default Vue.extend({
     Appear,
     Icon,
   },
+  beforeMount () {
+    console.log("in welcome") ;
+  },
 });
+
 </script>
 
 <style lang="scss">

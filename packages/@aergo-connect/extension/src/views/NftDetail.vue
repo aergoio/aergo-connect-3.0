@@ -95,54 +95,29 @@
             <option class="option" value="Received">Received</option>
             <option class="option" value="Sent">Sent</option>
           </select>
-          <li class="nft_detail_list" v-for="item in data">
-            <div v-if="item.meta.from === $store.state.accounts.address">
-              <div v-if="filter !== 'Received'">
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="direction_row">
-                  <div class="sent">Sent</div>
 
-                  <div class="token_symbol">
-                    {{
-                      `${
-                        item.meta.token_id.length > 15
-                          ? `${item.meta.token_id.slice(0, 15)}...`
-                          : item.meta.token_id
-                      }`
-                    }}
-                  </div>
-                </div>
-                <div class="line"></div>
-                <div class="direction_row">
-                  <div class="address" @click="gotoScanAccount(item.meta.to)">
-                    {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
-                  </div>
-                  <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
-                </div>
+          <li class="nft_detail_list" v-for="item in data" :key="item.meta.tx_id">
+            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+            <div class="direction_row">
+              <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
+              <div v-else class="received">Received</div>
+
+              <div class="token_symbol">
+                {{
+                  `${
+                    item.meta.token_id.length > 15
+                      ? `${item.meta.token_id.slice(0, 15)}...`
+                      : item.meta.token_id
+                  }`
+                }}
               </div>
             </div>
-            <div v-else>
-              <div v-if="filter !== 'Sent'">
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="direction_row">
-                  <div class="received">Recevied</div>
-                  <div class="token_symbol">
-                    {{
-                      `${
-                        item.meta.token_id.length > 15
-                          ? `${item.meta.token_id.slice(0, 15)}...`
-                          : item.meta.token_id
-                      }`
-                    }}
-                  </div>
-                </div>
-                <div class="direction_row">
-                  <div class="address" @click="gotoScanAccount(item.meta.from)">
-                    {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
-                  </div>
-                  <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
-                </div>
+            <div class="line"></div>
+            <div class="direction_row">
+              <div class="address" @click="gotoScanAccount(item.meta.to)">
+                {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
               </div>
+              <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
             </div>
           </li>
           <!-- </div> -->
@@ -204,6 +179,7 @@ export default Vue.extend({
       removeModal: false,
       error: '',
       data: [],
+      allData: [],
       filter: 'All',
     };
   },
@@ -215,9 +191,25 @@ export default Vue.extend({
 
   watch: {
     filter: function () {
-      this.getNftHistory();
-      this.$forceUpdate();
-      console.log('filter', this.filter);
+      // this.getNftHistory();
+      // this.$forceUpdate();
+      // console.log('filter', this.filter);
+
+      if (this.filter === 'All') {
+        this.getNftHistory();
+      } else if (this.filter === 'Sent') {
+        this.data = this.allData.filter((item) => {
+          if (item.meta.from === this.$store.state.accounts.address) {
+            return item;
+          }
+        });
+      } else if (this.filter === 'Received') {
+        this.data = this.allData.filter((item) => {
+          if (item.meta.from !== this.$store.state.accounts.address) {
+            return item;
+          }
+        });
+      }
     },
   },
 
@@ -262,7 +254,10 @@ export default Vue.extend({
       );
       const response = await resp.json();
       if (response.error) this.data = [];
-      else this.data = response.hits;
+      else {
+        this.data = response.hits;
+        this.allData = response.hits;
+      }
 
       console.log('history', this.data);
     },

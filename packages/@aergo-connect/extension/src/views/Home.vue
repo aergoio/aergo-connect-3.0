@@ -129,9 +129,9 @@
               <div class="line" />
             </div>
           </li>
-          <div v-else>
+          <!-- <div>
             <Icon :name="`nothing`" />
-          </div>
+          </div> -->
         </ul>
 
         <button

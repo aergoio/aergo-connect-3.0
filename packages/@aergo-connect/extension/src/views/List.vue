@@ -44,7 +44,7 @@
         </div>
         <div class="side-nav-version">
           <span>Version</span>
-          <span>2.0</span>
+          <span>3.0</span>
           <img src="@aergo-connect/lib-ui/src/icons/img/arrow-right.svg" />
         </div>
       </section>

@@ -17,7 +17,7 @@
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
           <div class="account_title">{{ $store.state.accounts.nick }}</div>
           <div class="account_title_wrapper">
-            <div class="account">
+            <div class="account" @click="copyToClipboard($store.state.accounts.address)">
               {{
                 `${$store.state.accounts.address.slice(
                   0,
@@ -155,6 +155,7 @@
         </div>
       </div>
     </div>
+    <ClipboardNotification v-if="clipboardNotification" />
   </ScrollView>
 </template>
 
@@ -168,13 +169,13 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
-
+import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
 import { Amount } from '@herajs/common';
 
-function getVueInstance(instance: any): Vue {
-  // @ts-ignore
-  return instance._vm as Vue;
-}
+// function getVueInstance(instance: any): Vue {
+//   // @ts-ignore
+//   return instance._vm as Vue;
+// }
 
 export default Vue.extend({
   components: {
@@ -187,12 +188,14 @@ export default Vue.extend({
     HeaderVue,
     Identicon,
     RemoveModal,
+    ClipboardNotification,
   },
 
   data() {
     return {
       tabState: 'inventory',
       removeModal: false,
+      clipboardNotification: false,
       error: '',
       data: [],
       allData: [],
@@ -207,10 +210,6 @@ export default Vue.extend({
 
   watch: {
     filter: function () {
-      // this.getNftHistory();
-      // this.$forceUpdate();
-      // console.log('filter', this.filter);
-
       if (this.filter === 'All') {
         this.getNftHistory();
       } else if (this.filter === 'Sent') {
@@ -225,6 +224,16 @@ export default Vue.extend({
             return item;
           }
         });
+      }
+    },
+    clipboardNotification(state: boolean) {
+      if (state) {
+        setTimeout(() => {
+          const time = (this.clipboardNotification = !state);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 2000);
       }
     },
   },
@@ -314,6 +323,10 @@ export default Vue.extend({
       else this.getNftHistory();
 
       this.tabState = state;
+    },
+    copyToClipboard(text: string) {
+      navigator.clipboard.writeText(text);
+      this.clipboardNotification = true;
     },
   },
 });
@@ -432,7 +445,8 @@ export default Vue.extend({
         background: #eff5f7;
         border-radius: 25px;
         .account {
-          padding: 6px;
+          cursor: pointer;
+          padding: 10px;
           display: flex;
           align-items: center;
           justify-content: center;

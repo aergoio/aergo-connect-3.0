@@ -13,17 +13,24 @@
         </div>
       </div>
       <div class="hash_result" v-if="signature">
-        <TextArea class="textarea_size" :placeholder="signature" :readonly=true />  
-        <Button class="copy_button" type="primary-outline" @click="copyText(signature)" >Copy</Button>
+        <TextArea class="textarea_size" :placeholder="signature" :readonly="true" />
+        <Button class="copy_button" type="primary-outline" @click="copyText(signature)"
+          >Copy</Button
+        >
       </div>
     </div>
     <template #footer>
-      <Button type="primary" size="large"   @click="handleBack">OK</Button>
+      <Button type="primary" size="large" @click="handleBack">OK</Button>
     </template>
-      <LoadingDialog :visible="statusDialogVisible" @close="statusDialogVisible=false" :state="dialogState">
-        <p v-if="dialogState !== 'error'">{{statusText}}</p>
-        <p v-else class="error">{{statusText}}</p>
-      </LoadingDialog>
+    <LoadingDialog
+      :visible="statusDialogVisible"
+      @close="statusDialogVisible = false"
+      :state="dialogState"
+    >
+      <p v-if="dialogState !== 'error'">{{ statusText }}</p>
+      <p v-else class="error">{{ statusText }}</p>
+    </LoadingDialog>
+    <ClipboardNotification v-if="clipboardNotification" />
   </ScrollView>
 </template>
 
@@ -34,6 +41,7 @@ import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextArea from '@aergo-connect/lib-ui/src/forms/TextArea.vue';
 import CheckboxButton from '@aergo-connect/lib-ui/src/buttons/CheckboxButton.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
+import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
 import Component, { mixins } from 'vue-class-component';
 import { timedAsync } from 'timed-async/index.js';
 import { Account } from '@herajs/wallet';
@@ -41,7 +49,7 @@ import { encodeBuffer } from '@herajs/common';
 import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import { ScrollView, LoadingDialog } from '@aergo-connect/lib-ui/src/layouts';
-
+import { Watch } from 'vue-property-decorator';
 @Component({
   components: {
     Header,
@@ -50,9 +58,9 @@ import { ScrollView, LoadingDialog } from '@aergo-connect/lib-ui/src/layouts';
     Button,
     CheckboxButton,
     TextArea,
+    ClipboardNotification,
   },
 })
-
 export default class RequestSign extends mixins() {
   message = '';
   signature = '';
@@ -62,6 +70,7 @@ export default class RequestSign extends mixins() {
   statusDialogVisible = false;
   dialogState: 'loading' | 'success' | 'error' = 'loading';
   isHashed = false;
+  clipboardNotification = false;
 
   setStatus(state: 'loading' | 'success' | 'error', text: string) {
     this.dialogState = state;
@@ -70,14 +79,27 @@ export default class RequestSign extends mixins() {
   }
 
   get accountSpec() {
-    return { address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network };
+    return {
+      address: this.$store.state.accounts.address,
+      chainId: this.$store.state.accounts.network,
+    };
   }
 
   get account(): Account {
-    return this.$background.getActiveAccount() ;
+    return this.$background.getActiveAccount();
   }
-
-/*
+  @Watch('clipboardNotification')
+  clipboardNotificationMethod(state) {
+    if (state) {
+      setTimeout(() => {
+        const time = (this.clipboardNotification = !state);
+        return () => {
+          clearTimeout(time);
+        };
+      }, 2000);
+    }
+  }
+  /*
   async signWithLedger(message: Buffer, displayAsHex = false) {
     this.setStatus('loading', 'Connecting to Ledger device...');
     const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -100,9 +122,8 @@ export default class RequestSign extends mixins() {
     }
   }
 */
-
-  checked () {
-   this.isHashed = !this.isHashed ;
+  checked() {
+    this.isHashed = !this.isHashed;
   }
 
   async handleBack() {
@@ -112,20 +133,19 @@ export default class RequestSign extends mixins() {
   async copyText(text) {
     try {
       await navigator.clipboard.writeText(text);
-      alert('Copied');
-/*
-      chrome.notifications.create('copy', { type: 'basic', 
-        iconUrl: '../img/icon-17.b1b4347e.png', 
+      this.copyToClipboard(text);
+      // alert('Copied');
+      /*
+      chrome.notifications.create('copy', { type: 'basic',
+        iconUrl: '../img/icon-17.b1b4347e.png',
         title: 'copied!', message: 'copied!', priority: 1 });
 */
-    } catch($e) {
+    } catch ($e) {
       alert('error', $e);
     }
-
   }
 
   async confirmHandler() {
-
     this.setStatus('loading', 'Calculating signature...');
     const message = this.message;
 
@@ -134,14 +154,14 @@ export default class RequestSign extends mixins() {
 
     if (message.substr(0, 2) === '0x') {
       try {
-        buf = Buffer.from(message.substr(2), "hex");
+        buf = Buffer.from(message.substr(2), 'hex');
         displayAsHex = true;
       } catch (e) {
         throw new Error(`Failed to parse message: ${e}`);
       }
     }
 
-/*
+    /*
     const account = await this.account ;
 
     console.log("account", account) ;
@@ -165,10 +185,10 @@ export default class RequestSign extends mixins() {
     };
 
     if (!this.isHashed) {
-      console.log("hash check no") ;
+      console.log('hash check no');
       callData.message = Array.from(Uint8Array.from(buf));
     } else {
-      console.log("hash check yes") ;
+      console.log('hash check yes');
       callData.hash = Array.from(Uint8Array.from(buf));
     }
     const result = await timedAsync(this.$background.signMessage(callData));
@@ -185,6 +205,10 @@ export default class RequestSign extends mixins() {
     } catch (e) {
       this.setStatus('error', `${e}`);
     }
+  }
+  copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+    this.clipboardNotification = true;
   }
 }
 </script>

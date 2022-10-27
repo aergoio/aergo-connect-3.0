@@ -20,7 +20,7 @@
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
           <div class="account_title">{{ $store.state.accounts.nick }}</div>
           <div class="account_title_wrapper">
-            <div class="account">
+            <div class="account" @click="copyToClipboard($store.state.accounts.address)">
               {{
                 `${$store.state.accounts.address.slice(
                   0,
@@ -34,7 +34,8 @@
 
       <div class="token_content_wrapper">
         <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
-        <Identicon v-else-if="!icon" :text="asset" class="token_icon" />
+        <Icon v-else-if="!icon" class="token_icon" :name="`defaultToken`" />
+        <!-- <Identicon v-else-if="!icon" :text="asset" class="token_icon" /> -->
         <img v-else class="token_icon" :src="icon" />
         <div class="token_amount">{{ balance }}</div>
         <div class="token_symbol">{{ symbol }}</div>
@@ -60,12 +61,14 @@
         >Show QR</Button
       >
     </template>
+    <ClipboardNotification v-if="clipboardNotification" />
   </ScrollView>
 </template>
 
 <script>
 import Vue from 'vue';
 import ReceiveModal from '@aergo-connect/lib-ui/src/modal/ReceiveModal.vue';
+import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
@@ -73,10 +76,11 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 
 export default Vue.extend({
-  components: { ScrollView, ReceiveModal, Header, Identicon, Icon, Button },
+  components: { ScrollView, ReceiveModal, Header, Identicon, Icon, Button, ClipboardNotification },
   data() {
     return {
       receiveModal: false,
+      clipboardNotification: false,
       asset: '',
       icon: '',
       balance: 0,
@@ -98,6 +102,16 @@ export default Vue.extend({
       this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
       this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
     },
+    clipboardNotification(state) {
+      if (state) {
+        setTimeout(() => {
+          const time = (this.clipboardNotification = !state);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 2000);
+      }
+    },
   },
 
   methods: {
@@ -109,6 +123,10 @@ export default Vue.extend({
     },
     handleConfirm() {
       this.receiveModal = false;
+    },
+    copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      this.clipboardNotification = true;
     },
   },
 });
@@ -184,7 +202,8 @@ export default Vue.extend({
         background: #eff5f7;
         border-radius: 25px;
         .account {
-          padding: 6px;
+          cursor: pointer;
+          padding: 10px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -225,8 +244,8 @@ export default Vue.extend({
       /* Grey/02 */
 
       border: 1px solid #d8d8d8;
-      width: 36px;
-      height: 36px;
+      width: 46px;
+      height: 46px;
       margin-left: 14px;
       border-radius: 50%;
       display: flex;

@@ -40,11 +40,11 @@
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
             <div class="balance">
-              {{ $store.state.session.tokens['AERGO'].balance }}
+              {{ Number($store.state.session.tokens['AERGO'].balance).toFixed(4) }}
             </div>
             <div class="dollor">
               <span>$ </span>
-              <span>{{ aergoPrice }} </span>
+              <span>{{ Number(aergoPrice).toFixed(4) }} </span>
             </div>
           </div>
           <div class="token_symbol">{{ symbol }}</div>
@@ -71,7 +71,7 @@
           />
           <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
-            <div class="balance">{{ $store.state.session.token.balance }}</div>
+            <div class="balance">{{ Number($store.state.session.token.balance).toFixed(4) }}</div>
           </div>
           <div class="token_symbol">{{ $store.state.session.token.meta.symbol }}</div>
         </div>

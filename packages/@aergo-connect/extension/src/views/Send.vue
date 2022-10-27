@@ -41,7 +41,7 @@
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
           <div class="account_title">{{ $store.state.accounts.nick }}</div>
           <div class="account_title_wrapper">
-            <div class="account">
+            <div class="account" @click="copyToClipboard($store.state.accounts.address)">
               {{
                 `${$store.state.accounts.address.slice(
                   0,
@@ -54,7 +54,8 @@
       </div>
       <div class="token_content_wrapper">
         <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
-        <Identicon v-else-if="!icon" :text="asset" class="token_icon" />
+        <!-- <Identicon v-else-if="!icon" :text="asset" class="token_icon" /> -->
+        <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" />
         <img v-else class="token_icon" :src="icon" />
 
         <div class="token_amount">{{ balance }}</div>
@@ -106,7 +107,8 @@
       <p v-if="dialogState !== 'error'">{{ statusText }}</p>
       <p v-else class="error">{{ statusText }}</p>
     </LoadingDialog>
-    <template #footer class="footer">
+    <ClipboardNotification v-if="clipboardNotification" />
+    <template #footer>
       <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
         Show optional fields
       </div>
@@ -119,6 +121,7 @@
 import Vue from 'vue';
 import SendOptionsModal from '@aergo-connect/lib-ui/src/modal/SendOptionsModal.vue';
 import ConfirmationModal from '@aergo-connect/lib-ui/src/modal/ConfirmationModal.vue';
+import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
@@ -148,6 +151,7 @@ export default Vue.extend({
     Tx,
     SendFinishModal,
     TextField,
+    ClipboardNotification,
   },
 
   data() {
@@ -165,6 +169,7 @@ export default Vue.extend({
       confirmationModal: false,
       sendFinishModal: false,
       passwordModal: false,
+      clipboardNotification: false,
       searchResult: [],
 
       txBody: {
@@ -209,6 +214,16 @@ export default Vue.extend({
       this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
       this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
       if (this.tokenType === 'ARC2') this.getNftInventory();
+    },
+    clipboardNotification(state) {
+      if (state) {
+        setTimeout(() => {
+          const time = (this.clipboardNotification = !state);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 2000);
+      }
     },
   },
 
@@ -404,6 +419,10 @@ export default Vue.extend({
         throw new Error(`Node response: ${e.message || e}`);
       }
     },
+    copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      this.clipboardNotification = true;
+    },
   },
 });
 </script>
@@ -478,7 +497,8 @@ export default Vue.extend({
         background: #eff5f7;
         border-radius: 25px;
         .account {
-          padding: 6px;
+          cursor: pointer;
+          padding: 10px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -519,8 +539,8 @@ export default Vue.extend({
       /* Grey/02 */
 
       border: 1px solid #d8d8d8;
-      width: 36px;
-      height: 36px;
+      width: 46px;
+      height: 46px;
       margin-left: 14px;
       border-radius: 50%;
       display: flex;

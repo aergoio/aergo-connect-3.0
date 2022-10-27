@@ -18,7 +18,7 @@
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
           <div class="account_title">{{ $store.state.accounts.nick }}</div>
           <div class="account_title_wrapper">
-            <div class="account_address">
+            <div class="account_address" @click="copyToClipboard($store.state.accounts.address)">
               {{
                 `${$store.state.accounts.address.slice(
                   0,
@@ -142,6 +142,7 @@
         </div>
       </div>
     </div>
+    <ClipboardNotification v-if="clipboardNotification" />
   </ScrollView>
 </template>
 
@@ -155,6 +156,7 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
+import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
 import { Amount } from '@herajs/common';
 import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
 function getVueInstance(instance: any): Vue {
@@ -173,11 +175,13 @@ export default Vue.extend({
     HeaderVue,
     Identicon,
     RemoveModal,
+    ClipboardNotification,
   },
 
   data() {
     return {
       removeModal: false,
+      clipboardNotification: false,
       error: '',
       allData: [],
       data: [],
@@ -187,7 +191,6 @@ export default Vue.extend({
       aergoPrice: 0,
     };
   },
-
   async beforeMount() {
     this.symbol = this.$store.state.session.token.meta.symbol;
     console.log('SYMBOL', this.symbol);
@@ -215,6 +218,16 @@ export default Vue.extend({
             return item;
           }
         });
+      }
+    },
+    clipboardNotification(state) {
+      if (state) {
+        setTimeout(() => {
+          const time = (this.clipboardNotification = !state);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 2000);
       }
     },
   },
@@ -319,6 +332,10 @@ export default Vue.extend({
       this.$router.push({ name: 'receive' }).catch(() => {});
       console.log('receive');
     },
+    copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      this.clipboardNotification = true;
+    },
   },
 });
 </script>
@@ -404,6 +421,7 @@ export default Vue.extend({
         background: #eff5f7;
         border-radius: 25px;
         .account_address {
+          cursor: pointer;
           padding: 10px;
           display: flex;
           align-items: center;
@@ -743,7 +761,7 @@ export default Vue.extend({
             font-family: 'Outfit';
             font-style: normal;
             font-weight: 400;
-            font-size: 13px;
+            font-size: 12.5px;
             line-height: 18px;
             letter-spacing: -0.333333px;
             text-decoration-line: underline;

@@ -15,9 +15,10 @@ export default Vue.extend({
 
 <style lang="scss">
 .alert-wrapper {
+  z-index: 3;
   position: absolute;
   left: 140px;
-  bottom: 40px;
+  bottom: 50px;
   background: #fff;
   border-radius: 3px;
   display: flex;

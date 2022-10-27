@@ -8,7 +8,9 @@
       </div>
       <VueQRCodeComponent :text="$store.state.accounts.address" :size="123"></VueQRCodeComponent>
       <div class="address_wrapper">
-        <div class="address" @click="copyToClipboard">{{ $store.state.accounts.address }}</div>
+        <div class="address" @click="copyToClipboard($store.state.accounts.address)">
+          {{ $store.state.accounts.address }}
+        </div>
       </div>
       <Button type="primary" @click="handleOK">OK</Button>
     </div>
@@ -46,8 +48,8 @@ export default Vue.extend({
       console.log('ok');
       this.$emit('cancel', 'accountDetailModal');
     },
-    copyToClipboard() {
-      navigator.clipboard.writeText(this.$store.state.accounts.address);
+    copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
       this.clipboardNotification = true;
     },
   },

@@ -129,9 +129,10 @@
               <div class="line" />
             </div>
           </li>
-          <!-- <div>
+          <div v-if="nftCountNum === 0" class="nftNothing">
             <Icon :name="`nothing`" />
-          </div> -->
+            <div class="text">No NFT</div>
+          </div>
         </ul>
 
         <button
@@ -170,8 +171,6 @@ import Identicon from '../../../lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
-// import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
-// import NotificationModal from '@aergo-connect/lib-ui/src/modal/NotificationModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
@@ -179,8 +178,6 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 
 export default Vue.extend({
   components: {
-    // RemoveAccountModal,
-    // NotificationModal,
     NoAccountModal,
     NetworkModal,
     PasswordModal,
@@ -198,8 +195,6 @@ export default Vue.extend({
   data() {
     return {
       hamburgerModal: false,
-      // removeAccountModal: false,
-      // notificationModal: false,
       networkModal: false,
       passwordModal: false,
       importAssetModal: false,
@@ -209,6 +204,7 @@ export default Vue.extend({
       tab: 'tokens',
       editNick: false,
       nick: this.$store.state.accounts.nick,
+      nftCountNum: 0,
     };
   },
 
@@ -227,6 +223,9 @@ export default Vue.extend({
 
     '$store.state.accounts.address': function () {
       this.initAccount();
+    },
+    tab() {
+      this.nftCount();
     },
   },
 
@@ -400,6 +399,15 @@ export default Vue.extend({
         return '0';
       }
     },
+    nftCount() {
+      const tokens = Object.values(this.$store.state.session.tokens);
+      tokens.map((token) => {
+        if (Object.values(token)[1].type === 'ARC2') {
+          this.nftCountNum = this.nftCountNum + 1;
+        }
+      });
+      console.log(this.nftCountNum);
+    },
   },
 });
 </script>
@@ -521,6 +529,24 @@ export default Vue.extend({
       height: 15.8rem;
       overflow-x: hidden;
       overflow-y: scroll;
+      .nftNothing {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .text {
+          margin-top: 10px;
+          font-family: 'Outfit';
+          font-style: normal;
+          font-weight: 400;
+          font-size: 15px;
+          line-height: 19px;
+          text-align: center;
+          letter-spacing: -0.333333px;
+          color: #bababa;
+        }
+      }
       .token_list_li {
         cursor: pointer;
         width: 290px;

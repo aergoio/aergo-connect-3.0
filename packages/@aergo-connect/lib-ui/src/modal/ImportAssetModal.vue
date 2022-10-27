@@ -86,6 +86,8 @@ export default Vue.extend({
   background: rgba(0, 0, 0, 0.1);
   z-index: 1;
   .import_asset_wrapper {
+    padding-top: 20px;
+    padding-bottom: 20px;
     position: absolute;
     width: 317px;
     height: 400px;

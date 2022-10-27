@@ -142,7 +142,7 @@
         </div>
       </div>
     </div>
-    <ClipboardNotification v-if="clipboardNotification" />
+    <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
   </ScrollView>
 </template>
 
@@ -156,7 +156,7 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
-import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
+import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import { Amount } from '@herajs/common';
 import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
 function getVueInstance(instance: any): Vue {
@@ -175,7 +175,7 @@ export default Vue.extend({
     HeaderVue,
     Identicon,
     RemoveModal,
-    ClipboardNotification,
+    Notification,
   },
 
   data() {

@@ -14,18 +14,18 @@
       </div>
       <Button type="primary" @click="handleOK">OK</Button>
     </div>
-    <ClipboardNotification v-if="clipboardNotification" />
+    <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
 import VueQRCodeComponent from 'vue-qrcode-component';
-import ClipboardNotification from './ClipboardNotification.vue';
+import Notification from './Notification.vue';
 import Identicon from '../content/Identicon.vue';
 import Button from '../buttons/Button.vue';
 export default Vue.extend({
-  components: { Identicon, Button, VueQRCodeComponent, ClipboardNotification },
+  components: { Identicon, Button, VueQRCodeComponent, Notification },
   data() {
     return {
       clipboardNotification: false,

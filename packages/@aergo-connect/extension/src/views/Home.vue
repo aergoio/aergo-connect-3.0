@@ -388,7 +388,6 @@ export default Vue.extend({
       this.tab = value;
     },
     tokenBalanceFormat(token) {
-      console.log('token', token);
       if (token.balance) {
         if (Number.isInteger(+token.balance)) {
           return token.balance;
@@ -406,7 +405,6 @@ export default Vue.extend({
           this.nftCountNum = this.nftCountNum + 1;
         }
       });
-      console.log(this.nftCountNum);
     },
   },
 });

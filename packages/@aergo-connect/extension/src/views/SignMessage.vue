@@ -30,7 +30,7 @@
       <p v-if="dialogState !== 'error'">{{ statusText }}</p>
       <p v-else class="error">{{ statusText }}</p>
     </LoadingDialog>
-    <ClipboardNotification v-if="clipboardNotification" />
+    <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
   </ScrollView>
 </template>
 
@@ -41,7 +41,7 @@ import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextArea from '@aergo-connect/lib-ui/src/forms/TextArea.vue';
 import CheckboxButton from '@aergo-connect/lib-ui/src/buttons/CheckboxButton.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
+import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import Component, { mixins } from 'vue-class-component';
 import { timedAsync } from 'timed-async/index.js';
 import { Account } from '@herajs/wallet';
@@ -58,7 +58,7 @@ import { Watch } from 'vue-property-decorator';
     Button,
     CheckboxButton,
     TextArea,
-    ClipboardNotification,
+    Notification,
   },
 })
 export default class RequestSign extends mixins() {

@@ -107,7 +107,13 @@
       <p v-if="dialogState !== 'error'">{{ statusText }}</p>
       <p v-else class="error">{{ statusText }}</p>
     </LoadingDialog>
-    <ClipboardNotification v-if="clipboardNotification" />
+    <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
+    <Notification
+      v-if="notEnoughBalanceNotification"
+      :title="`Not Enough Balance!`"
+      :icon="`warning2`"
+      :size="`250`"
+    />
     <template #footer>
       <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
         Show optional fields
@@ -121,7 +127,7 @@
 import Vue from 'vue';
 import SendOptionsModal from '@aergo-connect/lib-ui/src/modal/SendOptionsModal.vue';
 import ConfirmationModal from '@aergo-connect/lib-ui/src/modal/ConfirmationModal.vue';
-import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
+import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
@@ -151,7 +157,7 @@ export default Vue.extend({
     Tx,
     SendFinishModal,
     TextField,
-    ClipboardNotification,
+    Notification,
   },
 
   data() {
@@ -170,6 +176,7 @@ export default Vue.extend({
       sendFinishModal: false,
       passwordModal: false,
       clipboardNotification: false,
+      notEnoughBalanceNotification: false,
       searchResult: [],
 
       txBody: {
@@ -225,6 +232,16 @@ export default Vue.extend({
         }, 2000);
       }
     },
+    notEnoughBalanceNotification(state) {
+      if (state) {
+        setTimeout(() => {
+          const time = (this.notEnoughBalanceNotification = !state);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 2000);
+      }
+    },
   },
 
   methods: {
@@ -271,10 +288,12 @@ export default Vue.extend({
     },
     handleSendClick() {
       console.log('Send', this.txBody);
-
-      if (this.amount > this.balance) {
+      console.log('amount', this.inputAmount);
+      console.log('balance!!!', this.balance);
+      if (+this.inputAmount > +this.balance) {
         // error 출력 또는 입력 시에 확인
         console.log('insufficent');
+        this.notEnoughBalanceNotification = true;
         return;
       }
 

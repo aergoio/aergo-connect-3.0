@@ -1,11 +1,27 @@
 <template>
   <div class="component loading-indicator" :class="`type-${type}`">
-    <div class="balls" v-if="type === 'typing'" :style="{fontSize: `${size}px`}">
-      <div/><div/><div/>
+    <div class="balls" v-if="type === 'typing'" :style="{ fontSize: `${size}px` }">
+      <div />
+      <div />
+      <div />
     </div>
 
-    <svg class="spinner" v-if="type === 'spinner'" :width="size" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-      <circle class="path" fill="none" stroke-width="2" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+    <svg
+      class="spinner"
+      v-if="type === 'spinner'"
+      :width="size"
+      viewBox="0 0 66 66"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        class="path"
+        fill="none"
+        stroke-width="2"
+        stroke-linecap="round"
+        cx="33"
+        cy="33"
+        r="30"
+      ></circle>
     </svg>
   </div>
 </template>
@@ -76,7 +92,6 @@ export default Vue.extend({
   }
 }
 
-
 /* Spinner */
 .loading-indicator.type-spinner {
   $offset: 187;
@@ -85,14 +100,18 @@ export default Vue.extend({
     animation: rotator $duration linear infinite;
   }
   @keyframes rotator {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(270deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(270deg);
+    }
   }
   .path {
     stroke-dasharray: $offset;
     stroke-dashoffset: 0;
     transform-origin: center;
-    stroke: #ff337f;
+    stroke: #279ecc;
     animation: dash $duration ease-in-out infinite;
   }
   @keyframes dash {

@@ -58,7 +58,7 @@
         <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" />
         <img v-else class="token_icon" :src="icon" />
 
-        <div class="token_amount">{{ balance }}</div>
+        <div class="token_amount">{{ Number(balance).toFixed(4) }}</div>
         <div class="token_symbol">{{ symbol }}</div>
       </div>
       <div class="send_form_wrapper">

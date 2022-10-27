@@ -35,15 +35,17 @@ export default Vue.extend({
     console.log('idleTimeout:' + this.$store.state.ui.idleTimeout);
     extension.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
 
-//  extension.idle.onStateChanged.addListener(this.$background.lock());
-
     extension.idle.onStateChanged.addListener(function(newState: IdleState) {
+
       console.log(newState, "State") ;
+
       if (newState === 'idle' || !this.$store.state.ui.unlocked)  {
         this.$background.lock();
         this.$store.commit('ui/setUnlocked', false);
       }
     }) ;
+//  extension.idle.onStateChanged.addListener(this.$background.lock());
+
 
 //    const peformAuthCheck = !(
 //      this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck

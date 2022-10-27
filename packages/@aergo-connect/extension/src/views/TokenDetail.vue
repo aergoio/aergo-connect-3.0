@@ -18,7 +18,7 @@
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
           <div class="account_title">{{ $store.state.accounts.nick }}</div>
           <div class="account_title_wrapper">
-            <div class="account_address">
+            <div class="account_address" @click="copyToClipboard($store.state.accounts.address)">
               {{
                 `${$store.state.accounts.address.slice(
                   0,
@@ -40,38 +40,45 @@
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
             <div class="balance">
-              {{ $store.state.session.tokens['AERGO'].balance || '2,000,000.000' }}
+              {{ Number($store.state.session.tokens['AERGO'].balance).toFixed(4) }}
             </div>
             <div class="dollor">
-               <span>$ </span>
-               <span>{{ aergoPrice }} </span>
+              <span>$ </span>
+              <span>{{ Number(aergoPrice).toFixed(4) }} </span>
             </div>
           </div>
           <div class="token_symbol">{{ symbol }}</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
-          <a class="detail_title" href="https://voting.aergo.io/about" target="_blank">Staked Balance</a>
+          <div class="detail_title" @click="gotoStake()">Staked Balance</div>
           <div class="detail_content">{{ staking }}</div>
         </div>
+        <!--
         <div class="line detail" />
         <div class="detail_wrapper">
           <div class="detail_title">Registered Names</div>
           <div class="detail_content">{{ `0` }}</div>
         </div>
+-->
       </div>
       <div v-else class="token_detail others">
         <div class="flex-row">
-          <img class="icon" :src="$store.state.session.token.meta.image" alt="404" />
+          <img
+            v-if="$store.state.session.token.meta.image"
+            class="icon"
+            :src="$store.state.session.token.meta.image"
+          />
+          <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
-            <div class="balance">{{ $store.state.session.token.balance }}</div>
+            <div class="balance">{{ Number($store.state.session.token.balance).toFixed(4) }}</div>
           </div>
           <div class="token_symbol">{{ $store.state.session.token.meta.symbol }}</div>
         </div>
       </div>
       <div class="select_token">
         <div class="title">Transaction History</div>
-        <select class="select" v-model="filter">
+        <select class="select_tokenDetail" v-model="filter">
           <option class="option" selected value="All">All</option>
           <option class="option" value="Received">Received</option>
           <option class="option" value="Sent">Sent</option>
@@ -81,46 +88,38 @@
         <ul
           :class="[
             symbol === 'aergo' ? 'history_list ' : 'history_list others',
-            data.length === 0 ? 'history_list nothing' : 'history_list',
+            data.length === 0 ? 'history _list nothing' : 'history_list',
           ]"
         >
           <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
-            <!-- <div v-if="item.meta.from === $store.state.accounts.address"> -->
-            <div v-if="filter !== 'Received'">
-              <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+            <div class="direction_row">
+              <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
+              <div v-else class="received">Received</div>
+              <!--              <div :class="[filter === 'Received' ? 'received' : 'sent']">{{ filter }}</div>
+-->
               <div class="direction_row">
-                <div class="sent">Sent</div>
-                <div class="direction_row">
-                  <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                  <div class="token_symbol">{{ symbol }}</div>
-                </div>
-              </div>
-              <div class="line"></div>
-              <div class="direction_row">
-                <div class="address">
-                  {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
-                </div>
-                <Icon :name="'pointer'" @click="gotoScan(item)" />
+                <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
+                <div class="token_symbol">{{ symbol }}</div>
               </div>
             </div>
-            <!-- </div> -->
-            <div v-else>
-              <div v-if="filter !== 'Sent'">
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="direction_row">
-                  <div class="received">Recevied</div>
-                  <div class="direction_row">
-                    <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                    <div class="token_symbol">{{ symbol }}</div>
-                  </div>
+            <div class="line"></div>
+            <div class="direction_row">
+              <div
+                v-if="item.meta.from === $store.state.accounts.address"
+                class="address"
+                @click="gotoScanAccount(item.meta.to)"
+              >
+                {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+              </div>
+              <div v-else class="address" @click="gotoScanAccount(item.meta.to)">
+                {{ `From: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+              </div>
+              <div class="direction_row">
+                <div v-if="symbol === 'aergo'" class="address">
+                  {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}` }}
                 </div>
-                <div class="line"></div>
-                <div class="direction_row">
-                  <div class="address">
-                    {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
-                  </div>
-                  <Icon :name="'pointer'" @click="gotoScan(item)" />
-                </div>
+                <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
               </div>
             </div>
           </li>
@@ -143,6 +142,7 @@
         </div>
       </div>
     </div>
+    <ClipboardNotification v-if="clipboardNotification" />
   </ScrollView>
 </template>
 
@@ -156,8 +156,9 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
+import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
 import { Amount } from '@herajs/common';
-
+import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
 function getVueInstance(instance: any): Vue {
   // @ts-ignore
   return instance._vm as Vue;
@@ -174,12 +175,15 @@ export default Vue.extend({
     HeaderVue,
     Identicon,
     RemoveModal,
+    ClipboardNotification,
   },
 
   data() {
     return {
       removeModal: false,
+      clipboardNotification: false,
       error: '',
+      allData: [],
       data: [],
       filter: 'All',
       symbol: 'aergo',
@@ -187,21 +191,44 @@ export default Vue.extend({
       aergoPrice: 0,
     };
   },
-
-  beforeMount() {
+  async beforeMount() {
     this.symbol = this.$store.state.session.token.meta.symbol;
     console.log('SYMBOL', this.symbol);
     this.getTokenHistory();
-    this.$background.getTokenPrice('aergo.io').then(priceInfo => {
-      console.log("priceInfo", this.$store.state.session.tokens['AERGO'].balance*priceInfo.price) ;
-      this.aergoPrice = this.$store.state.session.tokens['AERGO'].balance*priceInfo.price ;
+    this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
+      console.log('priceInfo', this.$store.state.session.tokens['AERGO'].balance * priceInfo.price);
+      this.aergoPrice = this.$store.state.session.tokens['AERGO'].balance * priceInfo.price;
     });
+    this.aergoStaking();
   },
 
   watch: {
     filter: function () {
-      this.getTokenHistory();
-      console.log('filter', this.filter);
+      if (this.filter === 'All') {
+        this.getTokenHistory();
+      } else if (this.filter === 'Sent') {
+        this.data = this.allData.filter((item) => {
+          if (item.meta.from === this.$store.state.accounts.address) {
+            return item;
+          }
+        });
+      } else if (this.filter === 'Received') {
+        this.data = this.allData.filter((item) => {
+          if (item.meta.from !== this.$store.state.accounts.address) {
+            return item;
+          }
+        });
+      }
+    },
+    clipboardNotification(state) {
+      if (state) {
+        setTimeout(() => {
+          const time = (this.clipboardNotification = !state);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 2000);
+      }
     },
   },
 
@@ -215,15 +242,24 @@ export default Vue.extend({
       console.log('staking', staking);
 
       if (!staking) this.staking = '0';
-      else this.staking = staking.amount;
+      else this.staking = `${bigIntToString(BigInt(staking.amount.split(' ')[0]), 18) || 0} aergo`;
     },
 
-    gotoScan(item: object) {
-      const url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
-      window.open(url, '', 'width=1000,height=800');
+    gotoStake() {
+      window.open('https://voting.aergo.io/about', '', 'width=1000,height=800');
+    },
+    gotoScanTx(hash: string) {
+      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
+        hash.split('-')[0]
+      }/`;
+      window.open(url, '', 'width=1000,height=1000');
     },
 
-/*
+    gotoScanAccount(address: string) {
+      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
+      window.open(url, '', 'width=1000,height=1000');
+    },
+    /*
     aergoPrice() {
       this.$background.getTokenPrice('aergo.io').then(priceInfo => {
         console.log("priceInfo", this.$store.state.session.tokens['AERGO'].balance*priceInfo.price) ;
@@ -247,22 +283,24 @@ export default Vue.extend({
     },
 
     async getTokenHistory(): Promise<void> {
+      const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
       let resp;
       if (this.symbol === 'aergo') {
         resp = await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=100`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=100&sort=ts:desc`,
         );
       } else {
         resp = await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100&sort=ts:desc`,
         );
       }
 
       const response = await resp.json();
       if (response.error) this.data = [];
-      else this.data = response.hits;
-
-      //      console.log('tx', this.data);
+      else {
+        this.data = response.hits;
+        this.allData = response.hits;
+      }
     },
 
     /*
@@ -293,6 +331,10 @@ export default Vue.extend({
     handleReceive() {
       this.$router.push({ name: 'receive' }).catch(() => {});
       console.log('receive');
+    },
+    copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      this.clipboardNotification = true;
     },
   },
 });
@@ -374,11 +416,13 @@ export default Vue.extend({
         align-items: center;
         margin-left: 24px;
 
-        width: 110px;
+        width: 120px;
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
         .account_address {
+          cursor: pointer;
+          padding: 10px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -389,8 +433,6 @@ export default Vue.extend({
           line-height: 15px;
           text-align: right;
           letter-spacing: -0.333333px;
-          position: relative;
-          left: 6px;
           /* Primary/Blue01 */
 
           color: #279ecc;
@@ -419,7 +461,7 @@ export default Vue.extend({
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     &.aergo {
-      height: 143px;
+      height: 110px;
     }
     &.others {
       flex-direction: row;
@@ -436,6 +478,10 @@ export default Vue.extend({
       align-items: center;
       .token_symbol {
         margin-right: 13px;
+      }
+      .icon_center {
+        justify-content: center;
+        align-items: center;
       }
     }
 
@@ -493,8 +539,8 @@ export default Vue.extend({
       margin-top: 14px;
       margin-left: 8px;
       border: 1px solid #d8d8d8;
-      width: 41px;
-      height: 41px;
+      width: 46px;
+      height: 46px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -592,7 +638,7 @@ export default Vue.extend({
       flex-direction: column;
       display: flex;
       align-items: center;
-      height: 11rem;
+      height: 13.5rem;
       overflow-y: scroll;
       &.nothing {
         overflow: hidden;
@@ -715,7 +761,7 @@ export default Vue.extend({
             font-family: 'Outfit';
             font-style: normal;
             font-weight: 400;
-            font-size: 14px;
+            font-size: 12.5px;
             line-height: 18px;
             letter-spacing: -0.333333px;
             text-decoration-line: underline;
@@ -733,12 +779,12 @@ export default Vue.extend({
     }
   }
 }
-.select {
+.select_tokenDetail {
   margin-left: 98px;
   padding: 3px;
   background: #ffffff;
   /* Grey/02 */
-  width: 80px;
+  width: 85px;
   border: 1px solid #d8d8d8;
   border-radius: 4px;
 

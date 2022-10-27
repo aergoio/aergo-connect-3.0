@@ -28,9 +28,7 @@
       </div>
     </div>
     <template #footer>
-      <Button type="gradation" size="large" :to="{ name: 'account-backup' }">
-        OK
-      </Button>
+      <Button type="gradation" size="large" :to="{ name: 'account-backup' }"> OK </Button>
     </template>
   </ScrollView>
 </template>
@@ -64,7 +62,7 @@ export default Vue.extend({
       navigator.clipboard.writeText(this.mnemonic);
       this.copy = 'Copied';
       this.imageName = '@aergo-connect/lib-ui/src/icons/img/copy.svg';
-      this.$store.commit('accounts/setBackup',true);
+      this.$store.commit('accounts/setBackup', true);
     },
   },
 

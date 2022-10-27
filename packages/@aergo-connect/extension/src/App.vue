@@ -15,23 +15,45 @@ export default Vue.extend({
     RouteTransition,
   },
   async mounted() {
-    // Upon App launch, get initial state for 'unlocked'
-    const unlocked = await this.$background.isUnlocked();
+
     const isSetup = await this.$background.isSetup();
-    const getAccounts = await this.$background.getAccounts();
-    this.$store.commit('ui/setUnlocked', unlocked);
-
-    const peformAuthCheck = !(
-      this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck
-    );
-
-    if (!unlocked && peformAuthCheck && isSetup) {
-      this.$router.push({ name: 'lockscreen' }).catch(() => {});
-    }
+    const unlocked = await this.$background.isUnlocked();
 
     if (!isSetup) {
       this.$router.push({ name: 'welcome' }).catch(() => {});
     }
+    else if (!unlocked) {
+    // Upon App launch, get initial state for 'unlocked'
+      this.$router.push({ name: 'lockscreen' }).catch(() => {});
+    }
+
+    this.$store.commit('ui/setUnlocked', unlocked);
+    console.log('unlock', unlocked) ;
+
+    //const getAccounts = await this.$background.getAccounts();
+
+    console.log('idleTimeout:' + this.$store.state.ui.idleTimeout);
+    extension.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
+
+    extension.idle.onStateChanged.addListener(function(newState: IdleState) {
+
+      console.log(newState, "State") ;
+
+      if (newState === 'idle' || !this.$store.state.ui.unlocked)  {
+        this.$background.lock();
+        this.$store.commit('ui/setUnlocked', false);
+      }
+    }) ;
+//  extension.idle.onStateChanged.addListener(this.$background.lock());
+
+
+//    const peformAuthCheck = !(
+//      this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck
+//    );
+
+//    if (!unlocked && peformAuthCheck && isSetup) {
+//      this.$router.push({ name: 'lockscreen' }).catch(() => {});
+//    }
 
     // request.onsuccess = (e) => {
     //   const database = e.target.result;
@@ -46,9 +68,6 @@ export default Vue.extend({
     //     console.error(e.target.result);
     //   };
     // };
-    console.log('idleTimeout:' + this.$store.state.ui.idleTimeout);
-    extension.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
-    extension.idle.onStateChanged.addListener(this.$background.lock());
 
     // if (isSetup && unlocked) {
     //   if (getAccounts.length > 0) {

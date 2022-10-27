@@ -10,7 +10,8 @@
       @refreshClick="refreshClick"
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
-    <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" />
+    <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
+    <!-- <NotificationModal v-if="notificationModal" @cancel="handleCancel" /> -->
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <AccountDetailModal v-if="accountDetailModal" @cancel="handleCancel" />
     <div v-if="!noAccountModal" class="home_content">
@@ -21,6 +22,7 @@
         @select="handleSelect"
         @listModalOff="hamburgerClick"
         @securityClick="handleSecurity"
+        @notificationModalClick="handleNotificationModalClick"
       />
       <div class="account_info_wrapper">
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
@@ -44,19 +46,14 @@
               @click="handleEdit"
             />
           </div>
-          <div class="account_info_address_wrapper">
-            <span class="account_info_address_text" @click="handleDetailAddress">{{
+          <div class="account_info_address_wrapper" @click="handleDetailAddress">
+            <span class="account_info_address_text">{{
               `${$store.state.accounts.address.slice(
                 0,
                 15,
               )}...${$store.state.accounts.address.slice(-5)}`
             }}</span>
-            <Icon
-              class="account_info_address_button"
-              :name="`next`"
-              :size="50"
-              @click="handleDetailAddress"
-            />
+            <Icon class="account_info_address_button" :name="`next`" :size="50" />
           </div>
         </div>
       </div>
@@ -95,11 +92,11 @@
                   :src="token.meta.image"
                   alt="404"
                 />
-                <Identicon v-else class="token_list_icon" :text="token.hash" />
+                <Icon v-else class="token_list_icon" :name="`defaultToken`" />
                 <span class="token_list_text"> {{ token.meta.name }} </span>
               </div>
               <div class="token_list_amount">
-                <span class="token_list_balance">{{ token.balance }}</span>
+                <span class="token_list_balance">{{ tokenBalanceFormat(token) }}</span>
                 <span> {{ token.meta.symbol }}</span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
@@ -122,16 +119,20 @@
                 :src="token.meta.image"
                 alt="404"
               />
-              <Identicon v-else class="token_list_icon" :text="token.hash" />
+              <Icon v-else class="token_list_icon" :name="`defaultToken`" />
               <span class="token_list_text"> {{ token.meta.name }} </span>
               <div class="token_list_amount">
-                <span class="token_list_balance">{{ token.balance }}</span>
+                <span class="token_list_balance">{{ tokenBalanceFormat(token) }}</span>
                 <span> EA </span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
+              <div class="line" />
             </div>
-            <div class="line" />
           </li>
+          <div v-if="nftCountNum === 0" class="nftNothing">
+            <Icon :name="`nothing`" />
+            <div class="text">No NFT</div>
+          </div>
         </ul>
 
         <button
@@ -170,7 +171,6 @@ import Identicon from '../../../lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
-import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
@@ -178,7 +178,6 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 
 export default Vue.extend({
   components: {
-    RemoveAccountModal,
     NoAccountModal,
     NetworkModal,
     PasswordModal,
@@ -196,7 +195,6 @@ export default Vue.extend({
   data() {
     return {
       hamburgerModal: false,
-      removeAccountModal: false,
       networkModal: false,
       passwordModal: false,
       importAssetModal: false,
@@ -206,6 +204,7 @@ export default Vue.extend({
       tab: 'tokens',
       editNick: false,
       nick: this.$store.state.accounts.nick,
+      nftCountNum: 0,
     };
   },
 
@@ -225,6 +224,9 @@ export default Vue.extend({
     '$store.state.accounts.address': function () {
       this.initAccount();
     },
+    tab() {
+      this.nftCount();
+    },
   },
 
   methods: {
@@ -240,7 +242,7 @@ export default Vue.extend({
 
     async initAccount() {
       console.log('Address', this.$store.state.accounts.address);
-      console.log('IdleTime', this.$store.state.ui.idleTimeout);
+      //      console.log("List", this.$background.getAccounts()) ;
 
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
@@ -281,6 +283,7 @@ export default Vue.extend({
     },
 
     handleCancel(modalEvent: string) {
+      console.log(modalEvent);
       if (modalEvent === 'noAccountModal') {
         this.$background.lock();
       }
@@ -296,6 +299,9 @@ export default Vue.extend({
 
       if (modalEvent === 'accountDetailModal') {
         this.accountDetailModal = false;
+      }
+      if (modalEvent === 'notificationModal') {
+        this.notificationModal = false;
       }
     },
 
@@ -314,6 +320,9 @@ export default Vue.extend({
     },
     networkModalClick() {
       this.networkModal = !this.networkModal;
+    },
+    handleNotificationModalClick() {
+      this.notificationModal = true;
     },
     handleDetailAddress() {
       console.log('handleDetailAddress');
@@ -377,6 +386,27 @@ export default Vue.extend({
     },
     handleChangeTab(value: string) {
       this.tab = value;
+    },
+    tokenBalanceFormat(token) {
+      console.log('token', token);
+      if (token.balance) {
+        if (Number.isInteger(+token.balance)) {
+          return token.balance;
+        } else {
+          return Number(+token.balance).toFixed(3);
+        }
+      } else {
+        return '0';
+      }
+    },
+    nftCount() {
+      const tokens = Object.values(this.$store.state.session.tokens);
+      tokens.map((token) => {
+        if (Object.values(token)[1].type === 'ARC2') {
+          this.nftCountNum = this.nftCountNum + 1;
+        }
+      });
+      console.log(this.nftCountNum);
     },
   },
 });
@@ -444,6 +474,7 @@ export default Vue.extend({
         }
       }
       .account_info_address_wrapper {
+        cursor: pointer;
         width: 191px;
         height: 24px;
         background: #ecf8fd;
@@ -498,6 +529,24 @@ export default Vue.extend({
       height: 15.8rem;
       overflow-x: hidden;
       overflow-y: scroll;
+      .nftNothing {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .text {
+          margin-top: 10px;
+          font-family: 'Outfit';
+          font-style: normal;
+          font-weight: 400;
+          font-size: 15px;
+          line-height: 19px;
+          text-align: center;
+          letter-spacing: -0.333333px;
+          color: #bababa;
+        }
+      }
       .token_list_li {
         cursor: pointer;
         width: 290px;

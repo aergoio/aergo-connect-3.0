@@ -5,7 +5,7 @@
       <div class="flex-column">
         <div class="title">Type</div>
         <select class="select_box" v-model="iTxType">
-          <option v-for="type in $store.state.ui.txTypes" :value="type">
+          <option :key="type" v-for="type in $store.state.ui.txTypes" :value="type">
             {{ type }}
           </option>
         </select>
@@ -114,7 +114,7 @@ export default Vue.extend({
 
         background: #ffffff;
         /* Primary/Blue01 */
-
+        padding: 8px;
         border: 1px solid #279ecc;
         border-radius: 4px;
         margin-top: 9px;

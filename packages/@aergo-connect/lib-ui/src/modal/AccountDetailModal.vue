@@ -6,29 +6,51 @@
         <Identicon :text="$store.state.accounts.address" />
         <div>{{ $store.state.accounts.nick }}</div>
       </div>
-      <VueQRCodeComponent
-        :text="$store.state.accounts.address"
-        :size="123"
-      ></VueQRCodeComponent>
+      <VueQRCodeComponent :text="$store.state.accounts.address" :size="123"></VueQRCodeComponent>
       <div class="address_wrapper">
-        <div class="address">{{ $store.state.accounts.address }}</div>
+        <div class="address" @click="copyToClipboard($store.state.accounts.address)">
+          {{ $store.state.accounts.address }}
+        </div>
       </div>
       <Button type="primary" @click="handleOK">OK</Button>
     </div>
+    <ClipboardNotification v-if="clipboardNotification" />
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
 import VueQRCodeComponent from 'vue-qrcode-component';
+import ClipboardNotification from './ClipboardNotification.vue';
 import Identicon from '../content/Identicon.vue';
 import Button from '../buttons/Button.vue';
 export default Vue.extend({
-  components: { Identicon, Button, VueQRCodeComponent },
+  components: { Identicon, Button, VueQRCodeComponent, ClipboardNotification },
+  data() {
+    return {
+      clipboardNotification: false,
+    };
+  },
+  watch: {
+    clipboardNotification(state) {
+      if (state) {
+        setTimeout(() => {
+          const time = (this.clipboardNotification = !state);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 2000);
+      }
+    },
+  },
   methods: {
     handleOK() {
       console.log('ok');
-      this.$emit('cancel','accountDetailModal');
+      this.$emit('cancel', 'accountDetailModal');
+    },
+    copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      this.clipboardNotification = true;
     },
   },
 });
@@ -43,7 +65,6 @@ export default Vue.extend({
   top: 0px;
   background: rgba(0, 0, 0, 0.3);
   z-index: 1;
-
   .account_detail_wrapper {
     width: 317px;
     height: 400px;
@@ -87,6 +108,8 @@ export default Vue.extend({
       background: #ecf8fd;
       border-radius: 8px;
       .address {
+        padding: 12px;
+        cursor: pointer;
         word-break: break-all;
         /* Caption/C1_line */
 

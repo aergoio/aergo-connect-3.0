@@ -22,7 +22,7 @@
           :account="$store.state.accounts.accounts[$store.state.accounts.address]"
         />
         <SideNavButton img="add" title="Add Account" :to="{ name: 'register' }" />
-        <SideNavButton
+        <!-- <SideNavButton
           class="remove"
           :disabled="!$store.state.accounts.accounts[$store.state.accounts.address].backup"
           img="delete"
@@ -34,7 +34,7 @@
                 : handleAlert(),
             ]
           "
-        />
+        /> -->
       </section>
       <section class="nav-footer">
         <div>
@@ -44,7 +44,7 @@
         </div>
         <div class="side-nav-version">
           <span>Version</span>
-          <span>2.0</span>
+          <span>3.0</span>
           <img src="@aergo-connect/lib-ui/src/icons/img/arrow-right.svg" />
         </div>
       </section>
@@ -93,19 +93,19 @@ export default Vue.extend({
       this.isAccountsListOpened = !this.isAccountsListOpened;
     },
 
-    handleRemoveModal() {
-      this.$emit('removeModalClick');
-    },
-    handleAlert() {
-      alert('needs to backup private key');
-    },
+    // handleRemoveModal() {
+    //   this.$emit('removeModalClick');
+    // },
+    // handleAlert() {
+    //   console.log('notification');
+    //   this.$emit('notificationModalClick');
+    // },
 
     async handleSelect(account: any) {
       const address = account.address;
       await this.$store.commit('accounts/setActiveAccount', address);
 
       this.$emit('select', account);
-
       this.$router.push({ name: 'accounts-list' }).catch(() => {});
     },
 

@@ -25,11 +25,7 @@
           <div class="network_circle" />
           <div class="network_text">{{ $store.state.accounts.network }}</div>
         </div>
-        <TextField
-          placeholder="Name / Symbol"
-          class="network_textField"
-          @input="search"
-        />
+        <TextField placeholder="Name / Symbol" class="network_textField" @input="search" />
 
         <ul class="select_token_content">
           <div v-if="results.length">
@@ -42,7 +38,8 @@
                 @click="select(result)"
               >
                 <div class="token_list_wrapper">
-                  <Identicon :text="result.hash" class="list_icon" />
+                  <img v-if="result.meta.image" class="list_icon" :src="result.meta.image" />
+                  <Icon v-else class="list_icon" :name="`defaultToken`" />
                   <span class="list_text">
                     {{ result.meta.name + '    ' + result.meta.symbol }}
                   </span>
@@ -77,7 +74,7 @@
             <div v-if="check">
               <div class="custom_element_wrapper">
                 <div>Asset Type</div>
-                <TextField :disabled=true :placeholder="token.meta.type" class="asset_type"/>
+                <TextField :disabled="true" :placeholder="token.meta.type" class="asset_type" />
               </div>
               <div class="custom_element_wrapper">
                 <div>Symbol</div>
@@ -85,7 +82,7 @@
               </div>
               <div v-if="token.meta.type !== 'ARC2'" class="custom_element_wrapper">
                 <div>Decimal</div>
-                <TextField :disabled=true :placeholder="token.meta.decimals" class="asset_type" />
+                <TextField :disabled="true" :placeholder="token.meta.decimals" class="asset_type" />
               </div>
             </div>
           </div>
@@ -113,6 +110,7 @@
 <script>
 import Vue from 'vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
+import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
@@ -121,6 +119,7 @@ import ImportAssetModal from '@aergo-connect/lib-ui/src/modal/ImportAssetModal.v
 
 export default Vue.extend({
   components: {
+    Icon,
     Header,
     ScrollView,
     TextField,
@@ -143,7 +142,7 @@ export default Vue.extend({
     };
   },
   watch: {
-/*
+    /*
     value() {
       if (this.value === this.$store.state.accounts.address) {
         this.error = { state: false, value: '' };
@@ -157,29 +156,25 @@ export default Vue.extend({
     handleBack() {
       this.$router.push({
         name: 'accounts-list',
-        params: {
-        },
+        params: {},
       });
     },
 
     async search(query) {
-
       if (this.$route.params.option === 'token') {
         console.log('Search', query);
         await fetch(
           `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=*${query}*`,
         )
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          this.results = data.hits;
-        });
-
-        if (this.results) return ;
-      }	
-
-      else {
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => {
+            this.results = data.hits;
+          });
+        console.log('Results', this.results);
+        if (this.results) return;
+      } else {
         await fetch(
           `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=*${query}*`,
         )
@@ -190,14 +185,14 @@ export default Vue.extend({
             this.results = data.hits;
           });
 
-         console.log('Results', this.results);
-       }
+        console.log('Results', this.results);
+      }
     },
 
     async select(token) {
       console.log('Selected', token.meta);
 
-      this.token = token ;
+      this.token = token;
       await this.$store.dispatch('accounts/addToken', token);
       await this.$store.dispatch('session/initState');
 
@@ -218,29 +213,27 @@ export default Vue.extend({
     },
 
     async handleCheck() {
-
-      let results = {} ;
+      let results = {};
       console.log('fetch', this.value);
 
       if (this.$route.params.option === 'token') {
         await fetch(
           `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=_id:${this.value}`,
         )
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          results = data.hits;
-        });
-     }
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => {
+            results = data.hits;
+          });
+      }
 
-     console.log("custum result",results) ;
+      console.log('custum result', results);
 
-     this.token = results[0] ;
-     this.check = true ;
-     
+      this.token = results[0];
+      this.check = true;
     },
-    async customSubmit () {
+    async customSubmit() {
       await this.$store.dispatch('accounts/addToken', this.token);
       await this.$store.dispatch('session/initState');
 
@@ -288,8 +281,8 @@ export default Vue.extend({
         display: flex;
         align-items: center;
         .list_icon {
-          width: 42px;
-          height: 42px;
+          width: 46px;
+          height: 46px;
           border-radius: 50%;
         }
         .list_text {

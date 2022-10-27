@@ -1,23 +1,10 @@
 <template>
-  <div class="registAsset_backdrop">
-    <div class="registAsset_modal_wrapper" v-if="!isNext">
-      <div class="registAsset_title">Imported Asset Successfully!</div>
-      <Identicon :text="result.hash" class="token_icon" />
-      <img v-if="result.meta.image" :src="result.meta.image" />
-      <Icon v-else :name="`defaultToken`" />
-      <p>
-        {{ $route.params.result.meta.name }}
-        {{ result.meta.symbol }}
-        {{ result.meta.type }}
-        {{ result.hash }}
-      </p>
+  <div class="notification_backdrop">
+    <div class="notification_modal_wrapper">
+      <Icon :name="`warning`" :size="100" />
+      <div class="notification_text">Need to backup private key</div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover @click="register" @cancel="handleCancel"
-          >Confirm</ButtonVue
-        >
-        <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
-          >Cancel</ButtonVue
-        >
+        <ButtonVue type="secondary" size="medium" hover @click="handleCancel">BACK</ButtonVue>
       </ButtonGroup>
     </div>
   </div>
@@ -28,23 +15,20 @@ import Vue from 'vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import ButtonVue from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-
+import RemoveAccountStep2Modal from './RemoveAccountStep2Modal.vue';
 export default Vue.extend({
-  components: { Icon, ButtonGroup, ButtonVue },
+  components: { Icon, ButtonGroup, ButtonVue, RemoveAccountStep2Modal },
 
   methods: {
     handleCancel() {
-      this.$emit('cancel', 'registAssetModal');
-    },
-    register() {
-      this.isNext = true;
+      this.$emit('cancel', 'notificationModal');
     },
   },
 });
 </script>
 
 <style lang="scss">
-.registAsset_backdrop {
+.notification_backdrop {
   position: absolute;
   width: 375px;
   height: 600px;
@@ -52,9 +36,9 @@ export default Vue.extend({
   top: 0px;
   background: rgba(0, 0, 0, 0.3);
   z-index: 1;
-  .registAsset_modal_wrapper {
+  .notification_modal_wrapper {
     width: 317px;
-    height: 400px;
+    height: 300px;
     position: absolute;
     left: 28px;
     top: 110px;
@@ -65,8 +49,8 @@ export default Vue.extend({
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    .registAsset_title {
-      width: 255px;
+    .notification_title {
+      margin-bottom: 17px;
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 600;
@@ -79,19 +63,20 @@ export default Vue.extend({
 
       color: #e4097d;
     }
-    .registAsset_text {
-      width: 259px;
+    .notification_text {
+      /* Headline/H2 */
+
       font-family: 'Outfit';
       font-style: normal;
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 20px;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 30px;
       text-align: center;
       letter-spacing: -0.333333px;
 
-      /* Grey/07 */
+      /* Primary/Pink01 */
 
-      color: #454344;
+      color: #e4097d;
 
       .highlight {
         color: #e4097d;
@@ -99,7 +84,10 @@ export default Vue.extend({
     }
 
     .button_wrapper {
-      margin-top: 53px;
+      margin-top: 33px;
+      .button {
+        width: 289px;
+      }
     }
   }
 }

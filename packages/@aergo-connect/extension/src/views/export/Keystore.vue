@@ -100,15 +100,17 @@ export default class AccountExportKeystore extends Vue {
     try {
       const result = await this.$background.exportAccount({
         address: this.$store.state.accounts.address,
-        chainId: this.$store.state.accounts.network,
+        chainId: 'aergo.io',
         password: this.password,
         format: 'keystore',
       });
+
       this.keystore = result.privateKey;
       setTimeout(() => {
         (this.$refs.downloadButton as HTMLElement).click();
         this.modal = true;
       }, 150);
+
       await this.$store.commit('accounts/setBackup', true);
     } catch (e) {
       this.errors.password = `${e}`;
@@ -122,7 +124,6 @@ export default class AccountExportKeystore extends Vue {
 
 <style lang="scss">
 .content {
-  margin-left: 24px;
   .text {
     margin: 32px 24px 36px 0;
     font-family: 'Outfit';

@@ -3,8 +3,8 @@
     <div class="import_asset_wrapper">
       <div class="import_asset_header">Imported Asset Successfully!</div>
       <div class="import_asset_icon_wrapper">
-        <img v-if="token.meta.image" class="import_asset_icon" :src="token.meta.image"/>
-        <Identicon v-else class="import_asset_icon" text="token.hash" />
+        <img v-if="token.meta.image" class="import_asset_icon" :src="token.meta.image" />
+        <Icon v-else :name="`defaultToken`" class="import_asset_icon" />
         <div class="import_asset_title">
           {{ `${token.meta.name}` + ' ' + '(' + `${token.meta.symbol}` + ')' }}
         </div>
@@ -86,6 +86,8 @@ export default Vue.extend({
   background: rgba(0, 0, 0, 0.1);
   z-index: 1;
   .import_asset_wrapper {
+    padding-top: 20px;
+    padding-bottom: 20px;
     position: absolute;
     width: 317px;
     height: 400px;
@@ -107,8 +109,7 @@ export default Vue.extend({
       @include flex__column__center;
       .import_asset_icon {
         margin-top: 21px;
-        width: 54px;
-        height: 54px;
+        margin-bottom: 8px;
       }
       .import_asset_title {
         width: 269px;

@@ -59,17 +59,22 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
     Heading,
     Icon,
     TxConfirm,
+    account: {},
   },
 })
+
 export default class TxBase extends mixins(RequestMixin) {
   actionVerb = 'send';
 
+  async beforeMount() {
+    this.account = await this.$background.getActiveAccount();
+    console.log('Account Info', this.account);
+  }
+
   get accountSpec() {
-    return { address: this.$route.params.address, chainId: this.$route.params.chainId };
+    return { address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network };
   }
-  get account(): Account {
-    return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  }
+
   get txDataDisplay() {
     if (!this.request) return {};
     return {
@@ -97,7 +102,7 @@ export default class TxBase extends mixins(RequestMixin) {
     this.$store.dispatch('accounts/updateAccount', this.accountSpec);
   }
   async signWithLedger(txBody: any) {
-    const { tx } = await this.$background.prepareTransaction(txBody, this.$route.params.chainId);
+    const { tx } = await this.$background.prepareTransaction(txBody, this.$store.state.accounts.network);
     tx.payload = txBody.payload;
     this.setStatus('loading', 'Connecting to Ledger device...');
     const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -122,17 +127,22 @@ export default class TxBase extends mixins(RequestMixin) {
   }
 
   async confirmHandler(): Promise<any> {
+
     console.log('RequestSend confirmHandler');
     if (!this.request) return;
     let txBody = {
       ...this.request.data,
       payload: Array.from(this.payloadParsed),
-      from: this.$route.params.address,
+      from: this.$store.state.accounts.address,
     };
+    
+    console.log('txBody', txBody);
+
     if (!this.account) {
       // This shouldn't happen normally
       throw new Error('Could not load account, please reload page and try again.');
     }
+
     if (this.account.data.type === 'ledger') {
       txBody = await this.signWithLedger(txBody);
       if (this.actionVerb === 'sign') {
@@ -145,7 +155,10 @@ export default class TxBase extends mixins(RequestMixin) {
 
     if (this.actionVerb === 'sign') {
       this.setStatus('loading', 'Calculating signature...');
-      const result = await this.$background.signTransaction(txBody, this.$route.params.chainId);
+      const result = await this.$background.signTransaction(txBody, this.$store.state.accounts.network);
+
+      console.log('sign', result);
+
       if ('tx' in result) {
         return {
           account: this.accountSpec,
@@ -155,8 +168,11 @@ export default class TxBase extends mixins(RequestMixin) {
     } else {
       this.setStatus('loading', 'Sending to network...');
       const result = await timedAsync(
-        this.$background.sendTransaction(txBody, this.$route.params.chainId),
+        this.$background.sendTransaction(txBody, this.$store.state.accounts.network),
       );
+
+      console.log('noSign', result);
+
       if ('tx' in result) {
         return {
           hash: result.tx.hash,

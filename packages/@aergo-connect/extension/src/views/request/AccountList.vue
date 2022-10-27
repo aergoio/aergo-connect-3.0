@@ -10,7 +10,7 @@
         </div>
       </template>
       <div class="account-list-wrap">
-        <AccountList :accounts="accounts" @select="selectAccount" />
+        <AccountList :accounts="$store.state.accounts.accounts" @select="selectAccount" />
       </div>
     </ScrollView>
   </div>
@@ -32,10 +32,6 @@ export default Vue.extend({
       type: Boolean,
       default: true,
     },
-    accounts: {
-      type: Array,
-      default: [] as Account[],
-    },
   },
   components: {
     ScrollView,
@@ -50,23 +46,14 @@ export default Vue.extend({
       addAccountDialogVisible: false,
     };
   },
-  computed: {
-    accounts(): Account[] {
-      if (this.$store.state.accounts.keys.length) {
-        return Object.values(this.$store.state.accounts.accounts);
-      }
-      return [];
-    },
-  },
   methods: {
-    selectAccount(account: any) {
-      console.log('clicked ', account);
-      this.$background.setActiveAccount(account.data.spec);
-    },
-  },
 
-  mounted() {
-    this.$store.dispatch('accounts/fetchAccounts');
+  async  selectAccount(account: any) {
+      console.log('clicked ', account);
+      await this.$store.commit('accounts/setActiveAccount', account.address);
+      await this.$background.setActiveAccount({ chainId: 'aergo.io', address: account.address });
+      this.$router.push({ name: 'request-accounts-list'});
+    },
   },
 });
 </script>

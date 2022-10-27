@@ -64,18 +64,23 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
     ButtonGroup,
     Heading,
     Icon,
+    account: {},
   },
 })
+
+
 export default class RequestSign extends mixins(RequestMixin) {
+
+  async beforeMount() {
+    this.account = await this.$background.getActiveAccount();
+    console.log('Account Info', this.account);
+  }
+
   get accountSpec() {
-    return { address: this.$route.params.address, chainId: this.$route.params.chainId };
+    return { address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network };
   }
-  get account(): Account {
-    return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  }
-  created() {
-    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
-  }
+
+/*
   async signWithLedger(message: Buffer, displayAsHex = false) {
     this.setStatus('loading', 'Connecting to Ledger device...');
     const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -97,6 +102,7 @@ export default class RequestSign extends mixins(RequestMixin) {
       }
     }
   }
+*/
   get msgToSign() {
     if (!this.request) return '';
     return this.request.data.message || this.request.data.hash;
@@ -111,16 +117,22 @@ export default class RequestSign extends mixins(RequestMixin) {
     if (!this.request || !this.account) return false;
     return this.signSource === 'hash' && this.account.data.type === 'ledger';
   }
+
   async confirmHandler() {
+
     if (!this.request) return;
     if (!this.account) {
       throw new Error('Could not load account, please reload page and try again.');
     }
+
     const account = this.accountSpec;
+
     this.setStatus('loading', 'Calculating signature...');
     const message = this.msgToSign;
+
     let buf = Buffer.from(message);
     let displayAsHex = false;
+
     if (message.substr(0, 2) === '0x') {
       try {
         buf = Buffer.from(message.substr(2), 'hex');
@@ -129,6 +141,7 @@ export default class RequestSign extends mixins(RequestMixin) {
         throw new Error(`Failed to parse message: ${e}`);
       }
     }
+/*
     if (this.account.data.type === 'ledger') {
       const signature = await timedAsync(this.signWithLedger(buf, displayAsHex));
       return {
@@ -136,6 +149,7 @@ export default class RequestSign extends mixins(RequestMixin) {
         signature,
       };
     }
+*/
     const { address, chainId } = this.accountSpec;
     const callData: {
       address: string;
@@ -146,16 +160,19 @@ export default class RequestSign extends mixins(RequestMixin) {
       address,
       chainId,
     };
+
     if (this.signSource === 'message') {
       callData.message = Array.from(Uint8Array.from(buf));
     } else {
       callData.hash = Array.from(Uint8Array.from(buf));
     }
     const result = await timedAsync(this.$background.signMessage(callData));
+
     return {
       account,
       signature: result.signedMessage,
     };
+
   }
 }
 </script>

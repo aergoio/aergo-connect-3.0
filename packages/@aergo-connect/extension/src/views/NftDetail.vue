@@ -17,7 +17,7 @@
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
           <div class="account_title">{{ $store.state.accounts.nick }}</div>
           <div class="account_title_wrapper">
-            <div class="account">
+            <div class="account" @click="copyToClipboard($store.state.accounts.address)">
               {{
                 `${$store.state.accounts.address.slice(
                   0,
@@ -58,8 +58,16 @@
           v-if="tabState === 'inventory'"
           :class="[data.length > 0 ? 'nft_info_wrapper' : 'nft_info_wrapper noscroll']"
         >
-          <li v-for="item in data" class="nft_info_list" >
-            <!-- <img class="img" :src="item.token.meta.image" alt="404" /> -->
+          <li v-for="item in data" class="nft_info_list">
+            <div>
+              <!-- <img
+                v-if="item.token.meta.image"
+                class="img"
+                :src="item.token.meta.image"
+                alt="404"
+              /> -->
+              <Icon class="img" :name="`defaultNft`" />
+            </div>
             <div class="nft_name_wrapper">
               <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
               <!-- <div class="id">{{ item.token.meta.symbol }}</div> -->
@@ -95,54 +103,36 @@
             <option class="option" value="Received">Received</option>
             <option class="option" value="Sent">Sent</option>
           </select>
-          <li class="nft_detail_list" v-for="item in data">
-            <!-- <div v-if="item.meta.from === $store.state.accounts.address"> -->
-            <div v-if="filter !== 'Received'">
-              <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-              <div class="direction_row">
-                <div class="sent">Sent</div>
 
-                <div class="token_symbol">
-                  {{
-                    `${
-                      item.meta.token_id.length > 15
-                        ? `${item.meta.token_id.slice(0, 15)}...`
-                        : item.meta.token_id
-                    }`
-                  }}
-                </div>
-              </div>
-              <div class="line"></div>
-              <div class="direction_row">
-                <div class="address">
-                  {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
-                </div>
-                <Icon :name="'pointer'" @click="gotoScan(item)" />
+          <li class="nft_detail_list" v-for="item in data" :key="item.meta.tx_id">
+            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+            <div class="direction_row">
+              <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
+              <div v-else class="received">Received</div>
+
+              <div class="token_symbol">
+                {{
+                  `${
+                    item.meta.token_id.length > 15
+                      ? `${item.meta.token_id.slice(0, 15)}...`
+                      : item.meta.token_id
+                  }`
+                }}
               </div>
             </div>
-            <!-- </div> -->
-            <div v-else>
-              <div v-if="filter !== 'Sent'">
-                <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-                <div class="direction_row">
-                  <div class="received">Recevied</div>
-                  <div class="token_symbol">
-                    {{
-                      `${
-                        item.meta.token_id.length > 15
-                          ? `${item.meta.token_id.slice(0, 15)}...`
-                          : item.meta.token_id
-                      }`
-                    }}
-                  </div>
-                </div>
-                <div class="direction_row">
-                  <div class="address">
-                    {{ `From: ${item.meta.from.slice(0, 6)}...${item.meta.from.slice(-6)}` }}
-                  </div>
-                  <Icon :name="'pointer'" @click="gotoScan(item)" />
-                </div>
+            <div class="line"></div>
+            <div class="direction_row">
+              <div
+                v-if="item.meta.from === $store.state.accounts.address"
+                class="address"
+                @click="gotoScanAccount(item.meta.to)"
+              >
+                {{ `To: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
               </div>
+              <div v-else class="address" @click="gotoScanAccount(item.meta.to)">
+                {{ `From: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
+              </div>
+              <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
             </div>
           </li>
           <!-- </div> -->
@@ -165,6 +155,7 @@
         </div>
       </div>
     </div>
+    <ClipboardNotification v-if="clipboardNotification" />
   </ScrollView>
 </template>
 
@@ -178,12 +169,13 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '../../../lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
+import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
 import { Amount } from '@herajs/common';
 
-function getVueInstance(instance: any): Vue {
-  // @ts-ignore
-  return instance._vm as Vue;
-}
+// function getVueInstance(instance: any): Vue {
+//   // @ts-ignore
+//   return instance._vm as Vue;
+// }
 
 export default Vue.extend({
   components: {
@@ -196,14 +188,17 @@ export default Vue.extend({
     HeaderVue,
     Identicon,
     RemoveModal,
+    ClipboardNotification,
   },
 
   data() {
     return {
       tabState: 'inventory',
       removeModal: false,
+      clipboardNotification: false,
       error: '',
       data: [],
+      allData: [],
       filter: 'All',
     };
   },
@@ -215,9 +210,31 @@ export default Vue.extend({
 
   watch: {
     filter: function () {
-      this.getNftHistory();
-      this.$forceUpdate();
-      console.log('filter', this.filter);
+      if (this.filter === 'All') {
+        this.getNftHistory();
+      } else if (this.filter === 'Sent') {
+        this.data = this.allData.filter((item) => {
+          if (item.meta.from === this.$store.state.accounts.address) {
+            return item;
+          }
+        });
+      } else if (this.filter === 'Received') {
+        this.data = this.allData.filter((item) => {
+          if (item.meta.from !== this.$store.state.accounts.address) {
+            return item;
+          }
+        });
+      }
+    },
+    clipboardNotification(state: boolean) {
+      if (state) {
+        setTimeout(() => {
+          const time = (this.clipboardNotification = !state);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 2000);
+      }
     },
   },
 
@@ -233,9 +250,16 @@ export default Vue.extend({
         .catch(() => {});
     },
 
-    gotoScan(item: object) {
-      const url = `https://testnet.aergoscan.io/transaction/${item.hash.split('-')[0]}/`;
-      window.open(url, '', 'width=1000,height=800');
+    gotoScanTx(hash: string) {
+      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
+        hash.split('-')[0]
+      }/`;
+      window.open(url, '', 'width=1000,height=1000');
+    },
+
+    gotoScanAccount(address: string) {
+      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
+      window.open(url, '', 'width=1000,height=1000');
     },
 
     getTitle() {
@@ -253,11 +277,14 @@ export default Vue.extend({
       );
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100&sort=ts:desc`,
       );
       const response = await resp.json();
       if (response.error) this.data = [];
-      else this.data = response.hits;
+      else {
+        this.data = response.hits;
+        this.allData = response.hits;
+      }
 
       console.log('history', this.data);
     },
@@ -274,7 +301,7 @@ export default Vue.extend({
 
       const response = await resp.json();
       if (response.error) this.data = [];
-      else this.data = response.hits;
+      else this.data = response.hits.reverse();
 
       console.log('inventory', this.data);
     },
@@ -296,6 +323,10 @@ export default Vue.extend({
       else this.getNftHistory();
 
       this.tabState = state;
+    },
+    copyToClipboard(text: string) {
+      navigator.clipboard.writeText(text);
+      this.clipboardNotification = true;
     },
   },
 });
@@ -409,11 +440,13 @@ export default Vue.extend({
         align-items: center;
         margin-left: 24px;
 
-        width: 110px;
+        width: 120px;
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
         .account {
+          cursor: pointer;
+          padding: 10px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -424,8 +457,6 @@ export default Vue.extend({
           line-height: 15px;
           text-align: right;
           letter-spacing: -0.333333px;
-          position: relative;
-          left: 6px;
           /* Primary/Blue01 */
 
           color: #279ecc;
@@ -642,13 +673,12 @@ export default Vue.extend({
       overflow-y: scroll;
       overflow-x: hidden;
       display: flex;
-      justify-content: center;
       flex-direction: column;
       .nft_info_list {
         margin-top: 10px;
         display: flex;
         align-items: center;
-        justify-content: space-around;
+        justify-content: space-evenly;
         width: 327px;
         height: 78px;
         background: #ffffff;
@@ -657,11 +687,11 @@ export default Vue.extend({
           cursor: pointer;
         }
         .img {
-          width: 32px;
-          height: 32px;
+          width: 46px;
+          height: 46px;
         }
         .nft_name_wrapper {
-          width: 10rem;
+          width: 11.5rem;
           display: flex;
           flex-direction: column;
           .time {
@@ -693,6 +723,7 @@ export default Vue.extend({
       }
       &.noscroll {
         overflow-y: hidden;
+        justify-content: center;
       }
     }
     .nft_detail_wrapper {

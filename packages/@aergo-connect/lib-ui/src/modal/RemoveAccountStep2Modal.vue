@@ -52,12 +52,9 @@ export default Vue.extend({
     },
 
     async handleDeleteAccount() {
-      alert(
-        `${this.$store.state.accounts.address} has been removed!`,
-      );
-
-      await this.$store.dispatch('accounts/removeAccount') ;
-      this.$emit('cancel');
+      await this.$store.dispatch('accounts/removeAccount');
+      this.$router.push({ name: 'accounts-list' });
+//      this.$emit('cancel');
     },
   },
 });

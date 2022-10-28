@@ -162,9 +162,9 @@ export default Vue.extend({
 
     async search(query) {
       if (this.$route.params.option === 'token') {
-        console.log('Search', query);
+        console.log('Search', `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:{${query}} OR symbol:{${query}}) AND type:ARC1`),
         await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=*${query}*`,
+          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC1`,
         )
           .then((res) => {
             return res.json();
@@ -176,7 +176,7 @@ export default Vue.extend({
         if (this.results) return;
       } else {
         await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=*${query}*`,
+          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC2`,
         )
           .then((res) => {
             return res.json();
@@ -226,13 +226,24 @@ export default Vue.extend({
           .then((data) => {
             results = data.hits;
           });
-      }
+      } else {
+        await fetch(
+          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=_id:${this.value}`,
+        )
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => {
+            results = data.hits;
+          });
+      } ;
 
       console.log('custum result', results);
 
       this.token = results[0];
       this.check = true;
     },
+
     async customSubmit() {
       await this.$store.dispatch('accounts/addToken', this.token);
       await this.$store.dispatch('session/initState');

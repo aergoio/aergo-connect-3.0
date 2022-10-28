@@ -102,7 +102,7 @@ export default Vue.extend({
 
     handleChangePassword() {
       this.$router.push({
-        name: 'setup',
+        name: 'password',
         params: { nextPage: 'accounts-list', backPage: 'security' },
       });
     },

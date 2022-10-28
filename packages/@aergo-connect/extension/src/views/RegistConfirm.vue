@@ -57,7 +57,7 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
     Icon,
   },
 })
-export default class Create extends mixins() {
+export default class RegistConfirm extends mixins() {
   address = '';
   nick = '';
   key = '';

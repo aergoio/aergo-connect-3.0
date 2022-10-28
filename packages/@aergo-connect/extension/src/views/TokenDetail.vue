@@ -84,7 +84,7 @@
           <option class="option" value="Sent">Sent</option>
         </select>
       </div>
-      <div :class="[symbol === 'aergo' ? 'history' : 'history others']">
+      <div id="history" :class="[symbol === 'aergo' ? 'history' : 'history others']">
         <ul
           :class="[
             symbol === 'aergo' ? 'history_list ' : 'history_list others',
@@ -277,6 +277,16 @@ export default Vue.extend({
     },
 
     refreshClick() {
+
+      this.$vs.loading({
+        container: '#history',
+        scale: 0.6
+      })
+
+      setTimeout( ()=> {
+        this.$vs.loading.close('#history > .con-vs-loading')
+      }, 3000);
+
       console.log('refresh');
       this.getTokenHistory();
       this.$forceUpdate();

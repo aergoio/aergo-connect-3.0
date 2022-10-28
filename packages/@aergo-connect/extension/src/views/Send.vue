@@ -222,6 +222,7 @@ export default Vue.extend({
       this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
       if (this.tokenType === 'ARC2') this.getNftInventory();
     },
+
     clipboardNotification(state) {
       if (state) {
         setTimeout(() => {
@@ -389,6 +390,7 @@ export default Vue.extend({
 
     handleSent() {
       this.sendFinishModal = false;
+      this.balance = this.$store.state.session.tokens[this.asset]['balance'];
       this.inputAmount = 0;
     },
 

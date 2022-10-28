@@ -59,10 +59,12 @@
         <div class="line" />
         <div class="flex-row">
           <div class="title balance">Update Balance</div>
+<!--
           <div v-if="asset === 'AERGO'" class="detail balance">
             {{ $store.state.session.aergoBalance }}
           </div>
-          <div v-else class="detail balance">{{ $store.state.session.tokens[asset].balance }}</div>
+-->
+          <div class="detail balance">{{ Number(balance).toFixed(4) }}</div>
         </div>
         <div class="line" />
       </div>
@@ -93,35 +95,34 @@ export default Vue.extend({
     return {
       txReceipt: null,
       txData: null,
+      balance: this.$store.state.session.tokens[this.asset].balance, 
     };
   },
 
-  async mounted() {
+  async beforeMount() {
     console.log('txHash', this.txHash);
     console.log('network', this.$store.state.accounts.network);
     console.log('asset', this.asset);
+    console.log('balance1', this.$store.state.session.tokens[this.asset].balance) ;
+
     await this.$store.dispatch('accounts/updateAccount', {
       chainId: this.$store.state.accounts.network,
       address: this.$store.state.accounts.address,
     });
 
-    this.$store.commit('ui/clearInput', { key: 'send' });
+    await this.$store.commit('ui/clearInput', { key: 'send' });
+
     await this.$background
       .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
       .then((result) => {
         this.txReceipt = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
       });
-    /*
-    await this.$background
-      .getTransaction(this.$store.state.accounts.network, this.txHash)
-      .then(result => {
-        this.txData = result.tx;
-        this.txData.payload = Buffer.from(Object.values(this.txData.payload)).toString();
-      });
-*/
 
-    await this.$store.dispatch('session/updateBalances');
     console.log('receipt', this.txReceipt);
+    await this.$store.dispatch('session/updateBalances');
+    this.balance = await this.$store.state.session.tokens[this.asset].balance ;
+    console.log('balance', this.balance) ;
+
   },
 
   methods: {

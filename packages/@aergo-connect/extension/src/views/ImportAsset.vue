@@ -161,10 +161,12 @@ export default Vue.extend({
     },
 
     async search(query) {
+      const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
+
       if (this.$route.params.option === 'token') {
         console.log('Search', `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:{${query}} OR symbol:{${query}}) AND type:ARC1`),
         await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC1`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC1`,
         )
           .then((res) => {
             return res.json();
@@ -176,7 +178,7 @@ export default Vue.extend({
         if (this.results) return;
       } else {
         await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC2`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC2`,
         )
           .then((res) => {
             return res.json();
@@ -216,9 +218,10 @@ export default Vue.extend({
       let results = {};
       console.log('fetch', this.value);
 
+      const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
       if (this.$route.params.option === 'token') {
         await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=_id:${this.value}`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=_id:${this.value}`,
         )
           .then((res) => {
             return res.json();
@@ -228,7 +231,7 @@ export default Vue.extend({
           });
       } else {
         await fetch(
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=_id:${this.value}`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=_id:${this.value}`,
         )
           .then((res) => {
             return res.json();

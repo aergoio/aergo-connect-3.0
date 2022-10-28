@@ -1,5 +1,6 @@
 <template>
-  <div class="sendfinish_modal_backdrop">
+  <LoadingBar v-if="isLoading"/>
+  <div v-else class="sendfinish_modal_backdrop">
     <div class="sendfinish_modal_wrapper">
       <div class="flex-column">
         <Icon :name="`confirmation`" />
@@ -74,13 +75,16 @@
 </template>
 
 <script>
+
 import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import ButtonGroup from '../buttons/ButtonGroup.vue';
 import Button from '../buttons/Button.vue';
 import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
+import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
+
 export default Vue.extend({
-  components: { Icon, Button, ButtonGroup },
+  components: { Icon, Button, ButtonGroup, LoadingBar },
 
   props: {
     txHash: String,
@@ -96,10 +100,12 @@ export default Vue.extend({
       txReceipt: null,
       txData: null,
       balance: this.$store.state.session.tokens[this.asset].balance, 
+      isLoading: false,
     };
   },
 
   async beforeMount() {
+    this.isLoading = true ;
     console.log('txHash', this.txHash);
     console.log('network', this.$store.state.accounts.network);
     console.log('asset', this.asset);
@@ -121,8 +127,8 @@ export default Vue.extend({
     console.log('receipt', this.txReceipt);
     await this.$store.dispatch('session/updateBalances');
     this.balance = await this.$store.state.session.tokens[this.asset].balance ;
+    this.isLoading = false ;
     console.log('balance', this.balance) ;
-
   },
 
   methods: {

@@ -20,13 +20,6 @@ import ImportFormat from '../views/import/2-Format.vue';
 import ImportKeystore from '../views/import/3a-Keystore.vue';
 import ImportWif from '../views/import/3b-Wif.vue';
 import ImportSeedphrase from '../views/import/3c-Seedphrase.vue';
-
-import ConnectHw from '../views/connect-hw/1-Network.vue';
-import ConnectHwAccounts from '../views/connect-hw/2-Accounts.vue';
-import Settings from '../views/Settings.vue';
-import NetworksList from '../views/networks/List.vue';
-import NetworksUpdate from '../views/networks/Update.vue';
-
 import BackupPrivateKey from '../views/export/BackupPrivateKey.vue';
 import MnemonicSeedPhrase from '../views/export/MnemonicSeedPhrase.vue';
 import Keystore from '../views/export/Keystore.vue';
@@ -41,6 +34,11 @@ import RequestAddress from '../views/request/Address.vue';
 import RequestSign from '../views/request/Sign.vue';
 import RequestSendTx from '../views/request/Send.vue';
 import RequestSignTx from '../views/request/SignTx.vue';
+
+import ConnectHw from '../views/connect-hw/1-Network.vue';
+import ConnectHwAccounts from '../views/connect-hw/2-Accounts.vue';
+import NetworksList from '../views/networks/List.vue';
+import NetworksUpdate from '../views/networks/Update.vue';
 
 enum R {
   None = 0,
@@ -67,7 +65,7 @@ const routes: RouteConfig[] = [
     component: AccountsContainer,
     children: [
 
-      { path: '', redirect: 'home' },
+      { path: '', redirect: '/home' },
 
       withMeta( 0, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
       withMeta( 3, { path: '/password', name: 'password', component: Password }, R.NoAuthCheck | R.NoTracking,),

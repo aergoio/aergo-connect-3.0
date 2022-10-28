@@ -7,6 +7,7 @@
       :to="{ name: 'accounts-list' }"
       @refreshClick="refreshClick"
     />
+    <LoadingBar v-if="isLoading"/>
     <div class="nft_detail_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
@@ -167,15 +168,11 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
-import Identicon from '../../../lib-ui/src/content/Identicon.vue';
+import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
+import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
 import { Amount } from '@herajs/common';
-
-// function getVueInstance(instance: any): Vue {
-//   // @ts-ignore
-//   return instance._vm as Vue;
-// }
 
 export default Vue.extend({
   components: {
@@ -189,6 +186,7 @@ export default Vue.extend({
     Identicon,
     RemoveModal,
     Notification,
+    LoadingBar,
   },
 
   data() {
@@ -200,6 +198,7 @@ export default Vue.extend({
       data: [],
       allData: [],
       filter: 'All',
+      isLoading: false,
     };
   },
 
@@ -265,11 +264,16 @@ export default Vue.extend({
     getTitle() {
       return this.$store.state.session.token.meta.name;
     },
-    refreshClick() {
+
+    async refreshClick() {
+
+      this.isLoading = true ;
       console.log('refresh');
-      if (this.tabState == 'inventory') this.getNftInventory();
-      else this.getNftHistory();
+      if (this.tabState === 'inventory') await this.getNftInventory();
+      else await this.getNftHistory();
+      this.isLoading = false ;
     },
+
     async getNftHistory(): Promise<void> {
       console.log(
         'fetch',

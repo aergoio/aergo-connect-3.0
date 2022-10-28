@@ -27,6 +27,7 @@
       :tokenType="tokenType"
       @close="handleSent"
     />
+    <LoadingBar v-if="isLoading"/>
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <Header button="back" title="Send" @backClick="handleBack" />
     <div class="send_content_wrapper">
@@ -136,6 +137,7 @@ import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import LoadingDialog from '@aergo-connect/lib-ui/src/layouts/LoadingDialog.vue';
 import SendFinishModal from '@aergo-connect/lib-ui/src/modal/SendFinishModal.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
+import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
 // for TX
 import { timedAsync } from 'timed-async/index.js';
 import Transport from '@ledgerhq/hw-transport-webusb';
@@ -158,6 +160,7 @@ export default Vue.extend({
     SendFinishModal,
     TextField,
     Notification,
+    LoadingBar,
   },
 
   data() {
@@ -175,6 +178,7 @@ export default Vue.extend({
       confirmationModal: false,
       sendFinishModal: false,
       passwordModal: false,
+      isLoading: false,
       clipboardNotification: false,
       notEnoughBalanceNotification: false,
       searchResult: [],
@@ -261,6 +265,7 @@ export default Vue.extend({
     },
 
     async getNftInventory() {
+      this.isLoading = true ;
       const resp = await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}`,
       );
@@ -270,6 +275,7 @@ export default Vue.extend({
 
       if (response.error) this.nftInventory = [];
       else this.nftInventory = response.hits;
+      this.isLoading = false ;
     },
 
     updateTx(txType, payload) {

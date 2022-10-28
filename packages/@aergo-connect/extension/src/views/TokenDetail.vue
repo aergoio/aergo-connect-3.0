@@ -7,6 +7,7 @@
       :to="{ name: 'accounts-list' }"
       @refreshClick="refreshClick"
     />
+    <LoadingBar v-if="isLoading"/>
     <RemoveModal v-if="removeModal" @cancel="handleDelete" />
     <div class="token_detail_content">
       <div class="account_detail">
@@ -154,7 +155,8 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
-import Identicon from '../../../lib-ui/src/content/Identicon.vue';
+import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
+import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import { Amount } from '@herajs/common';
@@ -176,6 +178,7 @@ export default Vue.extend({
     Identicon,
     RemoveModal,
     Notification,
+    LoadingBar,
   },
 
   data() {
@@ -189,6 +192,7 @@ export default Vue.extend({
       symbol: 'aergo',
       staking: '0',
       aergoPrice: 0,
+      isLoading: false,
     };
   },
   async beforeMount() {
@@ -276,20 +280,12 @@ export default Vue.extend({
       return this.$store.state.session.token.meta.name;
     },
 
-    refreshClick() {
-
-      this.$vs.loading({
-        container: '#history',
-        scale: 0.6
-      })
-
-      setTimeout( ()=> {
-        this.$vs.loading.close('#history > .con-vs-loading')
-      }, 3000);
-
+    async refreshClick() {
+      this.isLoading = true ;
       console.log('refresh');
-      this.getTokenHistory();
-      this.$forceUpdate();
+      await this.getTokenHistory() ;
+      await this.$forceUpdate();
+      this.isLoading = false ;
     },
 
     async getTokenHistory(): Promise<void> {

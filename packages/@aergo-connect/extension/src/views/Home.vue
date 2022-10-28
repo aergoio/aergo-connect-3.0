@@ -9,6 +9,7 @@
       @networkModalClick="networkModalClick"
       @refreshClick="refreshClick"
     />
+    <LoadingBar v-if="isLoading"/>
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
     <!-- <NotificationModal v-if="notificationModal" @cancel="handleCancel" /> -->
@@ -167,8 +168,9 @@ import { Header } from '@aergo-connect/lib-ui/src/layouts';
 import List from './List.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import Identicon from '../../../lib-ui/src/content/Identicon.vue';
+import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
+import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
@@ -191,6 +193,7 @@ export default Vue.extend({
     Header,
     ScrollView,
     Appear,
+    LoadingBar,
   },
   data() {
     return {
@@ -205,6 +208,7 @@ export default Vue.extend({
       editNick: false,
       nick: this.$store.state.accounts.nick,
       nftCountNum: 0,
+      isLoading: false,
     };
   },
 
@@ -241,6 +245,7 @@ export default Vue.extend({
     },
 
     async initAccount() {
+      this.isLoading = true ;
       console.log('Address', this.$store.state.accounts.address);
       //      console.log("List", this.$background.getAccounts()) ;
 
@@ -257,11 +262,14 @@ export default Vue.extend({
           this.noAccountModal = true;
         } else await this.$store.dispatch('session/InitState');
       }
+      this.isLoading = false ;
     },
 
     async refreshClick() {
+      this.isLoading = true ;
       await this.$store.dispatch('session/updateBalances');
       this.$forceUpdate();
+      this.isLoading = false ;
 
       console.log('regresh', this.$store.state.session.tokens);
     },

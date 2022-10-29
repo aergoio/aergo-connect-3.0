@@ -343,54 +343,33 @@ export default Vue.extend({
     },
 
     handleToken(token: any) {
-      this.$store.commit('session/setToken', token);
+      this.$store.commit('session/setToken', token.hash);
       this.$router
-        .push({
-          name: 'token-detail',
-        })
-        .catch(() => {});
+        .push({ name: 'token-detail', }) .catch(() => {});
     },
+
     handleNft(nft: any) {
-      this.$store.commit('session/setToken', nft);
-      this.$router
-        .push({
-          name: 'nft-detail',
-        })
-        .catch(() => {});
+      this.$store.commit('session/setToken', nft.hash);
+      this.$router .push({ name: 'nft-detail', }) .catch(() => {});
     },
+
     handleImportAsset(to: string) {
       if (to === 'token') {
-        this.$router
-          .push({
-            name: 'import-asset',
-            params: { option: 'token' },
-          })
-          .catch(() => {});
-      }
+        this.$store.commit('session/setOption', 'token') ;
+        this.$router .push({ name: 'import-asset', }) .catch(() => {}); 
+      } ;
       if (to === 'nft') {
-        this.$router
-          .push({
-            name: 'import-asset',
-            params: { option: 'nft' },
-          })
-          .catch(() => {});
-      }
+        this.$store.commit('session/setOption', 'nft') ;
+        this.$router .push({ name: 'import-asset', }) .catch(() => {}); 
+      } ;
     },
+
     handleSend(token: any) {
       this.$router
-        .push({
-          name: 'send',
-          params: {},
-        })
-        .catch(() => {});
+        .push({ name: 'send', }) .catch(() => {});
     },
     handleReceive() {
-      this.$router
-        .push({
-          name: 'receive',
-          params: {},
-        })
-        .catch(() => {});
+      this.$router .push({ name: 'receive', }) .catch(() => {});
     },
     handleChangeTab(value: string) {
       this.tab = value;

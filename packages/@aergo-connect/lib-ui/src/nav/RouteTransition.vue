@@ -51,20 +51,14 @@ export default Vue.extend({
   watch: {
 
     '$route'(to: RouteConfig, from: RouteConfig): void {
-
       let transitionName = from.meta.transitionName || to.meta.transitionName || this.defaultTransition;
-
       if (from.meta.transitionName === 'fade' || to.meta.transitionName === 'fade') {
 
         // If one of them is fade, always use that
         transitionName = 'fade';
 
       } else {
-/*
-        // For slide, calculate depth difference based on path or meta.index
-        const depthDiff = from.path.split(`/`).length - to.path.split(`/`).length;
-        const indexDiff = (from.meta.index && to.meta.index) && (from.meta.index - to.meta.index);
-*/
+
         const indexDiff = (from.meta.index && to.meta.index) && (from.meta.index - to.meta.index);
         console.log('f',from.meta.index, from.name) ;
         console.log('t',to.meta.index, to.name) ;
@@ -73,8 +67,9 @@ export default Vue.extend({
 
       this.transitionName = transitionName;
       this.transitionEnterActiveClass = `${transitionName}-enter-active`;
-      // Use out-in mode for fade transitions
+
       this.transitionMode = transitionName === 'fade' ? 'out-in' : '';
+//      if (to.name !== 'lockscreen') this.$store.commit('session/setCurrentPage',to.name) ;
     }
   },
 

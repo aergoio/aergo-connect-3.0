@@ -74,9 +74,9 @@ const routes: RouteConfig[] = [
       withMeta( 0, { path: '/locked', name: 'lockscreen', component: Lockscreen }, R.NoAuthCheck | R.NoTracking,),
 
       withMeta( 1, { path: '/home', name: 'accounts-list', component: Home, }),
-      withMeta( 2, { path: '/home/tokendetail/:option', name: 'token-detail', component: TokenDetail, }),
+      withMeta( 2, { path: '/home/tokendetail', name: 'token-detail', component: TokenDetail, }),
       withMeta( 2, { path: '/home/nftdetail', name: 'nft-detail', component: NftDetail, }),
-      withMeta( 2, { path: '/home/importasset/:option', name: 'import-asset', component: ImportAsset, }),
+      withMeta( 2, { path: '/home/importasset', name: 'import-asset', component: ImportAsset, }),
       withMeta( 2, { path: '/home/send', name: 'send', component: Send, }),
       withMeta( 2, { path: '/home/receive', name: 'receive', component: Receive, }),
       withMeta( 2, { path: '/home/signmessage', name: 'sign-message', component: SignMessage, }),
@@ -145,11 +145,6 @@ const router = new VueRouter({
   routes,
 });
 
-/*
-router.beforeEach(function(to, from, next) {
-  console.log('from', from.name, 'to', to.name);
-  next();
-});*/
 router.beforeEach(allowedToExitLockscreen);
 router.beforeEach(loadPersistedRoute);
 router.beforeEach(persistRoute);

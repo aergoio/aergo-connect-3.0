@@ -28,7 +28,7 @@
               }}
             </div>
             <Icon
-              v-if="symbol !== 'aergo' && !$store.state.session.token.meta.image"
+              v-if="token.meta.symbol !== 'aergo' && !token.meta.image"
               class="account_button"
               :name="`delete2`"
               @click="handleDelete(true)"
@@ -36,45 +36,38 @@
           </div>
         </div>
       </div>
-      <div v-if="symbol === 'aergo'" class="token_detail aergo">
+      <div v-if="token.meta.symbol === 'aergo'" class="token_detail aergo">
         <div class="flex-row">
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
             <div class="balance">
-              {{ Number($store.state.session.tokens['AERGO'].balance).toFixed(4) }}
+              {{ Number(token.balance).toFixed(4) }}
             </div>
             <div class="dollor">
               <span>$ </span>
               <span>{{ Number(aergoPrice).toFixed(4) }} </span>
             </div>
           </div>
-          <div class="token_symbol">{{ symbol }}</div>
+          <div class="token_symbol">{{ token.meta.symbol }}</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
           <div class="detail_title" @click="gotoStake()">Staked Balance</div>
           <div class="detail_content">{{ staking }}</div>
         </div>
-        <!--
-        <div class="line detail" />
-        <div class="detail_wrapper">
-          <div class="detail_title">Registered Names</div>
-          <div class="detail_content">{{ `0` }}</div>
-        </div>
--->
       </div>
       <div v-else class="token_detail others">
         <div class="flex-row">
           <img
-            v-if="$store.state.session.token.meta.image"
+            v-if="token.meta.image"
             class="icon"
-            :src="$store.state.session.token.meta.image"
+            :src="token.meta.image"
           />
           <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
-            <div class="balance">{{ Number($store.state.session.token.balance).toFixed(4) }}</div>
+            <div class="balance">{{ Number(token.balance).toFixed(4) }}</div>
           </div>
-          <div class="token_symbol">{{ $store.state.session.token.meta.symbol }}</div>
+          <div class="token_symbol">{{ token.meta.symbol }}</div>
         </div>
       </div>
       <div class="select_token">
@@ -85,10 +78,10 @@
           <option class="option" value="Sent">Sent</option>
         </select>
       </div>
-      <div id="history" :class="[symbol === 'aergo' ? 'history' : 'history others']">
+      <div id="history" :class="[token.meta.symbol === 'aergo' ? 'history' : 'history others']">
         <ul
           :class="[
-            symbol === 'aergo' ? 'history_list ' : 'history_list others',
+            token.meta.symbol === 'aergo' ? 'history_list ' : 'history_list others',
             data.length === 0 ? 'history _list nothing' : 'history_list',
           ]"
         >
@@ -97,8 +90,6 @@
             <div class="direction_row">
               <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
               <div v-else class="received">Received</div>
-              <!--              <div :class="[filter === 'Received' ? 'received' : 'sent']">{{ filter }}</div>
--->
               <div class="direction_row">
                 <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
                 <div class="token_symbol">{{ symbol }}</div>
@@ -189,24 +180,25 @@ export default Vue.extend({
       allData: [],
       data: [],
       filter: 'All',
-      symbol: 'aergo',
       staking: '0',
       aergoPrice: 0,
       isLoading: false,
+      token: {},
     };
   },
+
   async beforeMount() {
-    this.symbol = this.$store.state.session.token.meta.symbol;
-    console.log('SYMBOL', this.symbol);
-    this.getTokenHistory();
-    this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
-      console.log('priceInfo', this.$store.state.session.tokens['AERGO'].balance * priceInfo.price);
-      this.aergoPrice = this.$store.state.session.tokens['AERGO'].balance * priceInfo.price;
-    });
-    this.aergoStaking();
+
+    this.token = await this.$store.state.session.tokens[this.$store.state.session.token] ;
+    console.log('token', this.token) ;
+
+    await this.getTokenHistory() ;
+    if (this.token.meta.symbol == 'aergo') await this.getAergoInfo() ;
+
   },
 
   watch: {
+
     filter: function () {
       if (this.filter === 'All') {
         this.getTokenHistory();
@@ -237,6 +229,7 @@ export default Vue.extend({
   },
 
   methods: {
+
     async aergoStaking(): Promise<void> {
       const staking = await this.$background.getStaking({
         chainId: this.$store.state.accounts.network,
@@ -263,27 +256,31 @@ export default Vue.extend({
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
       window.open(url, '', 'width=1000,height=1000');
     },
-    /*
-    aergoPrice() {
-      this.$background.getTokenPrice('aergo.io').then(priceInfo => {
-        console.log("priceInfo", this.$store.state.session.tokens['AERGO'].balance*priceInfo.price) ;
-        return this.$store.state.session.tokens['AERGO'].balance*priceInfo.price ;
+
+    getAergoInfo () {
+      this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
+        console.log('priceInfo', this.token.balance * priceInfo.price);
+        this.aergoPrice = this.token.balance * priceInfo.price;
       });
+
+      this.aergoStaking();
     },
-*/
 
     getBalance(value: number) {
-      return value / Math.pow(10, this.$store.state.session.token.meta.decimals);
+      return value / Math.pow(10, this.token.meta.decimals);
     },
 
     getTitle() {
-      return this.$store.state.session.token.meta.name;
+      console.log('getTitle', this.token)  ;
+      return this.token.meta.name ;
     },
 
     async refreshClick() {
-      this.isLoading = true ;
+
       console.log('refresh');
+      this.isLoading = true ;
       await this.getTokenHistory() ;
+      await this.getAergoInfo() ;
       await this.$forceUpdate();
       this.isLoading = false ;
     },
@@ -291,13 +288,13 @@ export default Vue.extend({
     async getTokenHistory(): Promise<void> {
       const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
       let resp;
-      if (this.symbol === 'aergo') {
+      if (this.token.meta.symbol === 'aergo') {
         resp = await fetch(
           `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=100&sort=ts:desc`,
         );
       } else {
         resp = await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100&sort=ts:desc`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}&size=100&sort=ts:desc`,
         );
       }
 
@@ -308,23 +305,6 @@ export default Vue.extend({
         this.allData = response.hits;
       }
     },
-
-    /*
-    get stakedFiatBalance(): string {
-      if (!this.tokenPriceInfo || !this.tokenPriceInfo.price || !this.staking || !this.staking.amount) return '';
-      const aergoAmount = new Amount(this.staking.amount).formatNumber('aergo');
-      const balance = Number(aergoAmount) * this.tokenPriceInfo.price;
-      return formatCurrency(balance, this.tokenPriceInfo.currency);
-    },
-
-    async load() {
-      if (this.state === 'initial') {
-        this.state = 'loading';
-      }
-      this.staking = await this.$background.getStaking(this.accountSpec);
-      this.state = 'loaded';
-    },
-*/
 
     handleDelete(state: boolean) {
       this.removeModal = state;

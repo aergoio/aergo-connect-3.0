@@ -27,7 +27,7 @@
               }}
             </div>
             <Icon
-              v-if="!$store.state.session.token.meta.image"
+              v-if="!token.meta.image"
               class="account_button"
               :name="`delete2`"
               @click="handleDelete(true)"
@@ -199,11 +199,13 @@ export default Vue.extend({
       allData: [],
       filter: 'All',
       isLoading: false,
+      token: {},
     };
   },
 
   beforeMount() {
-    console.log('token', this.$store.state.session.token);
+    this.token = this.$store.state.session.tokens[this.$store.state.session.token] ;
+    console.log('token', this.token);
     this.getNftInventory();
   },
 
@@ -262,7 +264,7 @@ export default Vue.extend({
     },
 
     getTitle() {
-      return this.$store.state.session.token.meta.name;
+      return this.token.meta.name;
     },
 
     async refreshClick() {
@@ -277,11 +279,11 @@ export default Vue.extend({
     async getNftHistory(): Promise<void> {
       console.log(
         'fetch',
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}`,
       );
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100&sort=ts:desc`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}&size=100&sort=ts:desc`,
       );
       const response = await resp.json();
       if (response.error) this.data = [];
@@ -296,11 +298,11 @@ export default Vue.extend({
     async getNftInventory(): Promise<void> {
       console.log(
         'nft',
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.$store.state.session.token.hash} AND account:${this.$store.state.accounts.address}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.token.hash} AND account:${this.$store.state.accounts.address}`,
       );
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.$store.state.session.token.hash} AND account:${this.$store.state.accounts.address}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.token.hash} AND account:${this.$store.state.accounts.address}`,
       );
 
       const response = await resp.json();

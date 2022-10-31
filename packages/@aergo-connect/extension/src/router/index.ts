@@ -89,6 +89,8 @@ const routes: RouteConfig[] = [
       withMeta(2, { path: '/home/send', name: 'send', component: Send }),
       withMeta(2, { path: '/home/receive', name: 'receive', component: Receive }),
       withMeta(2, { path: '/home/signmessage', name: 'sign-message', component: SignMessage }),
+      withMeta(2, { path: '/home/security', name: 'security', component: Security }),
+      withMeta(2, { path: '/home/version', name: 'version', component: Version }),
 
       withMeta(3, {
         path: '/export/BackupPrivateKey',

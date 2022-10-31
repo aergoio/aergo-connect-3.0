@@ -9,6 +9,7 @@ export interface SessionState {
   tokens: Record<string, any>;
   token: string;
   currentPage: string;
+  previousPage: string;
   option: Record<string, any>;
 }
 
@@ -97,10 +98,10 @@ const storeModule: Module<SessionState, RootState> = {
         const bal = balances.others.find((element) => element.meta.address == hash);
         if (bal) {
           if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance;
-          else console.log(bal.meta.balance_float);
-          state.tokens[hash]['balance'] =
-            //              bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals);
-            bal.meta.balance_float;
+          else
+            state.tokens[hash]['balance'] =
+              Number(bal.meta.balance) / Math.pow(10, bal.token.meta.decimals);
+          bal.meta.balance_float;
         } else {
           state.tokens[hash]['balance'] = 0;
         }
@@ -132,6 +133,10 @@ const storeModule: Module<SessionState, RootState> = {
 
     setCurrentPage(state, page: string) {
       state.currentPage = page;
+    },
+
+    setPreviousPage(state, page: string) {
+      state.previousPage = page;
     },
 
     setOption(state, option: string) {

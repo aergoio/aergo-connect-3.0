@@ -6,10 +6,10 @@ import Vue from 'vue';
 import store from '../store';
 
 export interface SessionState {
-  tokens: Object;
-  token: String;
-  currentPage: String;
-  option: Object;
+  tokens: Record<string, any>;
+  token: string;
+  currentPage: string;
+  option: Record<string, any>;
 }
 
 function getVueInstance(instance: any): Vue {
@@ -90,7 +90,6 @@ const storeModule: Module<SessionState, RootState> = {
   },
 
   mutations: {
-
     setTokenBalance(state, balances: any) {
       // others
       Object.keys(state.tokens).forEach((hash) => {
@@ -98,10 +97,9 @@ const storeModule: Module<SessionState, RootState> = {
         if (bal) {
           if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance;
           else
-            console.log(bal.meta.balance_float) ;
             state.tokens[hash]['balance'] =
-//              bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals);
-              bal.meta.balance_float;
+              Number(bal.meta.balance) / Math.pow(10, bal.token.meta.decimals);
+          bal.meta.balance_float;
         } else {
           state.tokens[hash]['balance'] = 0;
         }
@@ -131,12 +129,12 @@ const storeModule: Module<SessionState, RootState> = {
       state.token = token;
     },
 
-    setCurrentPage(state, page: String) {
-      state.currentPage = page ;
+    setCurrentPage(state, page: string) {
+      state.currentPage = page;
     },
 
-    setOption(state, option: String) {
-      state.option = option ;
+    setOption(state, option: string) {
+      state.option = option;
     },
   },
 };

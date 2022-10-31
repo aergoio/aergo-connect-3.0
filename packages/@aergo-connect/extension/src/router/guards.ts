@@ -14,6 +14,9 @@ export const allowedToExitLockscreen: NavigationGuard = (to, from, next) => {
       return next({ name: 'lockscreen' });
     }
   }
+
+  store.commit('session/setCurrentPage', to.name);
+
   return next();
 };
 
@@ -31,6 +34,10 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
       return next(persistedPath);
     }
   }
+
+  store.commit('session/setCurrentPage', to.name);
+  store.commit('session/setPreviousPage', from.name);
+
   return next();
 };
 
@@ -40,6 +47,7 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
 export const persistRoute: NavigationGuard = (to, _from, next) => {
   if (!((to.meta && to.meta.noTracking === true) || to.fullPath.match(/request/))) {
     store.commit('session/setCurrentPage', to.name);
+    store.commit('session/setPreviousPage', _from.name);
   }
   return next();
 };

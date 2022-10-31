@@ -9,6 +9,7 @@ export interface SessionState {
   tokens: Object;
   token: String;
   currentPage: String;
+  previousPage: String;
   option: Object;
 }
 
@@ -24,6 +25,7 @@ const storeModule: Module<SessionState, RootState> = {
     token: 'AERGO',
     tokens: {},
     currentPage: '',
+    previousPage: '',
     option: '',
   },
 
@@ -132,6 +134,10 @@ const storeModule: Module<SessionState, RootState> = {
 
     setCurrentPage(state, page: String) {
       state.currentPage = page ;
+    },
+
+    setPreviousPage(state, page: String) {
+      state.previousPage = page ;
     },
 
     setOption(state, option: String) {

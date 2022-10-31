@@ -41,11 +41,11 @@
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
             <div class="balance">
-              {{ Number(token.balance).toFixed(4) }}
+              {{ Number(token.balance).toFixed(3) }}
             </div>
             <div class="dollor">
               <span>$ </span>
-              <span>{{ Number(aergoPrice).toFixed(4) }} </span>
+              <span>{{ Number(aergoPrice).toFixed(3) }} </span>
             </div>
           </div>
           <div class="token_symbol">{{ token.meta.symbol }}</div>
@@ -65,7 +65,7 @@
           />
           <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
-            <div class="balance">{{ Number(token.balance).toFixed(4) }}</div>
+            <div class="balance">{{ Number(token.balance).toFixed(3) }}</div>
           </div>
           <div class="token_symbol">{{ token.meta.symbol }}</div>
         </div>
@@ -120,7 +120,7 @@
             <div class="nothing_text">No Transaction Details.</div>
           </div>
         </ul>
-        <div class="footer">
+        <div v-if="!isLoading" class="footer">
           <Appear :delay="0.6">
             <ButtonGroup>
               <Button class="button" type="font-gradation" size="small" @click="handleSend"

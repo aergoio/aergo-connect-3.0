@@ -6,12 +6,11 @@ import Vue from 'vue';
 import store from '../store';
 
 export interface SessionState {
-  tokens: Object;
-  token: String;
-  currentPage: String;
-  previousPage: String;
-  option: Object;
-
+  tokens: Record<string, any>;
+  token: string;
+  currentPage: string;
+  previousPage: string;
+  option: Record<string, any>;
 }
 
 function getVueInstance(instance: any): Vue {
@@ -136,12 +135,12 @@ const storeModule: Module<SessionState, RootState> = {
       state.currentPage = page;
     },
 
-    setPreviousPage(state, page: String) {
-      state.previousPage = page ;
+    setPreviousPage(state, page: string) {
+      state.previousPage = page;
     },
 
-    setOption(state, option: String) {
-      state.option = option ;
+    setOption(state, option: string) {
+      state.option = option;
     },
   },
 };

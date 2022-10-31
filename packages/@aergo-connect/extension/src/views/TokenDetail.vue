@@ -92,7 +92,7 @@
               <div v-else class="received">Received</div>
               <div class="direction_row">
                 <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
-                <div class="token_symbol">{{ symbol }}</div>
+                <div class="token_symbol">{{ token.meta.symbol }}</div>
               </div>
             </div>
             <div class="line"></div>
@@ -108,7 +108,7 @@
                 {{ `From: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
               </div>
               <div class="direction_row">
-                <div v-if="symbol === 'aergo'" class="address">
+                <div v-if="token.meta.symbol === 'aergo'" class="address">
                   {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}` }}
                 </div>
                 <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />

@@ -9,15 +9,6 @@
       @networkModalClick="networkModalClick"
       @refreshClick="refreshClick"
     />
-    <List
-        v-if="hamburgerModal"
-        removeAccountModal
-        @removeModalClick="handleRemoveModalClick"
-        @select="handleSelect"
-        @listModalOff="hamburgerClick"
-        @securityClick="handleSecurity"
-        @notificationModalClick="handleNotificationModalClick"
-    />
     <LoadingBar v-if="isLoading"/>
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
@@ -25,6 +16,15 @@
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <AccountDetailModal v-if="accountDetailModal" @cancel="handleCancel" />
     <div v-if="!noAccountModal" class="home_content">
+      <List
+        v-if="hamburgerModal"
+        removeAccountModal
+        @removeModalClick="handleRemoveModalClick"
+        @select="handleSelect"
+        @listModalOff="hamburgerClick"
+        @securityClick="handleSecurity"
+        @notificationModalClick="handleNotificationModalClick"
+      />
       <div class="account_info_wrapper">
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
         <div class="account_info_content_wrapper">

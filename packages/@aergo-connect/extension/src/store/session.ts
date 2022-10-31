@@ -6,10 +6,12 @@ import Vue from 'vue';
 import store from '../store';
 
 export interface SessionState {
-  tokens: Record<string, any>;
-  token: string;
-  currentPage: string;
-  option: Record<string, any>;
+  tokens: Object;
+  token: String;
+  currentPage: String;
+  previousPage: String;
+  option: Object;
+
 }
 
 function getVueInstance(instance: any): Vue {
@@ -24,6 +26,7 @@ const storeModule: Module<SessionState, RootState> = {
     token: 'AERGO',
     tokens: {},
     currentPage: '',
+    previousPage: '',
     option: '',
   },
 
@@ -133,8 +136,12 @@ const storeModule: Module<SessionState, RootState> = {
       state.currentPage = page;
     },
 
-    setOption(state, option: string) {
-      state.option = option;
+    setPreviousPage(state, page: String) {
+      state.previousPage = page ;
+    },
+
+    setOption(state, option: String) {
+      state.option = option ;
     },
   },
 };

@@ -77,14 +77,18 @@
           <div class="title">NFT ID</div>
           <div class="flex-column-searchbox">
             <TextField placeholder="Type ID" v-model="inputAmount" @input="searchNFT" />
-            <ul class="search_list_wrapper" v-if="searchResult.length">
+            <ul
+              class="search_list_wrapper"
+              v-if="searchResult.length"
+              :style="{ height: searchListClass() }"
+            >
               <li
                 class="search_list"
                 v-for="item in searchResult"
                 @click="selectNFT(item)"
                 :key="item.meta.token_id"
               >
-                <img class="img" :src="item.token.meta.image" alt="404" />
+                <!-- <img class="img" :src="item.token.meta.image" alt="404" /> -->
                 <span class="text"> {{ `${item.meta.token_id}` }} </span>
               </li>
             </ul>
@@ -273,12 +277,12 @@ export default Vue.extend({
       this.nftInventory.forEach((item) => {
         if (item.meta.token_id.indexOf(query) != -1) result.push(item);
       });
-      this.searchResult = result;
+      this.searchResult = result.reverse();
     },
 
     async getNftInventory() {
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND (account:${this.$store.state.accounts.address})sort=blockno:desc&from=0&size=100`,
       );
 
       const response = await resp.json();
@@ -296,8 +300,8 @@ export default Vue.extend({
     },
 
     handleBack() {
-
-      console.log('reviousPage', this.$store.state.session.previousPage) ;
+      console.log('reviousPage', this.$store.state.session.previousPage);
+      /*
       this.$router.push({
         name: this.$store.state.session.previousPage,
       });
@@ -305,8 +309,6 @@ export default Vue.extend({
       this.$router.push({
         name: 'accounts-list',
       });
-*/
-
     },
     handleOptionsModal() {
       this.optionsModal = true;
@@ -485,6 +487,17 @@ export default Vue.extend({
     copyToClipboard(text) {
       navigator.clipboard.writeText(text);
       this.clipboardNotification = true;
+    },
+    searchListClass() {
+      if (this.searchResult.length === 1) {
+        return '43px';
+      } else if (this.searchResult.length === 2) {
+        return '86px';
+      } else if (this.searchResult.length === 3) {
+        return '126px';
+      } else {
+        return '172px';
+      }
     },
   },
 });
@@ -717,16 +730,18 @@ export default Vue.extend({
         .search_list_wrapper {
           position: absolute;
           left: 105px;
-          top: 125px;
+          top: 115px;
+          height: 170px;
           border-radius: 3px;
           border: 1px solid #279ecc;
           overflow-y: scroll;
           overflow-x: hidden;
           .search_list {
+            padding-left: 10px;
             display: flex;
             align-items: center;
             cursor: pointer;
-            width: 228px;
+            width: 218px;
             height: 43px;
             /* Grey/White */
 

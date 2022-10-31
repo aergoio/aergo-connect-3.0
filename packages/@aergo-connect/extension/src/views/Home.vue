@@ -97,8 +97,11 @@
                 <span class="token_list_text"> {{ token.meta.name }} </span>
               </div>
               <div class="token_list_amount">
-                <span class="token_list_balance">{{ Number(token.balance).toFixed(3) }}</span>
-                <span> {{ token.meta.symbol }}</span>
+                <span v-if="token.balance" class="token_list_balance">{{
+                  Number.isInteger(token.balance) ? token.balance : Number(token.balance).toFixed(3)
+                }}</span>
+                <span v-if="token.balance"> {{ token.meta.symbol }}</span>
+
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
             </div>
@@ -381,6 +384,9 @@ export default Vue.extend({
         }
       });
     },
+    // getTokenBalance(){
+    //   console.log
+    // }
   },
 });
 </script>

@@ -271,7 +271,6 @@ export default Vue.extend({
     },
 
     getTitle() {
-      console.log('getTitle', this.token)  ;
       return this.token.meta.name ;
     },
 

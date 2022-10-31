@@ -91,7 +91,7 @@ export default Vue.extend({
   },
 
   async beforeMount() {
-    if (this.$store.state.session.token) this.asset = this.$store.state.session.token.hash;
+    if (this.$store.state.session.token) this.asset = this.$store.state.session.token;
     else this.asset = 'AERGO';
   },
 

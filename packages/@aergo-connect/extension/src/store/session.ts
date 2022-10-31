@@ -98,9 +98,8 @@ const storeModule: Module<SessionState, RootState> = {
         if (bal) {
           if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance;
           else
-            console.log(bal.meta.balance_float) ;
             state.tokens[hash]['balance'] =
-//              bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals);
+              Number(bal.meta.balance) / Math.pow(10, bal.token.meta.decimals);
               bal.meta.balance_float;
         } else {
           state.tokens[hash]['balance'] = 0;

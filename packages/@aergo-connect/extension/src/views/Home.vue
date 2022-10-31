@@ -97,7 +97,7 @@
                 <span class="token_list_text"> {{ token.meta.name }} </span>
               </div>
               <div class="token_list_amount">
-                <span class="token_list_balance">{{ tokenBalanceFormat(token) }}</span>
+                <span class="token_list_balance">{{ Number(token.balance).toFixed(3) }}</span>
                 <span> {{ token.meta.symbol }}</span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
@@ -123,7 +123,7 @@
               <Icon v-else class="token_list_icon" :name="`defaultToken`" />
               <span class="token_list_text"> {{ token.meta.name }} </span>
               <div class="token_list_amount">
-                <span class="token_list_balance">{{ tokenBalanceFormat(token) }}</span>
+                <span class="token_list_balance">{{ token.balance }}</span>
                 <span> EA </span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
@@ -145,7 +145,7 @@
           >
         </button>
       </div>
-      <div class="footer">
+      <div v-if="!isLoading" class="footer">
         <Appear :delay="0.6">
           <ButtonGroup>
             <Button class="button" type="font-gradation" size="small" @click="handleSend"
@@ -374,17 +374,7 @@ export default Vue.extend({
     handleChangeTab(value: string) {
       this.tab = value;
     },
-    tokenBalanceFormat(token) {
-      if (token.balance) {
-        if (Number.isInteger(+token.balance)) {
-          return token.balance;
-        } else {
-          return Number(+token.balance).toFixed(3);
-        }
-      } else {
-        return '0';
-      }
-    },
+
     nftCount() {
       const tokens = Object.values(this.$store.state.session.tokens);
       tokens.map((token) => {

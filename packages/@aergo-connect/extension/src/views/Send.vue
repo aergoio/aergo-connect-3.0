@@ -116,7 +116,7 @@
       :icon="`warning2`"
       :size="`250`"
     />
-    <template #footer>
+    <template v-if="!isLoading" #footer>
       <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
         Show optional fields
       </div>

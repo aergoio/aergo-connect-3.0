@@ -56,7 +56,7 @@
         <div class="line" />
         <div class="flex-row">
           <div class="title balance">Update Balance</div>
-          <div class="detail balance">{{ Number(balance).toFixed(4) }}</div>
+          <div class="detail balance">{{ Number(balance).toFixed(3) }}</div>
         </div>
         <div class="line" />
       </div>

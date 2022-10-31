@@ -142,7 +142,7 @@
             <div class="nothing_text">No Transaction Details.</div>
           </div>
         </ul>
-        <div class="footer">
+        <div v-if="!isLoading" class="footer">
           <Appear :delay="0.6">
             <ButtonGroup>
               <Button class="button" type="font-gradation" size="small" @click="handleSend"

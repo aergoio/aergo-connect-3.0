@@ -305,7 +305,7 @@ export default Vue.extend({
       this.$router.push({
         name: this.$store.state.session.previousPage,
       });
-*/
+/*
       this.$router.push({
         name: 'accounts-list',
       });

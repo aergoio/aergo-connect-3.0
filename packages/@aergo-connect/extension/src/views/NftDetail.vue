@@ -7,6 +7,7 @@
       :to="{ name: 'accounts-list' }"
       @refreshClick="refreshClick"
     />
+    <LoadingBar v-if="isLoading"/>
     <div class="nft_detail_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
@@ -26,7 +27,7 @@
               }}
             </div>
             <Icon
-              v-if="!$store.state.session.token.meta.image"
+              v-if="!token.meta.image"
               class="account_button"
               :name="`delete2`"
               @click="handleDelete(true)"
@@ -167,15 +168,11 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
-import Identicon from '../../../lib-ui/src/content/Identicon.vue';
+import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
+import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
 import { Amount } from '@herajs/common';
-
-// function getVueInstance(instance: any): Vue {
-//   // @ts-ignore
-//   return instance._vm as Vue;
-// }
 
 export default Vue.extend({
   components: {
@@ -189,6 +186,7 @@ export default Vue.extend({
     Identicon,
     RemoveModal,
     Notification,
+    LoadingBar,
   },
 
   data() {
@@ -200,11 +198,14 @@ export default Vue.extend({
       data: [],
       allData: [],
       filter: 'All',
+      isLoading: false,
+      token: {},
     };
   },
 
   beforeMount() {
-    console.log('token', this.$store.state.session.token);
+    this.token = this.$store.state.session.tokens[this.$store.state.session.token] ;
+    console.log('token', this.token);
     this.getNftInventory();
   },
 
@@ -263,21 +264,26 @@ export default Vue.extend({
     },
 
     getTitle() {
-      return this.$store.state.session.token.meta.name;
+      return this.token.meta.name;
     },
-    refreshClick() {
+
+    async refreshClick() {
+
+      this.isLoading = true ;
       console.log('refresh');
-      if (this.tabState == 'inventory') this.getNftInventory();
-      else this.getNftHistory();
+      if (this.tabState === 'inventory') await this.getNftInventory();
+      else await this.getNftHistory();
+      this.isLoading = false ;
     },
+
     async getNftHistory(): Promise<void> {
       console.log(
         'fetch',
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}`,
       );
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.$store.state.session.token.hash}&size=100&sort=ts:desc`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}&size=100&sort=ts:desc`,
       );
       const response = await resp.json();
       if (response.error) this.data = [];
@@ -292,11 +298,11 @@ export default Vue.extend({
     async getNftInventory(): Promise<void> {
       console.log(
         'nft',
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.$store.state.session.token.hash} AND account:${this.$store.state.accounts.address}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.token.hash} AND account:${this.$store.state.accounts.address}`,
       );
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.$store.state.session.token.hash} AND account:${this.$store.state.accounts.address}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.token.hash} AND account:${this.$store.state.accounts.address}`,
       );
 
       const response = await resp.json();

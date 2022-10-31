@@ -23,7 +23,7 @@
               type="primary"
               disabled
               size="large"
-              :to="{ name: 'account-connect-hw-accounts', params: { next: 'account-import' } }"
+              :to="{ name: 'account-connect-hw-accounts', params: { next: '' } }"
             >
               Connect Ledger
             </Button>
@@ -51,7 +51,8 @@ import { PersistInputsMixin } from '../store/ui';
     Header,
   },
 })
-export default class Create extends mixins(PersistInputsMixin) {
+export default class Register extends mixins(PersistInputsMixin) {
+
   async handleCreate() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: 'aergo.io',
@@ -65,10 +66,7 @@ export default class Create extends mixins(PersistInputsMixin) {
     console.log("List", this.$background.getAccounts()) ;
 
     this.$router.push({
-      name: 'account-create',
-      params: {
-        next: 'account-create',
-      },
+      name: 'regist-confirm',
     });
   }
 }

@@ -1,5 +1,6 @@
 <template>
   <ScrollView>
+    <LoadingBar v-if="isLoading"/>
     <SendOptionsModal
       v-if="optionsModal"
       :txType="txType"
@@ -25,6 +26,7 @@
       :amount="inputAmount"
       :symbol="symbol"
       :tokenType="tokenType"
+      :fee="fee"
       @close="handleSent"
     />
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
@@ -58,10 +60,10 @@
         <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" />
         <img v-else class="token_icon" :src="icon" />
 
-        <div class="token_amount">{{ Number(balance).toFixed(4) }}</div>
+        <div class="token_amount">{{ balance }}</div>
         <div class="token_symbol">{{ symbol }}</div>
       </div>
-      <div class="send_form_wrapper">
+      <div v-if="!isLoading" class="send_form_wrapper">
         <div class="flex-row">
           <div class="title">Asset</div>
           <select class="select_box" v-model="asset">
@@ -118,7 +120,7 @@
       <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
         Show optional fields
       </div>
-      <Button type="primary" size="large" @click="handleSendClick">Send</Button>
+      <Button v-if="!sendFinishModal || !isLoading" type="primary" size="large" @click="handleSendClick">Send</Button>
     </template>
   </ScrollView>
 </template>
@@ -136,12 +138,14 @@ import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import LoadingDialog from '@aergo-connect/lib-ui/src/layouts/LoadingDialog.vue';
 import SendFinishModal from '@aergo-connect/lib-ui/src/modal/SendFinishModal.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
+import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
 // for TX
 import { timedAsync } from 'timed-async/index.js';
 import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import { Tx } from '@herajs/client';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
+import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
 
 export default Vue.extend({
   components: {
@@ -158,6 +162,7 @@ export default Vue.extend({
     SendFinishModal,
     TextField,
     Notification,
+    LoadingBar,
   },
 
   data() {
@@ -169,6 +174,7 @@ export default Vue.extend({
       symbol: '',
       inputAmount: '',
       inputTo: '',
+      fee: '',
       txType: 'TRANSFER',
       nftInventory: [],
       optionsModal: false,
@@ -178,6 +184,7 @@ export default Vue.extend({
       clipboardNotification: false,
       notEnoughBalanceNotification: false,
       searchResult: [],
+      isLoading: false,
 
       txBody: {
         from: this.$store.state.accounts.address,
@@ -202,10 +209,10 @@ export default Vue.extend({
     this.account = await this.$background.getActiveAccount();
     console.log('Account Info', this.account);
 
-    if (this.$store.state.session.token) this.asset = await this.$store.state.session.token.hash;
+    if (this.$store.state.session.token) this.asset = await this.$store.state.session.token;
     else this.asset = 'AERGO';
 
-    if (this.$route.params.nft && this.$store.state.session.token.meta.type == 'ARC2') {
+    if (this.$route.params.nft && this.$store.state.session.tokens[this.asset].meta.type == 'ARC2') {
       this.inputAmount = this.$route.params.nft;
       this.searchResult = '';
     }
@@ -222,6 +229,7 @@ export default Vue.extend({
       this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
       if (this.tokenType === 'ARC2') this.getNftInventory();
     },
+
     clipboardNotification(state) {
       if (state) {
         setTimeout(() => {
@@ -286,10 +294,8 @@ export default Vue.extend({
     handleOptionsModal() {
       this.optionsModal = true;
     },
+
     handleSendClick() {
-      console.log('Send', this.txBody);
-      console.log('amount', this.inputAmount);
-      console.log('balance!!!', this.balance);
       if (+this.inputAmount > +this.balance) {
         // error 출력 또는 입력 시에 확인
         console.log('insufficent');
@@ -374,22 +380,44 @@ export default Vue.extend({
         console.log('txBody', this.txBody);
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         console.log('hash', hash);
+        this.txHash = hash;
 
         this.setStatus('success', 'Done');
-        setTimeout(() => {
-          this.txHash = hash;
-          this.statusDialogVisible = false;
-          this.sendFinishModal = true;
-        }, 1000);
+
+        this.isLoading = true ;
+
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
       }
+
+      this.statusDialogVisible = false;
+
+      if (!this.isLoading) return ;
+
+      await this.$store.dispatch('accounts/updateAccount', {
+        chainId: this.$store.state.accounts.network,
+        address: this.$store.state.accounts.address,
+      });
+
+      await this.$store.commit('ui/clearInput', { key: 'send' });
+      await this.$background
+        .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
+        .then((result) => {
+          this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
+      });
+
+      console.log('receipt', this.txReceipt);
+      await this.$store.dispatch('session/updateBalances');
+
+      this.isLoading = false ;
+      this.sendFinishModal = true;
     },
 
-    handleSent() {
-      this.sendFinishModal = false;
+    async handleSent() {
+      this.balance = await this.$store.state.session.tokens[this.asset].balance ;
       this.inputAmount = 0;
+      this.sendFinishModal = false;
     },
 
     async signWithLedger(txBody) {

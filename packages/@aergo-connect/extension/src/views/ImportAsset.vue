@@ -163,7 +163,7 @@ export default Vue.extend({
     async search(query) {
       const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
 
-      if (this.$route.params.option === 'token') {
+      if (this.$store.state.session.option === 'token') {
         console.log('Search', `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:{${query}} OR symbol:{${query}}) AND type:ARC1`),
         await fetch(
           `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC1`,
@@ -219,7 +219,7 @@ export default Vue.extend({
       console.log('fetch', this.value);
 
       const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
-      if (this.$route.params.option === 'token') {
+      if (this.$store.state.session.option === 'token') {
         await fetch(
           `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=_id:${this.value}`,
         )

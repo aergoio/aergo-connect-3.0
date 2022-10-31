@@ -22,7 +22,7 @@
               class="welcome_button_size"
               type="primary"
               size="large"
-              :to="{ name: 'setup', params: { nextPage: 'register', backPage: 'welcome' }}"
+              :to="{ name: 'password', params: { nextPage: 'register', backPage: 'welcome' }}"
               hover
               >Get Started</Button
             >

@@ -1,5 +1,5 @@
 <template>
-  <div class="sendfinish_modal_backdrop">
+  <div v-else class="sendfinish_modal_backdrop">
     <div class="sendfinish_modal_wrapper">
       <div class="flex-column">
         <Icon :name="`confirmation`" />
@@ -45,12 +45,9 @@
           </div>
         </div>
         <div class="line" />
-        <div v-if="txReceipt" class="flex-row">
+        <div v-if="fee" class="flex-row">
           <div class="title">Fee</div>
-          <div class="detail fee">{{ `${txReceipt} aergo` }}</div>
-          <!-- <div class="detail fee">
-            {{ bigIntToString(BigInt(txReceipt.fee.split(' ')[0]), 18) || 0 }}
-          </div> -->
+          <div class="detail fee">{{ `${fee} aergo` }}</div>
         </div>
         <div v-else class="flex-row">
           <div class="title">Status</div>
@@ -59,11 +56,6 @@
         <div class="line" />
         <div class="flex-row">
           <div class="title balance">Update Balance</div>
-<!--
-          <div v-if="asset === 'AERGO'" class="detail balance">
-            {{ $store.state.session.aergoBalance }}
-          </div>
--->
           <div class="detail balance">{{ Number(balance).toFixed(4) }}</div>
         </div>
         <div class="line" />
@@ -74,55 +66,29 @@
 </template>
 
 <script>
+
 import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import ButtonGroup from '../buttons/ButtonGroup.vue';
 import Button from '../buttons/Button.vue';
-import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
+
 export default Vue.extend({
-  components: { Icon, Button, ButtonGroup },
+  components: { Icon, Button, ButtonGroup  },
 
   props: {
+    asset: String,
     txHash: String,
     receipt: String,
     amount: String,
     symbol: String,
-    asset: String,
     tokenType: String,
+    fee: String,
   },
 
   data() {
     return {
-      txReceipt: null,
-      txData: null,
       balance: this.$store.state.session.tokens[this.asset].balance, 
     };
-  },
-
-  async beforeMount() {
-    console.log('txHash', this.txHash);
-    console.log('network', this.$store.state.accounts.network);
-    console.log('asset', this.asset);
-    console.log('balance1', this.$store.state.session.tokens[this.asset].balance) ;
-
-    await this.$store.dispatch('accounts/updateAccount', {
-      chainId: this.$store.state.accounts.network,
-      address: this.$store.state.accounts.address,
-    });
-
-    await this.$store.commit('ui/clearInput', { key: 'send' });
-
-    await this.$background
-      .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
-      .then((result) => {
-        this.txReceipt = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
-      });
-
-    console.log('receipt', this.txReceipt);
-    await this.$store.dispatch('session/updateBalances');
-    this.balance = await this.$store.state.session.tokens[this.asset].balance ;
-    console.log('balance', this.balance) ;
-
   },
 
   methods: {

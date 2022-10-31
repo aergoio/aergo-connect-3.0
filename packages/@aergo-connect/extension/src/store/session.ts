@@ -6,9 +6,10 @@ import Vue from 'vue';
 import store from '../store';
 
 export interface SessionState {
-  tokens: any;
-  token: any;
-  //  aergoBalance: number;
+  tokens: Object;
+  token: String;
+  currentPage: String;
+  option: Object;
 }
 
 function getVueInstance(instance: any): Vue {
@@ -20,16 +21,13 @@ const storeModule: Module<SessionState, RootState> = {
   namespaced: true,
 
   state: {
-    token: {},
+    token: 'AERGO',
     tokens: {},
+    currentPage: '',
+    option: '',
   },
 
   actions: {
-    /*
-    aergoBalance({ state }) {
-      return state.aergoBalance;
-    },
-*/
     tokenBalance({ state }, address: string) {
       return state.tokens[address]['balance'];
     },
@@ -84,21 +82,14 @@ const storeModule: Module<SessionState, RootState> = {
       await store.dispatch('session/updateBalances');
 
       // Default Token : 'AERGO'
-      await commit('setToken', state.tokens['AERGO']);
-      await store.commit('accounts/setSeedPhrase', '');
-      //      await commit('setToken',state.tokens['AERGO']) ;
-      //      await store.commit('accounts/setSeedPhrase','');
+      // await commit('setToken', state.tokens['AERGO']);
 
+      await store.commit('accounts/setSeedPhrase', '');
       console.log('Out tokens', state.tokens);
     },
   },
 
   mutations: {
-    /*
-    setAergoBalance(state, val: number) {
-      state.aergoBalance = val;
-    },
-*/
 
     setTokenBalance(state, balances: any) {
       // others
@@ -136,6 +127,14 @@ const storeModule: Module<SessionState, RootState> = {
 
     setToken(state, token: any) {
       state.token = token;
+    },
+
+    setCurrentPage(state, page: String) {
+      state.currentPage = page ;
+    },
+
+    setOption(state, option: String) {
+      state.option = option ;
     },
   },
 };

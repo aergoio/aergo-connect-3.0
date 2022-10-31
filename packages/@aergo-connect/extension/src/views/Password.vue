@@ -83,7 +83,7 @@ import { encodePrivateKey } from '@herajs/crypto';
     AppearVue,
   },
 })
-export default class Setup extends mixins() {
+export default class Password extends mixins() {
   password = '';
   passwordRepeat = '';
   setting = true;

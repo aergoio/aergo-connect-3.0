@@ -102,7 +102,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
       await this.$store.dispatch('accounts/addAccount', accountSpec.address);
       await this.$store.commit('accounts/setBackup', true);
       console.log("List", this.$background.getAccounts()) ;
-      this.$router.push({ name: 'account-imported' });
+      this.$router.push({ name: 'regist-confirm' });
     } catch (e) {
       console.log(e);
       if (`${e}`.match(/invalid mac value/)) {

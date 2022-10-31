@@ -16,34 +16,26 @@ const defaultSettings = {
 };
 
 export interface UiState {
-  route: {
-    currentPath: string;
-    previousPath: string;
-  };
   input: {
     [form: string]: InputData;
     settings: typeof defaultSettings;
   };
-  unlocked: boolean;
-  idleTimeout: number;
   txTypes: any;
   initSetupKey: string;
+  idleTimeout: number;
+  unlocked: boolean;
 }
 
 const storeModule: Module<UiState, RootState> = {
   namespaced: true,
   state: {
-    route: {
-      currentPath: '',
-      previousPath: '',
-    },
     input: {
       settings: defaultSettings,
     },
-    unlocked: false,
     txTypes: ['TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE', 'DEPLOY', 'REDEPLOY'],
     initSetupKey: '',
     idleTimeout: 60,
+    unlocked: false,
   },
   getters: {
     getSetting:
@@ -60,11 +52,15 @@ const storeModule: Module<UiState, RootState> = {
       },
   },
   mutations: {
-    setCurrentRoute(state, route: Route) {
-      if (route.fullPath === state.route.currentPath) return;
-      state.route.previousPath = state.route.currentPath;
-      state.route.currentPath = route.fullPath;
+
+    setUnlocked(state, unlocked) {
+      state.unlocked = unlocked;
     },
+
+    setIdleTimeout(state, time) {
+      state.idleTimeout = time;
+    },
+
     setInput(state, { key, field, value }: { key: string; field: string; value: Json }) {
       if (typeof state.input[key] === 'undefined') {
         state.input[key] = {};
@@ -77,15 +73,10 @@ const storeModule: Module<UiState, RootState> = {
     clearInput(state, { key }) {
       state.input[key] = {};
     },
-    setUnlocked(state, unlocked) {
-      state.unlocked = unlocked;
-    },
-    setIdleTimeout(state, time) {
-      state.idleTimeout = time;
-    },
     setInitSetupKey(state, initSetupKey) {
       state.initSetupKey = initSetupKey;
     },
+
   },
   actions: {
     setTxBody({ commit }, txBody) {

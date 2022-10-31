@@ -6,6 +6,7 @@ import { capitalizeFirstLetter } from '../utils/strings';
  * If we're coming from the lockscreen, check that app was actually unlocked.
  * Otherwise you can e.g. just 'go back' to show a previous screen (privacy issue).
  */
+
 export const allowedToExitLockscreen: NavigationGuard = (to, from, next) => {
   if (from.name === 'lockscreen') {
     const exclude = ['', '/', '/welcome'];
@@ -38,7 +39,7 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
  */
 export const persistRoute: NavigationGuard = (to, _from, next) => {
   if (!((to.meta && to.meta.noTracking === true) || to.fullPath.match(/request/))) {
-    store.commit('ui/setCurrentRoute', to);
+    store.commit('session/setCurrentPage', to.name);
   }
   return next();
 };

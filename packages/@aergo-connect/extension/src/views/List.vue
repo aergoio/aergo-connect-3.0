@@ -40,9 +40,9 @@
         <div>
           <SideNavButton img="sign-message" title="Sign Message" :to="{ name: 'sign-message' }" />
           <SideNavButton img="security" title="Security" @click="handleSecurity" />
-          <SideNavButton img="lock" title="Lock" @click="handleLock" />
+          <SideNavButton img="lock" title="Lock" />
         </div>
-        <div class="side-nav-version">
+        <div class="side-nav-version" @click="handleVersion">
           <span>Version</span>
           <span>3.0</span>
           <img src="@aergo-connect/lib-ui/src/icons/img/arrow-right.svg" />
@@ -116,6 +116,9 @@ export default Vue.extend({
     handleSecurity() {
       this.$emit('securityClick');
     },
+    handleVersion() {
+      this.$router.push({ name: 'version' }).catch(() => {});
+    },
   },
   mounted() {
     //    this.$store.dispatch('accounts/fetchAccounts');
@@ -124,20 +127,19 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-
 .fade-in-right {
   display: inline-block;
   padding: 10px;
-  animation: fadeInRight 0.5s; 
+  animation: fadeInRight 0.5s;
 }
 @keyframes fadeInRight {
   from {
-      opacity: 0;
-      transform: translate3d(20%, 0, 0);
+    opacity: 0;
+    transform: translate3d(20%, 0, 0);
   }
   to {
-      opacity: 1;
-      transform: translateZ(100);
+    opacity: 1;
+    transform: translateZ(100);
   }
 }
 

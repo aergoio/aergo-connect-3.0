@@ -1,6 +1,6 @@
 <template>
   <ScrollView>
-    <LoadingBar v-if="isLoading"/>
+    <LoadingBar v-if="isLoading" />
     <SendOptionsModal
       v-if="optionsModal"
       :txType="txType"
@@ -120,7 +120,13 @@
       <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
         Show optional fields
       </div>
-      <Button v-if="!sendFinishModal || !isLoading" type="primary" size="large" @click="handleSendClick">Send</Button>
+      <Button
+        v-if="!sendFinishModal || !isLoading"
+        type="primary"
+        size="large"
+        @click="handleSendClick"
+        >Send</Button
+      >
     </template>
   </ScrollView>
 </template>
@@ -212,7 +218,10 @@ export default Vue.extend({
     if (this.$store.state.session.token) this.asset = await this.$store.state.session.token;
     else this.asset = 'AERGO';
 
-    if (this.$route.params.nft && this.$store.state.session.tokens[this.asset].meta.type == 'ARC2') {
+    if (
+      this.$route.params.nft &&
+      this.$store.state.session.tokens[this.asset].meta.type == 'ARC2'
+    ) {
       this.inputAmount = this.$route.params.nft;
       this.searchResult = '';
     }
@@ -392,8 +401,7 @@ export default Vue.extend({
 
         this.setStatus('success', 'Done');
 
-        this.isLoading = true ;
-
+        this.isLoading = true;
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
@@ -401,7 +409,7 @@ export default Vue.extend({
 
       this.statusDialogVisible = false;
 
-      if (!this.isLoading) return ;
+      if (!this.isLoading) return;
 
       await this.$store.dispatch('accounts/updateAccount', {
         chainId: this.$store.state.accounts.network,
@@ -413,17 +421,17 @@ export default Vue.extend({
         .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
         .then((result) => {
           this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
-      });
+        });
 
       console.log('receipt', this.txReceipt);
       await this.$store.dispatch('session/updateBalances');
 
-      this.isLoading = false ;
+      this.isLoading = false;
       this.sendFinishModal = true;
     },
 
     async handleSent() {
-      this.balance = await this.$store.state.session.tokens[this.asset].balance ;
+      this.balance = await this.$store.state.session.tokens[this.asset].balance;
       this.inputAmount = 0;
       this.sendFinishModal = false;
     },
@@ -571,7 +579,7 @@ export default Vue.extend({
       }
       .account_button {
         cursor: pointer;
-        margin-left: 48px;
+        margin-left: 35px;
       }
     }
   }

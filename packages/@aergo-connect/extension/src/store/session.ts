@@ -11,6 +11,7 @@ export interface SessionState {
   currentPage: String;
   previousPage: String;
   option: Object;
+
 }
 
 function getVueInstance(instance: any): Vue {
@@ -92,7 +93,6 @@ const storeModule: Module<SessionState, RootState> = {
   },
 
   mutations: {
-
     setTokenBalance(state, balances: any) {
       // others
       Object.keys(state.tokens).forEach((hash) => {
@@ -102,7 +102,7 @@ const storeModule: Module<SessionState, RootState> = {
           else
             state.tokens[hash]['balance'] =
               Number(bal.meta.balance) / Math.pow(10, bal.token.meta.decimals);
-              bal.meta.balance_float;
+          bal.meta.balance_float;
         } else {
           state.tokens[hash]['balance'] = 0;
         }
@@ -132,8 +132,8 @@ const storeModule: Module<SessionState, RootState> = {
       state.token = token;
     },
 
-    setCurrentPage(state, page: String) {
-      state.currentPage = page ;
+    setCurrentPage(state, page: string) {
+      state.currentPage = page;
     },
 
     setPreviousPage(state, page: String) {

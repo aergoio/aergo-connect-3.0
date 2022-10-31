@@ -9,7 +9,7 @@
       @networkModalClick="networkModalClick"
       @refreshClick="refreshClick"
     />
-    <LoadingBar v-if="isLoading"/>
+    <LoadingBar v-if="isLoading" />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
     <!-- <NotificationModal v-if="notificationModal" @cancel="handleCancel" /> -->
@@ -152,7 +152,7 @@
               ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
             >
             <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-              ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
+              ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
             >
           </ButtonGroup>
         </Appear>
@@ -245,7 +245,7 @@ export default Vue.extend({
     },
 
     async initAccount() {
-      this.isLoading = true ;
+      this.isLoading = true;
       console.log('Address', this.$store.state.accounts.address);
       //      console.log("List", this.$background.getAccounts()) ;
 
@@ -262,14 +262,14 @@ export default Vue.extend({
           this.noAccountModal = true;
         } else await this.$store.dispatch('session/InitState');
       }
-      this.isLoading = false ;
+      this.isLoading = false;
     },
 
     async refreshClick() {
-      this.isLoading = true ;
+      this.isLoading = true;
       await this.$store.dispatch('session/updateBalances');
       this.$forceUpdate();
-      this.isLoading = false ;
+      this.isLoading = false;
 
       console.log('regresh', this.$store.state.session.tokens);
     },
@@ -344,32 +344,30 @@ export default Vue.extend({
 
     handleToken(token: any) {
       this.$store.commit('session/setToken', token.hash);
-      this.$router
-        .push({ name: 'token-detail', }) .catch(() => {});
+      this.$router.push({ name: 'token-detail' }).catch(() => {});
     },
 
     handleNft(nft: any) {
       this.$store.commit('session/setToken', nft.hash);
-      this.$router .push({ name: 'nft-detail', }) .catch(() => {});
+      this.$router.push({ name: 'nft-detail' }).catch(() => {});
     },
 
     handleImportAsset(to: string) {
       if (to === 'token') {
-        this.$store.commit('session/setOption', 'token') ;
-        this.$router .push({ name: 'import-asset', }) .catch(() => {}); 
-      } ;
+        this.$store.commit('session/setOption', 'token');
+        this.$router.push({ name: 'import-asset' }).catch(() => {});
+      }
       if (to === 'nft') {
-        this.$store.commit('session/setOption', 'nft') ;
-        this.$router .push({ name: 'import-asset', }) .catch(() => {}); 
-      } ;
+        this.$store.commit('session/setOption', 'nft');
+        this.$router.push({ name: 'import-asset' }).catch(() => {});
+      }
     },
 
     handleSend(token: any) {
-      this.$router
-        .push({ name: 'send', }) .catch(() => {});
+      this.$router.push({ name: 'send' }).catch(() => {});
     },
     handleReceive() {
-      this.$router .push({ name: 'receive', }) .catch(() => {});
+      this.$router.push({ name: 'receive' }).catch(() => {});
     },
     handleChangeTab(value: string) {
       this.tab = value;
@@ -591,8 +589,6 @@ export default Vue.extend({
       margin-top: 10px;
       margin-bottom: 10px;
       .token_list_button_img {
-        position: relative;
-        bottom: 2px;
       }
       .token_list_button_text {
         width: 76px;

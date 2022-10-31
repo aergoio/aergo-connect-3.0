@@ -112,9 +112,9 @@ const storeModule: Module<AccountsState, RootState> = {
       console.log('Add tokens', tokens);
     },
 
-    async deleteToken({ state, commit }, token: any) {
+    async deleteToken({ state, commit }, token: string) {
       const tokens = state.accounts[state.address]['token'][state.network];
-      delete tokens[token.hash];
+      delete tokens[token];
       commit('setTokens', tokens);
 
       store.state.dispatch('session/initState');

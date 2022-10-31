@@ -24,6 +24,7 @@ const storeModule: Module<SessionState, RootState> = {
     token: 'AERGO',
     tokens: {},
     currentPage: '',
+    previousPage: '',
     option: '',
   },
 
@@ -96,10 +97,10 @@ const storeModule: Module<SessionState, RootState> = {
         const bal = balances.others.find((element) => element.meta.address == hash);
         if (bal) {
           if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance;
-          else
-            state.tokens[hash]['balance'] =
-              Number(bal.meta.balance) / Math.pow(10, bal.token.meta.decimals);
-          bal.meta.balance_float;
+          else console.log(bal.meta.balance_float);
+          state.tokens[hash]['balance'] =
+            //              bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals);
+            bal.meta.balance_float;
         } else {
           state.tokens[hash]['balance'] = 0;
         }

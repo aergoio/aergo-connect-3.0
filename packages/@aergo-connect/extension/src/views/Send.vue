@@ -298,14 +298,14 @@ export default Vue.extend({
     handleBack() {
 
       console.log('reviousPage', this.$store.state.session.previousPage) ;
-/*
       this.$router.push({
         name: this.$store.state.session.previousPage,
       });
-*/
+/*
       this.$router.push({
         name: 'accounts-list',
       });
+*/
 
     },
     handleOptionsModal() {

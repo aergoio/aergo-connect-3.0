@@ -40,7 +40,7 @@
         <div>
           <SideNavButton img="sign-message" title="Sign Message" :to="{ name: 'sign-message' }" />
           <SideNavButton img="security" title="Security" @click="handleSecurity" />
-          <SideNavButton img="lock" title="Lock" />
+          <SideNavButton img="lock" title="Lock" @click="handleLock"/>
         </div>
         <div class="side-nav-version" @click="handleVersion">
           <span>Version</span>

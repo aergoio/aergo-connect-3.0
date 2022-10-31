@@ -7,7 +7,7 @@
       :to="{ name: 'accounts-list' }"
       @refreshClick="refreshClick"
     />
-    <LoadingBar v-if="isLoading"/>
+    <LoadingBar v-if="isLoading" />
     <div class="nft_detail_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
@@ -67,7 +67,7 @@
                 :src="item.token.meta.image"
                 alt="404"
               /> -->
-              <Icon class="img" :name="`defaultNft`" />
+              <!-- <Icon class="img" :name="`defaultNft`" /> -->
             </div>
             <div class="nft_name_wrapper">
               <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
@@ -149,7 +149,7 @@
                 ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
               >
               <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-                ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
+                ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
               >
             </ButtonGroup>
           </Appear>
@@ -204,7 +204,7 @@ export default Vue.extend({
   },
 
   beforeMount() {
-    this.token = this.$store.state.session.tokens[this.$store.state.session.token] ;
+    this.token = this.$store.state.session.tokens[this.$store.state.session.token];
     console.log('token', this.token);
     this.getNftInventory();
   },
@@ -268,12 +268,11 @@ export default Vue.extend({
     },
 
     async refreshClick() {
-
-      this.isLoading = true ;
+      this.isLoading = true;
       console.log('refresh');
       if (this.tabState === 'inventory') await this.getNftInventory();
       else await this.getNftHistory();
-      this.isLoading = false ;
+      this.isLoading = false;
     },
 
     async getNftHistory(): Promise<void> {
@@ -296,13 +295,13 @@ export default Vue.extend({
     },
 
     async getNftInventory(): Promise<void> {
-      console.log(
-        'nft',
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.token.hash} AND account:${this.$store.state.accounts.address}`,
-      );
+      // console.log(
+      //   'nft',
+      //   `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.token.hash} AND (account:${this.$store.state.accounts.address})&sort=blockno:desc&from=0&size=7`,
+      // );
 
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.token.hash} AND account:${this.$store.state.accounts.address}`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.token.hash} AND (account:${this.$store.state.accounts.address})&sort=blockno:desc&from=0&size=100`,
       );
 
       const response = await resp.json();
@@ -470,7 +469,7 @@ export default Vue.extend({
       }
       .account_button {
         cursor: pointer;
-        margin-left: 50px;
+        margin-left: 35px;
       }
     }
   }

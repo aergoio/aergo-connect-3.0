@@ -114,7 +114,9 @@ export default Vue.extend({
         visibility: hidden;
       }
     }
-
+    .icon--back {
+      line-height: 0;
+    }
     &.right {
       top: 60%;
       right: 20px;

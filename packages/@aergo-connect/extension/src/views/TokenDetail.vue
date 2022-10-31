@@ -7,7 +7,7 @@
       :to="{ name: 'accounts-list' }"
       @refreshClick="refreshClick"
     />
-    <LoadingBar v-if="isLoading"/>
+    <LoadingBar v-if="isLoading" />
     <RemoveModal v-if="removeModal" @cancel="handleDelete" />
     <div class="token_detail_content">
       <div class="account_detail">
@@ -58,11 +58,7 @@
       </div>
       <div v-else class="token_detail others">
         <div class="flex-row">
-          <img
-            v-if="token.meta.image"
-            class="icon"
-            :src="token.meta.image"
-          />
+          <img v-if="token.meta.image" class="icon" :src="token.meta.image" />
           <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
             <div class="balance">{{ Number(token.balance).toFixed(3) }}</div>
@@ -108,7 +104,7 @@
                 {{ `From: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
               </div>
               <div class="direction_row">
-                <div v-if="token.meta.symbol === 'aergo'" class="address">
+                <div v-if="token.meta.symbol === 'aergo'" class="address type">
                   {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}` }}
                 </div>
                 <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
@@ -127,7 +123,7 @@
                 ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
               >
               <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-                ><Icon class="button-icon" :name="`send`" /><span>Receive</span></Button
+                ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
               >
             </ButtonGroup>
           </Appear>
@@ -188,17 +184,14 @@ export default Vue.extend({
   },
 
   async beforeMount() {
+    this.token = await this.$store.state.session.tokens[this.$store.state.session.token];
+    console.log('token', this.token);
 
-    this.token = await this.$store.state.session.tokens[this.$store.state.session.token] ;
-    console.log('token', this.token) ;
-
-    await this.getTokenHistory() ;
-    if (this.token.meta.symbol == 'aergo') await this.getAergoInfo() ;
-
+    await this.getTokenHistory();
+    if (this.token.meta.symbol == 'aergo') await this.getAergoInfo();
   },
 
   watch: {
-
     filter: function () {
       if (this.filter === 'All') {
         this.getTokenHistory();
@@ -229,7 +222,6 @@ export default Vue.extend({
   },
 
   methods: {
-
     async aergoStaking(): Promise<void> {
       const staking = await this.$background.getStaking({
         chainId: this.$store.state.accounts.network,
@@ -257,7 +249,7 @@ export default Vue.extend({
       window.open(url, '', 'width=1000,height=1000');
     },
 
-    getAergoInfo () {
+    getAergoInfo() {
       this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
         console.log('priceInfo', this.token.balance * priceInfo.price);
         this.aergoPrice = this.token.balance * priceInfo.price;
@@ -271,17 +263,16 @@ export default Vue.extend({
     },
 
     getTitle() {
-      return this.token.meta.name ;
+      return this.token.meta.name;
     },
 
     async refreshClick() {
-
       console.log('refresh');
-      this.isLoading = true ;
-      await this.getTokenHistory() ;
-      await this.getAergoInfo() ;
+      this.isLoading = true;
+      await this.getTokenHistory();
+      await this.getAergoInfo();
       await this.$forceUpdate();
-      this.isLoading = false ;
+      this.isLoading = false;
     },
 
     async getTokenHistory(): Promise<void> {
@@ -425,7 +416,7 @@ export default Vue.extend({
       }
       .account_button {
         cursor: pointer;
-        margin-left: 50px;
+        margin-left: 35px;
       }
     }
   }
@@ -754,6 +745,10 @@ export default Vue.extend({
             /* Grey/06 */
 
             color: #686767;
+            &.type {
+              text-decoration-line: none;
+              cursor: text;
+            }
           }
           .button {
             width: 22px;

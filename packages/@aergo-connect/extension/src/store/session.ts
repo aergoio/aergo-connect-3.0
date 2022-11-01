@@ -55,10 +55,7 @@ const storeModule: Module<SessionState, RootState> = {
 
       const balances = { aergo: aergoBalance, others: response.hits };
 
-      console.log('UPDATE BAL', balances);
-
       await commit('setTokenBalance', balances);
-      console.log('UPDATE BAL', state.tokens);
     },
 
     async initState({ state, commit }) {
@@ -78,8 +75,6 @@ const storeModule: Module<SessionState, RootState> = {
 
       const response = await resp.json();
 
-      console.log('resp', response);
-
       await commit('updateTokens', response.hits);
       await store.dispatch('session/updateBalances');
 
@@ -87,7 +82,6 @@ const storeModule: Module<SessionState, RootState> = {
       // await commit('setToken', state.tokens['AERGO']);
 
       await store.commit('accounts/setSeedPhrase', '');
-      console.log('Out tokens', state.tokens);
     },
   },
 
@@ -111,13 +105,11 @@ const storeModule: Module<SessionState, RootState> = {
     },
 
     setTokens(state, tokens: any) {
-      console.log('set tokens', tokens);
       if (tokens) state.tokens = tokens;
       else state.tokens = {};
     },
 
     updateTokens(state, balances: any) {
-      console.log('SET TOKENS Balances', state.tokens, balances);
       if (balances)
         balances.forEach((e) => {
           if (e.token.meta.image) {
@@ -141,6 +133,10 @@ const storeModule: Module<SessionState, RootState> = {
 
     setOption(state, option: string) {
       state.option = option;
+    },
+    removeToken(state, token: any) {
+      state.token = '';
+      delete state.tokens[token];
     },
   },
 };

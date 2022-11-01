@@ -29,8 +29,8 @@ export default {};
   position: absolute;
   width: 64px;
   height: 64px;
-  bottom: 50%;
-  left: 40%;
+  bottom: 45%;
+  left: 42%;
 }
 
 .lds-facebook div {

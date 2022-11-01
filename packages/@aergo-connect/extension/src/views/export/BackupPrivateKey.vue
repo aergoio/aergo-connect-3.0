@@ -23,8 +23,8 @@
           size="large"
           :to="
             $route.params.from
-              ? { name: 'account-backup-mnemonic', params: { from: $route.params.from } }
-              : { name: 'account-backup-mnemonic' }
+              ? { name: 'account-backup-encrypted', params: { from: $route.params.from } }
+              : { name: 'account-backup-encrypted' }
           "
         >
           Encrypted Private Key
@@ -37,8 +37,8 @@
           size="large"
           :to="
             $route.params.from
-              ? { name: 'account-backup-mnemonic', params: { from: $route.params.from } }
-              : { name: 'account-backup-mnemonic' }
+              ? { name: 'account-backup-keystore', params: { from: $route.params.from } }
+              : { name: 'account-backup-keystore' }
           "
         >
           Keystore File

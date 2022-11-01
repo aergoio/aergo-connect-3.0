@@ -674,7 +674,7 @@ export default Vue.extend({
     }
     .nft_info_wrapper {
       width: 350px;
-      height: 21.5rem;
+      height: 22rem;
       overflow-y: scroll;
       overflow-x: hidden;
       display: flex;

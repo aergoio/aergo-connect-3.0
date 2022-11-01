@@ -56,7 +56,9 @@ export default Vue.extend({
   // position: relative;
   // display: inline-block;
   /* cursor: pointer; */
-
+  &.icon--back {
+    line-height: 0;
+  }
   .svg {
     position: relative;
     display: inline-block;

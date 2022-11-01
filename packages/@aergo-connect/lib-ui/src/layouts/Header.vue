@@ -99,7 +99,7 @@ export default Vue.extend({
 
   .header__button {
     width: 30px;
-    height: 30px;
+    /* height: 30px; */
     position: absolute;
     top: 50%;
     transform: translate(0%, -50%);
@@ -118,7 +118,7 @@ export default Vue.extend({
       line-height: 0;
     }
     &.right {
-      top: 60%;
+      /* top: 60%; */
       right: 20px;
       display: none;
 

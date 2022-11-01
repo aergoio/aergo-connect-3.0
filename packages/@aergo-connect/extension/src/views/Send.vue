@@ -79,8 +79,8 @@
             <TextField placeholder="Type ID" v-model="inputAmount" @input="searchNFT" />
             <ul
               class="search_list_wrapper"
-              v-if="searchResult.length"
-              :style="{ height: searchListClass() }"
+              v-if="searchResult.length && searchFocus"
+              :style="{ height: searchStyle() }"
             >
               <li
                 class="search_list"
@@ -88,7 +88,6 @@
                 @click="selectNFT(item)"
                 :key="item.meta.token_id"
               >
-                <!-- <img class="img" :src="item.token.meta.image" alt="404" /> -->
                 <span class="text"> {{ `${item.meta.token_id}` }} </span>
               </li>
             </ul>
@@ -156,7 +155,6 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import { Tx } from '@herajs/client';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
-
 export default Vue.extend({
   components: {
     ScrollView,
@@ -174,7 +172,6 @@ export default Vue.extend({
     Notification,
     LoadingBar,
   },
-
   data() {
     return {
       asset: '',
@@ -194,8 +191,8 @@ export default Vue.extend({
       clipboardNotification: false,
       notEnoughBalanceNotification: false,
       searchResult: [],
+      searchFocus: true,
       isLoading: false,
-
       txBody: {
         from: this.$store.state.accounts.address,
         to: '',
@@ -205,7 +202,6 @@ export default Vue.extend({
         limit: 0,
         type: 0,
       },
-
       // for tx
       account: {},
       statusDialogVisible: false,
@@ -214,14 +210,11 @@ export default Vue.extend({
       statusText: '',
     };
   },
-
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
     console.log('Account Info', this.account);
-
     if (this.$store.state.session.token) this.asset = await this.$store.state.session.token;
     else this.asset = 'AERGO';
-
     if (
       this.$route.params.nft &&
       this.$store.state.session.tokens[this.asset].meta.type == 'ARC2'
@@ -242,7 +235,6 @@ export default Vue.extend({
       this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
       if (this.tokenType === 'ARC2') this.getNftInventory();
     },
-
     clipboardNotification(state) {
       if (state) {
         setTimeout(() => {
@@ -264,56 +256,43 @@ export default Vue.extend({
       }
     },
   },
-
   methods: {
     async selectNFT(item) {
       this.inputAmount = item.meta.token_id;
       this.searchResult = '';
     },
-
     async searchNFT(query) {
       console.log('quary', query);
       const result = [];
       this.nftInventory.forEach((item) => {
         if (item.meta.token_id.indexOf(query) != -1) result.push(item);
       });
-      this.searchResult = result.reverse();
+      this.searchResult = result;
     },
-
     async getNftInventory() {
       const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND (account:${this.$store.state.accounts.address})sort=blockno:desc&from=0&size=100`,
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}&sort=blockno:desc&from=0&size=100`,
       );
-
       const response = await resp.json();
       console.log('inventory', response.hit);
-
       if (response.error) this.nftInventory = [];
-      else this.nftInventory = response.hits;
+      else this.nftInventory = response.hits.reverse();
     },
-
     updateTx(txType, payload) {
       console.log('return option', txType, payload);
       this.txType = txType;
       this.txBody.payload = payload;
       this.optionsModal = false;
     },
-
     handleBack() {
       console.log('reviousPage', this.$store.state.session.previousPage);
-      /*
       this.$router.push({
         name: this.$store.state.session.previousPage,
-      });
-/*
-      this.$router.push({
-        name: 'accounts-list',
       });
     },
     handleOptionsModal() {
       this.optionsModal = true;
     },
-
     handleSendClick() {
       if (+this.inputAmount > +this.balance) {
         // error 출력 또는 입력 시에 확인
@@ -321,71 +300,56 @@ export default Vue.extend({
         this.notEnoughBalanceNotification = true;
         return;
       }
-
       if (this.tokenType == 'AERGO') {
         this.txBody.to = this.inputTo;
         this.txBody.amount = `${this.inputAmount} ${this.txBody.unit}`;
       } else if (this.tokenType == 'ARC1') {
         this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
-
         const amount =
           Number(this.inputAmount) *
           Math.pow(10, this.$store.state.session.tokens[this.asset].meta.decimals);
         this.txBody.payload =
           '{"Name": "transfer", "Args": ["' + this.inputTo + '", "' + amount.toString() + '", ""]}';
-
         this.txType = 'CALL';
       } else {
         // ARC2
         this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
-
         this.txBody.payload =
           '{"Name": "transfer", "Args": ["' + this.inputTo + '", "' + this.inputAmount + '"]}';
-
         this.txType = 'CALL';
       }
-
       console.log('Init txBody', this.txBody);
-
       // TODO: try catch
       if (this.txBody.payload) {
         const payload = JSON.parse(this.txBody.payload);
         this.txBody.payload = JSON.stringify(payload);
       }
-
       this.txBody.type = Tx.Type[this.txType];
       console.log('txBody', this.txBody);
-
       this.confirmationModal = true;
     },
-
     handleCancel() {
       this.confirmationModal = false;
       this.passwordModal = false;
     },
-
     handlePassword() {
       this.confirmationModal = false;
       this.passwordModal = true;
     },
-
     setStatus(state, text) {
       this.dialogState = state;
       this.statusText = text;
       this.statusDialogVisible = true;
     },
-
     async handleConfirm() {
       console.log('Sending ..', this.txBody);
       this.passwordModal = false;
-
       if (!this.txBody.from) {
         //  This shouldn't happen normally
         throw new Error('Could not load account, please reload page and try again.');
       }
-
       /*
       // HW Ledger 사용 시에 ...
       if (this.account.data.type === 'ledger') {
@@ -400,44 +364,34 @@ export default Vue.extend({
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         console.log('hash', hash);
         this.txHash = hash;
-
         this.setStatus('success', 'Done');
-
         this.isLoading = true;
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
       }
-
       this.statusDialogVisible = false;
-
       if (!this.isLoading) return;
-
       await this.$store.dispatch('accounts/updateAccount', {
         chainId: this.$store.state.accounts.network,
         address: this.$store.state.accounts.address,
       });
-
       await this.$store.commit('ui/clearInput', { key: 'send' });
       await this.$background
         .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
         .then((result) => {
           this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
         });
-
       console.log('receipt', this.txReceipt);
       await this.$store.dispatch('session/updateBalances');
-
       this.isLoading = false;
       this.sendFinishModal = true;
     },
-
     async handleSent() {
       this.balance = await this.$store.state.session.tokens[this.asset].balance;
       this.inputAmount = 0;
       this.sendFinishModal = false;
     },
-
     async signWithLedger(txBody) {
       const { tx } = await this.$background.prepareTransaction(
         txBody,
@@ -465,7 +419,6 @@ export default Vue.extend({
         }
       }
     },
-
     async sendTransaction(txBody) {
       this.setStatus('loading', 'Sending to network...');
       try {
@@ -473,7 +426,6 @@ export default Vue.extend({
           txBody,
           this.$store.state.accounts.network,
         );
-
         if ('tx' in result) {
           return result.tx.hash;
         } else {
@@ -488,15 +440,16 @@ export default Vue.extend({
       navigator.clipboard.writeText(text);
       this.clipboardNotification = true;
     },
-    searchListClass() {
-      if (this.searchResult.length === 1) {
-        return '43px';
-      } else if (this.searchResult.length === 2) {
-        return '86px';
-      } else if (this.searchResult.length === 3) {
-        return '126px';
-      } else {
-        return '172px';
+    searchStyle() {
+      switch (this.searchResult.length) {
+        case 1:
+          return '43px';
+        case 2:
+          return '86px';
+        case 3:
+          return '129px';
+        default:
+          return '172px';
       }
     },
   },
@@ -532,9 +485,7 @@ export default Vue.extend({
         font-size: 12px;
         line-height: 15px;
         letter-spacing: -0.333333px;
-
         /* Grey/06 */
-
         color: #686767;
       }
     }
@@ -544,7 +495,6 @@ export default Vue.extend({
       margin-top: 8px;
       .account_icon {
         margin-left: 38px;
-
         width: 20px;
         height: 20px;
       }
@@ -558,16 +508,13 @@ export default Vue.extend({
         font-size: 16px;
         line-height: 20px;
         letter-spacing: -0.333333px;
-
         /* Grey/07 */
-
         color: #454344;
       }
       .account_title_wrapper {
         display: flex;
         align-items: center;
         margin-left: 24px;
-
         width: 120px;
         height: 22px;
         background: #eff5f7;
@@ -586,13 +533,12 @@ export default Vue.extend({
           text-align: right;
           letter-spacing: -0.333333px;
           /* Primary/Blue01 */
-
           color: #279ecc;
         }
       }
       .account_button {
         cursor: pointer;
-        margin-left: 35px;
+        margin-left: 48px;
       }
     }
   }
@@ -605,15 +551,12 @@ export default Vue.extend({
     margin-top: 19px;
     background: #ffffff;
     /* Grey/00 */
-
     border: 1px solid #f6f6f6;
     /* 05 */
-
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     .token_icon {
       /* Grey/02 */
-
       border: 1px solid #d8d8d8;
       width: 46px;
       height: 46px;
@@ -627,22 +570,18 @@ export default Vue.extend({
       width: 141px;
       margin-left: 20px;
       /* Headline/H3 */
-
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 600;
       font-size: 20px;
       line-height: 25px;
       letter-spacing: -0.333333px;
-
       /* Grey/08 */
-
       color: #231f20;
     }
     .token_symbol {
       margin-left: 48px;
       /* Subtitle/S3 */
-
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 400;
@@ -650,22 +589,18 @@ export default Vue.extend({
       line-height: 20px;
       text-align: right;
       letter-spacing: -0.333333px;
-
       /* Grey/08 */
-
       color: #231f20;
     }
   }
   .send_form_wrapper {
     /* Primary/lightsky */
-
     background: #eff5f7;
     box-shadow: inset 0px 6px 17px -8px rgba(0, 0, 0, 0.05);
     position: absolute;
     width: 375px;
     height: 380px;
     bottom: 0px;
-
     .flex-row {
       display: flex;
       align-items: center;
@@ -689,10 +624,8 @@ export default Vue.extend({
         width: 243px;
         height: 40px;
         /* White */
-
         background: #ffffff;
         /* Primary/Blue01 */
-
         border: 1px solid #279ecc;
         border-radius: 4px;
       }
@@ -700,10 +633,8 @@ export default Vue.extend({
         padding-left: 10px;
         margin-left: 19px;
         /* White */
-
         background: #ffffff;
         /* Primary/Blue01 */
-
         border: 1px solid #279ecc;
         border-radius: 4px;
         width: 240px;
@@ -712,10 +643,8 @@ export default Vue.extend({
       .text-field {
         margin-left: 26px;
         /* White */
-
         background: #ffffff;
         /* Primary/Blue01 */
-
         border: 1px solid #279ecc;
         border-radius: 4px;
         width: 246px;
@@ -728,23 +657,22 @@ export default Vue.extend({
           margin-top: 0;
         }
         .search_list_wrapper {
+          height: 172px;
           position: absolute;
           left: 105px;
           top: 115px;
-          height: 170px;
           border-radius: 3px;
           border: 1px solid #279ecc;
           overflow-y: scroll;
           overflow-x: hidden;
           .search_list {
-            padding-left: 10px;
+            padding-left: 5px;
             display: flex;
             align-items: center;
             cursor: pointer;
-            width: 218px;
+            width: 223px;
             height: 43px;
             /* Grey/White */
-
             background: #ffffff;
             border-radius: 3px;
             .img {
@@ -753,7 +681,6 @@ export default Vue.extend({
             }
             .text {
               /* Button/Btn3 */
-
               font-family: 'Outfit';
               font-style: normal;
               font-weight: 500;
@@ -761,9 +688,7 @@ export default Vue.extend({
               line-height: 20px;
               display: flex;
               align-items: center;
-
               /* Grey/07 */
-
               color: #454344;
             }
           }
@@ -785,7 +710,6 @@ export default Vue.extend({
         line-height: 21px;
         margin-top: 20px;
         /* Primary/Blue01 */
-
         color: #279ecc;
       }
       .text_box {
@@ -797,9 +721,7 @@ export default Vue.extend({
         font-size: 14px;
         line-height: 18px;
         letter-spacing: -0.333333px;
-
         /* Grey/07 */
-
         color: #454344;
         padding-left: 10px;
         padding-right: 10px;
@@ -808,7 +730,6 @@ export default Vue.extend({
         height: 33px;
         background: #ffffff;
         /* Primary/Blue01 */
-
         border: 1px solid #279ecc;
         border-radius: 4px;
       }
@@ -823,7 +744,6 @@ footer {
   .show_option {
     margin-bottom: 20px;
     /* Subtitle/S3_line */
-
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 400;
@@ -835,7 +755,6 @@ footer {
     letter-spacing: -0.333333px;
     text-decoration-line: underline;
     /* Gradation/04 */
-
     background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

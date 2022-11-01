@@ -39,7 +39,7 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
 export const persistRoute: NavigationGuard = (to, _from, next) => {
   if (!((to.meta && to.meta.noTracking === true) || to.fullPath.match(/request/))) {
     store.commit('session/setCurrentPage', to.name);
-    store.commit('session/setPreviousPage', _from.name);
+    if (_from.name != 'lockscreen') store.commit('session/setPreviousPage', _from.name);
   }
   return next();
 };

@@ -47,14 +47,12 @@ export default Vue.extend({
   },
   methods: {
     handleCancel() {
-      console.log('cancel', '1');
       this.$emit('cancel', 'removeAccountModal');
     },
 
     async handleDeleteAccount() {
       await this.$store.dispatch('accounts/removeAccount');
       this.$router.push({ name: 'accounts-list' });
-      //      this.$emit('cancel');
     },
   },
 });

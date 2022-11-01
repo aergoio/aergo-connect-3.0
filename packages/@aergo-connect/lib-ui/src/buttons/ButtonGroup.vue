@@ -46,7 +46,7 @@ export default Vue.extend({
       flex: 1;
     }
     > * + * {
-      margin-left: 10px;
+      margin-left: 0px;
     }
   }
 }

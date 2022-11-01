@@ -18,12 +18,16 @@
     </div>
 
     <template #footer>
-      <div class="content">
-        <ButtonGroup horizontal>
-          <Button type="secondary" @click="cancel">Cancel</Button>
-          <Button type="primary" @click="confirm">Confirm</Button>
-        </ButtonGroup>
-      </div>
+      <Appear :delay="0.6">
+      <ButtonGroup>
+        <Button class="button" type="font-gradation" size="small" @click="cancel">
+          <Icon class="button-icon" /><span>Cancel</span>
+        </Button>
+        <Button class="button" type="font-gradation" size="small" @click="confirm">
+          <Icon class="button-icon" /><span>Confirm</span>
+        </Button>
+      </ButtonGroup>
+      </Appear>
       <LoadingDialog
         :visible="statusDialogVisible"
         @close="statusDialogVisible = false"
@@ -48,6 +52,7 @@ import { timedAsync } from 'timed-async/index.js';
 import { Account } from '@herajs/wallet';
 import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
+import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 
 @Component({
   components: {
@@ -60,6 +65,7 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
     Icon,
     TxConfirm,
     account: {},
+    Appear,
   },
 })
 

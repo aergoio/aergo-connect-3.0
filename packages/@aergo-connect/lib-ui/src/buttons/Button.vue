@@ -103,7 +103,7 @@ export default Vue.extend({
   box-sizing: border-box;
   min-height: 30px;
   line-height: 3em;
-  padding: 0.5em 2.5em;
+//  padding: 0.5em 2.5em;
   height: 48px;
   /* Borders and background */
   outline: none;
@@ -130,7 +130,7 @@ export default Vue.extend({
     opacity: 0.75;
   }
   &.button-size-small {
-    width: 157px;
+    width: 140px;
   }
   &.button-size-medium {
     width: 289px;

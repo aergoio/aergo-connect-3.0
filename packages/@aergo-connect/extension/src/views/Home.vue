@@ -486,7 +486,7 @@ export default Vue.extend({
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 16px;
+    margin-top: 12px;
     .token_nft_button_wrapper {
       justify-content: center;
     }

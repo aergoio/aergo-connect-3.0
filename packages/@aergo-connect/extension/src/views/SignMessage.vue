@@ -235,6 +235,7 @@ export default class RequestSign extends mixins() {
   .sign_message_text {
     width: 93px;
     margin-bottom: 10px;
+    margin-left: 7px;
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 400;
@@ -253,7 +254,7 @@ export default class RequestSign extends mixins() {
     }
     .copy_button {
       float: right;
-      width: 34px;
+      width: 36px;
       height: 19px;
       margin-top: 6px;
       margin-right: 9px;
@@ -266,9 +267,10 @@ export default class RequestSign extends mixins() {
   .sign_message_confirm {
     display: flex;
     align-items: center;
+    margin-left: 7px;
     .sign_message_hash_text {
-      margin-left: 4px;
-      margin-right: 71px;
+      margin-left: 5px;
+      margin-right: 66px;
       width: 143px;
       font-family: 'Outfit';
       font-style: normal;
@@ -284,9 +286,9 @@ export default class RequestSign extends mixins() {
       color: #686767;
     }
     .button_size {
-      margin-top: 10px;
-      width: 89px;
-      height: 30px;
+      margin-top: 6px;
+      width: 80px;
+      height: 28px;
     }
   }
 }

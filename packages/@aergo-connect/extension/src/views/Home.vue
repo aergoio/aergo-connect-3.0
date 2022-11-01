@@ -237,7 +237,6 @@ export default Vue.extend({
       this.nftCount();
     },
   },
-
   methods: {
     async changeNick() {
       this.$store.commit('accounts/setNick', this.nick);

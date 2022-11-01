@@ -1,23 +1,19 @@
 <template>
-  <ul class="nav-account-list" v-if="accounts">
+  <ul class="nav-account-list" v-if="accounts" :style="{ overflow: accountsCheck }">
     <li
       v-for="account in accounts"
       :key="account.key"
       class="nav-account-item"
       @click.capture="$emit('select', account)"
     >
-      <div
-        :class="activeAccount && $store.state.accounts.address === account.address ? 'active' : ''"
-      >
+      <div :class="$store.state.accounts.address === account.address ? 'active' : ''">
         <AccountItem :address="account.address" :nickname="account.nick" />
       </div>
     </li>
   </ul>
   <div v-else class="nav-account-list">
     <div class="nav-account-item" @click.capture="$emit('select', account)">
-      <div
-        :class="activeAccount && $store.state.accounts.address === account.address ? 'active' : ''"
-      >
+      <div :class="$store.state.accounts.address === account.address ? 'active' : ''">
         <AccountItem :address="account.address" :nickname="account.nick" />
       </div>
     </div>
@@ -126,9 +122,14 @@ export default Vue.extend({
   data() {
     return {
       activeAccount: {} as Account,
+      accountsCheck: '',
     };
   },
-
+  watch: {
+    accountsCheck() {
+      return this.accountListCheck();
+    },
+  },
   computed: {
     sortedAccounts(): any[] {
       const accounts = [...this.accounts].filter((account) => typeof account.data !== 'undefined');
@@ -190,6 +191,13 @@ export default Vue.extend({
       const added = typeof account.data.added === 'string' ? +new Date(account.data.added) : 0;
       return +new Date() - added < MaxAge;
     },
+    accountListCheck() {
+      if (this.accounts.length > 4) {
+        return 'scroll';
+      } else {
+        return 'hidden';
+      }
+    },
   },
 
   async mounted() {
@@ -214,8 +222,14 @@ export default Vue.extend({
 <style lang="scss">
 .nav-account-list {
   max-height: 160px;
-  overflow-y: scroll;
   overflow-x: hidden;
+  .nav-account-item {
+    .active {
+      .account__item {
+        background: #e3f2fd;
+      }
+    }
+  }
 }
 </style>
 

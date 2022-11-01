@@ -108,7 +108,7 @@
                 {{ `From: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
               </div>
               <div class="direction_row">
-                <div v-if="token.meta.symbol === 'aergo'" class="address">
+                <div v-if="token.meta.symbol === 'aergo'" class="address type">
                   {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}` }}
                 </div>
                 <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
@@ -749,6 +749,10 @@ export default Vue.extend({
             /* Grey/06 */
 
             color: #686767;
+            &.type {
+              cursor: text;
+              text-decoration-line: none;
+            }
           }
           .button {
             width: 22px;

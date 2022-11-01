@@ -76,7 +76,12 @@
         <div class="flex-row" v-if="tokenType == 'ARC2'">
           <div class="title">NFT ID</div>
           <div class="flex-column-searchbox">
-            <TextField placeholder="Type ID" v-model="inputAmount" @input="searchNFT" />
+            <TextField
+              placeholder="Type ID"
+              v-model="inputAmount"
+              @input="searchNFT"
+              ref="target"
+            />
             <ul
               class="search_list_wrapper"
               v-if="searchResult.length && searchFocus"
@@ -191,7 +196,7 @@ export default Vue.extend({
       clipboardNotification: false,
       notEnoughBalanceNotification: false,
       searchResult: [],
-      searchFocus: true,
+      searchFocus: false,
       isLoading: false,
       txBody: {
         from: this.$store.state.accounts.address,
@@ -222,6 +227,9 @@ export default Vue.extend({
       this.inputAmount = this.$route.params.nft;
       this.searchResult = '';
     }
+  },
+  mounted() {
+    console.log('target', this.$refs.target);
   },
   updated() {
     console.log(this.asset, 'asset');

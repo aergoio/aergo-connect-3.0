@@ -1,7 +1,7 @@
 <template>
   <ScrollView class="page">
     <Appear>
-      <Header button="back" title="Register Account" :to="{ name: 'accounts-list' }" />
+      <Header button="back" title="Register Account" @backClick="handleBack" />
       <div class="register-contents">
         <Heading class="big-title">Register an Account</Heading>
         <span class="pre-header">Import on existing accounts or create a new one.</span>
@@ -52,7 +52,6 @@ import { PersistInputsMixin } from '../store/ui';
   },
 })
 export default class Register extends mixins(PersistInputsMixin) {
-
   async handleCreate() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: 'aergo.io',
@@ -63,10 +62,16 @@ export default class Register extends mixins(PersistInputsMixin) {
     await this.$store.commit('accounts/setSeedPhrase', mnemonic);
     await this.$store.commit('accounts/setBackup', false);
     console.log(this.$store.state.accounts[this.$store.state.accounts.address]);
-    console.log("List", this.$background.getAccounts()) ;
+    console.log('List', this.$background.getAccounts());
 
     this.$router.push({
       name: 'regist-confirm',
+    });
+  }
+  handleBack() {
+    console.log('reviousPage', this.$store.state.session.previousPage);
+    this.$router.push({
+      name: this.$store.state.session.previousPage,
     });
   }
 }

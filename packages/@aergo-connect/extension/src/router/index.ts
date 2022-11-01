@@ -16,6 +16,8 @@ import Send from '../views/Send.vue';
 import Receive from '../views/Receive.vue';
 import TokenDetail from '../views/TokenDetail.vue';
 import NftDetail from '../views/NftDetail.vue';
+import Version from '../views/Version.vue';
+
 import ImportFormat from '../views/import/2-Format.vue';
 import ImportKeystore from '../views/import/3a-Keystore.vue';
 import ImportWif from '../views/import/3b-Wif.vue';
@@ -87,8 +89,9 @@ const routes: RouteConfig[] = [
       withMeta(2, { path: '/home/send', name: 'send', component: Send }),
       withMeta(2, { path: '/home/receive', name: 'receive', component: Receive }),
       withMeta(2, { path: '/home/signmessage', name: 'sign-message', component: SignMessage }),
-
       withMeta(2, { path: '/home/security', name: 'security', component: Security }),
+      withMeta(2, { path: '/home/version', name: 'version', component: Version }),
+
       withMeta(3, {
         path: '/export/BackupPrivateKey',
         name: 'account-backup',

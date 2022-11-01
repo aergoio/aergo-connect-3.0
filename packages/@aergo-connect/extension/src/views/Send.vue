@@ -184,7 +184,7 @@ export default Vue.extend({
       balance: 0,
       tokenType: '',
       symbol: '',
-      inputAmount: '',
+      inputAmount: '0',
       inputTo: '',
       fee: '',
       txType: 'TRANSFER',

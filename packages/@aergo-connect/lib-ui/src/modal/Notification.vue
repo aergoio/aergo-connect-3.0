@@ -43,6 +43,9 @@ export default Vue.extend({
   justify-content: center;
   text-align: center;
   height: 30px;
+  .icon {
+    padding-top: 10px;
+  }
   .alert-text {
     color: #279ecc;
     margin-right: 5px;

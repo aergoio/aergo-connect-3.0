@@ -118,12 +118,7 @@
       <p v-else class="error">{{ statusText }}</p>
     </LoadingDialog>
     <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
-    <Notification
-      v-if="notEnoughBalanceNotification"
-      :title="`Not Enough Balance!`"
-      :icon="`warning2`"
-      :size="`250`"
-    />
+    <Notification v-if="notification" :title="notificationText" :icon="`warning2`" :size="250" />
     <template v-if="!isLoading" #footer>
       <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
         Show optional fields
@@ -194,7 +189,8 @@ export default Vue.extend({
       sendFinishModal: false,
       passwordModal: false,
       clipboardNotification: false,
-      notEnoughBalanceNotification: false,
+      notification: false,
+      notificationText: '',
       searchResult: [],
       searchFocus: false,
       isLoading: false,
@@ -217,7 +213,6 @@ export default Vue.extend({
   },
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
-    console.log('Account Info', this.account);
     if (this.$store.state.session.token) this.asset = await this.$store.state.session.token;
     else this.asset = 'AERGO';
     if (
@@ -227,12 +222,6 @@ export default Vue.extend({
       this.inputAmount = this.$route.params.nft;
       this.searchResult = '';
     }
-  },
-  mounted() {
-    console.log('target', this.$refs.target);
-  },
-  updated() {
-    console.log(this.asset, 'asset');
   },
   watch: {
     asset: function () {
@@ -253,10 +242,10 @@ export default Vue.extend({
         }, 2000);
       }
     },
-    notEnoughBalanceNotification(state) {
+    notification(state) {
       if (state) {
         setTimeout(() => {
-          const time = (this.notEnoughBalanceNotification = !state);
+          const time = (this.notification = !state);
           return () => {
             clearTimeout(time);
           };
@@ -304,7 +293,15 @@ export default Vue.extend({
       if (+this.inputAmount > +this.balance) {
         // error 출력 또는 입력 시에 확인
         console.log('insufficent');
-        this.notEnoughBalanceNotification = true;
+        this.notification = true;
+        this.notificationText = 'Not Enough Balance!';
+        return;
+      }
+      const numbers = /^[0-9]+$/;
+      if (!numbers.test(this.inputAmount)) {
+        console.log('need number');
+        this.notification = true;
+        this.notificationText = 'Input Number of Amount';
         return;
       }
       if (this.tokenType == 'AERGO') {
@@ -365,6 +362,7 @@ export default Vue.extend({
 */
       // send
       try {
+        console.log(this.inputAmount, 'inputAmount!!!!!!2');
         console.log('account', this.account);
         console.log('network', this.$store.state.accounts.network);
         console.log('txBody', this.txBody);

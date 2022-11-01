@@ -72,7 +72,7 @@ export default class Lockscreen extends mixins() {
       console.log('Saved nextPage', nextPage);
 
       if (nextPage) {
-        await this.$store.dispatch('session/initState') ;
+        if (this.$store.state.accounts.address) await this.$store.dispatch('session/initState') ;
       } else {
         nextPage = 'accounts-list' ; 
       } ;

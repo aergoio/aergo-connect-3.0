@@ -83,10 +83,11 @@ const storeModule: Module<AccountsState, RootState> = {
     },
 
     async removeAccount({ state, commit }, address: string) {
-      console.log(address);
+
       const vue = getVueInstance(this);
       await vue.$background.removeAccount({ address: state.address, chainId: 'aergo.io' });
       commit('removeAccount');
+
       const accounts = await vue.$background.getAccounts();
       if (accounts.length !== 0) commit('setActiveAccount', accounts[0]?.data.spec.address);
       else commit('setActiveAccount', '');
@@ -107,8 +108,6 @@ const storeModule: Module<AccountsState, RootState> = {
 
       tokens[token.hash] = token;
       commit('setTokens', tokens);
-      //      store.dispatch('session/initState') ;
-
       console.log('Add tokens', tokens);
     },
 
@@ -124,6 +123,7 @@ const storeModule: Module<AccountsState, RootState> = {
 
   mutations: {
     setActiveAccount(state, address: string) {
+
       if (!address) {
         state.address = '';
         state.nick = '';

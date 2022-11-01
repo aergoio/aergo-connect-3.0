@@ -52,9 +52,11 @@ export default Vue.extend({
     $route(to: RouteConfig, from: RouteConfig): void {
       let transitionName =
         from.meta.transitionName || to.meta.transitionName || this.defaultTransition;
+
       if (from.meta.transitionName === 'fade' || to.meta.transitionName === 'fade') {
         // If one of them is fade, always use that
         transitionName = 'fade';
+
       } else {
         const indexDiff = from.meta.index && to.meta.index && from.meta.index - to.meta.index;
         console.log('f', from.meta.index, from.name);
@@ -64,9 +66,7 @@ export default Vue.extend({
 
       this.transitionName = transitionName;
       this.transitionEnterActiveClass = `${transitionName}-enter-active`;
-
       this.transitionMode = transitionName === 'fade' ? 'out-in' : '';
-      //      if (to.name !== 'lockscreen') this.$store.commit('session/setCurrentPage',to.name) ;
     },
   },
 

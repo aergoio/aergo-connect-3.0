@@ -62,84 +62,65 @@ function withMeta(index: number | undefined, route: RouteConfig, flags: R = R.No
 
 const routes: RouteConfig[] = [
   { path: '/', redirect: '/accounts' },
-  {
-    path: '/accounts',
+  { path: '/accounts',
     component: AccountsContainer,
     children: [
       { path: '', redirect: '/home' },
 
-      withMeta(0, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
-      withMeta(
-        3,
-        { path: '/password', name: 'password', component: Password },
-        R.NoAuthCheck | R.NoTracking,
+      withMeta(1, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
+      withMeta(3, { path: '/register', name: 'register', component: Register }),
+      withMeta(6, { path: '/register/confirm', name: 'regist-confirm', component: RegistConfirm }),
+      withMeta(1, { path: '/locked', name: 'lockscreen', component: Lockscreen }, R.NoAuthCheck | R.NoTracking,
       ),
-      withMeta(4, { path: '/register', name: 'register', component: Register }),
-      withMeta(5, { path: '/register/confirm', name: 'regist-confirm', component: RegistConfirm }),
-      withMeta(
-        0,
-        { path: '/locked', name: 'lockscreen', component: Lockscreen },
-        R.NoAuthCheck | R.NoTracking,
-      ),
+      withMeta(2, { path: '/home', name: 'accounts-list', component: Home }),
+      withMeta(3, { path: '/home/tokendetail', name: 'token-detail', component: TokenDetail }),
+      withMeta(3, { path: '/home/nftdetail', name: 'nft-detail', component: NftDetail }),
+      withMeta(4, { path: '/home/importasset', name: 'import-asset', component: ImportAsset }),
+      withMeta(4, { path: '/home/send', name: 'send', component: Send }),
+      withMeta(3, { path: '/home/receive', name: 'receive', component: Receive }),
+      withMeta(3, { path: '/home/signmessage', name: 'sign-message', component: SignMessage }),
+      withMeta(3, { path: '/home/version', name: 'version', component: Version }),
+      withMeta(3, { path: '/home/security', name: 'security', component: Security }),
 
-      withMeta(1, { path: '/home', name: 'accounts-list', component: Home }),
-      withMeta(2, { path: '/home/tokendetail', name: 'token-detail', component: TokenDetail }),
-      withMeta(2, { path: '/home/nftdetail', name: 'nft-detail', component: NftDetail }),
-      withMeta(2, { path: '/home/importasset', name: 'import-asset', component: ImportAsset }),
-      withMeta(3, { path: '/home/send', name: 'send', component: Send }),
-      withMeta(2, { path: '/home/receive', name: 'receive', component: Receive }),
-      withMeta(2, { path: '/home/signmessage', name: 'sign-message', component: SignMessage }),
-      withMeta(2, { path: '/home/security', name: 'security', component: Security }),
-      withMeta(2, { path: '/home/version', name: 'version', component: Version }),
-
-      withMeta(3, {
-        path: '/export/BackupPrivateKey',
-        name: 'account-backup',
-        component: BackupPrivateKey,
+      withMeta(4, { path: '/password', name: 'password', component: Password }, R.NoAuthCheck | R.NoTracking,),
+      withMeta(4, { path: '/export/BackupPrivateKey', name: 'account-backup', component: BackupPrivateKey,
       }),
-      withMeta(4, {
+      withMeta(5, {
         path: '/export/MnemonicSeedPhrase ',
         name: 'account-backup-mnemonic',
         component: MnemonicSeedPhrase,
       }),
-      withMeta(4, { path: '/export/wif ', name: 'account-backup-encrypted', component: ExportWif }),
-      withMeta(4, {
+      withMeta(5, { path: '/export/wif ', name: 'account-backup-encrypted', component: ExportWif }),
+      withMeta(5, {
         path: '/export/keystore ',
         name: 'account-backup-keystore',
         component: Keystore,
       }),
 
-      withMeta(2, { path: '/import/format', name: 'account-import', component: ImportFormat }),
-      withMeta(3, {
-        path: '/import/keystore',
-        name: 'account-import-keystore',
-        component: ImportKeystore,
-      }),
-      withMeta(3, { path: '/import/wif', name: 'account-import-wif', component: ImportWif }),
-      withMeta(3, {
-        path: '/import/seedphrase',
-        name: 'account-import-seedphrase',
-        component: ImportSeedphrase,
+
+      withMeta(4, { path: '/import/format', name: 'account-import', component: ImportFormat }),
+      withMeta(5, { path: '/import/keystore', name: 'account-import-keystore', component: ImportKeystore, }),
+      withMeta(5, { path: '/import/wif', name: 'account-import-wif', component: ImportWif }),
+      withMeta(5, { path: '/import/seedphrase', name: 'account-import-seedphrase', component: ImportSeedphrase,
       }),
 
-      withMeta(2, { path: '/connect-hw', name: 'account-connect-hw', component: ConnectHw }),
-      withMeta(3, {
+      withMeta(4, { path: '/connect-hw', name: 'account-connect-hw', component: ConnectHw }),
+      withMeta(5, {
         path: '/connect-hw/accounts',
         name: 'account-connect-hw-accounts',
         component: ConnectHwAccounts,
       }),
-      withMeta(
-        4,
+      withMeta( 5,
         { path: 'networks', name: 'networks-list', component: NetworksList },
         R.NoTracking,
       ),
       withMeta(
-        5,
+        6,
         { path: 'networks/create', name: 'networks-create', component: NetworksUpdate },
         R.NoTracking,
       ),
       withMeta(
-        5,
+        6,
         { path: 'networks', name: 'networks-update', component: NetworksUpdate },
         R.NoTracking,
       ),
@@ -187,6 +168,7 @@ const routes: RouteConfig[] = [
 ];
 
 Vue.use(VueRouter);
+
 const router = new VueRouter({
   routes,
 });

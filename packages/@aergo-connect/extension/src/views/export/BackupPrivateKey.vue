@@ -1,13 +1,17 @@
 <template>
   <div :visible="visible" title="Export Account" @close="$emit('close')">
-    <Header button="back" title="Backup Private Key" :to="{name: 'accounts-list' }" />
+    <Header button="back" title="Backup Private Key" @backClick="handleBack" />
     <section class="exportAccountDialog-contents">
       <div class="btn-p-wrapper">
         <Button
           type="gradation"
           size="large"
           :disabled="!$store.state.accounts.lastSeedPhrase"
-          :to="{ name: 'account-backup-mnemonic', params: { next: 'account-backup-mnemonic' } }"
+          :to="
+            $route.params.from
+              ? { name: 'account-backup-mnemonic', params: { from: $route.params.from } }
+              : { name: 'account-backup-mnemonic' }
+          "
         >
           Mnemonic Seed Phrase
         </Button>
@@ -17,7 +21,11 @@
         <Button
           type="gradation"
           size="large"
-          :to="{ name: 'account-backup-encrypted', params: { next: 'account-backup-encrypted' } }"
+          :to="
+            $route.params.from
+              ? { name: 'account-backup-encrypted', params: { from: $route.params.from } }
+              : { name: 'account-backup-encrypted' }
+          "
         >
           Encrypted Private Key
         </Button>
@@ -27,7 +35,11 @@
         <Button
           type="gradation"
           size="large"
-          :to="{ name: 'account-backup-keystore', params: { next: 'account-backup-keystore' } }"
+          :to="
+            $route.params.from
+              ? { name: 'account-backup-keystore', params: { from: $route.params.from } }
+              : { name: 'account-backup-keystore' }
+          "
         >
           Keystore File
         </Button>
@@ -53,11 +65,24 @@ export default Vue.extend({
   props: {
     visible: { type: Boolean, default: false },
   },
-
-  beforeMount() {
-    console.log("back", this.$route.params.back) ;
+  mounted() {
+    console.log(this.$route.params);
   },
-
+  methods: {
+    handleBack() {
+      if (this.$route.params.from === 'register') {
+        this.$router.push({ name: 'accounts-list' });
+      } else {
+        this.$router.push({ name: 'security' });
+      }
+      // if (
+      //   this.$store.state.session.previousPage === 'account-backup-mnemonic' ||
+      //   this.$store.state.session.previousPage === 'account-backup-keystore' ||
+      //   this.$store.state.session.previousPage === 'account-backup-encrypted'
+      // ) {
+      // }
+    },
+  },
 });
 </script>
 

@@ -69,10 +69,7 @@ export default class Register extends mixins(PersistInputsMixin) {
     });
   }
   handleBack() {
-    console.log('reviousPage', this.$store.state.session.previousPage);
-    this.$router.push({
-      name: this.$store.state.session.previousPage,
-    });
+    this.$router.push({ name: 'accounts-list' });
   }
 }
 </script>

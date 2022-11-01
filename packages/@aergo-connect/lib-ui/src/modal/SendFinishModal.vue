@@ -66,14 +66,13 @@
 </template>
 
 <script>
-
 import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import ButtonGroup from '../buttons/ButtonGroup.vue';
 import Button from '../buttons/Button.vue';
 
 export default Vue.extend({
-  components: { Icon, Button, ButtonGroup  },
+  components: { Icon, Button, ButtonGroup },
 
   props: {
     asset: String,
@@ -87,7 +86,7 @@ export default Vue.extend({
 
   data() {
     return {
-      balance: this.$store.state.session.tokens[this.asset].balance, 
+      balance: this.$store.state.session.tokens[this.asset].balance,
     };
   },
 
@@ -107,7 +106,7 @@ export default Vue.extend({
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   z-index: 2;
   .sendfinish_modal_wrapper {
     position: absolute;

@@ -160,7 +160,7 @@ export default Vue.extend({
 
     height: 546px;
     box-sizing: border-box;
-    width: 270px;
+    width: 262px;
     background: #ffffff;
     box-shadow: 3px 0px 18px rgb(0 0 0 / 15%);
     display: flex;

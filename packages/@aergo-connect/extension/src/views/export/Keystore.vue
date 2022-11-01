@@ -1,26 +1,38 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" title="Keystore FIle" :to="{ name: 'account-backup' }" />
+    <Header
+      button="back"
+      title="Keystore FIle"
+      :to="
+        $route.params.from
+          ? { name: 'account-backup', params: { from: $route.params.from } }
+          : { name: 'account-backup' }
+      "
+    />
     <ConfirmModal v-if="modal" :title="modalTitle" to="account-backup" />
-    <div class="content" style="padding-bottom: 0">
+    <div class="backup_content">
       <p class="text">Choose a passphrase to encrypt your keystore file.</p>
-      <p class="title">Passphrase</p>
-      <PasswordStrengthField
-        class="password"
-        v-model="password"
-        @submit="createKeystore"
-        autofocus
-      />
-      {{ errors.password }}
+      <div>
+        <p class="title">Passphrase</p>
+        <PasswordStrengthField
+          class="password"
+          v-model="password"
+          @submit="createKeystore"
+          autofocus
+        />
+        {{ errors.password }}
+      </div>
       <div class="warningbox_wrapper">
         <WarningInBox
           error="Never disclose this passphrase and keyfile. Anyone with your private key can fully control
             your account."
         />
       </div>
-      <p class="title">Keyfile Name</p>
-      <div class="keystorefile_wrapper">
-        <p class="text">{{ fileName }}.txt</p>
+      <div>
+        <p class="title">Keyfile Name</p>
+        <div class="keystorefile_wrapper">
+          <p class="text">{{ fileName }}</p>
+        </div>
       </div>
     </div>
     <template #footer>
@@ -123,9 +135,13 @@ export default class AccountExportKeystore extends Vue {
 </script>
 
 <style lang="scss">
-.content {
+.backup_content {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   .text {
-    margin: 32px 24px 36px 0;
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 400;
@@ -139,11 +155,10 @@ export default class AccountExportKeystore extends Vue {
     margin: 0 0 10px 0;
   }
   .password {
-    margin-right: 24px;
   }
 
   .warningbox_wrapper {
-    margin: 16px 0 34px 0;
+    margin-bottom: 10px;
     .warningInBox-wrapper {
       margin-left: 0;
     }

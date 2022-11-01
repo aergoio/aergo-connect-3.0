@@ -74,7 +74,7 @@ const routes: RouteConfig[] = [
         { path: '/password', name: 'password', component: Password },
         R.NoAuthCheck | R.NoTracking,
       ),
-      withMeta(1, { path: '/register', name: 'register', component: Register }),
+      withMeta(4, { path: '/register', name: 'register', component: Register }),
       withMeta(5, { path: '/register/confirm', name: 'regist-confirm', component: RegistConfirm }),
       withMeta(
         0,
@@ -102,7 +102,7 @@ const routes: RouteConfig[] = [
         name: 'account-backup-mnemonic',
         component: MnemonicSeedPhrase,
       }),
-      withMeta(4, { path: '/export/Wif ', name: 'account-backup-encrypted', component: ExportWif }),
+      withMeta(4, { path: '/export/wif ', name: 'account-backup-encrypted', component: ExportWif }),
       withMeta(4, {
         path: '/export/keystore ',
         name: 'account-backup-keystore',

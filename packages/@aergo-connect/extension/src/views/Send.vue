@@ -293,7 +293,6 @@ export default Vue.extend({
       this.optionsModal = false;
     },
     handleBack() {
-      console.log('reviousPage', this.$store.state.session.previousPage);
       this.$router.push({
         name: this.$store.state.session.previousPage,
       });

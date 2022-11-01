@@ -117,21 +117,23 @@
             @click="handleNft(token)"
           >
             <div v-if="token.meta.type === 'ARC2'" class="token_list_wrapper">
-              <img
-                v-if="token.meta.image"
-                class="token_list_icon"
-                :src="token.meta.image"
-                alt="404"
-              />
-              <Icon v-else class="token_list_icon" :name="`defaultToken`" />
-              <span class="token_list_text"> {{ token.meta.name }} </span>
+              <div class="token_list_row">
+                <img
+                  v-if="token.meta.image"
+                  class="token_list_icon"
+                  :src="token.meta.image"
+                  alt="404"
+                />
+                <Icon v-else class="token_list_icon" :name="`defaultToken`" />
+                <span class="token_list_text"> {{ token.meta.name }} </span>
+              </div>
               <div class="token_list_amount">
                 <span class="token_list_balance">{{ token.balance }}</span>
                 <span> EA </span>
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
-              <div class="line" />
             </div>
+            <div class="line" />
           </li>
           <div v-if="nftCountNum === 0" class="nftNothing">
             <Icon :name="`nothing`" />
@@ -529,46 +531,47 @@ export default Vue.extend({
       .token_list_li {
         cursor: pointer;
         width: 290px;
-      }
-      .token_list_wrapper {
-        height: 62px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        .token_list_row {
+        .token_list_wrapper {
+          height: 62px;
           display: flex;
+          justify-content: space-between;
           align-items: center;
-        }
-        .token_list_icon {
-          width: 46px;
-          height: 46px;
-          border-radius: 50%;
-          border: 1px solid #f0f0f0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .token_list_amount {
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          .token_list_balance {
-            margin-right: 4px;
+          .token_list_row {
+            display: flex;
+            align-items: center;
           }
-          .token_list_symbol {
+          .token_list_icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          .token_list_amount {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            .token_list_balance {
+              margin-right: 4px;
+            }
+            .token_list_symbol {
+              width: max-content;
+            }
+          }
+          .token_list_text {
+            margin-left: 18px;
+          }
+          .token_list_balance {
             width: max-content;
           }
-        }
-        .token_list_text {
-          margin-left: 18px;
-        }
-        .token_list_balance {
-          width: max-content;
-        }
-        .token_list_nextbutton {
-          margin-left: 10px;
+          .token_list_nextbutton {
+            margin-left: 10px;
+          }
         }
       }
+
       .line {
         /* Grey/01 */
         height: 1px;

@@ -266,7 +266,7 @@ export default Vue.extend({
     },
 
     getBalance(value: number) {
-      return value / Math.pow(10, this.token.meta.decimals);
+      return (value / Math.pow(10, this.token.meta.decimals)).toFixed(3);
     },
 
     getTitle() {

@@ -62,11 +62,11 @@
 
         <div v-if="tokenType !== 'ARC2'">
           <span class="token_amount">{{ Number(balance).toFixed(3) }}</span>
-          <span> {{ symbol }}</span>
+          <span class="token_symbol"> {{ symbol }}</span>
         </div>
         <div v-else >
           <span class="token_amount">{{ balance }}</span>
-          <span> EA </span>
+          <span class="token_symbol"> EA </span>
         </div>
 
       </div>

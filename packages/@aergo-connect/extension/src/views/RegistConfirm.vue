@@ -71,7 +71,7 @@ export default class RegistConfirm extends mixins() {
   }
   async goBackup() {
     this.$store.commit('accounts/setNick', this.nick);
-    this.$router.push({ name: 'account-backup' });
+    this.$router.push({ name: 'account-backup', params: { from: 'register' } });
   }
 
   handleEdit() {

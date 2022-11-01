@@ -1,6 +1,14 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" title="Mnemonic Seed Phrase" :to="{ name: 'account-backup' }" />
+    <Header
+      button="back"
+      title="Mnemonic Seed Phrase"
+      :to="
+        $route.params.from
+          ? { name: 'account-backup', params: { from: $route.params.from } }
+          : { name: 'account-backup' }
+      "
+    />
     <div class="backup-mnemonic-content">
       <p class="note">
         For safe backup, write this recovery phrase on a piece of paper or copy it and save it.

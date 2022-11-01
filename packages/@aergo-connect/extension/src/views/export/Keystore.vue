@@ -1,6 +1,14 @@
 <template>
   <ScrollView class="page">
-    <Header button="back" title="Keystore FIle" :to="{ name: 'account-backup' }" />
+    <Header
+      button="back"
+      title="Keystore FIle"
+      :to="
+        $route.params.from
+          ? { name: 'account-backup', params: { from: $route.params.from } }
+          : { name: 'account-backup' }
+      "
+    />
     <ConfirmModal v-if="modal" :title="modalTitle" to="account-backup" />
     <div class="content" style="padding-bottom: 0">
       <p class="text">Choose a passphrase to encrypt your keystore file.</p>

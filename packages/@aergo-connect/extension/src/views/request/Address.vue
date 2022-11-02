@@ -1,48 +1,50 @@
 <template>
   <ScrollView class="page">
-    <Header
-      :title="$store.state.accounts.network"
-      network
-    />
+    <!-- <Header :title="$store.state.accounts.network" network /> -->
+    <div class="account_info_wrapper">
+      <Identicon :text="$store.state.accounts.address" class="account_info_img" />
+      <div class="account_info_content_wrapper">
+        <div class="account_info_nickname_wrapper">
+          <div class="account_info_nickname_text">
+            {{ $store.state.accounts.nick }}
+          </div>
+          <div class="account_info_network_wrapper">
+            <div class="account_info_network_circle" />
+            <div class="account_info_network">
+              {{ $store.state.accounts.network }}
+            </div>
+          </div>
+        </div>
+        <div class="account_info_address_wrapper" @click="handleDetailAddress">
+          <span class="account_info_address_text">{{
+            `${$store.state.accounts.address.slice(0, 15)}...${$store.state.accounts.address.slice(
+              -5,
+            )}`
+          }}</span>
+        </div>
+      </div>
+    </div>
     <div class="request_content">
       <div class="icon-header">
         <Icon :name="`title-request`" :size="36" />
+        <div class="title">Access public address</div>
       </div>
-      <div class="title">Access public address</div>
       <div class="description">
-        The website at {{ request.origin }} wants to receive your active account's public address and chain ID.
-      </div>
-      <div class="account_info_wrapper">
-        <Identicon :text="$store.state.accounts.address" class="account_info_img" />
-        <div class="account_info_content_wrapper">
-          <div class="account_info_nickname_wrapper">
-            <div class="account_info_nickname_text">
-              {{ $store.state.accounts.nick }}
-            </div>
-          </div>
-          <div class="account_info_address_wrapper" @click="handleDetailAddress">
-            <span class="account_info_address_text">{{
-              `${$store.state.accounts.address.slice(
-                0,
-                15,
-              )}...${$store.state.accounts.address.slice(-5)}`
-            }}</span>
-            <Icon class="account_info_address_button" :name="`next`" :size="50" />
-          </div>
-        </div>
+        The website at {{ request.origin }} wants to receive your active account's public address
+        and chain ID.
       </div>
     </div>
 
     <template #footer>
       <Appear :delay="0.6">
-      <ButtonGroup>
-        <Button class="button" type="font-gradation" size="small" @click="cancel">
-          <Icon class="button-icon" /><span>Cancel</span>
-        </Button>
-        <Button class="button" type="font-gradation" size="small" @click="confirm">
-          <Icon class="button-icon" /><span>Confirm</span>
-        </Button>
-      </ButtonGroup>
+        <ButtonGroup>
+          <Button class="button" type="font-gradation" size="small" @click="cancel">
+            <Icon class="button-icon" /><span>Cancel</span>
+          </Button>
+          <Button class="button" type="font-gradation" size="small" @click="confirm">
+            <Icon class="button-icon" /><span>Confirm</span>
+          </Button>
+        </ButtonGroup>
       </Appear>
       <LoadingDialog
         :visible="statusDialogVisible"
@@ -84,7 +86,7 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 export default class RequestAddress extends mixins(RequestMixin) {
   async confirmHandler() {
     const address = this.$store.state.accounts.address;
-    let chainId = '' ;
+    let chainId = '';
     if (this.$store.state.accounts.network === 'mainnet') chainId = 'aergo.io';
     else chainId = `${this.$store.state.accounts.network}.aergo.io`;
     return {
@@ -103,7 +105,13 @@ export default class RequestAddress extends mixins(RequestMixin) {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  .icon-header {
+    display: flex;
+    align-items: center;
+  }
   .title {
+    margin-top: 8px;
+    margin-left: 10px;
     /* Headline/H3 */
     font-family: 'Outfit';
     font-style: normal;
@@ -118,9 +126,6 @@ export default class RequestAddress extends mixins(RequestMixin) {
     color: #231f20;
   }
   .description {
-    width: 300px;
-    margin-top: 5px;
-    margin-bottom: 10px;
     margin-left: 24px;
     margin-right: 24px;
     /* Subtitle/S3 */
@@ -128,7 +133,7 @@ export default class RequestAddress extends mixins(RequestMixin) {
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 18px;
     letter-spacing: -0.333333px;
 
@@ -136,83 +141,103 @@ export default class RequestAddress extends mixins(RequestMixin) {
 
     color: #686767;
   }
-  .account_info_wrapper {
+}
+.account_info_wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  width: 375px;
+  height: 104px;
+  background: #ffffff;
+  border: 1px solid #f6f6f6;
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+
+  .account_info_img {
+    width: 56px;
+    height: 56px;
     display: flex;
-    flex-direction: row;
-    justify-content: center;
     align-items: center;
-    box-sizing: border-box;
-    width: 300px;
-    height: 104px;
-    background: #ffffff;
-    border: 1px solid #f6f6f6;
-    box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    border: 2px solid transparent;
     border-radius: 8px;
-    margin-top: 10px;
-    .account_info_img {
-      width: 56px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid transparent;
-      border-radius: 8px;
-      background-image: linear-gradient(#fff, #fff), linear-gradient(to right, #279ecc, #a13e99);
-      background-origin: border-box;
-      background-clip: content-box, border-box;
-      svg {
-        width: 44px;
-        height: 44px;
-      }
+    background-image: linear-gradient(#fff, #fff), linear-gradient(to right, #279ecc, #a13e99);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    svg {
+      width: 44px;
+      height: 44px;
     }
-    .account_info_content_wrapper {
+  }
+  .account_info_content_wrapper {
+    display: flex;
+    flex-direction: column;
+    .account_info_nickname_wrapper {
       display: flex;
-      flex-direction: column;
-      .account_info_nickname_wrapper {
+      justify-content: space-between;
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 24px;
+      margin-bottom: 8px;
+      margin-left: 25px;
+      width: 191px;
+      .account_info_network_wrapper {
         display: flex;
-        justify-content: space-between;
-        font-family: 'Outfit';
-        font-style: normal;
-        font-weight: 500;
-        font-size: 18px;
-        line-height: 24px;
-        margin-bottom: 8px;
-        margin-left: 25px;
-        width: 191px;
-        .account_info_nickname_text {
+        align-items: center;
+        .account_info_network_circle {
+          background: #e4097d;
+          width: 6px;
+          height: 6px;
           margin-right: 5px;
+          border-radius: 50%;
         }
-        .account_info_nickname_input {
-        }
-        .account_info_nickname_button {
-          cursor: pointer;
-        }
-      }
-      .account_info_address_wrapper {
-        cursor: pointer;
-        width: 191px;
-        height: 24px;
-        background: #ecf8fd;
-        border-radius: 25px;
-        color: #279ecc;
-        margin-left: 25px;
-        .account_info_address_text {
+        .account_info_network {
           font-family: 'Outfit';
           font-style: normal;
           font-weight: 300;
-          font-size: 12px;
-          line-height: 15px;
-          /* identical to box height */
+          font-size: 15px;
+          line-height: 19px;
+          text-align: center;
           letter-spacing: -0.333333px;
-          width: 148.32px;
-          height: 16px;
-          margin-left: 7.9px;
+          color: #686767;
         }
-        .account_info_address_button {
-          float: right;
-          margin-right: 7.33px;
-          cursor: pointer;
-        }
+      }
+      .account_info_nickname_text {
+        margin-right: 5px;
+      }
+      .account_info_nickname_input {
+      }
+      .account_info_nickname_button {
+        cursor: pointer;
+      }
+    }
+    .account_info_address_wrapper {
+      width: 160px;
+      height: 24px;
+      background: #ecf8fd;
+      border-radius: 25px;
+      color: #279ecc;
+      margin-left: 25px;
+      .account_info_address_text {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 300;
+        font-size: 12px;
+        line-height: 15px;
+        /* identical to box height */
+        letter-spacing: -0.333333px;
+        width: 148.32px;
+        height: 16px;
+        margin-left: 7.9px;
+      }
+      .account_info_address_button {
+        float: right;
+        margin-right: 7.33px;
+        cursor: pointer;
       }
     }
   }

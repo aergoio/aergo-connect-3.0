@@ -41,7 +41,13 @@
         </div>
         <div class="account_wrapper">
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
-          <div class="account_title">{{ $store.state.accounts.nick }}</div>
+          <div class="account_title">
+            {{
+              $store.state.accounts.nick.length > 17
+                ? `${$store.state.accounts.nick.slice(0, 17)}...`
+                : $store.state.accounts.nick
+            }}
+          </div>
           <div class="account_title_wrapper">
             <div class="account" @click="copyToClipboard($store.state.accounts.address)">
               {{
@@ -60,15 +66,14 @@
         <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" />
         <img v-else class="token_icon" :src="icon" />
 
-        <div v-if="tokenType !== 'ARC2'">
+        <div v-if="tokenType !== 'ARC2'" class="amount_wrapper">
           <span class="token_amount">{{ Number(balance).toFixed(3) }}</span>
           <span class="token_symbol"> {{ symbol }}</span>
         </div>
-        <div v-else >
+        <div v-else class="amount_wrapper">
           <span class="token_amount">{{ balance }}</span>
           <span class="token_symbol"> EA </span>
         </div>
-
       </div>
       <div v-if="!isLoading" class="send_form_wrapper">
         <div class="flex-row">
@@ -89,7 +94,7 @@
               @input="searchNFT"
               ref="target"
             />
-<!--
+            <!--
             <ul
               class="search_list_wrapper"
               v-if="searchResult.length && searchFocus"
@@ -132,12 +137,7 @@
       <p v-else class="error">{{ statusText }}</p>
     </LoadingDialog>
     <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
-    <Notification
-      v-if="notEnoughBalanceNotification"
-      :title="`Not Enough Balance!`"
-      :icon="`warning2`"
-      :size="`250`"
-    />
+    <Notification v-if="notification" :title="notificationText" :icon="`warning2`" :size="250" />
     <template v-if="!isLoading" #footer>
       <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
         Show optional fields
@@ -174,6 +174,7 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import { Tx } from '@herajs/client';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
+
 export default Vue.extend({
   components: {
     ScrollView,
@@ -208,9 +209,10 @@ export default Vue.extend({
       sendFinishModal: false,
       passwordModal: false,
       clipboardNotification: false,
-      notEnoughBalanceNotification: false,
+      notification: false,
+      notificationText: '',
       searchResult: [],
-//      searchFocus: false,
+      //      searchFocus: false,
       isLoading: false,
       txBody: {
         from: this.$store.state.accounts.address,
@@ -231,7 +233,6 @@ export default Vue.extend({
   },
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
-    console.log('Account Info', this.account);
     if (this.$store.state.session.token) this.asset = await this.$store.state.session.token;
     else this.asset = 'AERGO';
 
@@ -243,15 +244,9 @@ export default Vue.extend({
       this.searchResult = '';
     }
   },
-  mounted() {
-    console.log('target', this.$refs.target);
-  },
-  updated() {
-    console.log(this.asset, 'asset');
-  },
   watch: {
     asset: function () {
-      this.setParams() ;
+      this.setParams();
       if (this.tokenType === 'ARC2') this.getNftInventory();
     },
     clipboardNotification(state) {
@@ -264,10 +259,10 @@ export default Vue.extend({
         }, 2000);
       }
     },
-    notEnoughBalanceNotification(state) {
+    notification(state) {
       if (state) {
         setTimeout(() => {
-          const time = (this.notEnoughBalanceNotification = !state);
+          const time = (this.notification = !state);
           return () => {
             clearTimeout(time);
           };
@@ -276,27 +271,24 @@ export default Vue.extend({
     },
   },
   methods: {
-   async setParams () {
+    async setParams() {
       this.balance = this.$store.state.session.tokens[this.asset]['balance'];
       this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
       this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
       this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
       this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
-      console.log('symbol', this.symbol) ;
+      console.log('symbol', this.symbol);
     },
     async selectNFT(item) {
       this.inputAmount = item.meta.token_id;
       this.searchResult = '';
     },
     async searchNFT(query) {
-      console.log('quary', query);
       const result = [];
-      
-      console.log('inventory', this.nftInventory);
+
       this.nftInventory.forEach((item) => {
         if (item.meta.token_id.indexOf(query) != -1) result.push(item);
       });
-      console.log('result', result) ;
       this.searchResult = result;
     },
 
@@ -305,13 +297,11 @@ export default Vue.extend({
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}&sort=blockno:desc&from=0&size=100`,
       );
       const response = await resp.json();
-      console.log('inventory', response.hits);
       if (response.error) this.nftInventory = [];
       else this.nftInventory = response.hits.reverse();
     },
 
     updateTx(txType, payload) {
-      console.log('return option', txType, payload);
       this.txType = txType;
       this.txBody.payload = payload;
       this.optionsModal = false;
@@ -326,9 +316,14 @@ export default Vue.extend({
     },
     handleSendClick() {
       if (+this.inputAmount > +this.balance) {
-        // error 출력 또는 입력 시에 확인
-        console.log('insufficent');
-        this.notEnoughBalanceNotification = true;
+        this.notification = true;
+        this.notificationText = 'Not Enough Balance!';
+        return;
+      }
+      const amountRegex = /^\d*.?\d{0,3}$/;
+      if (!amountRegex.test(this.inputAmount) && this.tokenType !== 'ARC2') {
+        this.notification = true;
+        this.notificationText = 'Please Check Amount';
         return;
       }
       if (this.tokenType == 'AERGO') {
@@ -389,11 +384,7 @@ export default Vue.extend({
 */
       // send
       try {
-        console.log('account', this.account);
-        console.log('network', this.$store.state.accounts.network);
-        console.log('txBody', this.txBody);
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
-        console.log('hash', hash);
         this.txHash = hash;
         this.setStatus('success', 'Done');
         this.isLoading = true;
@@ -483,6 +474,16 @@ export default Vue.extend({
           return '172px';
       }
     },
+    // get formattedPayload(): string {
+    //   const payload = `${this.txBody.payload}`;
+    //   try {
+    //     // If it is parsable as json, use json highlighter
+    //     JSON.parse(payload);
+    //     return jsonHighlight(payload);
+    //   } catch {
+    //     return `<span class="string">${payload}</span>`;
+    //   }
+    // },
   },
 });
 </script>
@@ -531,7 +532,6 @@ export default Vue.extend({
       }
       .account_title {
         margin-left: 12px;
-        width: 83px;
         height: 20px;
         font-family: 'Outfit';
         font-style: normal;
@@ -545,7 +545,7 @@ export default Vue.extend({
       .account_title_wrapper {
         display: flex;
         align-items: center;
-        margin-left: 24px;
+        margin-left: 10px;
         width: 120px;
         height: 22px;
         background: #eff5f7;
@@ -595,6 +595,11 @@ export default Vue.extend({
       border-radius: 50%;
       display: flex;
       justify-content: center;
+      align-items: center;
+    }
+    .amount_wrapper {
+      width: 100%;
+      display: flex;
       align-items: center;
     }
     .token_amount {

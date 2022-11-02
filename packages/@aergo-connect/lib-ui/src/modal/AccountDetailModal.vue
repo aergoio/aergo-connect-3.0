@@ -4,7 +4,7 @@
       <div class="title">Account Address</div>
       <div class="flex-row">
         <Identicon :text="$store.state.accounts.address" />
-        <div>{{ $store.state.accounts.nick }}</div>
+        <div class="nick">{{ $store.state.accounts.nick }}</div>
       </div>
       <VueQRCodeComponent :text="$store.state.accounts.address" :size="123"></VueQRCodeComponent>
       <div class="address_wrapper">
@@ -67,7 +67,7 @@ export default Vue.extend({
   z-index: 1;
   .account_detail_wrapper {
     width: 317px;
-    height: 400px;
+    height: 408px;
     position: absolute;
     left: 28px;
     top: 110px;
@@ -95,6 +95,11 @@ export default Vue.extend({
       margin-top: 25px;
       margin-bottom: 15px;
       align-items: center;
+      max-width: 270px;
+      .nick {
+        margin-left: 5px;
+        word-break: break-all;
+      }
     }
     .address_wrapper {
       margin-top: 20px;

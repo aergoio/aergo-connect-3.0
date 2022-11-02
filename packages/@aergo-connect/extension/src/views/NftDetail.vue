@@ -16,7 +16,13 @@
         </div>
         <div class="account_wrapper">
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
-          <div class="account_title">{{ $store.state.accounts.nick }}</div>
+          <div class="account_title">
+            {{
+              $store.state.accounts.nick.length > 12
+                ? `${$store.state.accounts.nick.slice(0, 12)}...`
+                : $store.state.accounts.nick
+            }}
+          </div>
           <div class="account_title_wrapper">
             <div class="account" @click="copyToClipboard($store.state.accounts.address)">
               {{
@@ -427,8 +433,6 @@ export default Vue.extend({
       }
       .account_title {
         margin-left: 12px;
-        width: 83px;
-        height: 20px;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
@@ -443,7 +447,7 @@ export default Vue.extend({
       .account_title_wrapper {
         display: flex;
         align-items: center;
-        margin-left: 24px;
+        margin-left: 10px;
 
         width: 120px;
         height: 22px;
@@ -469,7 +473,7 @@ export default Vue.extend({
       }
       .account_button {
         cursor: pointer;
-        margin-left: 35px;
+        margin-left: 20px;
       }
     }
   }
@@ -543,6 +547,7 @@ export default Vue.extend({
         color: #686767;
       }
       .detail_content {
+        word-break: break-all;
         margin-right: 14px;
         /* Caption/C1 */
         float: right;
@@ -590,6 +595,7 @@ export default Vue.extend({
 
         color: #9c9a9a;
         margin-left: 15px;
+        word-break: break-all;
       }
     }
     .balance {

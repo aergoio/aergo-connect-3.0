@@ -1,7 +1,11 @@
 <template>
   <div class="receive_backdrop">
     <div class="receive_wrapper">
-      <VueQRCodeComponent class="qr" :text="inputText" :size="123"></VueQRCodeComponent>
+      <VueQRCodeComponent
+        class="qr"
+        :text="JSON.stringify(inputText)"
+        :size="123"
+      ></VueQRCodeComponent>
       <div class="amount_wrapper">
         <span>{{ `${amount} ${symbol}` }}</span>
       </div>
@@ -19,6 +23,7 @@ import Vue from 'vue';
 import VueQRCodeComponent from 'vue-qrcode-component';
 import Identicon from '../content/Identicon.vue';
 import Button from '../buttons/Button.vue';
+import { jsonHighlight } from '@aergo-connect/extension/src/utils/json';
 export default Vue.extend({
   components: { Identicon, Button, VueQRCodeComponent },
 
@@ -35,13 +40,18 @@ export default Vue.extend({
   },
 
   async beforeMount() {
-    this.inputText =
-      this.asset + ' ' + this.$store.state.session.address + ' ' + Number(this.amount);
+    this.inputText = {
+      network: this.$store.state.accounts.network,
+      token: this.asset,
+      address: this.$store.state.accounts.address,
+      amount: this.amount,
+    };
   },
 
   methods: {
     handleOK() {
       console.log('ok');
+      console.log(this.inputText, 'QRDATA');
       this.$emit('confirm', 'receiveModal');
     },
   },

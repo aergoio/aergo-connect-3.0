@@ -28,7 +28,9 @@
           <div v-if="tokenType !== 'ARC2'" class="title">Amount</div>
           <div v-else class="title">Token_ID</div>
           <div class="flex-row">
-            <div v-if="tokenType !== 'ARC2'" class="detail amount">{{ amount+'  '+symbol }}</div>
+            <div v-if="tokenType !== 'ARC2'" class="detail amount">
+              {{ amount + '  ' + symbol }}
+            </div>
             <div v-else class="detail amount">{{ amount }}</div>
           </div>
         </div>
@@ -53,7 +55,7 @@
         <div class="flex-row">
           <div class="title">Payload</div>
           <div class="flex-row">
-            <div class="detail payload">{{ payload }}</div>
+            <div class="detail payload" v-html="formattedPayload"></div>
           </div>
         </div>
       </div>
@@ -70,6 +72,7 @@ import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import ButtonGroup from '../buttons/ButtonGroup.vue';
 import Button from '../buttons/Button.vue';
+import { jsonHighlight } from '@aergo-connect/extension/src/utils/json';
 export default Vue.extend({
   components: { Icon, Button, ButtonGroup },
 
@@ -81,7 +84,18 @@ export default Vue.extend({
     payload: String,
     tokenType: String,
   },
-
+  computed: {
+    formattedPayload() {
+      const payload = `${this.payload}`;
+      console.log(payload, '1');
+      try {
+        JSON.parse(payload);
+        return jsonHighlight(payload);
+      } catch {
+        return `<span class="string">${payload}</span>`;
+      }
+    },
+  },
   methods: {
     handleOk() {
       console.log('ok', this.to);
@@ -197,6 +211,27 @@ export default Vue.extend({
             overflow-x: hidden;
             word-break: break-all;
             text-align: left;
+            font-family: monospace;
+            white-space: pre-wrap;
+            color: #777;
+
+            .string,
+            .boolean,
+            .number,
+            .null {
+              font-weight: 500;
+            }
+            .key {
+              color: #0082c7;
+            }
+            .string {
+              color: #000;
+            }
+            .boolean,
+            .number,
+            .null {
+              color: #259603;
+            }
           }
           &.gas {
             width: 168px;

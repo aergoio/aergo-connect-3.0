@@ -14,7 +14,7 @@
               type="primary"
               size="large"
               hover
-              :to="{ name: 'account-import', params: { next: 'account-import' } }"
+              :to="{ name: 'account-import', }"
             >
               Import
             </Button>

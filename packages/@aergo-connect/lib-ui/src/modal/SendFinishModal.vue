@@ -40,8 +40,8 @@
           <div v-if="tokenType !== 'ARC2'" class="title">Amount</div>
           <div v-else class="title">Token_ID</div>
           <div class="flex-row">
-            <div class="detail amount">{{ amount }}</div>
-            <div v-if="tokenType !== 'ARC2'" class="detail amount">{{ symbol }}</div>
+            <div v-if="tokenType !== 'ARC2'" class="detail amount">{{ amount+'  '+symbol }}</div>
+            <div v-else class="detail amount">{{ amount }}</div>
           </div>
         </div>
         <div class="line" />

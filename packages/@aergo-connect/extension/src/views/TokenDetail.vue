@@ -62,9 +62,12 @@
           <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
             <div v-if="token.balance" class="balance">
+              {{ Number(token.balance).toFixed(3) }}
+<!--
               {{
                 Number.isInteger(token.balance) ? token.balance : Number(token.balance).toFixed(3)
               }}
+-->
             </div>
           </div>
           <div class="token_symbol">{{ token.meta.symbol }}</div>
@@ -263,7 +266,7 @@ export default Vue.extend({
     },
 
     getBalance(value: number) {
-      return value / Math.pow(10, this.token.meta.decimals);
+      return (value / Math.pow(10, this.token.meta.decimals)).toFixed(3);
     },
 
     getTitle() {

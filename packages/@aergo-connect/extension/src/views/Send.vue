@@ -60,8 +60,15 @@
         <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" />
         <img v-else class="token_icon" :src="icon" />
 
-        <div class="token_amount">{{ balance }}</div>
-        <div class="token_symbol">{{ symbol }}</div>
+        <div v-if="tokenType !== 'ARC2'">
+          <span class="token_amount">{{ Number(balance).toFixed(3) }}</span>
+          <span class="token_symbol"> {{ symbol }}</span>
+        </div>
+        <div v-else >
+          <span class="token_amount">{{ balance }}</span>
+          <span class="token_symbol"> EA </span>
+        </div>
+
       </div>
       <div v-if="!isLoading" class="send_form_wrapper">
         <div class="flex-row">
@@ -82,9 +89,16 @@
               @input="searchNFT"
               ref="target"
             />
+<!--
             <ul
               class="search_list_wrapper"
               v-if="searchResult.length && searchFocus"
+              :style="{ height: searchStyle() }"
+            >
+-->
+            <ul
+              class="search_list_wrapper"
+              v-if="searchResult.length"
               :style="{ height: searchStyle() }"
             >
               <li
@@ -192,7 +206,7 @@ export default Vue.extend({
       notification: false,
       notificationText: '',
       searchResult: [],
-      searchFocus: false,
+//      searchFocus: false,
       isLoading: false,
       txBody: {
         from: this.$store.state.accounts.address,
@@ -215,6 +229,7 @@ export default Vue.extend({
     this.account = await this.$background.getActiveAccount();
     if (this.$store.state.session.token) this.asset = await this.$store.state.session.token;
     else this.asset = 'AERGO';
+
     if (
       this.$route.params.nft &&
       this.$store.state.session.tokens[this.asset].meta.type == 'ARC2'
@@ -225,11 +240,7 @@ export default Vue.extend({
   },
   watch: {
     asset: function () {
-      this.balance = this.$store.state.session.tokens[this.asset]['balance'];
-      this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
-      this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
-      this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
-      this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
+      this.setParams() ;
       if (this.tokenType === 'ARC2') this.getNftInventory();
     },
     clipboardNotification(state) {
@@ -254,6 +265,14 @@ export default Vue.extend({
     },
   },
   methods: {
+   async setParams () {
+      this.balance = this.$store.state.session.tokens[this.asset]['balance'];
+      this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
+      this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
+      this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
+      this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
+      console.log('symbol', this.symbol) ;
+    },
     async selectNFT(item) {
       this.inputAmount = item.meta.token_id;
       this.searchResult = '';
@@ -261,20 +280,25 @@ export default Vue.extend({
     async searchNFT(query) {
       console.log('quary', query);
       const result = [];
+      
+      console.log('inventory', this.nftInventory);
       this.nftInventory.forEach((item) => {
         if (item.meta.token_id.indexOf(query) != -1) result.push(item);
       });
+      console.log('result', result) ;
       this.searchResult = result;
     },
+
     async getNftInventory() {
       const resp = await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}&sort=blockno:desc&from=0&size=100`,
       );
       const response = await resp.json();
-      console.log('inventory', response.hit);
+      console.log('inventory', response.hits);
       if (response.error) this.nftInventory = [];
       else this.nftInventory = response.hits.reverse();
     },
+
     updateTx(txType, payload) {
       console.log('return option', txType, payload);
       this.txType = txType;

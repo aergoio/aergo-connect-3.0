@@ -1,6 +1,9 @@
 <template>
-  <div v-else id="app" :class="`page-${$router.currentRoute.name}`">
+  <div id="app" :class="`page-${$router.currentRoute.name}`">
+    <router-view />
+<!--
     <RouteTransition > <router-view /> </RouteTransition>
+-->
   </div>
 </template>
 

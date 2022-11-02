@@ -87,7 +87,7 @@ export default Vue.extend({
   },
   mounted() {
     if (this.autofocus) {
-      (this.$refs.inputElement as HTMLFormElement).focus();
+      (this.$refs.inputElement as HTMLFormElement).focus({preventScroll:true});
     }
   },
   methods: {

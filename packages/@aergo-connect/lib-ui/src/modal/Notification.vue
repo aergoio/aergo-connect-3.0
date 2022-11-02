@@ -29,11 +29,12 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .alert-wrapper {
-  bottom: 0;
   margin: auto;
   position: absolute;
+  bottom: 0;
   left: 0;
   right: 0;
+  top: 60%;
   z-index: 3;
   padding: 8px;
   background: #fff;
@@ -42,10 +43,10 @@ export default Vue.extend({
   align-items: center;
   justify-content: center;
   text-align: center;
-  height: 30px;
-  .icon {
+  height: 20px;
+  /* .icon {
     padding-top: 10px;
-  }
+  } */
   .alert-text {
     color: #279ecc;
     margin-right: 5px;

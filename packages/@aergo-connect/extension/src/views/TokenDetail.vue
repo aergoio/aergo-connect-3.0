@@ -17,7 +17,13 @@
         </div>
         <div class="account">
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
-          <div class="account_title">{{ $store.state.accounts.nick }}</div>
+          <div class="account_title">
+            {{
+              $store.state.accounts.nick.length > 17
+                ? `${$store.state.accounts.nick.slice(0, 17)}...`
+                : $store.state.accounts.nick
+            }}
+          </div>
           <div class="account_title_wrapper">
             <div class="account_address" @click="copyToClipboard($store.state.accounts.address)">
               {{
@@ -41,7 +47,7 @@
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
             <div class="balance">
-              {{ Number(token.balance).toFixed(3) }}
+              {{ token.balance ? Number(token.balance).toFixed(3) : 0 }}
             </div>
             <div class="dollor">
               <span>$ </span>
@@ -61,13 +67,8 @@
           <img v-if="token.meta.image" class="icon" :src="token.meta.image" />
           <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
-            <div v-if="token.balance" class="balance">
-              {{ Number(token.balance).toFixed(3) }}
-<!--
-              {{
-                Number.isInteger(token.balance) ? token.balance : Number(token.balance).toFixed(3)
-              }}
--->
+            <div class="balance">
+              {{ token.balance ? Number(token.balance).toFixed(3) : 0 }}
             </div>
           </div>
           <div class="token_symbol">{{ token.meta.symbol }}</div>
@@ -85,7 +86,8 @@
         <ul
           :class="[
             token.meta.symbol === 'aergo' ? 'history_list ' : 'history_list others',
-            data.length === 0 ? 'history _list nothing' : 'history_list',
+            data.length === 0 ? 'history_list nothing' : 'history_list',
+            data.length > 2 ? 'history_list scroll' : 'history_list',
           ]"
         >
           <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
@@ -124,16 +126,16 @@
           </div>
         </ul>
         <div v-if="!isLoading" class="footer">
-          <Appear :delay="0.6">
-            <ButtonGroup>
-              <Button class="button" type="font-gradation" size="small" @click="handleSend"
-                ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
-              >
-              <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-                ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
-              >
-            </ButtonGroup>
-          </Appear>
+          <!-- <Appear :delay="0.1"> -->
+          <ButtonGroup>
+            <Button class="button" type="font-gradation" size="small" @click="handleSend"
+              ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
+            >
+            <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+              ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
+            >
+          </ButtonGroup>
+          <!-- </Appear> -->
         </div>
       </div>
     </div>
@@ -287,11 +289,11 @@ export default Vue.extend({
       let resp;
       if (this.token.meta.symbol === 'aergo') {
         resp = await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=100&sort=ts:desc`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=10000&sort=ts:desc`,
         );
       } else {
         resp = await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}&size=100&sort=ts:desc`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}&size=10000&sort=ts:desc`,
         );
       }
 
@@ -381,8 +383,6 @@ export default Vue.extend({
       }
       .account_title {
         margin-left: 12px;
-        width: 83px;
-        height: 20px;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
@@ -397,7 +397,7 @@ export default Vue.extend({
       .account_title_wrapper {
         display: flex;
         align-items: center;
-        margin-left: 24px;
+        margin-left: 10px;
 
         width: 120px;
         height: 22px;
@@ -546,6 +546,7 @@ export default Vue.extend({
 
         color: #9c9a9a;
         margin-left: 15px;
+        word-break: break-all;
       }
     }
     .balance {
@@ -559,7 +560,7 @@ export default Vue.extend({
       font-size: 20px;
       line-height: 25px;
       letter-spacing: -0.333333px;
-
+      word-break: break-all;
       /* Grey/08 */
 
       color: #231f20;
@@ -622,9 +623,12 @@ export default Vue.extend({
       display: flex;
       align-items: center;
       height: 13.5rem;
-      overflow-y: scroll;
+      overflow-y: hidden;
       &.nothing {
         overflow: hidden;
+      }
+      &.scroll {
+        overflow-y: scroll;
       }
       &.others {
         height: 16rem;
@@ -637,7 +641,7 @@ export default Vue.extend({
         align-items: center;
         .nothing_text {
           /* Caption/C1 */
-          margin-top: 18.5px;
+          margin-top: 10px;
           font-family: 'Outfit';
           font-style: normal;
           font-weight: 400;
@@ -797,25 +801,9 @@ export default Vue.extend({
     box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
     border-radius: 4px;
     width: 157px;
+    margin-right: 10px;
     .button-icon {
-      margin-right: 9.49px;
-    }
-    &.button-type-font-gradation:hover {
-      background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
-      /* shadow/02 */
-      box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
-      border-radius: 4px;
-    }
-    &.button-type-font-gradation:hover span {
-      background: none;
-      color: #fff;
-      -webkit-text-fill-color: #fff;
-    }
-    &.button-type-font-gradation:hover path {
-      background: none;
-      color: #fff;
-      fill: #fff;
-      -webkit-text-fill-color: #fff;
+      margin-top: 5px;
     }
   }
 }

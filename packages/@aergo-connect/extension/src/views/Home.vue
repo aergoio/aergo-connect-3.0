@@ -77,7 +77,10 @@
             >NFT</Button
           >
         </ButtonGroup>
-        <ul class="token_list_ul" v-if="tab === `tokens`">
+        <ul
+          v-if="tab === `tokens`"
+          :class="[tokensCount > 4 ? 'token_list_ul scroll' : 'token_list_ul']"
+        >
           <li
             v-for="token in $store.state.session.tokens"
             class="token_list_li"
@@ -105,11 +108,14 @@
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
             </div>
-            <div class="line" />
+            <div v-if="token.meta.type === 'ARC1' || token.meta.type === 'AERGO'" class="line" />
           </li>
         </ul>
 
-        <ul class="token_list_ul" v-if="tab === `nft`">
+        <ul
+          v-if="tab === `nft`"
+          :class="[nftCountNum > 4 ? 'token_list_ul scroll' : 'token_list_ul']"
+        >
           <li
             v-for="token in $store.state.session.tokens"
             class="token_list_li"
@@ -133,8 +139,9 @@
                 <Icon class="token_list_nextbutton" :name="`next_grey`" />
               </div>
             </div>
-            <div class="line" />
+            <div v-if="token.meta.type === 'ARC2'" class="line" />
           </li>
+
           <div v-if="nftCountNum === 0" class="nftNothing">
             <Icon :name="`nothing`" />
             <div class="text">No NFT</div>
@@ -151,12 +158,12 @@
         </button>
       </div>
       <div v-if="!isLoading" class="footer">
-        <Appear :delay="0.6">
+        <Appear :delay="0">
           <ButtonGroup>
-            <Button class="button" type="font-gradation" size="small" @click="handleSend"
+            <Button class="footer_button" type="font-gradation" size="small" @click="handleSend"
               ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
             >
-            <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+            <Button class="footer_button" type="font-gradation" size="small" @click="handleReceive"
               ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
             >
           </ButtonGroup>
@@ -210,9 +217,10 @@ export default Vue.extend({
       accountDetailModal: false,
       network: 'aergo.io',
       tab: 'tokens',
+      tokensCount: 0,
+      nftCountNum: 0,
       editNick: false,
       nick: this.$store.state.accounts.nick,
-      nftCountNum: 0,
       isLoading: false,
     };
   },
@@ -256,6 +264,7 @@ export default Vue.extend({
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
         await this.$forceUpdate();
+        await this.nftCount();
         this.nick = await this.$store.state.accounts.nick;
       } else {
         console.log('Other Account Loading ..');
@@ -382,6 +391,11 @@ export default Vue.extend({
       tokens.map((token) => {
         if (Object.values(token)[1].type === 'ARC2') {
           this.nftCountNum = this.nftCountNum + 1;
+        } else if (
+          Object.values(token)[1].type === 'ARC1' ||
+          Object.values(token)[1].type === 'AERGO'
+        ) {
+          this.tokensCount = this.tokensCount + 1;
         }
       });
     },
@@ -436,6 +450,7 @@ export default Vue.extend({
       .account_info_nickname_wrapper {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 500;
@@ -446,6 +461,7 @@ export default Vue.extend({
         width: 191px;
         .account_info_nickname_text {
           margin-right: 5px;
+          word-break: break-all;
         }
         .account_info_nickname_input {
         }
@@ -491,6 +507,7 @@ export default Vue.extend({
       justify-content: center;
     }
     .token-button {
+      margin-right: 10px;
       width: 153px;
       height: 39px;
       background: #279ecc;
@@ -508,7 +525,10 @@ export default Vue.extend({
       width: 375px;
       height: 15.8rem;
       overflow-x: hidden;
-      overflow-y: scroll;
+      overflow-y: hidden;
+      &.scroll {
+        overflow-y: scroll;
+      }
       .nftNothing {
         height: 100%;
         display: flex;
@@ -576,6 +596,9 @@ export default Vue.extend({
         height: 1px;
         background: #f0f0f0;
         box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
+        &.none {
+          display: none;
+        }
       }
     }
     .token_list_button {
@@ -618,6 +641,14 @@ export default Vue.extend({
         order: 1;
         flex-grow: 0;
       }
+    }
+  }
+}
+.footer {
+  .footer_button {
+    margin-right: 10px;
+    .button-icon {
+      margin-top: 5px;
     }
   }
 }

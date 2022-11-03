@@ -22,7 +22,7 @@ export default {};
   left: 0px;
   top: 0px;
   background: rgba(0, 0, 0, 0.1);
-  z-index: 1;
+  z-index: 3;
 }
 .lds-facebook {
   display: inline-block;

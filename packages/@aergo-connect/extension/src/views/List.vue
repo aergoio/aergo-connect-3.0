@@ -1,5 +1,5 @@
 <template>
-  <div class="side-nav-backdrop fade-in-right" @click="(event) => handleListModalOff(event)">
+  <div class="side-nav-backdrop fade-in-left" @click="(event) => handleListModalOff(event)">
     <div class="side-nav-wrap">
       <section class="side-nav-accounts">
         <img class="side-nav-logo" src="@aergo-connect/lib-ui/src/icons/img/nav-logo.svg" />
@@ -127,19 +127,19 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-.fade-in-right {
+.fade-in-left {
   display: inline-block;
   padding: 10px;
-  animation: fadeInRight 0.5s;
+  animation: fadeInLeft 0.5s;
 }
-@keyframes fadeInRight {
-  from {
+@keyframes fadeInLeft {
+  0% {
     opacity: 0;
-    transform: translate3d(20%, 0, 0);
+    transform: translateX(-20px);
   }
-  to {
+  100% {
     opacity: 1;
-    transform: translateZ(100);
+    transform: translateX(0);
   }
 }
 

@@ -62,16 +62,26 @@ function withMeta(index: number | undefined, route: RouteConfig, flags: R = R.No
 
 const routes: RouteConfig[] = [
   { path: '/', redirect: '/accounts' },
-  { path: '/accounts',
+  {
+    path: '/accounts',
     component: AccountsContainer,
     children: [
       { path: '', redirect: '/home' },
+      withMeta(
+        1,
+        { path: '/locked', name: 'lockscreen', component: Lockscreen },
+        R.NoAuthCheck | R.NoTracking,
+      ),
 
       withMeta(1, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
+      withMeta(
+        2,
+        { path: '/password', name: 'password', component: Password },
+        R.NoAuthCheck | R.NoTracking,
+      ),
       withMeta(3, { path: '/register', name: 'register', component: Register }),
       withMeta(6, { path: '/register/confirm', name: 'regist-confirm', component: RegistConfirm }),
-      withMeta(1, { path: '/locked', name: 'lockscreen', component: Lockscreen }, R.NoAuthCheck | R.NoTracking,
-      ),
+
       withMeta(2, { path: '/home', name: 'accounts-list', component: Home }),
       withMeta(3, { path: '/home/tokendetail', name: 'token-detail', component: TokenDetail }),
       withMeta(3, { path: '/home/nftdetail', name: 'nft-detail', component: NftDetail }),
@@ -82,8 +92,10 @@ const routes: RouteConfig[] = [
       withMeta(3, { path: '/home/version', name: 'version', component: Version }),
       withMeta(3, { path: '/home/security', name: 'security', component: Security }),
 
-      withMeta(4, { path: '/password', name: 'password', component: Password }, R.NoAuthCheck | R.NoTracking,),
-      withMeta(4, { path: '/export/BackupPrivateKey', name: 'account-backup', component: BackupPrivateKey,
+      withMeta(4, {
+        path: '/export/BackupPrivateKey',
+        name: 'account-backup',
+        component: BackupPrivateKey,
       }),
       withMeta(5, {
         path: '/export/MnemonicSeedPhrase ',
@@ -97,11 +109,17 @@ const routes: RouteConfig[] = [
         component: Keystore,
       }),
 
-
       withMeta(4, { path: '/import/format', name: 'account-import', component: ImportFormat }),
-      withMeta(5, { path: '/import/keystore', name: 'account-import-keystore', component: ImportKeystore, }),
+      withMeta(5, {
+        path: '/import/keystore',
+        name: 'account-import-keystore',
+        component: ImportKeystore,
+      }),
       withMeta(5, { path: '/import/wif', name: 'account-import-wif', component: ImportWif }),
-      withMeta(5, { path: '/import/seedphrase', name: 'account-import-seedphrase', component: ImportSeedphrase,
+      withMeta(5, {
+        path: '/import/seedphrase',
+        name: 'account-import-seedphrase',
+        component: ImportSeedphrase,
       }),
 
       withMeta(4, { path: '/connect-hw', name: 'account-connect-hw', component: ConnectHw }),
@@ -110,7 +128,8 @@ const routes: RouteConfig[] = [
         name: 'account-connect-hw-accounts',
         component: ConnectHwAccounts,
       }),
-      withMeta( 5,
+      withMeta(
+        5,
         { path: 'networks', name: 'networks-list', component: NetworksList },
         R.NoTracking,
       ),

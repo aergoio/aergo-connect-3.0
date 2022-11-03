@@ -63,18 +63,9 @@
       <div class="nft_detail_background">
         <ul
           v-if="tabState === 'inventory'"
-          :class="[data.length > 0 ? 'nft_info_wrapper' : 'nft_info_wrapper noscroll']"
+          :class="[data.length > 5 ? 'nft_info_wrapper scroll' : 'nft_info_wrapper']"
         >
           <li v-for="item in data" class="nft_info_list">
-            <div>
-              <!-- <img
-                v-if="item.token.meta.image"
-                class="img"
-                :src="item.token.meta.image"
-                alt="404"
-              /> -->
-              <!-- <Icon class="img" :name="`defaultNft`" /> -->
-            </div>
             <div class="nft_name_wrapper">
               <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
               <!-- <div class="id">{{ item.token.meta.symbol }}</div> -->
@@ -95,21 +86,16 @@
             <div class="nothing_text">No Inventory.</div>
           </div>
         </ul>
-
+        <select v-if="tabState === `tx_history`" class="select" v-model="filter">
+          <option class="option" selected value="All">All</option>
+          <option class="option" value="Received">Received</option>
+          <option class="option" value="Sent">Sent</option>
+        </select>
         <ul
           v-if="tabState === 'tx_history'"
           :class="[data.length > 0 ? 'nft_detail_wrapper' : 'nft_detail_wrapper noscroll']"
         >
           <!-- <div v-if="data.length > 0"> -->
-          <select
-            v-if="tabState === `tx_history` && data.length > 0"
-            class="select"
-            v-model="filter"
-          >
-            <option class="option" selected value="All">All</option>
-            <option class="option" value="Received">Received</option>
-            <option class="option" value="Sent">Sent</option>
-          </select>
 
           <li class="nft_detail_list" v-for="item in data" :key="item.meta.tx_id">
             <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
@@ -641,8 +627,8 @@ export default Vue.extend({
     bottom: 0px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     .footer {
+      margin-left: 24px;
       position: absolute;
       bottom: 0;
       margin-bottom: 10px;
@@ -654,14 +640,13 @@ export default Vue.extend({
       }
     }
     .select {
-      margin-left: 0;
+      margin-left: 24px;
+      margin-top: 10px;
       background: #ffffff;
       /* Grey/02 */
       width: 90px;
-      height: 28px;
       border: 1px solid #d8d8d8;
       border-radius: 4px;
-      margin-bottom: 12px;
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 400;
@@ -679,19 +664,26 @@ export default Vue.extend({
       height: 345px;
     }
     .nft_info_wrapper {
-      width: 350px;
+      margin-top: 10px;
+      margin-left: 24px;
+      width: 330px;
       height: 22rem;
-      overflow-y: scroll;
+      overflow-y: hidden;
       overflow-x: hidden;
       display: flex;
       flex-direction: column;
+      &.scroll {
+        overflow-y: scroll;
+      }
       .nft_info_list {
-        margin-top: 10px;
+        width: 315px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        margin-top: 5px;
+        margin-bottom: 3px;
         display: flex;
         align-items: center;
-        justify-content: space-evenly;
-        width: 327px;
-        height: 78px;
+        justify-content: space-around;
         background: #ffffff;
         border-radius: 8px;
         .icon {
@@ -738,16 +730,16 @@ export default Vue.extend({
       }
     }
     .nft_detail_wrapper {
+      margin-left: 24px;
       overflow-x: hidden;
       overflow-y: scroll;
-      width: 350px;
-      height: 21rem;
+      width: 330px;
+      height: 19rem;
       margin-top: 10px;
       flex-direction: column;
       display: flex;
       .nft_detail_list {
         margin-bottom: 10px;
-        width: 327px;
         height: 88px;
         background: #ffffff;
         border-radius: 8px;
@@ -775,6 +767,7 @@ export default Vue.extend({
           margin-top: 4px;
           .icon {
             cursor: pointer;
+            margin-right: 10px;
           }
           .received {
             margin-left: 16px;
@@ -853,6 +846,7 @@ export default Vue.extend({
       }
     }
     .nft_detail_list_nothing_wrapper {
+      height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;

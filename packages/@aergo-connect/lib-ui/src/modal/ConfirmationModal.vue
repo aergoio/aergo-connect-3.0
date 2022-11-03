@@ -72,6 +72,7 @@ import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import ButtonGroup from '../buttons/ButtonGroup.vue';
 import Button from '../buttons/Button.vue';
+
 import { jsonHighlight } from '@aergo-connect/extension/src/utils/json';
 export default Vue.extend({
   components: { Icon, Button, ButtonGroup },
@@ -120,10 +121,9 @@ export default Vue.extend({
   z-index: 2;
   .confirmation_modal_wrapper {
     position: absolute;
-    width: 313px;
-    height: 435px;
-    left: 31px;
-    top: 83px;
+    max-height: 510px;
+    left: 20px;
+    top: 50px;
     background: #ffffff;
     border-radius: 8px;
     display: flex;
@@ -155,10 +155,10 @@ export default Vue.extend({
       }
     }
     .detail_form {
-      height: 200px;
-      margin-top: 18px;
-      width: 290px;
-      overflow-y: scroll;
+      height: 215px;
+      margin-top: 10px;
+      width: auto;
+      overflow-y: hidden;
       overflow-x: hidden;
       .flex-row {
         display: flex;
@@ -206,8 +206,8 @@ export default Vue.extend({
 
           color: #686767;
           &.payload {
-            width: 178px;
-            /* overflow-y:scroll; */
+            width: 200px;
+            overflow-y: scroll;
             overflow-x: hidden;
             word-break: break-all;
             text-align: left;
@@ -249,7 +249,7 @@ export default Vue.extend({
             word-break: break-all;
           }
           &.amount {
-            width: 178px;
+            max-width: 170px;
             font-family: 'Outfit';
             font-style: normal;
             font-weight: 400;
@@ -276,7 +276,9 @@ export default Vue.extend({
       }
     }
     .button_wrapper {
-      margin-top: 15px;
+      margin-left: 6px;
+      margin-top: 10px;
+      margin-bottom: 20px;
       .button {
         width: 289px;
       }

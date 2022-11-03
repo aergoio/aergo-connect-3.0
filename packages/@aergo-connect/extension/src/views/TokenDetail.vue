@@ -771,11 +771,11 @@ export default Vue.extend({
   }
 }
 .select_tokenDetail {
-  margin-left: 98px;
+  margin-left: 90px;
   padding: 3px;
   background: #ffffff;
   /* Grey/02 */
-  width: 85px;
+  width: 90px;
   border: 1px solid #d8d8d8;
   border-radius: 4px;
 

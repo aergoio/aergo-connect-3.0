@@ -97,7 +97,13 @@
                   alt="404"
                 />
                 <Icon v-else class="token_list_icon" :name="`defaultToken`" />
-                <span class="token_list_text"> {{ token.meta.name }} </span>
+                <span
+                  :class="[
+                    token.meta.name.length > 10 ? 'token_list_text wordbreak' : 'token_list_text',
+                  ]"
+                >
+                  {{ token.meta.name }}
+                </span>
               </div>
               <div class="token_list_amount">
                 <span class="token_list_balance">{{
@@ -131,7 +137,13 @@
                   alt="404"
                 />
                 <Icon v-else class="token_list_icon" :name="`defaultToken`" />
-                <span class="token_list_text"> {{ token.meta.name }} </span>
+                <span
+                  :class="[
+                    token.meta.name.length > 10 ? 'token_list_text wordbreak' : 'token_list_text',
+                  ]"
+                >
+                  {{ token.meta.name }}
+                </span>
               </div>
               <div class="token_list_amount">
                 <span class="token_list_balance">{{ token.balance }}</span>
@@ -242,6 +254,11 @@ export default Vue.extend({
       this.initAccount();
     },
     tab() {
+      if (this.tab === 'tokens') {
+        this.nftCountNum = 0;
+      } else if (this.tab === 'nft') {
+        this.tokensCount = 0;
+      }
       this.nftCount();
     },
   },
@@ -258,9 +275,8 @@ export default Vue.extend({
 
     async initAccount() {
       this.isLoading = true;
-      console.log('Address', this.$store.state.accounts.address);
-      //      console.log("List", this.$background.getAccounts()) ;
-
+      this.tokensCount = 0;
+      this.nftCountNum = 0;
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
         await this.$forceUpdate();
@@ -389,11 +405,11 @@ export default Vue.extend({
     nftCount() {
       const tokens = Object.values(this.$store.state.session.tokens);
       tokens.map((token) => {
-        if (Object.values(token)[1].type === 'ARC2') {
+        if (this.tab === 'nft' && Object.values(token)[1].type === 'ARC2') {
           this.nftCountNum = this.nftCountNum + 1;
         } else if (
-          Object.values(token)[1].type === 'ARC1' ||
-          Object.values(token)[1].type === 'AERGO'
+          (this.tab === 'tokens' && Object.values(token)[1].type === 'ARC1') ||
+          (this.tab === 'tokens' && Object.values(token)[1].type === 'AERGO')
         ) {
           this.tokensCount = this.tokensCount + 1;
         }
@@ -581,6 +597,10 @@ export default Vue.extend({
           }
           .token_list_text {
             margin-left: 18px;
+            &.wordbreak {
+              word-break: break-all;
+              max-width: 65px;
+            }
           }
           .token_list_balance {
             width: max-content;

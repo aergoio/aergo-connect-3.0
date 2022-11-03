@@ -103,7 +103,7 @@ export default Vue.extend({
   box-sizing: border-box;
   min-height: 30px;
   line-height: 3em;
-//  padding: 0.5em 2.5em;
+  //  padding: 0.5em 2.5em;
   height: 48px;
   /* Borders and background */
   outline: none;
@@ -192,7 +192,6 @@ export default Vue.extend({
   }
   &.button-type-font-gradation {
     background: $gradation04;
-    border: 1px solid #ecf8fd;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

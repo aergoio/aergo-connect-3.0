@@ -34,7 +34,7 @@ export default Vue.extend({
   bottom: 0;
   left: 0;
   right: 0;
-  top: 60%;
+  top: 40%;
   z-index: 3;
   padding: 8px;
   background: #fff;

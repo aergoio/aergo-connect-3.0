@@ -4,6 +4,12 @@
 @import './_forms.scss';
 @import './variables.scss';
 @import './mixin.scss';
+select {
+  padding: 3px;
+  // -webkit-appearance: none; /* for chrome */
+
+  // appearance: none;
+}
 
 .content_layout {
   padding-left: 24px;

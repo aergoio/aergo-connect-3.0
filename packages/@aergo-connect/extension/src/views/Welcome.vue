@@ -22,7 +22,7 @@
               class="welcome_button_size"
               type="primary"
               size="large"
-              :to="{ name: 'password', params: { nextPage: 'register', backPage: 'welcome' }}"
+              :to="{ name: 'password', params: { nextPage: 'register', backPage: 'welcome' } }"
               hover
               >Get Started</Button
             >
@@ -50,11 +50,10 @@ export default Vue.extend({
     Appear,
     Icon,
   },
-  beforeMount () {
-    console.log("in welcome") ;
+  beforeMount() {
+    console.log('in welcome');
   },
 });
-
 </script>
 
 <style lang="scss">
@@ -90,9 +89,6 @@ export default Vue.extend({
 }
 .welcome_footer {
   .button-group {
-    .button {
-      width: 327px;
-    }
   }
 }
 #app.page-welcome {

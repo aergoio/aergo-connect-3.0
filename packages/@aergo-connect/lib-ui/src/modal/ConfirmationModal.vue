@@ -155,7 +155,7 @@ export default Vue.extend({
       }
     }
     .detail_form {
-      height: 215px;
+      max-height: 300px;
       margin-top: 10px;
       width: auto;
       overflow-y: hidden;

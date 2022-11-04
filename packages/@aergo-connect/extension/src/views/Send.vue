@@ -317,13 +317,13 @@ export default Vue.extend({
     handleSendClick() {
       if (+this.inputAmount > +this.balance) {
         this.notification = true;
-        this.notificationText = 'Not Enough Balance!';
+        this.notificationText = 'Not Enough Balance.';
         return;
       }
       const amountRegex = /^\d*.?\d{0,3}$/;
       if (!amountRegex.test(this.inputAmount) && this.tokenType !== 'ARC2') {
         this.notification = true;
-        this.notificationText = 'Please Check Amount';
+        this.notificationText = 'Please Check Amount.';
         return;
       }
       if (this.tokenType == 'AERGO') {
@@ -350,7 +350,7 @@ export default Vue.extend({
       // TODO: try catch
       if (this.txBody.payload) {
         const payload = JSON.parse(this.txBody.payload);
-        this.txBody.payload = JSON.stringify(payload);
+        this.txBody.payload = JSON.stringify(payload, null, 2);
       }
       this.txBody.type = Tx.Type[this.txType];
       console.log('txBody', this.txBody);
@@ -448,6 +448,7 @@ export default Vue.extend({
           txBody,
           this.$store.state.accounts.network,
         );
+        console.log(result, 'result!!!');
         if ('tx' in result) {
           return result.tx.hash;
         } else {
@@ -455,6 +456,8 @@ export default Vue.extend({
           throw new Error('Result is missing transaction information.');
         }
       } catch (e) {
+        this.notification = true;
+        this.notificationText = `${(e.message || e).split('.')[0]}`;
         throw new Error(`Node response: ${e.message || e}`);
       }
     },
@@ -601,6 +604,7 @@ export default Vue.extend({
       width: 100%;
       display: flex;
       align-items: center;
+      justify-content: space-between;
     }
     .token_amount {
       width: 141px;
@@ -616,7 +620,7 @@ export default Vue.extend({
       color: #231f20;
     }
     .token_symbol {
-      margin-left: 48px;
+      margin-right: 10px;
       /* Subtitle/S3 */
       font-family: 'Outfit';
       font-style: normal;

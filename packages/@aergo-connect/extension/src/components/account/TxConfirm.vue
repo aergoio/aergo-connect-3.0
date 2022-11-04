@@ -16,7 +16,7 @@
         ><FormattedToken
           :value="amountValueOfArg"
           v-if="isArg"
-          :forced-unit="'ARG'"/><FormattedToken :value="amountValue" v-else
+          :forced-unit="'ARG'" /><FormattedToken :value="amountValue" v-else
       /></KVTableRow>
       <KVTableRow label="Fee" v-if="txBody.fee && (!keys.length || keys.indexOf('fee') !== -1)"
         ><FormattedToken :value="txBody.fee"
@@ -75,7 +75,9 @@ export default class TxConfirm extends Vue {
     const payload = `${this.txBody.payload}`;
     try {
       // If it is parsable as json, use json highlighter
+      console.log(payload, '1');
       JSON.parse(payload);
+      console.log(payload, '2');
       return jsonHighlight(payload);
     } catch {
       return `<span class="string">${payload}</span>`;

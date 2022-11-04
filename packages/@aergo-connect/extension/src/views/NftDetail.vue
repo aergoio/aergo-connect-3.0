@@ -137,12 +137,16 @@
         <div v-if="!isLoading" class="footer">
           <Appear :delay="0.6">
             <ButtonGroup>
-              <Button class="button" type="font-gradation" size="small" @click="handleSend"
-                ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
-              >
-              <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-                ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
-              >
+              <div :style="{ background: '#fff', width: '157px', borderRadius: '4px' }">
+                <Button class="button" type="font-gradation" size="small" @click="handleSend"
+                  ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
+                >
+              </div>
+              <div :style="{ background: '#fff', width: '157px', borderRadius: '4px' }">
+                <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+                  ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
+                >
+              </div>
             </ButtonGroup>
           </Appear>
         </div>
@@ -914,12 +918,12 @@ export default Vue.extend({
       border-radius: 4px;
     }
     &.button-type-font-gradation:hover span {
-      background: none;
+      /* background: none; */
       color: #fff;
       -webkit-text-fill-color: #fff;
     }
     &.button-type-font-gradation:hover path {
-      background: none;
+      /* background: none; */
       color: #fff;
       fill: #fff;
       -webkit-text-fill-color: #fff;

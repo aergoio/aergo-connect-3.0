@@ -41,9 +41,11 @@ export default Vue.extend({
 
   async beforeMount() {
     this.inputText = {
+      type: 'AERGO_REQUEST',
       network: this.$store.state.accounts.network,
-      token: this.asset,
       address: this.$store.state.accounts.address,
+      token: this.asset,
+      token_type: this.$store.state.session.tokens[this.asset].meta.type,
       amount: this.amount,
     };
   },

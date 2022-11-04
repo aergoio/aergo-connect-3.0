@@ -193,8 +193,5 @@ export default class AccountExportKeystore extends Vue {
   }
 }
 .button-group {
-  .button {
-    width: 327px;
-  }
 }
 </style>

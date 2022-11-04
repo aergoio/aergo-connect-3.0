@@ -40,7 +40,9 @@
           <div v-if="tokenType !== 'ARC2'" class="title">Amount</div>
           <div v-else class="title">Token_ID</div>
           <div class="flex-row">
-            <div v-if="tokenType !== 'ARC2'" class="detail amount">{{ amount+'  '+symbol }}</div>
+            <div v-if="tokenType !== 'ARC2'" class="detail amount">
+              {{ amount + '  ' + symbol }}
+            </div>
             <div v-else class="detail amount">{{ amount }}</div>
           </div>
         </div>
@@ -145,7 +147,7 @@ export default Vue.extend({
       }
     }
     .detail_form {
-      height: 260px;
+      max-height: 300px;
       margin-top: 18px;
       width: 280px;
       .flex-row {

@@ -6,7 +6,10 @@
         <Identicon :text="$store.state.accounts.address" />
         <div class="nick">{{ $store.state.accounts.nick }}</div>
       </div>
-      <VueQRCodeComponent :text="$store.state.accounts.address" :size="123"></VueQRCodeComponent>
+      <VueQRCodeComponent
+        :text="JSON.stringify({ type: 'AERGO_REQUEST', address: $store.state.accounts.address })"
+        :size="123"
+      ></VueQRCodeComponent>
       <div class="address_wrapper">
         <div class="address" @click="copyToClipboard($store.state.accounts.address)">
           {{ $store.state.accounts.address }}
@@ -102,10 +105,9 @@ export default Vue.extend({
       }
     }
     .address_wrapper {
-      margin-top: 20px;
-      margin-bottom: 25px;
+      margin-top: 10px;
+      margin-bottom: 15px;
       width: 251px;
-      height: 60px;
       /* Primary/Blue02 */
       display: flex;
       justify-content: center;

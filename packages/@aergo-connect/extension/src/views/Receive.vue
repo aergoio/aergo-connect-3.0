@@ -274,7 +274,6 @@ export default Vue.extend({
       color: #231f20;
     }
     .token_symbol {
-      margin-left: 48px;
       /* Subtitle/S3 */
 
       font-family: 'Outfit';

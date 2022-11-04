@@ -34,7 +34,7 @@ export default Vue.extend({
   bottom: 0;
   left: 0;
   right: 0;
-  top: 40%;
+  top: 55%;
   z-index: 3;
   padding: 8px;
   background: #fff;
@@ -44,9 +44,9 @@ export default Vue.extend({
   justify-content: center;
   text-align: center;
   height: 20px;
-  /* .icon {
+  .icon--warning2 {
     padding-top: 10px;
-  } */
+  }
   .alert-text {
     color: #279ecc;
     margin-right: 5px;

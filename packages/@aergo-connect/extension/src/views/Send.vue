@@ -94,13 +94,7 @@
               @input="searchNFT"
               ref="target"
             />
-            <!--
-            <ul
-              class="search_list_wrapper"
-              v-if="searchResult.length && searchFocus"
-              :style="{ height: searchStyle() }"
-            >
--->
+
             <ul
               class="search_list_wrapper"
               v-if="searchResult.length"
@@ -137,7 +131,7 @@
       <p v-else class="error">{{ statusText }}</p>
     </LoadingDialog>
     <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
-    <Notification v-if="notification" :title="notificationText" :icon="`warning2`" :size="250" />
+    <Notification v-if="notification" :title="notificationText" :icon="`warning2`" :size="300" />
     <template v-if="!isLoading" #footer>
       <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
         Show optional fields
@@ -147,6 +141,7 @@
         type="primary"
         size="large"
         @click="handleSendClick"
+        :disabled="!inputTo"
         >Send</Button
       >
     </template>
@@ -212,7 +207,7 @@ export default Vue.extend({
       notification: false,
       notificationText: '',
       searchResult: [],
-      //      searchFocus: false,
+      searchFocus: false,
       isLoading: false,
       txBody: {
         from: this.$store.state.accounts.address,
@@ -323,7 +318,7 @@ export default Vue.extend({
       const amountRegex = /^\d*.?\d{0,3}$/;
       if (!amountRegex.test(this.inputAmount) && this.tokenType !== 'ARC2') {
         this.notification = true;
-        this.notificationText = 'Please Check Amount.';
+        this.notificationText = 'Please Input a Number in Amount.';
         return;
       }
       if (this.tokenType == 'AERGO') {
@@ -721,6 +716,7 @@ export default Vue.extend({
             }
             .text {
               /* Button/Btn3 */
+              padding-left: 5px;
               font-family: 'Outfit';
               font-style: normal;
               font-weight: 500;

@@ -17,7 +17,7 @@ export default Vue.extend({
     },
     icon: {
       type: String,
-      default: '',
+      default: 'warning2',
     },
     size: {
       type: Number,
@@ -38,6 +38,9 @@ export default Vue.extend({
   z-index: 3;
   padding: 8px;
   background: #fff;
+  border: #f0f0f0;
+  border-style: solid;
+  border-width: 0.1px;
   border-radius: 5px;
   display: flex;
   align-items: center;

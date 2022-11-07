@@ -5,6 +5,7 @@
       :amount="inputAmount"
       :symbol="symbol"
       :asset="asset"
+      :tokenName="tokenName"
       @confirm="handleConfirm"
     />
     <Header button="back" title="Recieve" @backClick="handleBack" />
@@ -64,11 +65,21 @@
       </div>
     </div>
     <template #footer class="footer">
-      <Button v-if="!receiveModal" type="primary" size="large" @click="handleShowQRClick"
+      <Button
+        v-if="!receiveModal"
+        type="primary"
+        size="large"
+        @click="handleShowQRClick"
+        :disabled="!inputAmount && tokenType !== 'ARC2'"
         >Show QR</Button
       >
     </template>
-    <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
+    <Notification
+      v-if="notification"
+      :title="notificationText"
+      :icon="notificationText === 'Copied!' ? 'check' : 'warning2'"
+      :size="notificationText !== 'Copied!' ? 250 : 100"
+    />
   </ScrollView>
 </template>
 
@@ -87,13 +98,15 @@ export default Vue.extend({
   data() {
     return {
       receiveModal: false,
-      clipboardNotification: false,
+      notification: false,
+      notificationText: '',
       asset: '',
       icon: '',
       balance: 0,
       tokenType: '',
       symbol: '',
-      inputAmount: '0',
+      tokenName: '',
+      inputAmount: '',
     };
   },
 
@@ -108,11 +121,12 @@ export default Vue.extend({
       this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
       this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
       this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
+      this.tokenName = this.$store.state.session.tokens[this.asset]['meta']['name'];
     },
-    clipboardNotification(state) {
+    notification(state) {
       if (state) {
         setTimeout(() => {
-          const time = (this.clipboardNotification = !state);
+          const time = (this.notification = !state);
           return () => {
             clearTimeout(time);
           };
@@ -126,14 +140,21 @@ export default Vue.extend({
       this.$router.push({ name: 'accounts-list' });
     },
     handleShowQRClick() {
-      this.receiveModal = true;
+      const regex = /[^0-9]/g;
+      if (!regex.test(this.inputAmount)) {
+        this.receiveModal = true;
+      } else {
+        this.notification = true;
+        this.notificationText = 'Please input a number.';
+      }
     },
     handleConfirm() {
       this.receiveModal = false;
     },
     copyToClipboard(text) {
       navigator.clipboard.writeText(text);
-      this.clipboardNotification = true;
+      this.notification = true;
+      this.notificationText = 'Copied!';
     },
   },
 });

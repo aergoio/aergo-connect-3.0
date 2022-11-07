@@ -3,11 +3,17 @@
     <div class="receive_wrapper">
       <VueQRCodeComponent
         class="qr"
-        :text="JSON.stringify(inputText)"
+        :text="JSON.stringify(inputText).padEnd(220)"
         :size="123"
       ></VueQRCodeComponent>
       <div class="amount_wrapper">
-        <span>{{ `${amount} ${symbol}` }}</span>
+        <span>{{
+          `${
+            $store.state.session.tokens[this.asset].meta.type !== 'ARC2'
+              ? `${amount} ${symbol}`
+              : ''
+          }`
+        }}</span>
       </div>
       <div class="description">
         Show the above QR code to the sender. The sender can scan this QR code in the AERGO Connect
@@ -31,6 +37,7 @@ export default Vue.extend({
     amount: Number,
     symbol: String,
     asset: String,
+    tokenName: String,
   },
 
   data() {
@@ -46,14 +53,15 @@ export default Vue.extend({
       address: this.$store.state.accounts.address,
       token: this.asset,
       token_type: this.$store.state.session.tokens[this.asset].meta.type,
-      amount: this.amount,
+      token_name: this.tokenName,
+      amount: String(this.amount),
     };
   },
-
+  mounted() {
+    console.log(this.inputText, 'qr');
+  },
   methods: {
     handleOK() {
-      console.log('ok');
-      console.log(this.inputText, 'QRDATA');
       this.$emit('confirm', 'receiveModal');
     },
   },

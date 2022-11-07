@@ -19,8 +19,13 @@
         </div>
       </div>
       <ImportAssetModal v-if="importAssetModal" :token="token" />
-
       <div v-if="state === `search`" class="search_wrapper">
+        <Notification
+          v-if="notification"
+          :title="`Token already added.`"
+          :size="300"
+          :icon="`warning2`"
+        />
         <div class="network_wrapper">
           <div class="network_circle" />
           <div class="network_text">{{ $store.state.accounts.network }}</div>
@@ -116,7 +121,7 @@ import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import ImportAssetModal from '@aergo-connect/lib-ui/src/modal/ImportAssetModal.vue';
-
+import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 export default Vue.extend({
   components: {
     Icon,
@@ -126,10 +131,12 @@ export default Vue.extend({
     Button,
     Identicon,
     ImportAssetModal,
+    Notification,
   },
   data() {
     return {
       importAssetModal: false,
+      notification: false,
       results: {},
       state: 'search',
       error: {
@@ -142,6 +149,16 @@ export default Vue.extend({
     };
   },
   watch: {
+    notification(state) {
+      if (state) {
+        setTimeout(() => {
+          const time = (this.notification = !state);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 2000);
+      }
+    },
     /*
     value() {
       if (this.value === this.$store.state.accounts.address) {
@@ -164,16 +181,19 @@ export default Vue.extend({
       const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
 
       if (this.$store.state.session.option === 'token') {
-        console.log('Search', `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:{${query}} OR symbol:{${query}}) AND type:ARC1`),
-        await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC1`,
-        )
-          .then((res) => {
-            return res.json();
-          })
-          .then((data) => {
-            this.results = data.hits;
-          });
+        console.log(
+          'Search',
+          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:{${query}} OR symbol:{${query}}) AND type:ARC1`,
+        ),
+          await fetch(
+            `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC1`,
+          )
+            .then((res) => {
+              return res.json();
+            })
+            .then((data) => {
+              this.results = data.hits;
+            });
         console.log('Results', this.results);
         if (this.results) return;
       } else {
@@ -194,11 +214,15 @@ export default Vue.extend({
     async select(token) {
       console.log('Selected', token.meta);
 
-      this.token = token;
-      await this.$store.dispatch('accounts/addToken', token);
-      await this.$store.dispatch('session/initState');
-
-      this.importAssetModal = true;
+      console.log(token, 'token!!!!!!!!!!!!!!!!!!!!!');
+      if (this.$store.state.session.tokens[token.hash]?.hash) {
+        this.notification = true;
+      } else {
+        this.token = token;
+        await this.$store.dispatch('accounts/addToken', token);
+        await this.$store.dispatch('session/initState');
+        this.importAssetModal = true;
+      }
     },
 
     async custom() {
@@ -239,7 +263,7 @@ export default Vue.extend({
           .then((data) => {
             results = data.hits;
           });
-      } ;
+      }
 
       console.log('custum result', results);
 

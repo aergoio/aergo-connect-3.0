@@ -66,7 +66,7 @@
           :class="[data.length > 5 ? 'nft_info_wrapper scroll' : 'nft_info_wrapper']"
         >
           <li v-for="item in data" class="nft_info_list">
-            <div class="nft_name_wrapper">
+            <div class="nft_name_wrapper" @click="gotoSend(item)" :style="{ cursor: 'pointer' }">
               <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
               <!-- <div class="id">{{ item.token.meta.symbol }}</div> -->
               <div class="id">
@@ -79,7 +79,11 @@
                 }}
               </div>
             </div>
-            <Icon class="icon" :name="`nftIcon`" @click="gotoSend(item)" />
+            <Icon
+              class="icon"
+              :name="`pointer`"
+              @click="gotoScanNft(item.meta.address, item.meta.token_id)"
+            />
           </li>
           <div v-if="data.length === 0" class="nft_detail_list_nothing_wrapper">
             <Icon class="nothing_icon" :name="`nothing`" />
@@ -135,20 +139,20 @@
           </div>
         </ul>
         <div v-if="!isLoading" class="footer">
-          <Appear :delay="0.6">
-            <ButtonGroup>
-              <div :style="{ background: '#fff', width: '157px', borderRadius: '4px' }">
-                <Button class="button" type="font-gradation" size="small" @click="handleSend"
-                  ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
-                >
-              </div>
-              <div :style="{ background: '#fff', width: '157px', borderRadius: '4px' }">
-                <Button class="button" type="font-gradation" size="small" @click="handleReceive"
-                  ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
-                >
-              </div>
-            </ButtonGroup>
-          </Appear>
+          <!-- <Appear :delay="0.6"> -->
+          <ButtonGroup>
+            <div :style="{ background: '#fff', width: '157px', borderRadius: '4px' }">
+              <Button class="button" type="font-gradation" size="small" @click="handleSend"
+                ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
+              >
+            </div>
+            <div :style="{ background: '#fff', width: '157px', borderRadius: '4px' }">
+              <Button class="button" type="font-gradation" size="small" @click="handleReceive"
+                ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
+              >
+            </div>
+          </ButtonGroup>
+          <!-- </Appear> -->
         </div>
       </div>
     </div>
@@ -196,6 +200,7 @@ export default Vue.extend({
       filter: 'All',
       isLoading: false,
       token: {},
+      winWidth: '',
     };
   },
 
@@ -203,8 +208,20 @@ export default Vue.extend({
     this.token = this.$store.state.session.tokens[this.$store.state.session.token];
     console.log('token', this.token);
     this.getNftInventory();
+    if (screen.availWidth < 1920) {
+      this.winWidth = 398;
+    } else if (screen.availWidth === 1920) {
+      this.winWidth = 806;
+    } else if (screen.availWidth > 1920 && screen.availWidth < 2560) {
+      this.winWidth = 1100;
+    } else if (screen.availWidth === 2560) {
+      this.winWidth = 1405;
+    }
   },
-
+  mounted() {
+    console.log(window, 'window!!!!!!!!!!');
+    console.log(screen, 'screen!!!!!!!!!!!!!!!!!!!!');
+  },
   watch: {
     filter: function () {
       if (this.filter === 'All') {
@@ -251,7 +268,7 @@ export default Vue.extend({
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
         hash.split('-')[0]
       }/`;
-      window.open(url, '', 'width=1000,height=1000');
+      window.open(url, '_blank', 'width=1000,height=1000');
     },
 
     gotoScanAccount(address: string) {
@@ -259,6 +276,18 @@ export default Vue.extend({
       window.open(url, '', 'width=1000,height=1000');
     },
 
+    gotoScanNft(address: string, nftName: string) {
+      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/nft/${address}/?tx=inventory&keyword=${nftName}`;
+      window.open(
+        url,
+        '_blank',
+        'width=' +
+          parseInt(this.winWidth) +
+          ',height=' +
+          parseInt(screen.availHeight) * 1 +
+          ',toolbar=0,menubar=0,location=0,status=0,scrollbars=1,resizable=0,left=0,top=0',
+      );
+    },
     getTitle() {
       return this.token.meta.name;
     },
@@ -568,6 +597,7 @@ export default Vue.extend({
       border-radius: 50%;
     }
     .balance_wrapper {
+      word-break: break-all;
       width: 200px;
       margin-top: 14px;
       .dollor {
@@ -728,6 +758,9 @@ export default Vue.extend({
           }
         }
       }
+      .nft_info_list:hover {
+        background: #f6f6f6;
+      }
       &.noscroll {
         overflow-y: hidden;
         justify-content: center;
@@ -738,7 +771,7 @@ export default Vue.extend({
       overflow-x: hidden;
       overflow-y: scroll;
       width: 330px;
-      height: 19rem;
+      height: 19.5rem;
       margin-top: 10px;
       flex-direction: column;
       display: flex;

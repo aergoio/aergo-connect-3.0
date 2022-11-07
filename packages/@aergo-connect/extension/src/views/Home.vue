@@ -27,6 +27,12 @@
       />
       <div class="account_info_wrapper">
         <Identicon :text="$store.state.accounts.address" class="account_info_img" />
+        <Notification
+          v-if="notification"
+          :title="notificationText"
+          :size="300"
+          :icon="`warning2`"
+        />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
             <div v-if="!editNick" class="account_info_nickname_text">
@@ -99,7 +105,7 @@
                 <Icon v-else class="token_list_icon" :name="`defaultToken`" />
                 <span
                   :class="[
-                    token.meta.name.length > 10 ? 'token_list_text wordbreak' : 'token_list_text',
+                    token.meta.name.length > 12 ? 'token_list_text wordbreak' : 'token_list_text',
                   ]"
                 >
                   {{ token.meta.name }}
@@ -139,7 +145,11 @@
                 <Icon v-else class="token_list_icon" :name="`defaultToken`" />
                 <span
                   :class="[
-                    token.meta.name.length > 10 ? 'token_list_text wordbreak' : 'token_list_text',
+                    token.meta.name.split(' ').length > 1 ||
+                    token.meta.name.split('-').length > 1 ||
+                    token.meta.name.split('_').length > 1
+                      ? 'token_list_text wordbreak'
+                      : 'token_list_text',
                   ]"
                 >
                   {{ token.meta.name }}
@@ -201,7 +211,7 @@ import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
-
+import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 export default Vue.extend({
   components: {
     NoAccountModal,
@@ -218,6 +228,7 @@ export default Vue.extend({
     ScrollView,
     Appear,
     LoadingBar,
+    Notification,
   },
   data() {
     return {
@@ -227,6 +238,8 @@ export default Vue.extend({
       importAssetModal: false,
       noAccountModal: false,
       accountDetailModal: false,
+      notification: false,
+      notificationText: '',
       network: 'aergo.io',
       tab: 'tokens',
       tokensCount: 0,
@@ -261,16 +274,33 @@ export default Vue.extend({
       }
       this.nftCount();
     },
+    notification(state) {
+      if (state) {
+        setTimeout(() => {
+          const time = (this.notification = !state);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 2000);
+      }
+    },
   },
   methods: {
     async changeNick() {
-      this.$store.commit('accounts/setNick', this.nick);
-      this.editNick = false;
+      if (this.nick.length < 12 && this.nick.length !== 0) {
+        this.$store.commit('accounts/setNick', this.nick);
+        this.editNick = false;
+      } else if (this.nick.length < 1) {
+        this.notification = true;
+        this.notificationText = `Nickname must be at least 1 `;
+      } else {
+        this.notification = true;
+        this.notificationText = `Nickname must be less than 12`;
+      }
     },
 
     handleEdit() {
       this.editNick = true;
-      console.log('edit nick');
     },
 
     async initAccount() {
@@ -287,7 +317,6 @@ export default Vue.extend({
         const succ = await this.$store.dispatch('accounts/loadAccount');
 
         if (!succ) {
-          console.log('Need Register');
           this.noAccountModal = true;
         } else await this.$store.dispatch('session/InitState');
       }
@@ -362,7 +391,6 @@ export default Vue.extend({
       this.notificationModal = true;
     },
     handleDetailAddress() {
-      console.log('handleDetailAddress');
       this.accountDetailModal = true;
     },
 
@@ -396,7 +424,7 @@ export default Vue.extend({
       this.$router.push({ name: 'send' }).catch(() => {});
     },
     handleReceive() {
-      this.$router.push({ name: 'receive' }).catch(() => {});
+      this.accountDetailModal = true;
     },
     handleChangeTab(value: string) {
       this.tab = value;
@@ -521,6 +549,8 @@ export default Vue.extend({
     margin-top: 12px;
     .token_nft_button_wrapper {
       justify-content: center;
+      margin-left: 8px;
+      margin-bottom: 4px;
     }
     .token-button {
       margin-right: 10px;
@@ -565,8 +595,12 @@ export default Vue.extend({
       }
       .token_list_li {
         cursor: pointer;
-        width: 290px;
+        width: 315px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
         .token_list_wrapper {
+          width: 290px;
           height: 62px;
           display: flex;
           justify-content: space-between;
@@ -599,7 +633,6 @@ export default Vue.extend({
             margin-left: 18px;
             &.wordbreak {
               word-break: break-all;
-              max-width: 65px;
             }
           }
           .token_list_balance {
@@ -609,8 +642,13 @@ export default Vue.extend({
             margin-left: 10px;
           }
         }
+        /* .token_list_wrapper:hover {
+          background: #f6f6f6;
+        } */
       }
-
+      .token_list_li:hover {
+        background: #f6f6f6;
+      }
       .line {
         /* Grey/01 */
         height: 1px;
@@ -660,6 +698,17 @@ export default Vue.extend({
         flex: none;
         order: 1;
         flex-grow: 0;
+      }
+    }
+    .token_list_button:hover {
+      background: #279ecc;
+      .token_list_button_text {
+        color: #ffffff;
+      }
+      .icon--plus {
+        path {
+          fill: #fff;
+        }
       }
     }
   }

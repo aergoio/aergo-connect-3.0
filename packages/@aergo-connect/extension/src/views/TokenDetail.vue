@@ -114,7 +114,11 @@
               </div>
               <div class="direction_row">
                 <div v-if="token.meta.symbol === 'aergo'" class="address type">
-                  {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}` }}
+                  <!-- {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}` }} -->
+                  {{ getTokenType(item) }}
+                  <!-- {{
+                    item.meta.category === 'call' ? `Type: ${item.meta.method.toUpperCase()}` : ''
+                  }} -->
                 </div>
                 <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
               </div>
@@ -233,7 +237,9 @@ export default Vue.extend({
       }
     },
   },
-
+  mounted() {
+    console.log(this.data, 'data!!!!!!!!!!!!!!!!!');
+  },
   methods: {
     async aergoStaking(): Promise<void> {
       const staking = await this.$background.getStaking({
@@ -305,6 +311,7 @@ export default Vue.extend({
       if (response.error) this.data = [];
       else {
         this.data = response.hits;
+        console.log(response.hits, 'data!!!!!!!!!!!!!!!!');
         this.allData = response.hits;
       }
     },
@@ -324,6 +331,13 @@ export default Vue.extend({
     copyToClipboard(text) {
       navigator.clipboard.writeText(text);
       this.clipboardNotification = true;
+    },
+    getTokenType(item) {
+      if (!item.meta.category && !item.meta.method) {
+        return `Type : CALL`;
+      } else {
+        return `Type: ${item.meta.category.toUpperCase()}`;
+      }
     },
   },
 });
@@ -534,6 +548,7 @@ export default Vue.extend({
       border-radius: 50%;
     }
     .balance_wrapper {
+      word-break: break-all;
       width: 200px;
       .dollor {
         /* Caption/C3 */

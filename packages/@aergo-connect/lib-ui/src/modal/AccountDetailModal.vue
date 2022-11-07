@@ -1,5 +1,5 @@
 <template>
-  <div class="account_detail_backdrop">
+  <div class="account_detail_backdrop" @click="handleBack">
     <div class="account_detail_wrapper">
       <div class="title">Account Address</div>
       <div class="flex-row">
@@ -15,7 +15,10 @@
           {{ $store.state.accounts.address }}
         </div>
       </div>
-      <Button type="primary" @click="handleOK">OK</Button>
+      <ButtonGroup vertical>
+        <Button type="primary" @click="handleBack">OK</Button>
+        <Button type="primary" @click="handleReceive">Receive</Button>
+      </ButtonGroup>
     </div>
     <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
   </div>
@@ -27,8 +30,9 @@ import VueQRCodeComponent from 'vue-qrcode-component';
 import Notification from './Notification.vue';
 import Identicon from '../content/Identicon.vue';
 import Button from '../buttons/Button.vue';
+import ButtonGroup from '../buttons/ButtonGroup.vue';
 export default Vue.extend({
-  components: { Identicon, Button, VueQRCodeComponent, Notification },
+  components: { Identicon, ButtonGroup, Button, VueQRCodeComponent, Notification },
   data() {
     return {
       clipboardNotification: false,
@@ -47,9 +51,12 @@ export default Vue.extend({
     },
   },
   methods: {
-    handleOK() {
+    handleBack() {
       console.log('ok');
       this.$emit('cancel', 'accountDetailModal');
+    },
+    handleReceive() {
+      this.$router.push({ name: 'receive' });
     },
     copyToClipboard(text) {
       navigator.clipboard.writeText(text);
@@ -70,10 +77,10 @@ export default Vue.extend({
   z-index: 1;
   .account_detail_wrapper {
     width: 317px;
-    height: 408px;
+    height: 460px;
     position: absolute;
     left: 28px;
-    top: 110px;
+    top: 70px;
     background: #ffffff;
     border-radius: 8px;
 
@@ -105,7 +112,7 @@ export default Vue.extend({
       }
     }
     .address_wrapper {
-      margin-top: 10px;
+      margin-top: 15px;
       margin-bottom: 15px;
       width: 251px;
       /* Primary/Blue02 */
@@ -135,6 +142,9 @@ export default Vue.extend({
     }
     .button {
       width: 289px;
+    }
+    .button-group-vertical {
+      margin-left: 8px;
     }
   }
 }

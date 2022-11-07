@@ -1,7 +1,7 @@
 <template>
   <div id="app" :class="`page-${$router.currentRoute.name}`">
     <router-view />
-<!--
+    <!--
     <RouteTransition > <router-view /> </RouteTransition>
 -->
   </div>
@@ -24,7 +24,7 @@ export default Vue.extend({
   data() {
     return {
       isLoading: false,
-    }
+    };
   },
 
   async mounted() {
@@ -33,21 +33,20 @@ export default Vue.extend({
 
     if (!isSetup) {
       this.$router.push({ name: 'welcome' }).catch(() => {});
-    }
-    else if (!unlocked) {
-    // Upon App launch, get initial state for 'unlocked'
+    } else if (!unlocked) {
+      // Upon App launch, get initial state for 'unlocked'
       this.$router.push({ name: 'lockscreen' }).catch(() => {});
     }
 
     this.$store.commit('ui/setUnlocked', unlocked);
-    console.log('unlock', unlocked) ;
+    console.log('unlock', unlocked);
 
     //const getAccounts = await this.$background.getAccounts();
 
     console.log('idleTimeout:' + this.$store.state.ui.idleTimeout);
     extension.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
 
-/*
+    /*
     extension.idle.onStateChanged.addListener(function(newState: IdleState) {
       console.log(newState, "State") ;
       if (newState === 'idle' || !this.$store.state.ui.unlocked)  {
@@ -57,16 +56,15 @@ export default Vue.extend({
     }) ;
 */
 
-//  extension.idle.onStateChanged.addListener(this.$background.lock());
+    //  extension.idle.onStateChanged.addListener(this.$background.lock());
 
+    //    const peformAuthCheck = !(
+    //      this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck
+    //    );
 
-//    const peformAuthCheck = !(
-//      this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck
-//    );
-
-//    if (!unlocked && peformAuthCheck && isSetup) {
-//      this.$router.push({ name: 'lockscreen' }).catch(() => {});
-//    }
+    //    if (!unlocked && peformAuthCheck && isSetup) {
+    //      this.$router.push({ name: 'lockscreen' }).catch(() => {});
+    //    }
 
     // request.onsuccess = (e) => {
     //   const database = e.target.result;

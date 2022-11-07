@@ -158,7 +158,7 @@ export default Vue.extend({
       max-height: 300px;
       margin-top: 10px;
       width: auto;
-      overflow-y: hidden;
+      overflow-y: auto;
       overflow-x: hidden;
       .flex-row {
         display: flex;
@@ -207,7 +207,6 @@ export default Vue.extend({
           color: #686767;
           &.payload {
             width: 200px;
-            overflow-y: scroll;
             overflow-x: hidden;
             word-break: break-all;
             text-align: left;

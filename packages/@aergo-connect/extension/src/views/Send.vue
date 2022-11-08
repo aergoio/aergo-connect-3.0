@@ -36,7 +36,7 @@
         <div class="direction-row">
           <div class="circle" />
           <div class="network">
-            {{ this.$store.state.accounts.network || `AERGO Mainnet` }}
+            {{ this.$store.state.accounts.network.toUpperCase() || `MAINNET` }}
           </div>
         </div>
         <div class="account_wrapper">
@@ -596,7 +596,7 @@ export default Vue.extend({
       align-items: center;
     }
     .amount_wrapper {
-      width: 100%;
+      width: 281px;
       display: flex;
       align-items: center;
       justify-content: space-between;

@@ -83,7 +83,6 @@ const storeModule: Module<AccountsState, RootState> = {
     },
 
     async removeAccount({ state, commit }, address: string) {
-
       const vue = getVueInstance(this);
       await vue.$background.removeAccount({ address: state.address, chainId: 'aergo.io' });
       commit('removeAccount');
@@ -123,7 +122,6 @@ const storeModule: Module<AccountsState, RootState> = {
 
   mutations: {
     setActiveAccount(state, address: string) {
-
       if (!address) {
         state.address = '';
         state.nick = '';

@@ -13,7 +13,7 @@
       <div class="account_detail">
         <div class="direction-row">
           <div class="circle" />
-          <div class="network">{{ $store.state.accounts.network }}</div>
+          <div class="network">{{ $store.state.accounts.network.toUpperCase() || 'MAINNET' }}</div>
         </div>
         <div class="account">
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
@@ -47,18 +47,18 @@
           <Icon class="icon" :name="'aergo'" />
           <div class="balance_wrapper">
             <div class="balance">
-              {{ token.balance ? Number(token.balance).toFixed(3) : 0 }}
+              {{ token.balance ? formatBalance(token.balance) : 0 }}
             </div>
             <div class="dollor">
               <span>$ </span>
-              <span>{{ Number(aergoPrice).toFixed(3) }} </span>
+              <span>{{ aergoPrice ? formatBalance(aergoPrice) : 0 }} </span>
             </div>
           </div>
           <div class="token_symbol">{{ token.meta.symbol }}</div>
         </div>
         <div class="line" />
-        <div class="detail_wrapper">
-          <div class="detail_title" @click="gotoStake()">Staked Balance</div>
+        <div class="detail_wrapper" @click="gotoStake()">
+          <div class="detail_title">Staked Balance</div>
           <div class="detail_content">{{ staking }}</div>
         </div>
       </div>
@@ -68,7 +68,7 @@
           <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
             <div class="balance">
-              {{ token.balance ? Number(token.balance).toFixed(3) : 0 }}
+              {{ token.balance ? formatBalance(token.balance) : 0 }}
             </div>
           </div>
           <div class="token_symbol">{{ token.meta.symbol }}</div>
@@ -114,11 +114,7 @@
               </div>
               <div class="direction_row">
                 <div v-if="token.meta.symbol === 'aergo'" class="address type">
-                  <!-- {{ `Type: ${$store.state.ui.txTypes[item.meta.type]}` }} -->
                   {{ getTokenType(item) }}
-                  <!-- {{
-                    item.meta.category === 'call' ? `Type: ${item.meta.method.toUpperCase()}` : ''
-                  }} -->
                 </div>
                 <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
               </div>
@@ -130,7 +126,6 @@
           </div>
         </ul>
         <div v-if="!isLoading" class="footer">
-          <!-- <Appear :delay="0.1"> -->
           <ButtonGroup>
             <div :style="{ background: '#fff', width: '157px', borderRadius: '4px' }">
               <Button class="button" type="font-gradation" size="small" @click="handleSend"
@@ -143,7 +138,6 @@
               >
             </div>
           </ButtonGroup>
-          <!-- </Appear> -->
         </div>
       </div>
     </div>
@@ -202,7 +196,6 @@ export default Vue.extend({
 
   async beforeMount() {
     this.token = await this.$store.state.session.tokens[this.$store.state.session.token];
-    console.log('token', this.token);
 
     await this.getTokenHistory();
     if (this.token.meta.symbol == 'aergo') await this.getAergoInfo();
@@ -237,9 +230,6 @@ export default Vue.extend({
       }
     },
   },
-  mounted() {
-    console.log(this.data, 'data!!!!!!!!!!!!!!!!!');
-  },
   methods: {
     async aergoStaking(): Promise<void> {
       const staking = await this.$background.getStaking({
@@ -254,13 +244,13 @@ export default Vue.extend({
     },
 
     gotoStake() {
-      window.open('https://voting.aergo.io/about', '', 'width=1000,height=800');
+      window.open('https://voting.aergo.io/about', '', 'width=1000');
     },
     gotoScanTx(hash: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
         hash.split('-')[0]
       }/`;
-      window.open(url, '', 'width=1000,height=1000');
+      window.open(url, '', 'width=1000');
     },
 
     gotoScanAccount(address: string) {
@@ -270,7 +260,6 @@ export default Vue.extend({
 
     getAergoInfo() {
       this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
-        console.log('priceInfo', this.token.balance * priceInfo.price);
         this.aergoPrice = this.token.balance * priceInfo.price;
       });
 
@@ -278,7 +267,8 @@ export default Vue.extend({
     },
 
     getBalance(value: number) {
-      return (value / Math.pow(10, this.token.meta.decimals)).toFixed(3);
+      const noDecimalValue = value / Math.pow(10, this.token.meta.decimals);
+      return this.formatBalance(noDecimalValue);
     },
 
     getTitle() {
@@ -311,7 +301,6 @@ export default Vue.extend({
       if (response.error) this.data = [];
       else {
         this.data = response.hits;
-        console.log(response.hits, 'data!!!!!!!!!!!!!!!!');
         this.allData = response.hits;
       }
     },
@@ -322,11 +311,9 @@ export default Vue.extend({
 
     handleSend() {
       this.$router.push({ name: 'send' }).catch(() => {});
-      console.log('send');
     },
     handleReceive() {
       this.$router.push({ name: 'receive' }).catch(() => {});
-      console.log('receive');
     },
     copyToClipboard(text) {
       navigator.clipboard.writeText(text);
@@ -338,6 +325,12 @@ export default Vue.extend({
       } else {
         return `Type: ${item.meta.category.toUpperCase()}`;
       }
+    },
+    formatBalance(balance) {
+      if (Number.isInteger(balance)) {
+        return balance;
+      }
+      return Number(balance).toFixed(3);
     },
   },
 });
@@ -496,6 +489,7 @@ export default Vue.extend({
       margin-top: 6px;
     }
     .detail_wrapper {
+      cursor: pointer;
       margin-top: 6px;
       width: 100%;
       display: flex;
@@ -695,8 +689,6 @@ export default Vue.extend({
         .time {
           margin-left: 16px;
           margin-top: 8px;
-          width: 100px;
-          height: 15px;
           font-family: 'Outfit';
           font-style: normal;
           font-weight: 300;

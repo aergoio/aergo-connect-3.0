@@ -65,21 +65,19 @@ export default class Lockscreen extends mixins() {
 
   async unlock(): Promise<void> {
     try {
-
       await this.$background.unlock({ password: this.password });
       let nextPage = this.$store.state.session.currentPage;
 
       console.log('Saved nextPage', nextPage);
 
       if (nextPage) {
-        if (this.$store.state.accounts.address) await this.$store.dispatch('session/initState') ;
+        if (this.$store.state.accounts.address) await this.$store.dispatch('session/initState');
       } else {
-        nextPage = 'accounts-list' ; 
-      } ;
+        nextPage = 'accounts-list';
+      }
 
       console.log('nextPage', nextPage);
-      this.$router.push({name: nextPage}).catch(() => {});
-
+      this.$router.push({ name: nextPage }).catch(() => {});
     } catch (e) {
       this.errors.password = `${e}`;
     }

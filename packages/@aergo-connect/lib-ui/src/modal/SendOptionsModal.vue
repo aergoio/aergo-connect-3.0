@@ -44,7 +44,6 @@ export default Vue.extend({
   methods: {
     handleOk() {
       this.$emit('updateTx', this.iTxType, this.iPayload);
-      console.log('ok');
     },
   },
 });

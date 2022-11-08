@@ -1,8 +1,8 @@
 <template>
-  <div class="network_content">
+  <div class="network_content" @click="networkModalClick">
     <div class="network_circle" />
-    <span class="network_name" @click="networkModalClick">
-      {{ network }}
+    <span class="network_name">
+      {{ network.toUpperCase() }}
     </span>
   </div>
 </template>
@@ -17,14 +17,14 @@ export default Vue.extend({
   },
   computed: {
     network() {
-      const network = this.$store.state.accounts.network ;
+      const network = this.$store.state.accounts.network;
       if (!network) {
-        return "mainnet" ;
+        return 'mainnet';
       } else {
-        return network ;
+        return network;
       }
-    }
-  }
+    },
+  },
 });
 </script>
 
@@ -33,6 +33,7 @@ export default Vue.extend({
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
   .network_circle {
     background: #e4097d;
     width: 6px;
@@ -49,10 +50,9 @@ export default Vue.extend({
     text-align: center;
     letter-spacing: -0.333333px;
     color: #686767;
-    cursor: pointer;
   }
-  .network_name:hover {
+  /* .network_name:hover {
     text-decoration: underline;
-  }
+  } */
 }
 </style>

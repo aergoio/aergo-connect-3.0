@@ -25,8 +25,8 @@ async function init(name: string) {
   const extensionPort = extension.runtime.connect({ name });
   const connectionStream = new PortStream(extensionPort);
   const background = await connectToBackground(connectionStream);
-  // const manifest = extension.runtime.getManifest();
-
+  const manifest = extension.runtime.getManifest();
+  console.log(manifest, 'manifest!!!');
   Vue.use(Background, { background });
   Vue.use(IndexedDb);
   const requestId = getRequestId();

@@ -10,12 +10,7 @@
       <div class="button_wrapper">
         <Appear :delay="0.6">
           <ButtonGroup vertical class="button_group_wrapper">
-            <Button
-              type="primary"
-              size="large"
-              hover
-              :to="{ name: 'account-import', }"
-            >
+            <Button type="primary" size="large" hover :to="{ name: 'account-import' }">
               Import
             </Button>
             <Button type="primary" size="large" hover @click="handleCreate"> Create </Button>

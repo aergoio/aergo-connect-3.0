@@ -12,7 +12,7 @@
       <div class="account_detail_wrapper">
         <div class="direction-row">
           <div class="circle" />
-          <div class="network">{{ $store.state.accounts.network }}</div>
+          <div class="network">{{ $store.state.accounts.network.toUpperCase() || 'MAINNET' }}</div>
         </div>
         <div class="account_wrapper">
           <Identicon :text="$store.state.accounts.address" class="account_icon" />

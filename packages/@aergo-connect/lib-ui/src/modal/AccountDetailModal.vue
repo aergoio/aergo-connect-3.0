@@ -16,7 +16,6 @@
         </div>
       </div>
       <ButtonGroup vertical>
-        <Button type="primary" @click="handleBack">OK</Button>
         <Button type="primary" @click="handleReceive">Receive</Button>
       </ButtonGroup>
     </div>
@@ -51,8 +50,12 @@ export default Vue.extend({
     },
   },
   methods: {
-    handleBack() {
-      console.log('ok');
+    handleBack(event) {
+      if (event.eventPhase === 2) {
+        this.$emit('cancel', 'accountDetailModal');
+      }
+    },
+    handleButtonOK() {
       this.$emit('cancel', 'accountDetailModal');
     },
     handleReceive() {
@@ -77,7 +80,7 @@ export default Vue.extend({
   z-index: 1;
   .account_detail_wrapper {
     width: 317px;
-    height: 460px;
+    height: 410px;
     position: absolute;
     left: 28px;
     top: 70px;

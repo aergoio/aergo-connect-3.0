@@ -58,9 +58,6 @@ export default Vue.extend({
       default: {},
     },
   },
-  mounted() {
-    console.log(this.token);
-  },
   methods: {
     handleClick() {
       this.$router.push({

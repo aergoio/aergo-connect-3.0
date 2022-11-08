@@ -1,13 +1,35 @@
 <template>
-  <div class="account__item">
-    <div class="name__wrapper">
+  <div
+    :class="[
+      this.$route.name === 'request-accounts-list' ? 'account__item request' : 'account__item',
+    ]"
+  >
+    <div
+      :class="[
+        this.$route.name === 'request-accounts-list' ? 'name__wrapper request' : 'name__wrapper',
+      ]"
+    >
       <div class="identicon-wrapper">
         <Identicon :text="address" :list="true" />
       </div>
-      <span class="name" for="account__name">{{ nickname }}</span>
+      <span class="name" for="account__name">{{
+        this.$route.name === 'request-accounts-list'
+          ? `${address.slice(0, 10)}...${address.slice(-10)}`
+          : nickname
+      }}</span>
     </div>
-    <div class="address__wrapper">
-      <span class="address">{{ `${address.slice(0, 3)}...${address.slice(-3)}` }}</span>
+    <div
+      :class="[
+        this.$route.name === 'request-accounts-list'
+          ? 'address__wrapper request'
+          : 'address__wrapper',
+      ]"
+    >
+      <span class="address">{{
+        this.$route.name === 'request-accounts-list'
+          ? nickname
+          : `${address.slice(0, 3)}...${address.slice(-3)}`
+      }}</span>
     </div>
   </div>
 </template>
@@ -35,7 +57,9 @@ export default Vue.extend({
   },
   computed: {},
   methods: {},
-  mounted() {},
+  mounted() {
+    console.log(this.$route.name, 'routerInAccountItem');
+  },
 });
 </script>
 
@@ -50,7 +74,9 @@ export default Vue.extend({
   display: flex;
   justify-content: space-between;
   align-items: center;
-
+  &.request {
+    justify-content: space-around;
+  }
   cursor: pointer;
   &.active {
     background: #eff5f7;
@@ -62,12 +88,15 @@ export default Vue.extend({
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 42px;
+    /* margin-right: 42px; */
     font-weight: 400;
-    font-size: 14px;
+    font-size: 0.875em;
     line-height: 18px;
     letter-spacing: -0.333333px;
     color: #454344;
+    &.request {
+      font-size: 1em;
+    }
     .identicon-wrapper {
       margin-right: 8px;
       border: 1px solid #d8d8d8;
@@ -86,10 +115,13 @@ export default Vue.extend({
     justify-content: center;
     align-items: center;
     padding: 2px 8px;
-
+    width: 65px;
+    &.request {
+      font-size: 0.8125em;
+    }
     .address {
       font-weight: 300;
-      font-size: 12px;
+      font-size: 0.75em;
       line-height: 15px;
       text-align: center;
       letter-spacing: -0.333333px;

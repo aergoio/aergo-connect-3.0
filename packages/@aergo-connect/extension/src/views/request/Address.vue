@@ -2,6 +2,7 @@
   <ScrollView class="page">
     <!-- <Header :title="$store.state.accounts.network" network /> -->
     <div class="account_info_wrapper">
+      <Icon :name="`back`" @click="handleGoBack" />
       <Identicon :text="$store.state.accounts.address" class="account_info_img" />
       <div class="account_info_content_wrapper">
         <div class="account_info_nickname_wrapper">
@@ -11,7 +12,7 @@
           <div class="account_info_network_wrapper">
             <div class="account_info_network_circle" />
             <div class="account_info_network">
-              {{ $store.state.accounts.network }}
+              {{ $store.state.accounts.network.toUpperCase() }}
             </div>
           </div>
         </div>
@@ -68,7 +69,6 @@ import { RequestMixin } from './mixin';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import { Header } from '@aergo-connect/lib-ui/src/layouts';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
-
 @Component({
   components: {
     ScrollView,
@@ -95,6 +95,9 @@ export default class RequestAddress extends mixins(RequestMixin) {
         chainId,
       },
     };
+  }
+  handleGoBack() {
+    this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
   }
 }
 </script>
@@ -154,7 +157,14 @@ export default class RequestAddress extends mixins(RequestMixin) {
   border: 1px solid #f6f6f6;
   box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-
+  .icon--back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-top: 30px;
+    margin-left: 5px;
+    cursor: pointer;
+  }
   .account_info_img {
     width: 56px;
     height: 56px;
@@ -199,7 +209,7 @@ export default class RequestAddress extends mixins(RequestMixin) {
           font-family: 'Outfit';
           font-style: normal;
           font-weight: 300;
-          font-size: 15px;
+          font-size: 14px;
           line-height: 19px;
           text-align: center;
           letter-spacing: -0.333333px;

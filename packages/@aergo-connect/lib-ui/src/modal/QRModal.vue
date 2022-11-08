@@ -24,7 +24,6 @@ export default Vue.extend({
   components: { Identicon, Button, VueQRCodeComponent },
   methods: {
     handleOK() {
-      console.log('ok');
       this.$emit('cancel', 'accountDetailModal');
     },
   },

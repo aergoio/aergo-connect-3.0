@@ -19,14 +19,14 @@
 
     <template #footer>
       <Appear :delay="0.6">
-      <ButtonGroup>
-        <Button class="button" type="font-gradation" size="small" @click="cancel">
-          <Icon class="button-icon" /><span>Cancel</span>
-        </Button>
-        <Button class="button" type="font-gradation" size="small" @click="confirm">
-          <Icon class="button-icon" /><span>Confirm</span>
-        </Button>
-      </ButtonGroup>
+        <ButtonGroup>
+          <Button class="button" type="font-gradation" size="small" @click="cancel">
+            <Icon class="button-icon" /><span>Cancel</span>
+          </Button>
+          <Button class="button" type="font-gradation" size="small" @click="confirm">
+            <Icon class="button-icon" /><span>Confirm</span>
+          </Button>
+        </ButtonGroup>
       </Appear>
       <LoadingDialog
         :visible="statusDialogVisible"
@@ -68,7 +68,6 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
     Appear,
   },
 })
-
 export default class TxBase extends mixins(RequestMixin) {
   actionVerb = 'send';
 
@@ -78,7 +77,10 @@ export default class TxBase extends mixins(RequestMixin) {
   }
 
   get accountSpec() {
-    return { address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network };
+    return {
+      address: this.$store.state.accounts.address,
+      chainId: this.$store.state.accounts.network,
+    };
   }
 
   get txDataDisplay() {
@@ -108,7 +110,10 @@ export default class TxBase extends mixins(RequestMixin) {
     this.$store.dispatch('accounts/updateAccount', this.accountSpec);
   }
   async signWithLedger(txBody: any) {
-    const { tx } = await this.$background.prepareTransaction(txBody, this.$store.state.accounts.network);
+    const { tx } = await this.$background.prepareTransaction(
+      txBody,
+      this.$store.state.accounts.network,
+    );
     tx.payload = txBody.payload;
     this.setStatus('loading', 'Connecting to Ledger device...');
     const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -133,7 +138,6 @@ export default class TxBase extends mixins(RequestMixin) {
   }
 
   async confirmHandler(): Promise<any> {
-
     console.log('RequestSend confirmHandler');
     if (!this.request) return;
     let txBody = {
@@ -141,7 +145,7 @@ export default class TxBase extends mixins(RequestMixin) {
       payload: Array.from(this.payloadParsed),
       from: this.$store.state.accounts.address,
     };
-    
+
     console.log('txBody', txBody);
 
     if (!this.account) {
@@ -161,7 +165,10 @@ export default class TxBase extends mixins(RequestMixin) {
 
     if (this.actionVerb === 'sign') {
       this.setStatus('loading', 'Calculating signature...');
-      const result = await this.$background.signTransaction(txBody, this.$store.state.accounts.network);
+      const result = await this.$background.signTransaction(
+        txBody,
+        this.$store.state.accounts.network,
+      );
 
       console.log('sign', result);
 

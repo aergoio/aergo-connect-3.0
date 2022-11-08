@@ -24,7 +24,6 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
   const isStartTransition = from.fullPath === '/' && from.name === null && to.name === 'home';
   if (isStartTransition) {
     const persistedPath = store.state.session.currentPath;
-    console.log(persistedPath, 'persistedPath');
     const exclude = ['', '/', '/welcome', to.fullPath];
     if (persistedPath && exclude.indexOf(persistedPath) === -1) {
       return next(persistedPath);
@@ -38,7 +37,6 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
  */
 export const persistRoute: NavigationGuard = (to, _from, next) => {
   if (!((to.meta && to.meta.noTracking === true) || to.fullPath.match(/request/))) {
-    console.log("guard", to.name, _from.name) ;
     store.commit('session/setCurrentPage', to.name);
     if (_from.name != 'lockscreen') store.commit('session/setPreviousPage', _from.name);
   }

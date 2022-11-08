@@ -6,6 +6,7 @@
       :symbol="symbol"
       :asset="asset"
       :tokenName="tokenName"
+      :decimal="decimal"
       @confirm="handleConfirm"
     />
     <Header button="back" title="Recieve" @backClick="handleBack" />
@@ -14,7 +15,7 @@
         <div class="direction-row">
           <div class="circle" />
           <div class="network">
-            {{ this.$store.state.accounts.network || `AERGO Mainnet` }}
+            {{ this.$store.state.accounts.network.toUpperCase() || `MAINNET` }}
           </div>
         </div>
         <div class="account_wrapper">
@@ -45,8 +46,10 @@
         <Icon v-else-if="!icon" class="token_icon" :name="`defaultToken`" />
         <!-- <Identicon v-else-if="!icon" :text="asset" class="token_icon" /> -->
         <img v-else class="token_icon" :src="icon" />
-        <div class="token_amount">{{ balance }}</div>
-        <div class="token_symbol">{{ symbol }}</div>
+        <div class="amount_wrapper">
+          <div class="token_amount">{{ token.balance ? formatBalance(token.balance) : 0 }}</div>
+          <div class="token_symbol">{{ symbol }}</div>
+        </div>
       </div>
 
       <div class="send_form_wrapper">
@@ -107,10 +110,14 @@ export default Vue.extend({
       symbol: '',
       tokenName: '',
       inputAmount: '',
+      decimal: '',
+      token: {},
     };
   },
 
   async beforeMount() {
+    this.token = await this.$store.state.session.tokens[this.$store.state.session.token];
+
     if (this.$store.state.session.token) this.asset = this.$store.state.session.token;
     else this.asset = 'AERGO';
   },
@@ -122,6 +129,7 @@ export default Vue.extend({
       this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
       this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
       this.tokenName = this.$store.state.session.tokens[this.asset]['meta']['name'];
+      this.decimal = this.$store.state.session.tokens[this.asset]['meta']['decimal'];
     },
     notification(state) {
       if (state) {
@@ -132,6 +140,9 @@ export default Vue.extend({
           };
         }, 2000);
       }
+    },
+    balance() {
+      this.$forceUpdate();
     },
   },
 
@@ -155,6 +166,12 @@ export default Vue.extend({
       navigator.clipboard.writeText(text);
       this.notification = true;
       this.notificationText = 'Copied!';
+    },
+    formatBalance(balance) {
+      if (Number.isInteger(balance)) {
+        return balance;
+      }
+      return Number(balance).toFixed(3);
     },
   },
 });
@@ -278,6 +295,12 @@ export default Vue.extend({
       justify-content: center;
       align-items: center;
     }
+    .amount_wrapper {
+      width: 281px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
     .token_amount {
       width: 141px;
       margin-left: 20px;
@@ -295,19 +318,7 @@ export default Vue.extend({
       color: #231f20;
     }
     .token_symbol {
-      /* Subtitle/S3 */
-
-      font-family: 'Outfit';
-      font-style: normal;
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 20px;
-      text-align: right;
-      letter-spacing: -0.333333px;
-
-      /* Grey/08 */
-
-      color: #231f20;
+      width: 100%;
     }
   }
   .send_form_wrapper {

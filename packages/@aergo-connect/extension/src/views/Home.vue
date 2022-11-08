@@ -14,7 +14,7 @@
     <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
     <!-- <NotificationModal v-if="notificationModal" @cancel="handleCancel" /> -->
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
-    <AccountDetailModal v-if="accountDetailModal" @cancel="handleCancel" />
+    <AccountDetailModal v-if="accountDetailModal" @cancel="(e) => handleCancel(e)" />
     <div v-if="!noAccountModal" class="home_content">
       <List
         v-if="hamburgerModal"
@@ -113,7 +113,7 @@
               </div>
               <div class="token_list_amount">
                 <span class="token_list_balance">{{
-                  token.balance ? Number(token.balance).toFixed(3) : 0
+                  token.balance ? formatBalance(token.balance) : 0
                 }}</span>
                 <span class="token_list_symbol"> {{ token.meta.symbol }}</span>
 
@@ -180,16 +180,16 @@
         </button>
       </div>
       <div v-if="!isLoading" class="footer">
-        <Appear :delay="0">
-          <ButtonGroup>
-            <Button class="footer_button" type="font-gradation" size="small" @click="handleSend"
-              ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
-            >
-            <Button class="footer_button" type="font-gradation" size="small" @click="handleReceive"
-              ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
-            >
-          </ButtonGroup>
-        </Appear>
+        <!-- <Appear :delay="0"> -->
+        <ButtonGroup>
+          <Button class="footer_button" type="font-gradation" size="small" @click="handleSend"
+            ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
+          >
+          <Button class="footer_button" type="font-gradation" size="small" @click="handleReceive"
+            ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
+          >
+        </ButtonGroup>
+        <!-- </Appear> -->
       </div>
     </div>
   </ScrollView>
@@ -348,7 +348,7 @@ export default Vue.extend({
       this.hamburgerModal = !this.hamburgerModal;
     },
 
-    handleCancel(modalEvent: string) {
+    handleCancel(modalEvent: any) {
       console.log(modalEvent);
       if (modalEvent === 'noAccountModal') {
         this.$background.lock();
@@ -443,9 +443,12 @@ export default Vue.extend({
         }
       });
     },
-    // getTokenBalance(){
-    //   console.log
-    // }
+    formatBalance(balance) {
+      if (Number.isInteger(balance)) {
+        return balance;
+      }
+      return Number(balance).toFixed(3);
+    },
   },
 });
 </script>

@@ -38,6 +38,7 @@ export default Vue.extend({
     symbol: String,
     asset: String,
     tokenName: String,
+    decimals: Number,
   },
 
   data() {
@@ -55,6 +56,7 @@ export default Vue.extend({
       token_type: this.$store.state.session.tokens[this.asset].meta.type,
       token_name: this.tokenName,
       amount: String(this.amount),
+      decimals: String(this.decimals),
     };
   },
   mounted() {

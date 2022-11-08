@@ -88,7 +88,6 @@ export default Vue.extend({
   computed: {
     formattedPayload() {
       const payload = `${this.payload}`;
-      console.log(payload, '1');
       try {
         JSON.parse(payload);
         return jsonHighlight(payload);
@@ -99,11 +98,9 @@ export default Vue.extend({
   },
   methods: {
     handleOk() {
-      console.log('ok', this.to);
       this.$emit('confirm');
     },
     handleCancel() {
-      console.log('cancel');
       this.$emit('cancel');
     },
   },

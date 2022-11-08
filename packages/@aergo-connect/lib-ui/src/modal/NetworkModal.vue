@@ -1,24 +1,24 @@
 <template>
-  <div class="network_modal_backdrop" @click="networkModalClick">
+  <div class="network_modal_backdrop" @click="(event) => networkModalClick(event)">
     <div class="network_modal_wrapper">
       <div class="network_modal_title">Select Network</div>
       <div class="network_modal_line" />
       <ul class="network_modal_ul">
         <li class="network_modal_li" @click="setNetwork('mainnet')">
           <div class="network_modal_circle1" />
-          <span class="network_modal_name">AERGO Mainnet</span>
+          <span class="network_modal_name">AERGO MAINNET</span>
           <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
         </li>
         <div class="list_line" />
         <li class="network_modal_li" @click="setNetwork('testnet')">
           <div class="network_modal_circle2" />
-          <span class="network_modal_name">AERGO Testnet</span>
+          <span class="network_modal_name">AERGO TESTNET</span>
           <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
         </li>
         <div class="list_line" />
         <li class="network_modal_li" @click="setNetwork('alpha')">
           <div class="network_modal_circle3" />
-          <span class="network_modal_name">AERGO alpha</span>
+          <span class="network_modal_name">AERGO ALPHA</span>
           <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
         </li>
         <div class="list_line" />
@@ -38,20 +38,31 @@ export default Vue.extend({
     Button,
   },
   methods: {
-    networkModalClick() {
-      this.$emit('networkModalClick');
+    networkModalClick(event) {
+      if (event.eventPhase === 2) {
+        this.$emit('networkModalClick');
+      }
+      // event.stopPropagation();
+      // this.$emit('networkModalClick');
     },
 
-    setNetwork(network) {
+    async setNetwork(network) {
       this.$store.commit('accounts/setNetwork', network);
+      this.$emit('networkModalClick');
 
-      // reset account_data
-      this.$router.push({
-        name: 'accounts-list',
-        params: {
-          address: this.$store.state.accounts.address,
-        },
-      });
+      if (this.$route.name === 'request-accounts-list') {
+        return;
+      } else {
+        // reset account_data
+        await this.$router
+          .push({
+            name: 'accounts-list',
+            params: {
+              address: this.$store.state.accounts.address,
+            },
+          })
+          .catch(() => {});
+      }
     },
   },
 });

@@ -50,9 +50,6 @@ export default Vue.extend({
     Appear,
     Icon,
   },
-  beforeMount() {
-    console.log('in welcome');
-  },
 });
 </script>
 
@@ -89,6 +86,9 @@ export default Vue.extend({
 }
 .welcome_footer {
   .button-group {
+    .button {
+      width: 327px;
+    }
   }
 }
 #app.page-welcome {

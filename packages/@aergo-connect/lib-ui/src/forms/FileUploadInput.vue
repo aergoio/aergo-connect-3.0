@@ -47,7 +47,7 @@ export default Vue.extend({
       console.log('file up');
       if (!$elem || !$elem.files || $elem.files.length === 0) return;
       const reader = new FileReader();
-      reader.onload = e => {
+      reader.onload = (e) => {
         if (e.target) {
           this.$emit('file', e.target.result);
         }

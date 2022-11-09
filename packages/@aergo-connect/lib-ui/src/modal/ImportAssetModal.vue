@@ -40,7 +40,7 @@
         </div>
       </div>
 
-      <Button type="gradation" class="button" size="medium" @click="handleClick">OK</Button>
+      <Button type="primary" class="button" size="medium" @click="handleClick" hover>OK</Button>
     </div>
   </div>
 </template>
@@ -57,6 +57,9 @@ export default Vue.extend({
       type: Object,
       default: {},
     },
+  },
+  mounted() {
+    console.log(this.token);
   },
   methods: {
     handleClick() {

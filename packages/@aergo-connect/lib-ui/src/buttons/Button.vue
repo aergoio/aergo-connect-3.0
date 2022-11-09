@@ -151,6 +151,7 @@ export default Vue.extend({
   &.button-type-primary {
     background-color: $Blue01;
     color: #fff;
+
     &[disabled] {
       background: $Grey04;
       opacity: 0.3;
@@ -161,7 +162,9 @@ export default Vue.extend({
   }
   &.button-type-primary-outline {
     color: $Blue01;
-    outline: 2px solid $Blue01;
+    /* outline: 2px solid $Blue01; */
+    border: 2px solid $Blue01;
+
     &.hover:hover {
       color: $Grey01;
       background: $gradation04;

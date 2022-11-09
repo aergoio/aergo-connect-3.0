@@ -5,7 +5,7 @@
         <Icon :name="`checkmark-circle`" :size="100" />
         <!-- <Icon :name="`${name}`" :size="100" /> -->
         <h1>{{ title }}</h1>
-        <Button :type="`${buttonType}`" size="medium" :to="{ name: `${to}` }">OK</Button>
+        <Button :type="`${buttonType}`" size="medium" :to="{ name: `${to}` }" hover>OK</Button>
       </div>
     </Appear>
   </div>
@@ -26,7 +26,7 @@ export default Vue.extend({
     },
     buttonType: {
       type: String,
-      default: 'gradation',
+      default: 'primary',
     },
     to: {
       type: String,

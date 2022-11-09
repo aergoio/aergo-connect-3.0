@@ -31,7 +31,7 @@
       </div>
     </div>
     <template #footer>
-      <Button type="gradation" size="large" @click="handleBack">OK</Button>
+      <Button type="primary" size="large" @click="handleBack" hover>OK</Button>
     </template>
     <LoadingDialog
       :visible="statusDialogVisible"
@@ -329,6 +329,15 @@ export default class RequestSign extends mixins() {
         margin-right: 5px;
       }
     }
+    .copy_button:hover {
+      background: #279ecc;
+      color: #ffffff;
+      .icon--copybutton {
+        path {
+          fill: #ffffff;
+        }
+      }
+    }
   }
   .textarea_size {
     width: 327px;
@@ -359,6 +368,10 @@ export default class RequestSign extends mixins() {
       margin-top: 6px;
       width: 89px;
       height: 28px;
+    }
+    .button_size:hover {
+      background: #279ecc;
+      color: #ffffff;
     }
   }
   .button-type-primary-outline {

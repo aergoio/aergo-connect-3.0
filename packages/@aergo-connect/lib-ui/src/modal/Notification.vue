@@ -1,15 +1,18 @@
 <template>
-  <div class="alert-wrapper" :style="{ width: `${size}px` }">
-    <div class="alert-text">{{ title }}</div>
-    <Icon :name="`${icon}`" />
-  </div>
+  <Appear :delay="0">
+    <div class="alert-wrapper" :style="{ width: `${size}px` }">
+      <div class="alert-text">{{ title }}</div>
+      <Icon :name="`${icon}`" />
+    </div>
+  </Appear>
 </template>
 
 <script setup>
 import Vue from 'vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
+import Appear from '../animations/Appear.vue';
 export default Vue.extend({
-  components: { Icon },
+  components: { Icon, Appear },
   props: {
     title: {
       type: String,
@@ -34,7 +37,7 @@ export default Vue.extend({
   bottom: 0;
   left: 0;
   right: 0;
-  top: 55%;
+  top: 50%;
   z-index: 3;
   padding: 8px;
   background: #fff;

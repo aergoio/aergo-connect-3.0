@@ -16,7 +16,7 @@
         </div>
       </div>
       <ButtonGroup vertical>
-        <Button type="primary" @click="handleReceive">Receive</Button>
+        <Button type="primary" @click="handleReceive" hover>Receive</Button>
       </ButtonGroup>
     </div>
     <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
@@ -83,7 +83,7 @@ export default Vue.extend({
     height: 410px;
     position: absolute;
     left: 28px;
-    top: 70px;
+    top: 85px;
     background: #ffffff;
     border-radius: 8px;
 

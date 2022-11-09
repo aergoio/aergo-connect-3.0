@@ -46,7 +46,7 @@
                   <img v-if="result.meta.image" class="list_icon" :src="result.meta.image" />
                   <Icon v-else class="list_icon" :name="`defaultToken`" />
                   <span class="list_text">
-                    {{ result.meta.name + '    ' + result.meta.symbol }}
+                    {{ `${result.meta.name} (${result.meta.symbol})` }}
                   </span>
                   <span class="list_button">
                     {{ result.meta.type }}
@@ -181,24 +181,19 @@ export default Vue.extend({
       const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
 
       if (this.$store.state.session.option === 'token') {
-        console.log(
-          'Search',
-          `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:{${query}} OR symbol:{${query}}) AND type:ARC1`,
-        ),
-          await fetch(
-            `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC1`,
-          )
-            .then((res) => {
-              return res.json();
-            })
-            .then((data) => {
-              this.results = data.hits;
-            });
-        console.log('Results', this.results);
+        await fetch(
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC1`,
+        )
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => {
+            this.results = data.hits;
+          });
         if (this.results) return;
       } else {
         await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC2`,
+          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC2`,
         )
           .then((res) => {
             return res.json();

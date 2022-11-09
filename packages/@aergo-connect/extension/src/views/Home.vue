@@ -47,6 +47,7 @@
               @keyup.enter="changeNick"
             />
             <Icon
+              v-if="!editNick"
               class="account_info_nickname_button"
               :name="`edit`"
               :size="50"
@@ -566,6 +567,10 @@ export default Vue.extend({
         color: #bababa;
         box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.05);
       }
+      /* &.unclicked:hover {
+        background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+        color: #ffffff;
+      } */
     }
     .token_list_ul {
       display: flex;
@@ -613,6 +618,7 @@ export default Vue.extend({
             align-items: center;
           }
           .token_list_icon {
+            background: #ffffff;
             width: 46px;
             height: 46px;
             border-radius: 50%;

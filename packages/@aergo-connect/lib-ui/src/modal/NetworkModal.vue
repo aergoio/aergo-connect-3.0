@@ -22,8 +22,8 @@
           <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
         </li>
         <div class="list_line" />
+        <Button type="primary" size="large" disabled>Add a network</Button>
       </ul>
-      <!-- <Button type="primary" size="x-large">Add a network</Button> -->
     </div>
   </div>
 </template>

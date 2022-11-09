@@ -662,7 +662,7 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     .footer {
-      margin-left: 24px;
+      margin-left: 12px;
       position: absolute;
       bottom: 0;
       margin-bottom: 10px;

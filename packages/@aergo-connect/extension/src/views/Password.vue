@@ -37,6 +37,14 @@
                 : true
             "
             @click="handleModal"
+            :hover="
+              (checked || $route.params.nextPage !== 'register') &&
+              password === passwordRepeat &&
+              password.length > 0 &&
+              passwordRepeat.length > 0
+                ? true
+                : false
+            "
           >
             Set Password
           </Button>

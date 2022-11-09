@@ -78,7 +78,7 @@ export default Vue.extend({
   left: 0px;
   top: 0px;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1;
+  z-index: 2;
 
   .receive_wrapper {
     width: 317px;

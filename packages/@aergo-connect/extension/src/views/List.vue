@@ -162,7 +162,7 @@ export default Vue.extend({
     box-sizing: border-box;
     width: 262px;
     background: #ffffff;
-    box-shadow: 3px 0px 18px rgb(0 0 0 / 15%);
+    /* box-shadow: 3px 0px 18px rgb(0 0 0 / 15%); */
     display: flex;
     flex-direction: column;
     justify-content: space-between;

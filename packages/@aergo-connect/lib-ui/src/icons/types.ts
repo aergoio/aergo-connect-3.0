@@ -71,5 +71,7 @@ export const iconNames = tuple(
   'receive',
   'copybutton',
   'checkmarkwhite',
+  'dropdownblue',
+  'dropupblue',
 );
 export type IconName = typeof iconNames[number];

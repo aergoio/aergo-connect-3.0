@@ -4,17 +4,31 @@
       <div class="title">Optional Fields</div>
       <div class="flex-column">
         <div class="title">Type</div>
-        <select class="select_box" v-model="iTxType">
+        <!-- <select class="select_box" v-model="iTxType">
           <option :key="type" v-for="type in $store.state.ui.txTypes" :value="type">
             {{ type }}
           </option>
-        </select>
+        </select> -->
+        <div class="select_box" @click="handleSelectTxType">
+          <div class="text">{{ iTxType }}</div>
+          <Icon :name="select ? `dropupblue` : `dropdownblue`" />
+        </div>
       </div>
+      <ul v-if="select" class="list_wrapper">
+        <li
+          class="list"
+          v-for="txType in $store.state.ui.txTypes"
+          :key="txType"
+          @click="selectTxType(txType)"
+        >
+          {{ txType }}
+        </li>
+      </ul>
       <div class="flex-column">
         <div class="title data">Data (payload)</div>
         <input v-model="iPayload" type="text" class="text_box" />
       </div>
-      <Button size="medium" type="primary" class="button" @click="handleOk">OK</Button>
+      <Button size="medium" type="primary" class="button" @click="handleOk" hover>OK</Button>
     </div>
   </div>
 </template>
@@ -22,16 +36,18 @@
 <script>
 import Vue from 'vue';
 import Button from '../buttons/Button.vue';
+import Icon from '../icons/Icon.vue';
 import { Tx } from '@herajs/client';
 
 export default Vue.extend({
-  components: { Button },
+  components: { Button, Icon },
   props: {
     payload: String,
     txType: String,
   },
   data() {
     return {
+      select: false,
       iPayload: '',
       iTxType: '',
     };
@@ -44,6 +60,13 @@ export default Vue.extend({
   methods: {
     handleOk() {
       this.$emit('updateTx', this.iTxType, this.iPayload);
+    },
+    selectTxType(txType) {
+      this.iTxType = txType;
+      this.select = false;
+    },
+    handleSelectTxType() {
+      this.select = !this.select;
     },
   },
 });
@@ -107,30 +130,32 @@ export default Vue.extend({
           width: 114px;
         }
       }
-
       .select_box {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px;
+        border-radius: 3px;
         /* White */
-
         background: #ffffff;
         /* Primary/Blue01 */
-        padding: 8px;
         border: 1px solid #279ecc;
         border-radius: 4px;
+
         margin-top: 9px;
-        height: 40px;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
         font-size: 17px;
         line-height: 21px;
 
-        /* Grey/06 */
-
         color: #454344;
+        .text {
+          margin-left: 3px;
+        }
       }
+
       .text_box {
         margin-top: 14px;
-        width: 265px;
         height: 89px;
 
         /* White */
@@ -144,6 +169,36 @@ export default Vue.extend({
     }
     .button {
       margin-top: 76px;
+    }
+  }
+
+  .list_wrapper {
+    cursor: pointer;
+    height: 172px;
+    position: absolute;
+    bottom: 116px;
+    width: 261px;
+    border-radius: 3px;
+    border: 1px solid #279ecc;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    .list {
+      padding-left: 10px;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      cursor: pointer;
+      height: 43px;
+      background: #ffffff;
+      border-radius: 3px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .list:hover {
+      background: #f6f6f6;
     }
   }
 }

@@ -1,7 +1,13 @@
 <template>
   <ScrollView class="page">
     <Appear>
-      <Header button="back" title="Register Account" @backClick="handleBack" />
+      <Header
+        :button="$store.state.accounts.address ? 'back' : false"
+        :skip="!$store.state.accounts.address ? true : false"
+        title="Register Account"
+        @backClick="handleBack"
+        @skipClick="handleBack"
+      />
       <div class="register-contents">
         <Heading class="big-title">Register an Account</Heading>
         <span class="pre-header">Import on existing accounts or create a new one.</span>
@@ -10,8 +16,13 @@
       <div class="button_wrapper">
         <Appear :delay="0.6">
           <ButtonGroup vertical class="button_group_wrapper">
-            <Button type="primary" size="large" hover :to="{ name: 'account-import' }">
-              Import
+            <Button
+              class="button_outline"
+              type="primary-outline"
+              size="large"
+              :to="{ name: 'account-import' }"
+            >
+              <span>Import</span>
             </Button>
             <Button type="primary" size="large" hover @click="handleCreate"> Create </Button>
             <Button
@@ -91,6 +102,16 @@ export default class Register extends mixins(PersistInputsMixin) {
 .button_wrapper {
   display: flex;
   justify-content: center;
+  .button_outline {
+  }
+  .button_outline:hover {
+    border: 2px solid #512da8;
+    span {
+      background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
   .button_group_wrapper {
     .button {
       width: 327px;

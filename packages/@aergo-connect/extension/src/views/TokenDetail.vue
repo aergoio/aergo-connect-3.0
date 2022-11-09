@@ -632,6 +632,7 @@ export default Vue.extend({
     flex-direction: column;
     align-items: center;
     .history_list {
+      margin-left: 10px;
       flex-direction: column;
       display: flex;
       align-items: center;

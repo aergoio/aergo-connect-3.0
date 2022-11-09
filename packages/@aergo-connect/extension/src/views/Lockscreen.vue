@@ -20,6 +20,7 @@
         type="primary"
         size="medium"
         @keyup.enter="unlock"
+        hover
         >Unlock</Button
       >
       <!-- <div class="password-text-wrapper">

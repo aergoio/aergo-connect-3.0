@@ -67,7 +67,7 @@
         <img v-else class="token_icon" :src="icon" />
 
         <div v-if="tokenType !== 'ARC2'" class="amount_wrapper">
-          <span class="token_amount">{{ Number(balance).toFixed(3) }}</span>
+          <span class="token_amount">{{ balance ? formatBalance(balance) : 0 }}</span>
           <span class="token_symbol"> {{ symbol }}</span>
         </div>
         <div v-else class="amount_wrapper">
@@ -78,13 +78,61 @@
       <div v-if="!isLoading" class="send_form_wrapper">
         <div class="flex-row">
           <div class="title">Asset</div>
-          <select class="select_box" v-model="asset">
+
+          <!-- <select class="select_box" v-model="asset">
             <option v-for="token in $store.state.session.tokens" :value="token.hash">
               <img :src="token.meta.image" alt="404" />
               <span>{{ token.meta.name }}</span>
             </option>
-          </select>
+          </select> -->
+
+          <div class="select_box" @click="handleSelectAsset">
+            <div
+              :style="{
+                display: 'flex',
+                alignItems: 'center',
+              }"
+            >
+              <Icon v-if="asset === 'AERGO'" :name="`aergo`" :style="{ marginLeft: '4px' }" />
+              <Icon v-else-if="!icon" :name="`defaultToken`" />
+              <img class="img" v-else :src="icon" />
+              <div
+                :style="
+                  icon || asset === 'AERGO'
+                    ? {
+                        marginLeft: '8px',
+                        cursor: 'default',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                      }
+                    : {
+                        cursor: 'default',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        position: 'relative',
+                        right: '5px',
+                      }
+                "
+              >
+                {{ tokenName }}
+              </div>
+            </div>
+            <Icon :name="selectAsset ? `dropupblue` : `dropdownblue`" />
+          </div>
         </div>
+        <ul v-if="selectAsset" class="selectbox_asset">
+          <li
+            class="list"
+            v-for="token in $store.state.session.tokens"
+            :key="token.meta.hash"
+            @click="selectAssetFunc(token.hash)"
+          >
+            <img class="img" v-if="token.meta.image" :src="token.meta.image" />
+            <Icon class="aergo" v-else-if="token.hash === 'AERGO'" :name="`aergo`" />
+            <Icon v-else :name="`defaultToken`" />
+            {{ token.meta.name }}
+          </li>
+        </ul>
         <div class="flex-row" v-if="tokenType == 'ARC2'">
           <div class="title">NFT ID</div>
           <div class="flex-column-searchbox">
@@ -141,7 +189,8 @@
         type="primary"
         size="large"
         @click="handleSendClick"
-        :disabled="!inputTo"
+        :disabled="!inputTo || !inputAmount"
+        :hover="inputTo && inputAmount ? true : false"
         >Send</Button
       >
     </template>
@@ -189,11 +238,13 @@ export default Vue.extend({
   },
   data() {
     return {
+      selectAsset: false,
       asset: '',
       icon: '',
       balance: 0,
       tokenType: '',
       symbol: '',
+      tokenName: '',
       inputAmount: '',
       inputTo: '',
       fee: '',
@@ -272,7 +323,7 @@ export default Vue.extend({
       this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
       this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
       this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
-      console.log('symbol', this.symbol);
+      this.tokenName = this.$store.state.session.tokens[this.asset]['meta']['name'];
     },
     async selectNFT(item) {
       this.inputAmount = item.meta.token_id;
@@ -472,16 +523,19 @@ export default Vue.extend({
           return '172px';
       }
     },
-    // get formattedPayload(): string {
-    //   const payload = `${this.txBody.payload}`;
-    //   try {
-    //     // If it is parsable as json, use json highlighter
-    //     JSON.parse(payload);
-    //     return jsonHighlight(payload);
-    //   } catch {
-    //     return `<span class="string">${payload}</span>`;
-    //   }
-    // },
+    formatBalance(balance) {
+      if (Number.isInteger(balance)) {
+        return balance;
+      }
+      return Number(balance).toFixed(3);
+    },
+    handleSelectAsset() {
+      this.selectAsset = !this.selectAsset;
+    },
+    selectAssetFunc(asset) {
+      this.asset = asset;
+      this.selectAsset = false;
+    },
   },
 });
 </script>
@@ -576,7 +630,7 @@ export default Vue.extend({
     align-items: center;
     width: 327px;
     height: 60px;
-    margin-left: 28px;
+    margin-left: 24px;
     margin-top: 19px;
     background: #ffffff;
     /* Grey/00 */
@@ -654,7 +708,6 @@ export default Vue.extend({
       .select_box {
         padding: 8px;
         margin-left: 38px;
-        background: rgba(255, 255, 255, 0.05);
         border-radius: 3px;
         width: 243px;
         height: 40px;

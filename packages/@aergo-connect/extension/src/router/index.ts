@@ -79,7 +79,11 @@ const routes: RouteConfig[] = [
         { path: '/password', name: 'password', component: Password },
         R.NoAuthCheck | R.NoTracking,
       ),
-      withMeta(3, { path: '/register', name: 'register', component: Register }),
+      withMeta(2, {
+        path: '/register',
+        name: 'register',
+        component: Register,
+      }),
       withMeta(6, { path: '/register/confirm', name: 'regist-confirm', component: RegistConfirm }),
 
       withMeta(2, { path: '/home', name: 'accounts-list', component: Home }),

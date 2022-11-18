@@ -24,6 +24,8 @@ export interface UiState {
   initSetupKey: string;
   idleTimeout: number;
   unlocked: boolean;
+  currentPage: string;
+  previousPage: string;
 }
 
 const storeModule: Module<UiState, RootState> = {
@@ -52,7 +54,6 @@ const storeModule: Module<UiState, RootState> = {
       },
   },
   mutations: {
-
     setUnlocked(state, unlocked) {
       state.unlocked = unlocked;
     },
@@ -76,7 +77,12 @@ const storeModule: Module<UiState, RootState> = {
     setInitSetupKey(state, initSetupKey) {
       state.initSetupKey = initSetupKey;
     },
-
+    setCurrentPage(state, page: string) {
+      state.currentPage = page;
+    },
+    setPreviousPage(state, page: string) {
+      state.previousPage = page;
+    },
   },
   actions: {
     setTxBody({ commit }, txBody) {

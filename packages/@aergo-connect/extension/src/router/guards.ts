@@ -21,9 +21,10 @@ export const allowedToExitLockscreen: NavigationGuard = (to, from, next) => {
  * or whenever selecting an account during permission request
  */
 export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
+  console.log(to.fullPath, 'toFull');
   const isStartTransition = from.fullPath === '/' && from.name === null && to.name === 'home';
   if (isStartTransition) {
-    const persistedPath = store.state.session.currentPath;
+    const persistedPath = store.state.ui.currentPage;
     const exclude = ['', '/', '/welcome', to.fullPath];
     if (persistedPath && exclude.indexOf(persistedPath) === -1) {
       return next(persistedPath);
@@ -37,8 +38,8 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
  */
 export const persistRoute: NavigationGuard = (to, _from, next) => {
   if (!((to.meta && to.meta.noTracking === true) || to.fullPath.match(/request/))) {
-    store.commit('session/setCurrentPage', to.name);
-    if (_from.name != 'lockscreen') store.commit('session/setPreviousPage', _from.name);
+    store.commit('ui/setCurrentPage', to.name);
+    if (_from.name != 'lockscreen') store.commit('ui/setPreviousPage', _from.name);
   }
   return next();
 };

@@ -22,13 +22,13 @@
       <div v-if="state === `search`" class="search_wrapper">
         <Notification
           v-if="notification"
-          :title="`Token already added.`"
+          :title="notificationText"
           :size="300"
           :icon="`warning2`"
         />
         <div class="network_wrapper">
           <div class="network_circle" />
-          <div class="network_text">{{ $store.state.accounts.network }}</div>
+          <div class="network_text">{{ $store.state.accounts.network.toUpperCase() }}</div>
         </div>
         <TextField placeholder="Name / Symbol" class="network_textField" @input="search" />
 
@@ -45,12 +45,20 @@
                 <div class="token_list_wrapper">
                   <img v-if="result.meta.image" class="list_icon" :src="result.meta.image" />
                   <Icon v-else class="list_icon" :name="`defaultToken`" />
-                  <span class="list_text">
-                    {{ `${result.meta.name} (${result.meta.symbol})` }}
-                  </span>
-                  <span class="list_button">
-                    {{ result.meta.type }}
-                  </span>
+                  <div :style="{ width: '240px', display: 'flex', 'flex-direction': 'column' }">
+                    <span class="list_text">
+                      {{ `${result.meta.name} (${result.meta.symbol})` }}
+                    </span>
+                    <span class="list_text hash">{{
+                      `[${result.hash.slice(0, 11)}........${result.hash.slice(-11)}]`
+                    }}</span>
+                  </div>
+                  <div>
+                    <span class="list_button">
+                      {{ result.meta.type }}
+                    </span>
+                    <Icon v-if="hasTokenCheck" :name="`check`" />
+                  </div>
                 </div>
                 <div class="line" />
               </li>
@@ -63,10 +71,16 @@
         <div class="custom_wrapper">
           <div class="network_wrapper">
             <div class="network_circle" />
-            <div class="network_text">{{ $store.state.accounts.network }}</div>
+            <div class="network_text">{{ $store.state.accounts.network.toUpperCase() }}</div>
           </div>
           <div class="custom_detail_wrapper">
-            <div>
+            <Notification
+              v-if="notification"
+              :title="notificationText"
+              :size="300"
+              :icon="`warning2`"
+            />
+            <div v-if="!check">
               <div>Contract Address</div>
               <TextField
                 placeholder="Enter the address"
@@ -78,16 +92,21 @@
             </div>
             <div v-if="check">
               <div class="custom_element_wrapper">
+                <div>Contract Address</div>
+                <TextField disabled :placeholder="value" class="asset_type" />
+              </div>
+
+              <div class="custom_element_wrapper">
                 <div>Asset Type</div>
-                <TextField :disabled="true" :placeholder="token.meta.type" class="asset_type" />
+                <TextField disabled :placeholder="token.meta.type" class="asset_type" />
               </div>
               <div class="custom_element_wrapper">
                 <div>Symbol</div>
-                <TextField v-model="token.meta.symbol" class="asset_type" />
+                <TextField disabled v-model="token.meta.symbol" class="asset_type" />
               </div>
               <div v-if="token.meta.type !== 'ARC2'" class="custom_element_wrapper">
                 <div>Decimal</div>
-                <TextField :disabled="true" :placeholder="token.meta.decimals" class="asset_type" />
+                <TextField disabled :placeholder="token.meta.decimals" class="asset_type" />
               </div>
             </div>
           </div>
@@ -98,7 +117,13 @@
       <!-- <Button v-if="state === `search`" type="primary" size="large" @click="handleImport"
         >Import</Button
       > -->
-      <Button v-if="state === `custom` && !check" type="primary" size="large" @click="handleCheck"
+      <Button
+        v-if="state === `custom` && !check"
+        type="primary"
+        size="large"
+        @click="handleCheck"
+        :disabled="!value"
+        hover
         >Check
       </Button>
       <Button
@@ -106,6 +131,7 @@
         type="primary"
         size="large"
         @click="customSubmit"
+        hover
         >Import</Button
       >
     </template>
@@ -137,7 +163,8 @@ export default Vue.extend({
     return {
       importAssetModal: false,
       notification: false,
-      results: {},
+      notificationText: '',
+      results: [],
       state: 'search',
       error: {
         state: true,
@@ -146,6 +173,7 @@ export default Vue.extend({
       value: '',
       check: false,
       token: {},
+      hasTokenCheck: false,
     };
   },
   watch: {
@@ -188,7 +216,7 @@ export default Vue.extend({
             return res.json();
           })
           .then((data) => {
-            this.results = data.hits;
+            this.results = [...data.hits];
           });
         if (this.results) return;
       } else {
@@ -199,7 +227,7 @@ export default Vue.extend({
             return res.json();
           })
           .then((data) => {
-            this.results = data.hits;
+            this.results = [...data.hits];
           });
 
         console.log('Results', this.results);
@@ -212,6 +240,7 @@ export default Vue.extend({
       console.log(token, 'token!!!!!!!!!!!!!!!!!!!!!');
       if (this.$store.state.session.tokens[token.hash]?.hash) {
         this.notification = true;
+        this.notificationText = `Token already added.`;
       } else {
         this.token = token;
         await this.$store.dispatch('accounts/addToken', token);
@@ -234,7 +263,7 @@ export default Vue.extend({
     },
 
     async handleCheck() {
-      let results = {};
+      let results = [];
       console.log('fetch', this.value);
 
       const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
@@ -246,7 +275,7 @@ export default Vue.extend({
             return res.json();
           })
           .then((data) => {
-            results = data.hits;
+            results = [...data.hits];
           });
       } else {
         await fetch(
@@ -256,14 +285,20 @@ export default Vue.extend({
             return res.json();
           })
           .then((data) => {
-            results = data.hits;
+            results = [...data.hits];
           });
       }
 
       console.log('custum result', results);
 
       this.token = results[0];
-      this.check = true;
+      if (results.length > 0) {
+        this.check = true;
+      } else {
+        this.check = false;
+        this.notification = true;
+        this.notificationText = `Please Check Contract Address.`;
+      }
     },
 
     async customSubmit() {
@@ -321,17 +356,23 @@ export default Vue.extend({
         .list_text {
           display: flex;
           /* Subtitle/S3 */
-          width: 250px;
+
           font-family: 'Outfit';
           font-style: normal;
           font-weight: 400;
           font-size: 14px;
           line-height: 20px;
           letter-spacing: -0.333333px;
-          margin-left: 12px;
+          margin-left: 10px;
           /* Grey/07 */
 
           color: #454344;
+          &.hash {
+            color: #757575;
+            font-size: 13px;
+            display: none;
+            font-weight: 200;
+          }
         }
         .list_button {
           margin-right: 5px;
@@ -362,7 +403,14 @@ export default Vue.extend({
     }
     .select_token_list:hover {
       background: #eff5f7;
-      opacity: 0.5;
+      /* opacity: 0.5; */
+      .token_list_wrapper {
+        .list_text {
+          &.hash {
+            display: flex;
+          }
+        }
+      }
     }
   }
   .tab_wrapper {

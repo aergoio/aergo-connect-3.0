@@ -30,6 +30,7 @@ export default Vue.extend({
   display: flex;
   justify-content: flex-start;
   margin-left: 10px;
+  margin-top: 6px;
   &.button-group-vertical {
     flex-direction: column;
     justify-content: center;

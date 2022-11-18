@@ -7,9 +7,9 @@ import Background from './plugins/background';
 import IndexedDb from './plugins/indexeddb';
 import extension from 'extensionizer';
 import PortStream from 'extension-port-stream';
+// import ClickOutside from 'vue-click-outside';
 import '@aergo-connect/lib-ui/src/styles/base.scss';
 import { enforceRequest } from './router/guards';
-
 Vue.config.productionTip = false;
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
@@ -29,6 +29,21 @@ async function init(name: string) {
   console.log(manifest, 'manifest!!!');
   Vue.use(Background, { background });
   Vue.use(IndexedDb);
+  Vue.directive('click-outside', {
+    bind: function (el, binding, vnode) {
+      el.clickOutsideEvent = function (event) {
+        // here I check that click was outside the el and his children
+        if (!(el == event.target || el.contains(event.target))) {
+          // and if it did, call method provided in attribute value
+          vnode.context[binding.expression](event);
+        }
+      };
+      document.body.addEventListener('click', el.clickOutsideEvent);
+    },
+    unbind: function (el) {
+      document.body.removeEventListener('click', el.clickOutsideEvent);
+    },
+  });
   const requestId = getRequestId();
 
   if (requestId) {
@@ -49,6 +64,7 @@ async function init(name: string) {
   background.on('update', function (state) {
     console.log('update from bg', state);
     const isNonAuthPage = router.currentRoute.meta && router.currentRoute.meta.noAuthCheck === true;
+    console.log(router, 'router');
     console.log(isNonAuthPage, 'isNonAuthPage');
 
     if (Object.prototype.hasOwnProperty.call(state, 'unlocked')) {

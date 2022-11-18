@@ -62,7 +62,7 @@
         </div>
         <div class="line" />
       </div>
-      <Button size="medium" type="primary" @click="handleOk">OK</Button>
+      <Button size="medium" type="primary" @click="handleOk" hover>OK</Button>
     </div>
   </div>
 </template>
@@ -94,8 +94,10 @@ export default Vue.extend({
 
   methods: {
     handleOk() {
-      console.log('ok', this.to);
-      this.$emit('close');
+      // console.log('ok', this.to);
+      // this.$emit('close');
+      // this.$store.commit('session/setToken', token.hash);
+      this.$router.push({ name: 'token-detail' }).catch(() => {});
     },
   },
 });
@@ -113,7 +115,7 @@ export default Vue.extend({
   .sendfinish_modal_wrapper {
     position: absolute;
     width: 313px;
-    height: 435px;
+    height: 410px;
     left: 31px;
     top: 83px;
     background: #ffffff;
@@ -121,6 +123,9 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     align-items: center;
+    .button {
+      margin-top: 14px;
+    }
     .flex-column {
       margin-top: 24px;
       display: flex;

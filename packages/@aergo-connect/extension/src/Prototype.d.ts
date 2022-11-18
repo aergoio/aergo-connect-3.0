@@ -1,10 +1,10 @@
 declare global {
   interface String {
     isEmpty(): boolean;
-    countDecimals(): function;
+    countDecimals(): Function;
   }
   interface Number {
-    countDecimals(): function;
+    countDecimals(): Function;
   }
 }
 

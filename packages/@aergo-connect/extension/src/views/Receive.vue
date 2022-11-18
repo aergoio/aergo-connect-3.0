@@ -55,58 +55,60 @@
       <div class="send_form_wrapper">
         <div class="flex-row">
           <div class="title">Asset</div>
-          <!-- <select class="select_box" v-model="asset">
-            <option v-for="token in $store.state.session.tokens" :value="token.hash">
-              {{ token.meta.name }}
-            </option>
-          </select> -->
-          <div class="select_box" @click="handleSelectAsset">
-            <div
-              :style="{
-                display: 'flex',
-                alignItems: 'center',
-              }"
-            >
-              <Icon v-if="asset === 'AERGO'" :name="`aergo`" :style="{ marginLeft: '4px' }" />
-              <Icon v-else-if="!icon" :name="`defaultToken`" />
-              <img class="img" v-else :src="icon" />
+          <div v-click-outside="hide">
+            <div class="select_box" @click="handleSelectAsset">
               <div
-                :style="
-                  icon || asset === 'AERGO'
-                    ? {
-                        marginLeft: '8px',
-                        cursor: 'default',
-                        fontSize: '16px',
-                        fontWeight: '500',
-                      }
-                    : {
-                        cursor: 'default',
-                        fontSize: '16px',
-                        fontWeight: '500',
-                        position: 'relative',
-                        right: '5px',
-                      }
-                "
+                :style="{
+                  display: 'flex',
+                  alignItems: 'center',
+                }"
               >
-                {{ tokenName }}
+                <Icon v-if="asset === 'AERGO'" :name="`aergo`" :style="{ marginLeft: '4px' }" />
+                <Icon v-else-if="!icon" :name="`defaultToken`" />
+                <img class="img" v-else :src="icon" />
+                <div
+                  :style="
+                    icon || asset === 'AERGO'
+                      ? {
+                          marginLeft: '8px',
+                          cursor: 'default',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                        }
+                      : {
+                          cursor: 'default',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                          position: 'relative',
+                          right: '5px',
+                        }
+                  "
+                >
+                  {{ tokenName }}
+                </div>
               </div>
+              <Icon :name="selectAsset ? `dropupblue` : `dropdownblue`" />
             </div>
-            <Icon :name="selectAsset ? `dropupblue` : `dropdownblue`" />
+            <ul
+              v-if="selectAsset"
+              class="selectbox_asset"
+              :style="{ height: assetListStyle(), 'overflow-y': assetListScrollStyle() }"
+            >
+              <li
+                class="list"
+                v-for="token in $store.state.session.tokens"
+                :key="token.meta.hash"
+                @click="selectAssetFunc(token.hash)"
+              >
+                <img class="img" v-if="token.meta.image" :src="token.meta.image" />
+                <Icon class="aergo" v-else-if="token.hash === 'AERGO'" :name="`aergo`" />
+                <Icon v-else :name="`defaultToken`" />
+                {{ token.meta.name }}
+              </li>
+            </ul>
           </div>
         </div>
-        <ul v-if="selectAsset" class="selectbox_asset">
-          <li
-            class="list"
-            v-for="token in $store.state.session.tokens"
-            :key="token.meta.hash"
-            @click="selectAssetFunc(token.hash)"
-          >
-            <img class="img" v-if="token.meta.image" :src="token.meta.image" />
-            <Icon class="aergo" v-else-if="token.hash === 'AERGO'" :name="`aergo`" />
-            <Icon v-else :name="`defaultToken`" />
-            {{ token.meta.name }}
-          </li>
-        </ul>
+
         <div class="flex-row" v-if="tokenType !== 'ARC2'">
           <div class="title">Amount</div>
           <input v-model.number="inputAmount" type="text" class="text_box" />
@@ -193,9 +195,7 @@ export default Vue.extend({
       this.$forceUpdate();
     },
   },
-  updated() {
-    console.log(this.asset, 'this.asset');
-  },
+
   methods: {
     handleBack() {
       this.$router.push({ name: 'accounts-list' });
@@ -228,6 +228,29 @@ export default Vue.extend({
     },
     selectAssetFunc(asset) {
       this.asset = asset;
+      this.selectAsset = false;
+    },
+    assetListStyle() {
+      switch (Object.keys(this.$store.state.session.tokens).length) {
+        case 1:
+          return '43px';
+        case 2:
+          return '86px';
+        case 3:
+          return '129px';
+        default:
+          return '172px';
+      }
+    },
+    assetListScrollStyle() {
+      switch (Object.keys(this.$store.state.session.tokens).length) {
+        case 4:
+          return 'scroll';
+        default:
+          return 'hidden';
+      }
+    },
+    hide() {
       this.selectAsset = false;
     },
   },
@@ -388,14 +411,14 @@ export default Vue.extend({
     height: 380px;
     bottom: 0px;
     .selectbox_asset {
-      cursor: pointer;
+      width: 243px;
       height: 172px;
       position: absolute;
       left: 105px;
       border-radius: 3px;
       border: 1px solid #279ecc;
-      overflow-y: scroll;
-      overflow-x: hidden;
+      /* overflow-y: scroll; */
+      /* overflow-x: hidden; */
       .img {
         margin-left: 6px;
         margin-right: 8px;
@@ -416,7 +439,7 @@ export default Vue.extend({
         -ms-flex-align: center;
         align-items: center;
         cursor: pointer;
-        width: 228px;
+        /* width: 228px; */
         height: 43px;
         background: #ffffff;
         border-radius: 3px;
@@ -447,7 +470,7 @@ export default Vue.extend({
         margin-left: 38px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 3px;
-        width: 245px;
+        width: 228px;
         height: 22px;
         /* White */
 

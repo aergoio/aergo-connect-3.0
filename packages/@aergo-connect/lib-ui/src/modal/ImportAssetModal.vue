@@ -15,7 +15,7 @@
           <div class="network_title">Network</div>
           <div class="network_state_wrapper">
             <div class="network_state" />
-            <div class="network_text">{{ $store.state.accounts.network }}</div>
+            <div class="network_text">{{ $store.state.accounts.network.toUpperCase() }}</div>
           </div>
         </div>
 

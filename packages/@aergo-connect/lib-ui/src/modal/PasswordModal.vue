@@ -77,7 +77,7 @@ export default Vue.extend({
   z-index: 2;
   .password_modal_wrapper {
     width: 317px;
-    height: 400px;
+    height: 370px;
     position: absolute;
     left: 28px;
     top: 110px;

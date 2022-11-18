@@ -329,8 +329,6 @@ export default Vue.extend({
       await this.$store.dispatch('session/updateBalances');
       this.$forceUpdate();
       this.isLoading = false;
-
-      console.log('regresh', this.$store.state.session.tokens);
     },
 
     /*

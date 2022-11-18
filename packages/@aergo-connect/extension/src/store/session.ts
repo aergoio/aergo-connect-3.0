@@ -24,8 +24,6 @@ const storeModule: Module<SessionState, RootState> = {
   state: {
     token: 'AERGO',
     tokens: {},
-    currentPage: '',
-    previousPage: '',
     option: '',
   },
 
@@ -121,14 +119,6 @@ const storeModule: Module<SessionState, RootState> = {
 
     setToken(state, token: any) {
       state.token = token;
-    },
-
-    setCurrentPage(state, page: string) {
-      state.currentPage = page;
-    },
-
-    setPreviousPage(state, page: string) {
-      state.previousPage = page;
     },
 
     setOption(state, option: string) {

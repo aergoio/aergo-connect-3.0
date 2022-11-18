@@ -150,7 +150,7 @@ const storeModule: Module<AccountsState, RootState> = {
     addAccount(state, address: string) {
       state.accounts[address] = {
         address: address,
-        nick: address.substr(0, 5) + '_nick',
+        nick: address.substr(0, 5),
         token: {},
       };
       console.log('addAccount', state.accounts[address]['nick']);

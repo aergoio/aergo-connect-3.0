@@ -67,7 +67,7 @@ export default class Lockscreen extends mixins() {
   async unlock(): Promise<void> {
     try {
       await this.$background.unlock({ password: this.password });
-      let nextPage = this.$store.state.session.currentPage;
+      let nextPage = this.$store.state.ui.currentPage;
 
       console.log('Saved nextPage', nextPage);
 

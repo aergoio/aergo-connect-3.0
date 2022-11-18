@@ -27,10 +27,10 @@
     </TextField>
     <div v-if="setting" class="password-strength">
       <span class="input-error-text password-weak" v-if="value && passwordStrength.score < 3">
-        Strength : Week
+        Strength: Week
       </span>
       <span class="input-error-text password-good" v-else-if="value && passwordStrength.score >= 3"> 
-        Strength : Good
+        Strength: Good
       </span>
       <span v-else class="input-error-text password-good"> </span>
     </div>

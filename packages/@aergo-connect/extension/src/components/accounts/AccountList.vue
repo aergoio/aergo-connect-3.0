@@ -168,7 +168,7 @@ export default Vue.extend({
   },
   methods: {
     nick(address: string) {
-      const key = address.substr(0, 5) + '_nick';
+      const key = address.substr(0, 5);
       let nick = '';
       try {
         nick = localStorage.getItem(key);

@@ -1,6 +1,6 @@
-import 'regenerator-runtime/runtime';
-
 require('../manifest.json');
+
+import 'regenerator-runtime/runtime';
 
 import extension from 'extensionizer';
 import endOfStream from 'end-of-stream';

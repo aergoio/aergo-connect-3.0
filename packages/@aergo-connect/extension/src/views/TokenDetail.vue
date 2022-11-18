@@ -244,18 +244,22 @@ export default Vue.extend({
     },
 
     gotoStake() {
-      window.open('https://voting.aergo.io/about', '', 'width=1000');
+      const windowFeatures = `width=${window.innerWidth * 3.75},height=${window.innerHeight * 2}`;
+      console.log(windowFeatures, ' windowFeatures');
+      window.open('https://voting.aergo.io/about', '', windowFeatures);
     },
     gotoScanTx(hash: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
         hash.split('-')[0]
       }/`;
-      window.open(url, '', 'width=1000');
+      const userWidth = window.innerWidth;
+      window.open(url, '_blank', `width=${userWidth}`);
     },
 
     gotoScanAccount(address: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
-      window.open(url, '', 'width=1000,height=1000');
+      const userWidth = window.innerWidth;
+      window.open(url, '_blank', 'width=' + parseInt(userWidth * 0.75));
     },
 
     getAergoInfo() {

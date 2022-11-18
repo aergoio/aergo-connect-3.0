@@ -80,9 +80,9 @@ export default Vue.extend({
   .network_modal_wrapper {
     position: absolute;
     width: 375px;
-    height: 338px;
+    height: 280px;
+    top: 320px;
     left: 0px;
-    top: 262px;
     background: #ffffff;
     box-shadow: 0px -6px 12px rgba(0, 0, 0, 0.1);
     border-top-left-radius: 20px;
@@ -110,6 +110,11 @@ export default Vue.extend({
     }
     .network_modal_ul {
       height: 294px;
+      .button {
+        margin-top: 14px;
+        margin-left: 20px;
+      }
+
       .list_line {
         margin-left: 24px;
         width: 327px;

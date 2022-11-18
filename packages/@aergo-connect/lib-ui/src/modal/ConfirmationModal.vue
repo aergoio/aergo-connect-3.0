@@ -11,7 +11,7 @@
           <div class="flex-row network">
             <div class="detail network">
               <div class="circle" />
-              {{ $store.state.accounts.network }}
+              {{ $store.state.accounts.network.toUpperCase() }}
             </div>
           </div>
         </div>
@@ -60,7 +60,7 @@
         </div>
       </div>
       <ButtonGroup vertical class="button_wrapper">
-        <Button size="medium" type="primary" @click="handleOk">OK</Button>
+        <Button size="medium" type="primary" @click="handleOk" hover>OK</Button>
         <Button size="medium" type="primary-outline" @click="handleCancel">Cancel</Button>
       </ButtonGroup>
     </div>
@@ -275,6 +275,10 @@ export default Vue.extend({
       margin-left: 6px;
       margin-top: 10px;
       margin-bottom: 20px;
+      .button-type-primary-outline:hover {
+        border: 2px solid #512da8;
+        color: #512da8;
+      }
       .button {
         width: 289px;
       }

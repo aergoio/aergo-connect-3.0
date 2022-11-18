@@ -79,60 +79,60 @@
         <div class="flex-row">
           <div class="title">Asset</div>
 
-          <!-- <select class="select_box" v-model="asset">
-            <option v-for="token in $store.state.session.tokens" :value="token.hash">
-              <img :src="token.meta.image" alt="404" />
-              <span>{{ token.meta.name }}</span>
-            </option>
-          </select> -->
-
-          <div class="select_box" @click="handleSelectAsset">
-            <div
-              :style="{
-                display: 'flex',
-                alignItems: 'center',
-              }"
-            >
-              <Icon v-if="asset === 'AERGO'" :name="`aergo`" :style="{ marginLeft: '4px' }" />
-              <Icon v-else-if="!icon" :name="`defaultToken`" />
-              <img class="img" v-else :src="icon" />
+          <div v-click-outside="hide">
+            <div class="select_box" @click="handleSelectAsset">
               <div
-                :style="
-                  icon || asset === 'AERGO'
-                    ? {
-                        marginLeft: '8px',
-                        cursor: 'default',
-                        fontSize: '16px',
-                        fontWeight: '500',
-                      }
-                    : {
-                        cursor: 'default',
-                        fontSize: '16px',
-                        fontWeight: '500',
-                        position: 'relative',
-                        right: '5px',
-                      }
-                "
+                :style="{
+                  display: 'flex',
+                  alignItems: 'center',
+                }"
               >
-                {{ tokenName }}
+                <Icon v-if="asset === 'AERGO'" :name="`aergo`" :style="{ marginLeft: '4px' }" />
+                <Icon v-else-if="!icon" :name="`defaultToken`" />
+                <img class="img" v-else :src="icon" />
+                <div
+                  :style="
+                    icon || asset === 'AERGO'
+                      ? {
+                          marginLeft: '8px',
+                          cursor: 'default',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                        }
+                      : {
+                          cursor: 'default',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                          position: 'relative',
+                          right: '5px',
+                        }
+                  "
+                >
+                  {{ tokenName }}
+                </div>
               </div>
+              <Icon :name="selectAsset ? `dropupblue` : `dropdownblue`" />
             </div>
-            <Icon :name="selectAsset ? `dropupblue` : `dropdownblue`" />
+            <ul
+              v-if="selectAsset"
+              class="selectbox_asset"
+              :style="{ height: assetListStyle(), 'overflow-y': assetListScrollStyle() }"
+            >
+              <li
+                class="list"
+                v-for="token in $store.state.session.tokens"
+                :key="token.meta.hash"
+                @click="selectAssetFunc(token.hash)"
+              >
+                <img class="img" v-if="token.meta.image" :src="token.meta.image" />
+                <Icon class="aergo" v-else-if="token.hash === 'AERGO'" :name="`aergo`" />
+                <Icon v-else :name="`defaultToken`" />
+                {{ token.meta.name }}
+              </li>
+            </ul>
           </div>
         </div>
-        <ul v-if="selectAsset" class="selectbox_asset">
-          <li
-            class="list"
-            v-for="token in $store.state.session.tokens"
-            :key="token.meta.hash"
-            @click="selectAssetFunc(token.hash)"
-          >
-            <img class="img" v-if="token.meta.image" :src="token.meta.image" />
-            <Icon class="aergo" v-else-if="token.hash === 'AERGO'" :name="`aergo`" />
-            <Icon v-else :name="`defaultToken`" />
-            {{ token.meta.name }}
-          </li>
-        </ul>
+
         <div class="flex-row" v-if="tokenType == 'ARC2'">
           <div class="title">NFT ID</div>
           <div class="flex-column-searchbox">
@@ -353,9 +353,11 @@ export default Vue.extend({
       this.optionsModal = false;
     },
     handleBack() {
-      this.$router.push({
-        name: this.$store.state.session.previousPage,
-      });
+      this.$router
+        .push({
+          name: this.$store.state.session.previousPage ?? 'accounts-list',
+        })
+        .catch(() => {});
     },
     handleOptionsModal() {
       this.optionsModal = true;
@@ -523,6 +525,30 @@ export default Vue.extend({
           return '172px';
       }
     },
+    assetListStyle() {
+      switch (Object.keys(this.$store.state.session.tokens).length) {
+        case 1:
+          return '43px';
+        case 2:
+          return '86px';
+        case 3:
+          return '129px';
+        default:
+          return '172px';
+      }
+    },
+    assetListScrollStyle() {
+      switch (Object.keys(this.$store.state.session.tokens).length) {
+        case 1:
+          return 'hidden';
+        case 2:
+          return 'hidden';
+        case 3:
+          return 'hidden';
+        default:
+          return 'scroll';
+      }
+    },
     formatBalance(balance) {
       if (Number.isInteger(balance)) {
         return balance;
@@ -534,6 +560,9 @@ export default Vue.extend({
     },
     selectAssetFunc(asset) {
       this.asset = asset;
+      this.selectAsset = false;
+    },
+    hide() {
       this.selectAsset = false;
     },
   },

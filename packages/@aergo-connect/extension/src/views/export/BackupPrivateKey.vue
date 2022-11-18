@@ -4,7 +4,7 @@
     <section class="exportAccountDialog-contents">
       <div class="btn-p-wrapper">
         <Button
-          type="gradation"
+          type="primary"
           size="large"
           :disabled="!$store.state.accounts.lastSeedPhrase"
           :to="
@@ -12,6 +12,7 @@
               ? { name: 'account-backup-mnemonic', params: { from: $route.params.from } }
               : { name: 'account-backup-mnemonic' }
           "
+          hover
         >
           Mnemonic Seed Phrase
         </Button>
@@ -19,13 +20,14 @@
       </div>
       <div class="btn-p-wrapper">
         <Button
-          type="gradation"
+          type="primary"
           size="large"
           :to="
             $route.params.from
               ? { name: 'account-backup-encrypted', params: { from: $route.params.from } }
               : { name: 'account-backup-encrypted' }
           "
+          hover
         >
           Encrypted Private Key
         </Button>
@@ -33,13 +35,14 @@
       </div>
       <div class="btn-p-wrapper">
         <Button
-          type="gradation"
+          type="primary"
           size="large"
           :to="
             $route.params.from
               ? { name: 'account-backup-keystore', params: { from: $route.params.from } }
               : { name: 'account-backup-keystore' }
           "
+          hover
         >
           Keystore File
         </Button>

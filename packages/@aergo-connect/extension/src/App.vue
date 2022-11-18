@@ -30,7 +30,8 @@ export default Vue.extend({
   async mounted() {
     const isSetup = await this.$background.isSetup();
     const unlocked = await this.$background.isUnlocked();
-
+    console.log(this.$store.state.ui.currentPage, 'currentPage');
+    console.log(this.$store.state.ui.previousPage, 'previousPage');
     if (!isSetup) {
       this.$router.push({ name: 'welcome' }).catch(() => {});
     } else if (!unlocked) {

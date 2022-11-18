@@ -1,18 +1,15 @@
 <template>
   <div className="removeAccount_backdrop">
-    <div class="removeAccount_modal_wrapper">
+    <div class="removeAccount_modal2_wrapper">
       <Icon :name="`warning2`" />
-      <div class="removeAccount_title">Type 'delete' to confirm deleting this account.</div>
+      <div class="removeAccount_title">
+        {{ `Type '${$store.state.accounts.nick}' to confirm deleting this account.` }}
+      </div>
       <div class="removeAccount_textField">
         <TextField type="text" v-model="value" @submit="handleDeleteAccount" />
       </div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue
-          type="secondary"
-          size="medium"
-          hover
-          :disabled="!disabled"
-          @click="handleDeleteAccount"
+        <ButtonVue type="secondary" size="medium" :disabled="!disabled" @click="handleDeleteAccount"
           >Confirm</ButtonVue
         >
         <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
@@ -38,7 +35,7 @@ export default Vue.extend({
   },
   computed: {
     disabled() {
-      if (this.value === 'delete') {
+      if (this.value === this.$store.state.accounts.nick) {
         return true;
       } else {
         return false;
@@ -67,9 +64,9 @@ export default Vue.extend({
   top: 0px;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1;
-  .removeAccount_modal_wrapper {
+  .removeAccount_modal2_wrapper {
     width: 317px;
-    height: 400px;
+    height: 360px;
     position: absolute;
     left: 28px;
     top: 110px;
@@ -97,7 +94,8 @@ export default Vue.extend({
       color: #e4097d;
     }
     .removeAccount_textField {
-      width: 213px;
+      width: 270px;
+      margin-top: 10px;
       height: 48px;
     }
     .removeAccount_text {
@@ -117,6 +115,12 @@ export default Vue.extend({
     }
     .button_wrapper {
       margin-top: 33px;
+      .button-type-secondary:hover:not([disabled]) {
+        background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+      }
+      .button {
+        width: 270px;
+      }
     }
   }
 }

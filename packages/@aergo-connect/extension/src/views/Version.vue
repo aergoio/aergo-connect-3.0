@@ -3,9 +3,10 @@
     <Header button="back" title="App Version" @backClick="handleBack" />
     <div class="version_content">
       <Icon :name="`aergoMainLogo`" />
+      <div class="text">Currently Version: {{ checkVersion() }}</div>
       <div class="text">Your app is up to date.</div>
     </div>
-    <Button class="version_button" type="primary" size="large" @click="handleBack">OK</Button>
+    <Button class="version_button" type="primary" size="large" @click="handleBack" hover>OK</Button>
   </ScrollView>
 </template>
 
@@ -22,6 +23,10 @@ export default Vue.extend({
       this.$router.push({
         name: 'accounts-list',
       });
+    },
+    checkVersion() {
+      const manifest = chrome.runtime.getManifest();
+      return manifest.version;
     },
   },
 });

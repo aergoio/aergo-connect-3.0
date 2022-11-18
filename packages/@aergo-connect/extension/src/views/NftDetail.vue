@@ -268,12 +268,14 @@ export default Vue.extend({
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
         hash.split('-')[0]
       }/`;
-      window.open(url, '_blank', 'width=1000,height=1000');
+      const userWidth = window.innerWidth;
+      window.open(url, '_blank', 'width=' + parseInt(userWidth * 0.75));
     },
 
     gotoScanAccount(address: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
-      window.open(url, '', 'width=1000,height=1000');
+      const userWidth = window.innerWidth;
+      window.open(url, '', 'width=' + parseInt(userWidth * 0.75));
     },
 
     gotoScanNft(address: string, nftName: string) {

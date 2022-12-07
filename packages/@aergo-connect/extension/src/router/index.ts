@@ -89,7 +89,11 @@ const routes: RouteConfig[] = [
       withMeta(2, { path: '/home', name: 'accounts-list', component: Home }),
       withMeta(3, { path: '/home/tokendetail', name: 'token-detail', component: TokenDetail }),
       withMeta(3, { path: '/home/nftdetail', name: 'nft-detail', component: NftDetail }),
-      withMeta(4, { path: '/home/importasset', name: 'import-asset', component: ImportAsset }),
+      withMeta(4, {
+        path: '/home/importasset/:option',
+        name: 'import-asset',
+        component: ImportAsset,
+      }),
       withMeta(4, { path: '/home/send', name: 'send', component: Send }),
       withMeta(3, { path: '/home/receive', name: 'receive', component: Receive }),
       withMeta(3, { path: '/home/signmessage', name: 'sign-message', component: SignMessage }),

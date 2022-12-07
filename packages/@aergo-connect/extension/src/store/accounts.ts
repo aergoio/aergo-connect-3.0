@@ -100,12 +100,15 @@ const storeModule: Module<AccountsState, RootState> = {
 
     async addToken({ state, commit }, token: any) {
       let tokens = state.accounts[state.address]['token'][state.network];
-
+      console.log(tokens, 'tokens');
+      console.log(token, 'token');
+      console.log(state.accounts, 'state-addrees');
       if (!tokens) {
         tokens = {};
       }
-
       tokens[token.hash] = token;
+      const walletData = JSON.parse(localStorage.getItem(`${state.address}_${token.hash}`));
+      console.log(walletData, 'walletData!!');
       commit('setTokens', tokens);
       console.log('Add tokens', tokens);
     },
@@ -150,7 +153,7 @@ const storeModule: Module<AccountsState, RootState> = {
     addAccount(state, address: string) {
       state.accounts[address] = {
         address: address,
-        nick: address.substr(0, 5),
+        nick: `${address.substr(0, 5)}_${address.substr(-5)}`,
         token: {},
       };
       console.log('addAccount', state.accounts[address]['nick']);
@@ -172,6 +175,13 @@ const storeModule: Module<AccountsState, RootState> = {
 
     setBackup(state, value: boolean) {
       state.accounts[state.address]['backup'] = value;
+    },
+    setNftWallet(state, { nftWallet, hash }) {
+      if (nftWallet.length === 0) {
+        state.accounts[state.address].token[state.network][hash]['nftWallet'] = [];
+      } else {
+        state.accounts[state.address].token[state.network][hash]['nftWallet'] = nftWallet;
+      }
     },
   },
 };

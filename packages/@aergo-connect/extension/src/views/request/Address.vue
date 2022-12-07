@@ -10,9 +10,9 @@
             {{ $store.state.accounts.nick }}
           </div>
           <div class="account_info_network_wrapper">
-            <div class="account_info_network_circle" />
+            <div :class="`account_info_network_circle ${$store.state.accounts.network}`" />
             <div class="account_info_network">
-              {{ $store.state.accounts.network.toUpperCase() }}
+              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
           </div>
         </div>
@@ -204,6 +204,15 @@ export default class RequestAddress extends mixins(RequestMixin) {
           height: 6px;
           margin-right: 5px;
           border-radius: 50%;
+          &.mainnet {
+            background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+          }
+          &.testnet {
+            background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+          }
+          &.alpha {
+            background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+          }
         }
         .account_info_network {
           font-family: 'Outfit';

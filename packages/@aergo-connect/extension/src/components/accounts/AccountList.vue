@@ -14,60 +14,11 @@
   <div v-else class="nav-account-list">
     <div class="nav-account-item" @click.capture="$emit('select', account)">
       <div :class="$store.state.accounts.address === account.address ? 'active' : ''">
-        <AccountItem :address="account.address" :nickname="account.nick" />
+        <!-- <AccountItem :address="account.address" :nickname="account.nick" /> -->
       </div>
     </div>
   </div>
 </template>
-
-<!-- <template>
-  <ul class="account-list">
-    <h1>test</h1>
-    <li v-for="[chainId, accounts] in accountsByChainId" :key="chainId">
-      <div class="chainid-group" v-if="groupByChain">
-        <span class="chain-id-icon">
-          <Icon :name="isPublicChainId(chainId) ? 'logo' : 'network-other'" :size="36" />
-        </span>
-        <span class="chain-id">{{ chainId }}</span>
-      </div>
-      <ul>
-        <li
-          v-for="account in accounts"
-          :key="account.key"
-          class="account-item-li"`
-          @click.capture="$emit('select', account)"
-        >
-          <router-link :to="{ name: balanceListRoute, params: account.data.spec }">
-            <div
-              class="account-item"
-              :class="activeAccount && activeAccount.key === account.key ? 'active' : ''"
-            >
-              <span>
-                <Identicon :text="account.data.spec.address" class="circle" />
-                <span v-if="account.data.type === 'ledger'" class="account-label account-label-usb"
-                  ><Icon name="usb" :size="17"
-                /></span>
-                <span v-else-if="isNew(account)" class="account-label account-label-new">new</span>
-              </span>
-
-              <span class="account-address-balance">
-                <span class="account-address">{{ account.data.spec.address }}</span>
-                <span class="balance-actions">
-                  <FormattedToken class="account-balance" :value="account.data.balance" />
-                  <router-link
-                    class="delete-button"
-                    :to="{ name: 'account-remove', params: account.data.spec }"
-                    ><Icon name="trash" :size="10"
-                  /></router-link>
-                </span>
-              </span>
-            </div>
-          </router-link>
-        </li>
-      </ul>
-    </li>
-  </ul>
-</template> -->
 
 <script lang="ts">
 import Vue from 'vue';

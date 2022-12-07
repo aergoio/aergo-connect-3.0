@@ -7,13 +7,13 @@
       :to="{ name: 'accounts-list' }"
       @refreshClick="refreshClick"
     />
-    <LoadingBar v-if="isLoading" />
+    <!-- <LoadingBar v-if="isLoading" /> -->
     <RemoveModal v-if="removeModal" @cancel="handleDelete" />
     <div class="token_detail_content">
       <div class="account_detail">
         <div class="direction-row">
-          <div class="circle" />
-          <div class="network">{{ $store.state.accounts.network.toUpperCase() || 'MAINNET' }}</div>
+          <div :class="`circle ${$store.state.accounts.network}`" />
+          <div class="network">{{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}</div>
         </div>
         <div class="account">
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
@@ -57,9 +57,23 @@
           <div class="token_symbol">{{ token.meta.symbol }}</div>
         </div>
         <div class="line" />
-        <div class="detail_wrapper" @click="gotoStake()">
-          <div class="detail_title">Staked Balance</div>
-          <div class="detail_content">{{ staking }}</div>
+        <div class="detail_wrapper">
+          <div :style="{ display: 'flex', flexDirection: 'column' }">
+            <div class="detail_title">Staked Balance</div>
+            <div class="detail_title staking">
+              {{ staking }}
+              <span class="dollor">{{
+                stakingPrice ? `[$ ${formatBalance(stakingPrice)}]` : `[$ 0]`
+              }}</span>
+            </div>
+          </div>
+          <Button
+            type="font-gradation"
+            hover
+            :style="{ height: '24px', marginRight: '8px', border: 'solid 0.01em #d0d0d0' }"
+            @click="gotoStake()"
+            >MANAGE</Button
+          >
         </div>
       </div>
       <div v-else class="token_detail others">
@@ -92,11 +106,24 @@
         >
           <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
             <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-            <div class="direction_row">
+            <div class="direction_row mt4">
               <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
               <div v-else class="received">Received</div>
               <div class="direction_row">
-                <div class="balance">{{ getBalance(item.meta.amount_float) }}</div>
+                <div v-if="item.meta.from === $store.state.accounts.address" class="balance sent">
+                  {{
+                    item.meta.amount_float === 0
+                      ? `${getBalance(item.meta.amount_float)}`
+                      : `- ${getBalance(item.meta.amount_float)}`
+                  }}
+                </div>
+                <div v-else class="balance received">
+                  {{
+                    item.meta.amount_float === 0
+                      ? `${getBalance(item.meta.amount_float)}`
+                      : `+ ${getBalance(item.meta.amount_float)}`
+                  }}
+                </div>
                 <div class="token_symbol">{{ token.meta.symbol }}</div>
               </div>
             </div>
@@ -154,7 +181,7 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
-import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
+// import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import { Amount } from '@herajs/common';
@@ -176,7 +203,7 @@ export default Vue.extend({
     Identicon,
     RemoveModal,
     Notification,
-    LoadingBar,
+    // LoadingBar,
   },
 
   data() {
@@ -189,6 +216,7 @@ export default Vue.extend({
       filter: 'All',
       staking: '0',
       aergoPrice: 0,
+      stakingPrice: 0,
       isLoading: false,
       token: {},
     };
@@ -198,7 +226,9 @@ export default Vue.extend({
     this.token = await this.$store.state.session.tokens[this.$store.state.session.token];
 
     await this.getTokenHistory();
-    if (this.token.meta.symbol == 'aergo') await this.getAergoInfo();
+    if (this.token.meta.symbol == 'aergo') {
+      await this.getAergoInfo();
+    }
   },
 
   watch: {
@@ -229,6 +259,9 @@ export default Vue.extend({
         }, 2000);
       }
     },
+    staking() {
+      this.stakingPrice = this.getStakingAergoInfo(this.staking.split(' ')[0]);
+    },
   },
   methods: {
     async aergoStaking(): Promise<void> {
@@ -237,10 +270,10 @@ export default Vue.extend({
         address: this.$store.state.accounts.address,
       });
 
-      console.log('staking', staking);
-
       if (!staking) this.staking = '0';
-      else this.staking = `${bigIntToString(BigInt(staking.amount.split(' ')[0]), 18) || 0} aergo`;
+      else {
+        this.staking = `${bigIntToString(BigInt(staking.amount.split(' ')[0]), 18) || 0} aergo`;
+      }
     },
 
     gotoStake() {
@@ -262,14 +295,20 @@ export default Vue.extend({
       window.open(url, '_blank', 'width=' + parseInt(userWidth * 0.75));
     },
 
-    getAergoInfo() {
-      this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
+    async getAergoInfo() {
+      await this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
         this.aergoPrice = this.token.balance * priceInfo.price;
       });
 
       this.aergoStaking();
     },
 
+    async getStakingAergoInfo(staking: any) {
+      await this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
+        console.log(staking);
+        this.stakingPrice = staking * priceInfo.price;
+      });
+    },
     getBalance(value: number) {
       const noDecimalValue = value / Math.pow(10, this.token.meta.decimals);
       return this.formatBalance(noDecimalValue);
@@ -370,9 +409,18 @@ export default Vue.extend({
         width: 4px;
         height: 4px;
         margin-right: 4px;
+        &.mainnet {
+          background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+        }
+        &.testnet {
+          background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+        }
+        &.alpha {
+          background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+        }
       }
       .network {
-        width: 84px;
+        width: 100px;
         height: 15px;
         font-family: 'Outfit';
         font-style: normal;
@@ -459,7 +507,7 @@ export default Vue.extend({
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     &.aergo {
-      height: 110px;
+      height: 118px;
     }
     &.others {
       flex-direction: row;
@@ -493,8 +541,6 @@ export default Vue.extend({
       margin-top: 6px;
     }
     .detail_wrapper {
-      cursor: pointer;
-      margin-top: 6px;
       width: 100%;
       display: flex;
       align-items: center;
@@ -514,6 +560,28 @@ export default Vue.extend({
         /* Grey/06 */
 
         color: #686767;
+        &.staking {
+          display: flex;
+          align-items: center;
+          font-weight: 500;
+          .dollor {
+            /* Caption/C3 */
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 18px;
+            /* identical to box height */
+
+            letter-spacing: -0.333333px;
+
+            /* Grey/04 */
+
+            color: #9c9a9a;
+            margin-left: 8px;
+            word-break: break-all;
+          }
+        }
       }
       .detail_content {
         margin-right: 14px;
@@ -578,9 +646,12 @@ export default Vue.extend({
       line-height: 25px;
       letter-spacing: -0.333333px;
       word-break: break-all;
-      /* Grey/08 */
-
-      color: #231f20;
+      &.sent {
+        color: #231f20;
+      }
+      &.received {
+        color: #279ecc;
+      }
     }
     .token_name {
       /* Subtitle/S3 */
@@ -707,7 +778,6 @@ export default Vue.extend({
         }
         .received {
           margin-left: 16px;
-          margin-top: 4px;
           /* Button/Btn2 */
 
           font-family: 'Outfit';
@@ -722,7 +792,6 @@ export default Vue.extend({
         }
         .sent {
           margin-left: 16px;
-          margin-top: 4px;
           font-family: 'Outfit';
           font-style: normal;
           font-weight: 500;
@@ -737,6 +806,9 @@ export default Vue.extend({
           display: flex;
           align-items: center;
           justify-content: space-between;
+          &.mt4 {
+            margin-top: 4px;
+          }
           .icon {
             cursor: pointer;
             margin-right: 10px;
@@ -750,9 +822,6 @@ export default Vue.extend({
             font-size: 17px;
             line-height: 21px;
             text-align: right;
-            /* Grey/07 */
-
-            color: #454344;
           }
           .token_symbol {
             margin-right: 16px;

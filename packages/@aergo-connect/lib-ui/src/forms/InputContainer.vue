@@ -90,9 +90,15 @@ export default Vue.extend({
     background-clip: content-box, border-box;
 
     &.is-focused {
-      outline: none;
+      box-shadow: none;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      background-image: linear-gradient(white, white), linear-gradient(to right, #279ecc, #a13e99);
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+      /* outline: none;
       background-image: linear-gradient(white, white), linear-gradient(to right, $Grey07, $Grey07);
-      // box-shadow: inset 0 0 0 2px $Grey07;
+      // box-shadow: inset 0 0 0 2px $Grey07; */
     }
 
     &.is-disabled {

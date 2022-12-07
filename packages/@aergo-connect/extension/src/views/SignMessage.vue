@@ -375,7 +375,6 @@ export default class RequestSign extends mixins() {
     }
   }
   .button-type-primary-outline {
-    outline: 1px solid #279ecc;
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 400;

@@ -8,11 +8,7 @@ import {
 } from '@herajs/crypto';
 import { Amount } from '@herajs/common';
 import { Account, Transaction } from '@herajs/wallet';
-
-/*
-// seo
-import { Address, Contract } from '@herajs/client';
-*/
+import { Address } from '@herajs/client';
 
 import Controller from './controller';
 import { ChainConfig } from '../config';

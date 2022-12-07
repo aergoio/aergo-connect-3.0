@@ -7,7 +7,7 @@
         <span>resgistered on this wallet. Would you like to add an Account?</span>
       </div>
       <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" size="medium" hover :to="{ name: 'register' }"
+        <ButtonVue type="secondary" hover size="medium" :to="{ name: 'register' }"
           >Add Account</ButtonVue
         >
         <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
@@ -77,6 +77,19 @@ export default Vue.extend({
       .button {
         width: 289px;
       }
+      /* .add_account:hover {
+        background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+      } */
+      /* .cancel:hover {
+        border: 2px solid transparent;
+        border-radius: 4px;
+        border-image: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+        border-image-slice: 1;
+        background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      } */
     }
   }
 }

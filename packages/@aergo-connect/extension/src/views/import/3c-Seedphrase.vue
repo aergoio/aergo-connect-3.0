@@ -40,6 +40,7 @@
           type="primary"
           :disabled="!canContinue || loading"
           :loading="loading"
+          hover
         >
           Import
         </Button>

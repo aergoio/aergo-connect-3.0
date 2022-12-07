@@ -1,6 +1,10 @@
 <template>
   <ScrollView orientation="horizontal">
-    <Header button="back" title="Import Asset" @backClick="handleBack" />
+    <Header
+      button="back"
+      :title="$store.state.session.option === 'token' ? `Import Asset` : `Import NFT`"
+      @backClick="handleBack"
+    />
     <div class="tab_content">
       <div class="tab_wrapper">
         <div
@@ -27,20 +31,34 @@
           :icon="`warning2`"
         />
         <div class="network_wrapper">
-          <div class="network_circle" />
-          <div class="network_text">{{ $store.state.accounts.network.toUpperCase() }}</div>
+          <div :class="`network_circle ${$store.state.accounts.network}`" />
+          <div class="network_text">
+            {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+          </div>
         </div>
-        <TextField placeholder="Name / Symbol" class="network_textField" @input="search" />
+        <div>Step1: Search NFT Group</div>
+        <TextField
+          placeholder="Name / Symbol"
+          class="network_textField"
+          @input="search"
+          :value="inputTextField"
+        />
 
         <ul class="select_token_content">
           <div v-if="results.length">
-            <div class="select_token_text">Select the token or NFT.</div>
-            <ul>
+            <ul v-if="!importNftStep2">
+              <div class="select_token_text">
+                {{
+                  $store.state.session.option === 'token'
+                    ? `Select the Token Asset`
+                    : `Select the NFT Group`
+                }}
+              </div>
               <li
                 v-for="result in results"
                 :key="result.hash"
                 class="select_token_list"
-                @click="select(result)"
+                @click="() => select(result)"
               >
                 <div class="token_list_wrapper">
                   <img v-if="result.meta.image" class="list_icon" :src="result.meta.image" />
@@ -63,6 +81,20 @@
                 <div class="line" />
               </li>
             </ul>
+            <div :style="{ marginTop: '10px' }" v-if="importNftStep2">
+              <div>Step2: Input NFT ID</div>
+              <TextField placeholder="NFT ID" class="network_textField" @input="inputNftId" />
+              <Button class="import_nft_button" @click="importNFT" type="primary" hover size="large"
+                >Import NFT</Button
+              >
+              <ImportAssetModal v-if="importSuccessNft" :token="token" :nftData="nftData" />
+              <Notification
+                v-if="notification"
+                :title="notificationText"
+                :size="300"
+                :icon="`warning2`"
+              />
+            </div>
           </div>
         </ul>
       </div>
@@ -70,8 +102,10 @@
       <div v-if="state === `custom`">
         <div class="custom_wrapper">
           <div class="network_wrapper">
-            <div class="network_circle" />
-            <div class="network_text">{{ $store.state.accounts.network.toUpperCase() }}</div>
+            <div :class="`network_circle ${$store.state.accounts.network}`" />
+            <div class="network_text">
+              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+            </div>
           </div>
           <div class="custom_detail_wrapper">
             <Notification
@@ -119,6 +153,7 @@
       > -->
       <Button
         v-if="state === `custom` && !check"
+        class="token_content_button"
         type="primary"
         size="large"
         @click="handleCheck"
@@ -128,6 +163,7 @@
       </Button>
       <Button
         v-else-if="state === `custom` && check"
+        class="token_content_button"
         type="primary"
         size="large"
         @click="customSubmit"
@@ -174,6 +210,12 @@ export default Vue.extend({
       check: false,
       token: {},
       hasTokenCheck: false,
+      importNftStep2: false,
+      inputTextField: '',
+      userInputNftId: '',
+      nftData: {},
+      importSuccessNft: false,
+      isAddedNft: {},
     };
   },
   watch: {
@@ -187,6 +229,10 @@ export default Vue.extend({
         }, 2000);
       }
     },
+    importNftStep2() {
+      this.inputTextField = this.token.meta.name;
+    },
+
     /*
     value() {
       if (this.value === this.$store.state.accounts.address) {
@@ -207,7 +253,7 @@ export default Vue.extend({
 
     async search(query) {
       const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
-
+      this.importNftStep2 = false;
       if (this.$store.state.session.option === 'token') {
         await fetch(
           `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC1`,
@@ -233,22 +279,19 @@ export default Vue.extend({
         console.log('Results', this.results);
       }
     },
-
     async select(token) {
-      console.log('Selected', token.meta);
-
-      console.log(token, 'token!!!!!!!!!!!!!!!!!!!!!');
-      if (this.$store.state.session.tokens[token.hash]?.hash) {
-        this.notification = true;
-        this.notificationText = `Token already added.`;
-      } else {
-        this.token = token;
-        await this.$store.dispatch('accounts/addToken', token);
-        await this.$store.dispatch('session/initState');
+      console.log(token.meta);
+      this.token = token;
+      await this.$store.dispatch('accounts/addToken', token);
+      if (token.meta.type === 'ARC1') {
         this.importAssetModal = true;
+      } else if (token.meta.type === 'ARC2') {
+        this.importNftStep2 = true;
       }
     },
-
+    inputNftId(nftId) {
+      this.userInputNftId = nftId;
+    },
     async custom() {
       console.log('custom');
     },
@@ -261,7 +304,51 @@ export default Vue.extend({
     handleInput(value) {
       this.value = value;
     },
+    async importNFT() {
+      const resp = await fetch(
+        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.token.hash} AND (account:${this.$store.state.accounts.address})&sort=blockno:desc&from=0&size=100`,
+      );
 
+      const response = await resp.json();
+      const checkLocalStorageNftId = JSON.parse(
+        localStorage.getItem(`${this.$store.state.accounts.address}_${this.token.hash}`) || '[]',
+      );
+      this.isAddedNft = checkLocalStorageNftId.find((myNft) => {
+        if (this.userInputNftId === myNft.meta.token_id) {
+          return myNft;
+        }
+      });
+      if (response.error) {
+        this.nftData = {};
+        this.notification = true;
+        this.notificationText = `Error: ${response.error}`;
+      } else {
+        if (response.hits.length === 0) {
+          this.notification = true;
+          this.notificationText = `No Nft in this Wallet`;
+          return;
+        } else if (this.isAddedNft?.meta?.token_id) {
+          this.notification = true;
+          this.notificationText = `Already Added NFT`;
+          return;
+        } else {
+          const filteredNft = response.hits.filter((nftData) => {
+            if (this.userInputNftId === nftData.meta.token_id) {
+              return nftData;
+            }
+          });
+          if (filteredNft.length === 0) {
+            this.notification = true;
+            this.notificationText = `Check Your NFT ID`;
+          } else {
+            this.$store.commit('session/addNftToLocalStorage', filteredNft[0]);
+            this.token = filteredNft[0].token;
+            this.nftData = filteredNft[0].meta;
+            this.importSuccessNft = true;
+          }
+        }
+      }
+    },
     async handleCheck() {
       let results = [];
       console.log('fetch', this.value);
@@ -323,6 +410,12 @@ export default Vue.extend({
   .select_token_content {
     width: 375px;
     margin-top: 15px;
+    .token_content_button {
+      margin-top: 220px;
+    }
+    .import_nft_button {
+      margin-top: 220px;
+    }
     ul {
       overflow-y: scroll;
       overflow-x: hidden;
@@ -489,6 +582,15 @@ export default Vue.extend({
     width: 6px;
     height: 6px;
     margin-right: 2px;
+    &.mainnet {
+      background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+    }
+    &.testnet {
+      background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+    }
+    &.alpha {
+      background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+    }
   }
   .network_text {
     color: #686767;

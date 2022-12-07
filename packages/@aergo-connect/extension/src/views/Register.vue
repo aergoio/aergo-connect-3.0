@@ -20,6 +20,7 @@
               class="button_outline"
               type="primary-outline"
               size="large"
+              hover
               :to="{ name: 'account-import' }"
             >
               <span>Import</span>
@@ -102,25 +103,7 @@ export default class Register extends mixins(PersistInputsMixin) {
 .button_wrapper {
   display: flex;
   justify-content: center;
-  .button_outline {
-  }
-  .button_outline:hover {
-    border: 2px solid #512da8;
 
-    /* box-shadow: none; */
-    /* border: 2px solid transparent; */
-    /* border-radius: 4px; */
-    /* background-image: -webkit-gradient(linear, left top, left bottom, from(white), to(white)),
-      -webkit-gradient(linear, left top, right top, from(#9a449c), to(#e30a7d)); */
-    /* background-image: linear-gradient(white, white), linear-gradient(to right, #9a449c, #e30a7d); */
-    /* background-clip: content-box, border-box; */
-    /* background-origin: border-box; */
-    span {
-      background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-  }
   .button_group_wrapper {
     .button {
       width: 327px;
@@ -128,3 +111,30 @@ export default class Register extends mixins(PersistInputsMixin) {
   }
 }
 </style>
+
+<!-- .button_outline {
+}
+.button_outline:hover {
+  /* border: 2px solid #512da8; */
+  border: 2px solid transparent;
+  border-radius: 4px;
+  border-image: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+  border-image-slice: 1;
+  /* background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text; */
+  /* box-shadow: none; */
+  /* border: 2px solid transparent; */
+  /* border-radius: 4px; */
+  /* background-image: -webkit-gradient(linear, left top, left bottom, from(white), to(white)),
+    -webkit-gradient(linear, left top, right top, from(#9a449c), to(#e30a7d)); */
+  /* background-image: linear-gradient(white, white), linear-gradient(to right, #9a449c, #e30a7d); */
+  /* background-clip: content-box, border-box; */
+  /* background-origin: border-box; */
+  span {
+    background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+} -->

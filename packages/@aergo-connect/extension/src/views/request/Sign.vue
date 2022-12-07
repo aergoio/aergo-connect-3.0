@@ -10,9 +10,9 @@
               {{ $store.state.accounts.nick }}
             </div>
             <div class="account_info_network_wrapper">
-              <div class="account_info_network_circle" />
+              <div :class="`account_info_network_circle ${$store.state.accounts.network}`" />
               <div class="account_info_network">
-                {{ $store.state.accounts.network.toUpperCase() }}
+                {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
               </div>
             </div>
           </div>

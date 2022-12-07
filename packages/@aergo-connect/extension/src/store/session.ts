@@ -4,13 +4,18 @@ import { Account, serializeAccountSpec } from '@herajs/wallet';
 import { Amount } from '@herajs/common';
 import Vue from 'vue';
 import store from '../store';
+import { NftInventoryType, NftTokenType } from '@/types';
 
+interface NftSessionType extends NftTokenType {
+  dropdownsState: boolean;
+  nftWallet: NftInventoryType[];
+}
 export interface SessionState {
   tokens: Record<string, any>;
   token: string;
   currentPage: string;
   previousPage: string;
-  option: Record<string, any>;
+  option: string;
 }
 
 function getVueInstance(instance: any): Vue {
@@ -24,9 +29,13 @@ const storeModule: Module<SessionState, RootState> = {
   state: {
     token: 'AERGO',
     tokens: {},
-    option: '',
+    option: 'token',
   },
-
+  mutations: {
+    MUTATE_ITEMS: (state, items) => {
+      Vue.set(state, 'items', [...items]);
+    },
+  },
   actions: {
     tokenBalance({ state }, address: string) {
       return state.tokens[address]['balance'];
@@ -127,6 +136,36 @@ const storeModule: Module<SessionState, RootState> = {
     removeToken(state, token: any) {
       state.token = '';
       delete state.tokens[token];
+    },
+    // addNftDropdownState(state, hash: any) {
+    //   state.tokens[hash]['dropdownState'] = !state.tokens[hash]['dropdownState'];
+    // },
+
+    // getNFTWallet(state, hash: any) {
+    //   // state.tokens[hash][`nftWallet`] = [];
+    //   state.tokens[hash][`nftWallet`] = JSON.parse(localStorage.getItem(hash));
+    // },
+
+    addNftToLocalStorage(state, userNftData) {
+      console.log(userNftData, 'userNftData');
+      const beforeNftData = JSON.parse(
+        localStorage.getItem(`${userNftData.meta.account}_${userNftData.meta.address}`) || '{}',
+      );
+      const array =
+        Object.values(beforeNftData).length !== 0 ? [...beforeNftData, userNftData] : [userNftData];
+      localStorage.setItem(
+        `${userNftData.meta.account}_${userNftData.meta.address}`,
+        JSON.stringify(array),
+      );
+    },
+    handleDropdownState(state, hash: string) {
+      const copiedObject = { ...state.tokens[hash] };
+      if (copiedObject.dropdownState) {
+        copiedObject['dropdownState'] = false;
+      } else {
+        copiedObject['dropdownState'] = true;
+      }
+      state.tokens[hash] = copiedObject;
     },
   },
 };

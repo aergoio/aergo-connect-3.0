@@ -1,9 +1,8 @@
 <template>
   <div id="app" :class="`page-${$router.currentRoute.name}`">
     <router-view />
-    <!--
-    <RouteTransition > <router-view /> </RouteTransition>
--->
+
+    <!-- <RouteTransition> <router-view /> </RouteTransition> -->
   </div>
 </template>
 
@@ -11,14 +10,14 @@
 import Vue from 'vue';
 import LoadingDialog from '@aergo-connect/lib-ui/src/layouts/LoadingDialog.vue';
 import RouteTransition from '@aergo-connect/lib-ui/src/nav/RouteTransition.vue';
-import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
+// import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
 import extension from 'extensionizer';
 
 export default Vue.extend({
   components: {
     RouteTransition,
     LoadingDialog,
-    LoadingBar,
+    // LoadingBar,
   },
 
   data() {

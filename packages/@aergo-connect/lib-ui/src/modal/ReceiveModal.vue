@@ -19,7 +19,7 @@
         Show the above QR code to the sender. The sender can scan this QR code in the AERGO Connect
         APP to send a transaction.
       </div>
-      <Button type="gradation" @click="handleOK">OK</Button>
+      <Button type="primary" @click="handleOK" hover>OK</Button>
     </div>
   </div>
 </template>

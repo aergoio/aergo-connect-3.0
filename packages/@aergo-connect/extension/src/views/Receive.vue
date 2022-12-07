@@ -9,13 +9,13 @@
       :decimal="decimal"
       @confirm="handleConfirm"
     />
-    <Header button="back" title="Recieve" @backClick="handleBack" />
+    <Header button="back" title="Receive" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <div class="circle" />
+          <div :class="`circle ${$store.state.accounts.network}`" />
           <div class="network">
-            {{ this.$store.state.accounts.network.toUpperCase() || `MAINNET` }}
+            {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
           </div>
         </div>
         <div class="account_wrapper">
@@ -47,7 +47,7 @@
         <!-- <Identicon v-else-if="!icon" :text="asset" class="token_icon" /> -->
         <img v-else class="token_icon" :src="icon" />
         <div class="amount_wrapper">
-          <div class="token_amount">{{ token.balance ? formatBalance(token.balance) : 0 }}</div>
+          <div class="token_amount">{{ balance ? formatBalance(balance) : 0 }}</div>
           <div class="token_symbol">{{ symbol }}</div>
         </div>
       </div>
@@ -276,9 +276,18 @@ export default Vue.extend({
         width: 4px;
         height: 4px;
         margin-right: 4px;
+        &.mainnet {
+          background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+        }
+        &.testnet {
+          background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+        }
+        &.alpha {
+          background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+        }
       }
       .network {
-        width: 84px;
+        width: 100px;
         height: 15px;
         font-family: 'Outfit';
         font-style: normal;

@@ -1,12 +1,17 @@
 <template>
   <div class="import_asset_backdrop">
     <div class="import_asset_wrapper">
-      <div class="import_asset_header">Imported Asset Successfully!</div>
+      <div class="import_asset_header">
+        Imported {{ token?.meta?.type === 'ARC1' ? `Asset` : `NFT` }} Successfully!
+      </div>
       <div class="import_asset_icon_wrapper">
-        <img v-if="token.meta.image" class="import_asset_icon" :src="token.meta.image" />
+        <img v-if="token?.meta?.image" class="import_asset_icon" :src="token?.meta?.image" />
         <Icon v-else :name="`defaultToken`" class="import_asset_icon" />
         <div class="import_asset_title">
-          {{ `${token.meta.name}` + ' ' + '(' + `${token.meta.symbol}` + ')' }}
+          {{ `${token?.meta?.name}` + ' ' + '(' + `${token?.meta?.symbol}` + ')' }}
+        </div>
+        <div v-if="nftData?.token_id" class="import_asset_title inventory_id">
+          {{ nftData?.token_id }}
         </div>
       </div>
 
@@ -15,28 +20,30 @@
           <div class="network_title">Network</div>
           <div class="network_state_wrapper">
             <div class="network_state" />
-            <div class="network_text">{{ $store.state.accounts.network.toUpperCase() }}</div>
+            <div class="network_text">
+              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+            </div>
           </div>
         </div>
 
         <div class="token_type_detail_wrapper">
           <div>
             <div class="title">Type</div>
-            <div class="content">{{ token.meta.type }}</div>
+            <div class="content">{{ token?.meta?.type }}</div>
           </div>
           <div>
             <div class="title">Symbol</div>
-            <div class="content">{{ token.meta.symbol }}</div>
+            <div class="content">{{ token?.meta?.symbol }}</div>
           </div>
           <div>
             <div class="title">Decimal</div>
-            <div class="content">{{ token.meta.decimals }}</div>
+            <div class="content">{{ token?.meta?.decimals }}</div>
           </div>
         </div>
 
         <div class="address_wrapper">
           <div class="address_title">Address</div>
-          <div class="address_content">{{ token.hash }}</div>
+          <div class="address_content">{{ token?.hash }}</div>
         </div>
       </div>
 
@@ -57,6 +64,10 @@ export default Vue.extend({
       type: Object,
       default: {},
     },
+    nftData: {
+      type: Object,
+      default: {},
+    },
   },
   mounted() {
     console.log(this.token);
@@ -65,9 +76,6 @@ export default Vue.extend({
     handleClick() {
       this.$router.push({
         name: 'accounts-list',
-        params: {
-          address: this.$store.state.accounts.address,
-        },
       });
     },
   },
@@ -126,6 +134,11 @@ export default Vue.extend({
         /* Grey/07 */
 
         color: #454344;
+        &.inventory_id {
+          background: linear-gradient(133.72deg, #279ecc 0%, #e4097d 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
       }
     }
     .import_asset_detail_wrapper {

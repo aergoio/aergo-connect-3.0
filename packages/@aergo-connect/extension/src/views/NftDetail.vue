@@ -7,12 +7,12 @@
       :to="{ name: 'accounts-list' }"
       @refreshClick="refreshClick"
     />
-    <LoadingBar v-if="isLoading" />
+    <!-- <LoadingBar v-if="isLoading" /> -->
     <div class="nft_detail_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <div class="circle" />
-          <div class="network">{{ $store.state.accounts.network.toUpperCase() || 'MAINNET' }}</div>
+          <div :class="`circle ${$store.state.accounts.network}`" />
+          <div class="network">{{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}</div>
         </div>
         <div class="account_wrapper">
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
@@ -171,7 +171,7 @@ import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
-import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
+// import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
 import { Amount } from '@herajs/common';
 
 export default Vue.extend({
@@ -186,7 +186,7 @@ export default Vue.extend({
     Identicon,
     RemoveModal,
     Notification,
-    LoadingBar,
+    // LoadingBar,
   },
 
   data() {
@@ -275,20 +275,12 @@ export default Vue.extend({
     gotoScanAccount(address: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
       const userWidth = window.innerWidth;
-      window.open(url, '', 'width=' + parseInt(userWidth * 0.75));
+      window.open(url, '_blank', 'width=' + parseInt(userWidth * 0.75));
     },
 
     gotoScanNft(address: string, nftName: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/nft/${address}/?tx=inventory&keyword=${nftName}`;
-      window.open(
-        url,
-        '_blank',
-        'width=' +
-          parseInt(this.winWidth) +
-          ',height=' +
-          parseInt(screen.availHeight) * 1 +
-          ',toolbar=0,menubar=0,location=0,status=0,scrollbars=1,resizable=0,left=0,top=0',
-      );
+      window.open(url, '_blank');
     },
     getTitle() {
       return this.token.meta.name;
@@ -426,9 +418,18 @@ export default Vue.extend({
         width: 4px;
         height: 4px;
         margin-right: 4px;
+        &.mainnet {
+          background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+        }
+        &.testnet {
+          background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+        }
+        &.alpha {
+          background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+        }
       }
       .network {
-        width: 84px;
+        width: 100px;
         height: 15px;
         font-family: 'Outfit';
         font-style: normal;

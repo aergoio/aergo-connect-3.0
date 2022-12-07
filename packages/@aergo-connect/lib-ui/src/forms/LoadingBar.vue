@@ -10,10 +10,6 @@
   </div>
 </template>
 
-<script>
-export default {};
-</script>
-
 <style>
 .loading_backdrop {
   position: absolute;
@@ -39,7 +35,7 @@ export default {};
   left: 6px;
   width: 13px;
   background: #279ecc;
-  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+  animation: lds-facebook 0.8s cubic-bezier(0, 0.5, 0.5, 1) infinite;
 }
 
 .lds-facebook div:nth-child(1) {

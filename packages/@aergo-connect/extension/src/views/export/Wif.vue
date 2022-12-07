@@ -25,6 +25,7 @@
             @click="copyToClipBoard()"
             :type="copy === 'Copy' ? 'primary-outline' : 'primary'"
             size="medium"
+            hover
           >
             <img v-if="copy === 'Copy'" src="@aergo-connect/lib-ui/src/icons/img/copy.svg" />
             <img v-if="copy === 'Copied'" src="@aergo-connect/lib-ui/src/icons/img/copied.svg" />

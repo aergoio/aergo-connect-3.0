@@ -1,8 +1,8 @@
 <template>
   <div class="network_content" @click="networkModalClick">
-    <div class="network_circle" />
+    <div :class="`network_circle ${network}`" />
     <span class="network_name">
-      {{ network.toUpperCase() }}
+      {{ `AERGO ${network.toUpperCase()}` }}
     </span>
   </div>
 </template>
@@ -35,11 +35,20 @@ export default Vue.extend({
   align-items: center;
   cursor: pointer;
   .network_circle {
-    background: #e4097d;
+    background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
     width: 6px;
     height: 6px;
     margin-right: 5px;
     border-radius: 50%;
+    &.mainnet {
+      background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+    }
+    &.testnet {
+      background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+    }
+    &.alpha {
+      background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+    }
   }
   .network_name {
     font-family: 'Outfit';

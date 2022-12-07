@@ -34,9 +34,9 @@
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <div class="circle" />
+          <div :class="`circle ${$store.state.accounts.network}`" />
           <div class="network">
-            {{ this.$store.state.accounts.network.toUpperCase() || `MAINNET` }}
+            {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
           </div>
         </div>
         <div class="account_wrapper">
@@ -79,7 +79,7 @@
         <div class="flex-row">
           <div class="title">Asset</div>
 
-          <div v-click-outside="hide">
+          <div v-click-outside="hideAssetList">
             <div class="select_box" @click="handleSelectAsset">
               <div
                 :style="{
@@ -135,12 +135,12 @@
 
         <div class="flex-row" v-if="tokenType == 'ARC2'">
           <div class="title">NFT ID</div>
-          <div class="flex-column-searchbox">
+          <div class="flex-column-searchbox" v-click-outside="hideNftList">
             <TextField
               placeholder="Type ID"
               v-model="inputAmount"
               @input="searchNFT"
-              ref="target"
+              @focus="focusNFT"
             />
 
             <ul
@@ -331,13 +331,14 @@ export default Vue.extend({
     },
     async searchNFT(query) {
       const result = [];
-
       this.nftInventory.forEach((item) => {
         if (item.meta.token_id.indexOf(query) != -1) result.push(item);
       });
       this.searchResult = result;
     },
-
+    async focusNFT() {
+      this.searchResult = [...this.nftInventory];
+    },
     async getNftInventory() {
       const resp = await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}&sort=blockno:desc&from=0&size=100`,
@@ -557,13 +558,18 @@ export default Vue.extend({
     },
     handleSelectAsset() {
       this.selectAsset = !this.selectAsset;
+      this.inputAmount = '';
     },
     selectAssetFunc(asset) {
       this.asset = asset;
       this.selectAsset = false;
     },
-    hide() {
+    hideAssetList() {
       this.selectAsset = false;
+    },
+    hideNftList() {
+      this.searchFocus = false;
+      this.searchResult = '';
     },
   },
 });
@@ -588,9 +594,18 @@ export default Vue.extend({
         width: 4px;
         height: 4px;
         margin-right: 4px;
+        &.mainnet {
+          background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+        }
+        &.testnet {
+          background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+        }
+        &.alpha {
+          background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+        }
       }
       .network {
-        width: 84px;
+        width: 100px;
         height: 15px;
         font-family: 'Outfit';
         font-style: normal;
@@ -776,7 +791,7 @@ export default Vue.extend({
         .search_list_wrapper {
           height: 172px;
           position: absolute;
-          left: 105px;
+          left: 104px;
           top: 115px;
           border-radius: 3px;
           border: 1px solid #279ecc;

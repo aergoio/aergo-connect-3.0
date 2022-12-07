@@ -2,14 +2,14 @@
   <ScrollView>
     <Header
       button="hamburger"
-      :title="$store.state.accounts.network"
+      :title="$store?.state?.accounts?.network"
       refresh
       network
       @hamburgerClick="hamburgerClick"
       @networkModalClick="networkModalClick"
       @refreshClick="refreshClick"
     />
-    <LoadingBar v-if="isLoading" />
+    <!-- <LoadingBar v-if="isLoading" /> -->
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
     <!-- <NotificationModal v-if="notificationModal" @cancel="handleCancel" /> -->
@@ -26,7 +26,7 @@
         @notificationModalClick="handleNotificationModalClick"
       />
       <div class="account_info_wrapper">
-        <Identicon :text="$store.state.accounts.address" class="account_info_img" />
+        <Identicon :text="$store?.state?.accounts?.address" class="account_info_img" />
         <Notification
           v-if="notification"
           :title="notificationText"
@@ -36,7 +36,7 @@
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
             <div v-if="!editNick" class="account_info_nickname_text">
-              {{ $store.state.accounts.nick }}
+              {{ $store?.state?.accounts?.nick }}
             </div>
             <input
               v-if="editNick"
@@ -56,10 +56,10 @@
           </div>
           <div class="account_info_address_wrapper" @click="handleDetailAddress">
             <span class="account_info_address_text">{{
-              `${$store.state.accounts.address.slice(
+              `${$store?.state?.accounts?.address.slice(
                 0,
                 15,
-              )}...${$store.state.accounts.address.slice(-5)}`
+              )}...${$store?.state?.accounts?.address.slice(-5)}`
             }}</span>
             <Icon class="account_info_address_button" :name="`next`" :size="50" />
           </div>
@@ -70,10 +70,10 @@
       <div class="token_content_wrapper">
         <ButtonGroup class="token_nft_button_wrapper">
           <Button
-            :class="[tab === `tokens` ? `token-button` : `token-button unclicked`]"
+            :class="[tab === `token` ? `token-button` : `token-button unclicked`]"
             type="primary"
             size="small"
-            @click="handleChangeTab('tokens')"
+            @click="handleChangeTab('token')"
             >Tokens</Button
           >
           <Button
@@ -85,84 +85,131 @@
           >
         </ButtonGroup>
         <ul
-          v-if="tab === `tokens`"
+          v-if="tab === `token`"
           :class="[tokensCount > 4 ? 'token_list_ul scroll' : 'token_list_ul']"
         >
           <li
-            v-for="token in $store.state.session.tokens"
+            v-for="token in $store?.state?.session?.tokens"
             class="token_list_li"
             :key="token.hash"
             @click="handleToken(token)"
           >
-            <div v-if="token.meta.type !== 'ARC2'" class="token_list_wrapper">
+            <div v-if="token?.meta?.type !== 'ARC2'" class="token_list_wrapper">
               <div class="token_list_row">
-                <Icon v-if="token.meta.type === 'AERGO'" class="token_list_icon" :name="`aergo`" />
-                <img
-                  v-else-if="token.meta.image"
+                <Icon
+                  v-if="token?.meta?.type === 'AERGO'"
                   class="token_list_icon"
-                  :src="token.meta.image"
+                  :name="`aergo`"
+                />
+                <img
+                  v-else-if="token?.meta?.image"
+                  class="token_list_icon"
+                  :src="token?.meta?.image"
                   alt="404"
                 />
                 <Icon v-else class="token_list_icon" :name="`defaultToken`" />
-                <span
-                  :class="[
-                    token.meta.name.length > 12 ? 'token_list_text wordbreak' : 'token_list_text',
-                  ]"
-                >
-                  {{ token.meta.name }}
-                </span>
+                <div class="token_list_amount">
+                  <div>
+                    <span
+                      :class="[
+                        token?.meta?.name.length > 12
+                          ? 'token_list_text wordbreak'
+                          : 'token_list_text',
+                      ]"
+                    >
+                      {{ token?.meta?.name }}
+                    </span>
+                  </div>
+                  <div :style="{ display: 'flex' }">
+                    <span class="token_list_balance">{{
+                      token?.balance ? formatBalance(token?.balance) : 0
+                    }}</span>
+                    <span class="token_list_symbol"> {{ token?.meta?.symbol }}</span>
+                  </div>
+                  <span v-if="token?.meta?.name !== 'AERGO'" class="token_list_text hash">{{
+                    `[${token?.hash.slice(0, 6)}...${token?.hash.slice(-6)}]`
+                  }}</span>
+                </div>
               </div>
-              <div class="token_list_amount">
-                <span class="token_list_balance">{{
-                  token.balance ? formatBalance(token.balance) : 0
-                }}</span>
-                <span class="token_list_symbol"> {{ token.meta.symbol }}</span>
-
-                <Icon class="token_list_nextbutton" :name="`next_grey`" />
-              </div>
+              <Icon class="token_list_nextbutton" :name="`next_grey`" />
             </div>
-            <div v-if="token.meta.type === 'ARC1' || token.meta.type === 'AERGO'" class="line" />
+            <div
+              v-if="token?.meta?.type === 'ARC1' || token?.meta?.type === 'AERGO'"
+              class="line"
+            />
           </li>
         </ul>
 
         <ul
           v-if="tab === `nft`"
-          :class="[nftCountNum > 4 ? 'token_list_ul scroll' : 'token_list_ul']"
+          :class="[
+            nftCountNum > 4 || dropdownScroll ? 'token_list_ul scroll' : 'token_list_ul',
+            tab === 'nft' ? 'token_list_ul nft' : 'token_list_ul',
+          ]"
         >
           <li
-            v-for="token in $store.state.session.tokens"
-            class="token_list_li"
-            :key="token.hash"
-            @click="handleNft(token)"
+            v-for="token in $store?.state?.session?.tokens"
+            :class="[myNFTCount(token?.hash) ? `token_list_li` : `token_list_li none`]"
+            :key="token?.hash"
           >
-            <div v-if="token.meta.type === 'ARC2'" class="token_list_wrapper">
+            <!-- <li
+            v-for="token in $store?.state?.session?.tokens"
+            class="token_list_li"
+            :key="token?.hash"
+          > -->
+            <div
+              v-if="token?.meta?.type === 'ARC2'"
+              class="token_list_wrapper"
+              @click="handleNft(token)"
+            >
               <div class="token_list_row">
                 <img
-                  v-if="token.meta.image"
+                  v-if="token?.meta?.image"
                   class="token_list_icon"
-                  :src="token.meta.image"
+                  :src="token?.meta?.image"
                   alt="404"
                 />
                 <Icon v-else class="token_list_icon" :name="`defaultToken`" />
-                <span
-                  :class="[
-                    token.meta.name.split(' ').length > 1 ||
-                    token.meta.name.split('-').length > 1 ||
-                    token.meta.name.split('_').length > 1
-                      ? 'token_list_text wordbreak'
-                      : 'token_list_text',
-                  ]"
-                >
-                  {{ token.meta.name }}
-                </span>
+                <div class="token_list_amount">
+                  <div>
+                    <span class="token_list_text wordbreak">
+                      {{ token?.meta?.name }}
+                    </span>
+                  </div>
+                  <div :style="{ display: 'flex' }">
+                    <span class="token_list_balance">{{ myNFTCount(token?.hash) }}</span>
+                    <span class="token_list_symbol"> EA </span>
+                  </div>
+                  <span class="token_list_text hash">{{
+                    `[${token?.hash.slice(0, 6)}...${token?.hash.slice(-6)}]`
+                  }}</span>
+                </div>
               </div>
-              <div class="token_list_amount">
-                <span class="token_list_balance">{{ token.balance }}</span>
-                <span> EA </span>
-                <Icon class="token_list_nextbutton" :name="`next_grey`" />
-              </div>
+              <Icon
+                class="token_list_nextbutton"
+                :name="token?.dropdownState ? `arrow-up` : `arrow-down`"
+              />
             </div>
-            <div v-if="token.meta.type === 'ARC2'" class="line" />
+            <div v-if="token?.meta?.type === 'ARC2'" class="line" />
+
+            <ul class="nft_inventory_list_wrapper" v-if="token?.dropdownState">
+              <div class="row">
+                <li
+                  v-for="(nftWalletItem, i) in $store?.state?.session?.tokens[token.hash].nftWallet"
+                  :key="`${i + nftWalletItem?.hash}`"
+                  class="nft_inventory_list_wrapper_list"
+                  @click="handleGoNftInventory(nftWalletItem?.meta?.token_id)"
+                >
+                  <div class="token_id">{{ nftWalletItem?.meta?.token_id }}</div>
+                  <div>{{ `#${nftWalletItem?.meta?.token_id.slice(-4)}` }}</div>
+                </li>
+              </div>
+              <div :style="{ float: 'right' }">
+                <Button :size="`small`" type="secondary" @click="GoToNftDetail" hover
+                  >NFT History</Button
+                >
+              </div>
+            </ul>
           </li>
 
           <div v-if="nftCountNum === 0" class="nftNothing">
@@ -173,22 +220,25 @@
 
         <button
           class="token_list_button"
-          @click="[tab === 'tokens' ? handleImportAsset('token') : handleImportAsset('nft')]"
+          @click="[tab === 'token' ? handleImportAsset('token') : handleImportAsset('nft')]"
         >
-          <Icon name="plus" class="token_list_button_img" /><span class="token_list_button_text"
-            >Import Asset</span
-          >
+          <Icon name="plus" class="token_list_button_img" />
+          <span class="token_list_button_text">{{
+            tab === 'token' ? `Import Asset` : `Import NFT`
+          }}</span>
         </button>
       </div>
-      <div v-if="!isLoading" class="footer">
+      <div v-if="!isLoading && tab === 'token'" class="footer">
         <!-- <Appear :delay="0"> -->
         <ButtonGroup>
-          <Button class="footer_button" type="font-gradation" size="small" @click="handleSend"
-            ><Icon class="button-icon" :name="`send`" /><span>Send</span></Button
-          >
-          <Button class="footer_button" type="font-gradation" size="small" @click="handleReceive"
-            ><Icon class="button-icon" :name="`receive`" /><span>Receive</span></Button
-          >
+          <Button class="footer_button" type="font-gradation" size="small" @click="handleSend">
+            <Icon class="button-icon" :name="`send`" />
+            <span>Send</span>
+          </Button>
+          <Button class="footer_button" type="font-gradation" size="small" @click="handleReceive">
+            <Icon class="button-icon" :name="`receive`" />
+            <span>Receive</span>
+          </Button>
         </ButtonGroup>
         <!-- </Appear> -->
       </div>
@@ -205,7 +255,7 @@ import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
+// import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
@@ -213,6 +263,7 @@ import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
+import { NftTokenType } from '../types';
 export default Vue.extend({
   components: {
     NoAccountModal,
@@ -228,7 +279,7 @@ export default Vue.extend({
     Header,
     ScrollView,
     Appear,
-    LoadingBar,
+    // LoadingBar,
     Notification,
   },
   data() {
@@ -242,19 +293,20 @@ export default Vue.extend({
       notification: false,
       notificationText: '',
       network: 'aergo.io',
-      tab: 'tokens',
+      tab: 'token',
       tokensCount: 0,
       nftCountNum: 0,
       editNick: false,
       nick: this.$store.state.accounts.nick,
       isLoading: false,
+      tokens: [],
+      dropdownScroll: false,
     };
   },
-
   beforeMount() {
     this.initAccount();
+    this.tab = this.$store.state.session.option || 'token';
   },
-
   watch: {
     $route(to, from) {
       this.refreshClick();
@@ -268,12 +320,12 @@ export default Vue.extend({
       this.initAccount();
     },
     tab() {
-      if (this.tab === 'tokens') {
+      if (this.tab === 'token') {
         this.nftCountNum = 0;
       } else if (this.tab === 'nft') {
         this.tokensCount = 0;
       }
-      this.nftCount();
+      this.myNFTList();
     },
     notification(state) {
       if (state) {
@@ -310,9 +362,11 @@ export default Vue.extend({
       this.nftCountNum = 0;
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
-        await this.$forceUpdate();
-        await this.nftCount();
+        // await this.nftCount();
+        await this.getNftDataInLocalStorage();
         this.nick = await this.$store.state.accounts.nick;
+        await this.myNFTList();
+        await this.$forceUpdate();
       } else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');
@@ -405,17 +459,21 @@ export default Vue.extend({
 
     handleNft(nft: any) {
       this.$store.commit('session/setToken', nft.hash);
-      this.$router.push({ name: 'nft-detail' }).catch(() => {});
+      this.$store.commit('session/handleDropdownState', nft.hash);
+
+      if (this.$store.state.session.tokens[nft.hash].nftWallet.length > 3) {
+        this.dropdownScroll = true;
+      }
     },
 
     handleImportAsset(to: string) {
       if (to === 'token') {
         this.$store.commit('session/setOption', 'token');
-        this.$router.push({ name: 'import-asset' }).catch(() => {});
+        this.$router.push({ name: 'import-asset', params: { option: 'token' } }).catch(() => {});
       }
       if (to === 'nft') {
         this.$store.commit('session/setOption', 'nft');
-        this.$router.push({ name: 'import-asset' }).catch(() => {});
+        this.$router.push({ name: 'import-asset', params: { option: 'nft' } }).catch(() => {});
       }
     },
 
@@ -427,26 +485,66 @@ export default Vue.extend({
     },
     handleChangeTab(value: string) {
       this.tab = value;
+      this.$store.commit('session/setOption', value);
     },
 
-    nftCount() {
-      const tokens = Object.values(this.$store.state.session.tokens);
-      tokens.map((token) => {
-        if (this.tab === 'nft' && Object.values(token)[1].type === 'ARC2') {
-          this.nftCountNum = this.nftCountNum + 1;
-        } else if (
-          (this.tab === 'tokens' && Object.values(token)[1].type === 'ARC1') ||
-          (this.tab === 'tokens' && Object.values(token)[1].type === 'AERGO')
-        ) {
-          this.tokensCount = this.tokensCount + 1;
-        }
-      });
-    },
     formatBalance(balance) {
       if (Number.isInteger(balance)) {
         return balance;
       }
       return Number(balance).toFixed(3);
+    },
+    getNftDataInLocalStorage() {
+      const myWalletAddress = this.$store.state.accounts.address;
+      const myWalletNetwork = this.$store.state.accounts.network;
+      const myTokenList =
+        this.$store.state.accounts.accounts[myWalletAddress].token[myWalletNetwork];
+      const myTokenListKeys = Object.keys(myTokenList);
+      myTokenListKeys.map((myTokenKey) => {
+        const getMyNftWalletLocalStorage = JSON.parse(
+          localStorage.getItem(`${myWalletAddress}_${myTokenKey}`) || '[]',
+        );
+        if (getMyNftWalletLocalStorage.length > 0) {
+          this.$store.commit('accounts/setNftWallet', {
+            nftWallet: getMyNftWalletLocalStorage,
+            hash: myTokenKey,
+          });
+        } else {
+          this.$store.commit('accounts/setNftWallet', { nftWallet: [], hash: myTokenKey });
+        }
+      });
+    },
+    myNFTCount(hash: any) {
+      if (!this.$store.state.session.tokens[hash].nftWallet) {
+        return null;
+      } else {
+        if (this.$store.state.session.tokens[hash].nftWallet.length > 3) {
+          this.dropdownScroll = true;
+        }
+        return this.$store.state.session.tokens[hash].nftWallet.length;
+      }
+    },
+    myNFTList() {
+      Object.values(this.$store.state.session.tokens).map((token: any) => {
+        console.log(token.nftWallet);
+        if (token.nftWallet.length !== 0) {
+          this.nftCountNum++;
+        }
+      });
+    },
+    handleGoNftInventory(tokenId: string) {
+      // this.$router.push({ name: 'nft-detail' }).catch(() => {});
+      this.$router
+        .push({
+          name: 'send',
+          params: {
+            nft: tokenId,
+          },
+        })
+        .catch(() => {});
+    },
+    GoToNftDetail() {
+      this.$router.push({ name: 'nft-detail' }).catch(() => {});
     },
   },
 });
@@ -578,6 +676,9 @@ export default Vue.extend({
       height: 15.8rem;
       overflow-x: hidden;
       overflow-y: hidden;
+      &.nft {
+        height: 19.8rem;
+      }
       &.scroll {
         overflow-y: scroll;
       }
@@ -600,17 +701,47 @@ export default Vue.extend({
         }
       }
       .token_list_li {
-        cursor: pointer;
         width: 315px;
         border-radius: 10px;
         display: flex;
+        flex-direction: column;
         justify-content: center;
+        &.none {
+          display: none;
+        }
+        .nft_inventory_list_wrapper {
+          width: 325px;
+          /* height: 248px; */
+          .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            .nft_inventory_list_wrapper_list {
+              cursor: pointer;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              border-radius: 4px;
+              background: #f6f6f6;
+              height: 118px;
+              width: 96px;
+              margin-bottom: 10px;
+              margin-right: 10px;
+              border: solid 0.01em #d0d0d0;
+              .token_id {
+                font-size: smaller;
+                word-break: break-all;
+                margin-bottom: 4px;
+              }
+            }
+          }
+        }
         .token_list_wrapper {
-          width: 290px;
           height: 62px;
           display: flex;
           justify-content: space-between;
           align-items: center;
+          cursor: pointer;
           .token_list_row {
             display: flex;
             align-items: center;
@@ -625,36 +756,53 @@ export default Vue.extend({
             justify-content: center;
             align-items: center;
           }
+
           .token_list_amount {
             display: flex;
-            align-items: center;
-            justify-content: flex-end;
+            flex-direction: column;
+            margin-left: 10px;
+            /* align-items: center; */
+            /* justify-content: flex-end; */
             .token_list_balance {
+              font-weight: 400;
               margin-right: 4px;
+              color: #686767;
             }
             .token_list_symbol {
+              font-weight: 400;
               width: max-content;
+              color: #686767;
             }
           }
           .token_list_text {
-            margin-left: 18px;
+            font-weight: 400;
             &.wordbreak {
               word-break: break-all;
+            }
+            &.hash {
+              color: #757575;
+              font-size: 13px;
+              display: none;
+              font-weight: 200;
             }
           }
           .token_list_balance {
             width: max-content;
           }
           .token_list_nextbutton {
-            margin-left: 10px;
           }
         }
         /* .token_list_wrapper:hover {
           background: #f6f6f6;
         } */
       }
-      .token_list_li:hover {
+      .token_list_wrapper:hover {
         background: #f6f6f6;
+        .token_list_text {
+          &.hash {
+            display: flex;
+          }
+        }
       }
       .line {
         /* Grey/01 */
@@ -685,16 +833,11 @@ export default Vue.extend({
       cursor: pointer;
       margin-top: 10px;
       margin-bottom: 10px;
-      .token_list_button_img {
-      }
       .token_list_button_text {
-        width: 76px;
-        height: 18px;
         /* Caption/C3 */
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
-        font-size: 14px;
         line-height: 18px;
         /* identical to box height */
         text-align: center;
@@ -709,6 +852,7 @@ export default Vue.extend({
     }
     .token_list_button:hover {
       background: #279ecc;
+
       .token_list_button_text {
         color: #ffffff;
       }

@@ -80,7 +80,7 @@ export default class StakeDetails extends Vue {
   padding: 15px 20px;
   box-shadow: inset 0 -1px 0 0 #f2f2f2;
   .stake-label {
-    font-weight: 500;
+    font-weight: 600;
     white-space: nowrap;
   }
   .stake-balance {

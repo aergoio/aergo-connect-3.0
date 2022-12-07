@@ -35,7 +35,7 @@
         >
           Backup Private Key
         </Button>
-        <Button class="button_outline" type="primary-outline" size="large" @click="goHome">
+        <Button class="button_outline" type="primary-outline" size="large" @click="goHome" hover>
           <span>Home</span>
         </Button>
       </ButtonGroup>
@@ -156,14 +156,14 @@ export default class RegistConfirm extends mixins() {
   .buttonGroup_position {
     position: absolute;
     top: 448px;
-    .button_outline:hover {
+    /* .button_outline:hover {
       border: 2px solid #512da8;
       span {
         background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
-    }
+    } */
     .button {
       width: 327px;
     }

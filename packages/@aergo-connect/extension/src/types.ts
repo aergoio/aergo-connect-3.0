@@ -37,6 +37,7 @@ export interface NftTokenType {
   hash: string;
   meta: TokenType | NftType;
   dropdownState?: boolean;
+  dropdownClickNum?: number;
   nftWallet?: NftInventoryType[];
 }
 

@@ -7,7 +7,7 @@
       :to="{ name: 'accounts-list' }"
       @refreshClick="refreshClick"
     />
-    <!-- <LoadingBar v-if="isLoading" /> -->
+    <!-- <LoadingIndicator v-if="isLoading" /> -->
     <RemoveModal v-if="removeModal" @cancel="handleDelete" />
     <div class="token_detail_content">
       <div class="account_detail">
@@ -70,9 +70,9 @@
           <Button
             type="font-gradation"
             hover
-            :style="{ height: '24px', marginRight: '8px', border: 'solid 0.01em #d0d0d0' }"
             @click="gotoStake()"
-            >MANAGE</Button
+            :style="{ height: '24px', marginRight: '8px', padding: '12px' }"
+            ><span>Manage</span></Button
           >
         </div>
       </div>
@@ -181,7 +181,7 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
-// import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
+// import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import { Amount } from '@herajs/common';
@@ -203,7 +203,7 @@ export default Vue.extend({
     Identicon,
     RemoveModal,
     Notification,
-    // LoadingBar,
+    // LoadingIndicator,
   },
 
   data() {
@@ -518,6 +518,7 @@ export default Vue.extend({
     }
 
     .flex-row {
+      margin: 10px;
       display: flex;
       justify-content: space-evenly;
       width: 100%;
@@ -532,7 +533,6 @@ export default Vue.extend({
     }
 
     .line {
-      margin-top: 12px;
       background: #f0f0f0;
       width: 299px;
       height: 1px;
@@ -603,8 +603,6 @@ export default Vue.extend({
       }
     }
     .icon {
-      margin-top: 14px;
-      margin-left: 8px;
       border: 1px solid #d8d8d8;
       width: 46px;
       height: 46px;
@@ -615,7 +613,7 @@ export default Vue.extend({
     }
     .balance_wrapper {
       word-break: break-all;
-      width: 200px;
+      margin-right: 50px;
       .dollor {
         /* Caption/C3 */
         font-family: 'Outfit';
@@ -711,7 +709,7 @@ export default Vue.extend({
       flex-direction: column;
       display: flex;
       align-items: center;
-      height: 13.5rem;
+      height: 12.9rem;
       overflow-y: hidden;
       &.nothing {
         overflow: hidden;

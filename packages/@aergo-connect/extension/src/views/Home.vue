@@ -9,10 +9,12 @@
       @networkModalClick="networkModalClick"
       @refreshClick="refreshClick"
     />
-    <!-- <LoadingBar v-if="isLoading" /> -->
+    <LoadingIndicator
+      :style="{ position: 'absolute', zIndex: 10, top: 0, bottom: 0, left: 0, right: 0 }"
+      v-if="isLoading"
+      :size="56"
+    />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
-    <!-- <RemoveAccountModal v-if="removeAccountModal" @cancel="handleCancel" /> -->
-    <!-- <NotificationModal v-if="notificationModal" @cancel="handleCancel" /> -->
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <AccountDetailModal v-if="accountDetailModal" @cancel="(e) => handleCancel(e)" />
     <div v-if="!noAccountModal" class="home_content">
@@ -23,7 +25,6 @@
         @select="handleSelect"
         @listModalOff="hamburgerClick"
         @securityClick="handleSecurity"
-        @notificationModalClick="handleNotificationModalClick"
       />
       <div class="account_info_wrapper">
         <Identicon :text="$store?.state?.accounts?.address" class="account_info_img" />
@@ -143,8 +144,9 @@
         <ul
           v-if="tab === `nft`"
           :class="[
-            nftCountNum > 4 || dropdownScroll ? 'token_list_ul scroll' : 'token_list_ul',
-            tab === 'nft' ? 'token_list_ul nft' : 'token_list_ul',
+            nftCountNum > 4 || dropdownScroll || $store?.state?.ui?.dropdownClickNum > 1
+              ? 'token_list_ul scroll'
+              : 'token_list_ul',
           ]"
         >
           <li
@@ -152,11 +154,6 @@
             :class="[myNFTCount(token?.hash) ? `token_list_li` : `token_list_li none`]"
             :key="token?.hash"
           >
-            <!-- <li
-            v-for="token in $store?.state?.session?.tokens"
-            class="token_list_li"
-            :key="token?.hash"
-          > -->
             <div
               v-if="token?.meta?.type === 'ARC2'"
               class="token_list_wrapper"
@@ -198,21 +195,24 @@
                   v-for="(nftWalletItem, i) in $store?.state?.session?.tokens[token.hash].nftWallet"
                   :key="`${i + nftWalletItem?.hash}`"
                   class="nft_inventory_list_wrapper_list"
-                  @click="handleGoNftInventory(nftWalletItem?.meta?.token_id)"
+                  @click="handleGoNftInventory(nftWalletItem)"
                 >
-                  <div class="token_id">{{ nftWalletItem?.meta?.token_id }}</div>
-                  <div>{{ `#${nftWalletItem?.meta?.token_id.slice(-4)}` }}</div>
+                  <div v-if="nftWalletItem?.meta?.img_url" class="nft_img_wrapper">
+                    <img class="img" :src="nftWalletItem?.meta?.img_url" alt="404" />
+                    <div :style="{ textAlign: 'center' }">
+                      {{ `#${nftWalletItem?.meta?.token_id}` }}
+                    </div>
+                  </div>
+                  <div class="frame" v-else>
+                    <div class="token_name">{{ nftWalletItem?.token?.meta?.name }}</div>
+                    <div class="nft_id">{{ `#${nftWalletItem?.meta?.token_id}` }}</div>
+                  </div>
                 </li>
-              </div>
-              <div :style="{ float: 'right' }">
-                <Button :size="`small`" type="secondary" @click="GoToNftDetail" hover
-                  >NFT History</Button
-                >
               </div>
             </ul>
           </li>
 
-          <div v-if="nftCountNum === 0" class="nftNothing">
+          <div v-if="nftCountNum === 0 && !isLoading" class="nftNothing">
             <Icon :name="`nothing`" />
             <div class="text">No NFT</div>
           </div>
@@ -228,20 +228,6 @@
           }}</span>
         </button>
       </div>
-      <div v-if="!isLoading && tab === 'token'" class="footer">
-        <!-- <Appear :delay="0"> -->
-        <ButtonGroup>
-          <Button class="footer_button" type="font-gradation" size="small" @click="handleSend">
-            <Icon class="button-icon" :name="`send`" />
-            <span>Send</span>
-          </Button>
-          <Button class="footer_button" type="font-gradation" size="small" @click="handleReceive">
-            <Icon class="button-icon" :name="`receive`" />
-            <span>Receive</span>
-          </Button>
-        </ButtonGroup>
-        <!-- </Appear> -->
-      </div>
     </div>
   </ScrollView>
 </template>
@@ -255,7 +241,7 @@ import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-// import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
+import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
@@ -263,7 +249,7 @@ import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
-import { NftTokenType } from '../types';
+
 export default Vue.extend({
   components: {
     NoAccountModal,
@@ -279,7 +265,7 @@ export default Vue.extend({
     Header,
     ScrollView,
     Appear,
-    // LoadingBar,
+    LoadingIndicator,
     Notification,
   },
   data() {
@@ -301,6 +287,7 @@ export default Vue.extend({
       isLoading: false,
       tokens: [],
       dropdownScroll: false,
+      dropdownClickNum: 0,
     };
   },
   beforeMount() {
@@ -319,14 +306,7 @@ export default Vue.extend({
     '$store.state.accounts.address': function () {
       this.initAccount();
     },
-    tab() {
-      if (this.tab === 'token') {
-        this.nftCountNum = 0;
-      } else if (this.tab === 'nft') {
-        this.tokensCount = 0;
-      }
-      this.myNFTList();
-    },
+
     notification(state) {
       if (state) {
         setTimeout(() => {
@@ -337,6 +317,9 @@ export default Vue.extend({
         }, 2000);
       }
     },
+  },
+  updated() {
+    console.log(this.nftCountNum, 'nftCountNum,1@#@!#@!#!@,');
   },
   methods: {
     async changeNick() {
@@ -362,7 +345,6 @@ export default Vue.extend({
       this.nftCountNum = 0;
       if (this.$store.state.accounts.address) {
         await this.$store.dispatch('session/initState');
-        // await this.nftCount();
         await this.getNftDataInLocalStorage();
         this.nick = await this.$store.state.accounts.nick;
         await this.myNFTList();
@@ -385,30 +367,13 @@ export default Vue.extend({
       this.isLoading = false;
     },
 
-    /*
-    async autoUpdateBalances(time) {
-      try {
-        console.log('UpdateBalances');
-        this.$store.dispatch('session/updateBalances');
-        setTimeout(() => this.updateBalances(), time);
-      } catch (e) {
-        console.error(e);
-      }
-    },
-*/
-
     hamburgerClick() {
       this.hamburgerModal = !this.hamburgerModal;
     },
 
     handleCancel(modalEvent: any) {
-      console.log(modalEvent);
       if (modalEvent === 'noAccountModal') {
         this.$background.lock();
-      }
-
-      if (modalEvent === 'removeAccountModal') {
-        this.removeAccountModal = false;
       }
 
       if (modalEvent === 'passwordModal') {
@@ -418,9 +383,6 @@ export default Vue.extend({
 
       if (modalEvent === 'accountDetailModal') {
         this.accountDetailModal = false;
-      }
-      if (modalEvent === 'notificationModal') {
-        this.notificationModal = false;
       }
     },
 
@@ -432,7 +394,6 @@ export default Vue.extend({
 
     handleRemoveModalClick() {
       this.hamburgerModal = false;
-      this.removeAccountModal = true;
     },
     handleSelect() {
       this.hamburgerModal = false;
@@ -440,9 +401,7 @@ export default Vue.extend({
     networkModalClick() {
       this.networkModal = !this.networkModal;
     },
-    handleNotificationModalClick() {
-      this.notificationModal = true;
-    },
+
     handleDetailAddress() {
       this.accountDetailModal = true;
     },
@@ -502,7 +461,7 @@ export default Vue.extend({
       const myTokenListKeys = Object.keys(myTokenList);
       myTokenListKeys.map((myTokenKey) => {
         const getMyNftWalletLocalStorage = JSON.parse(
-          localStorage.getItem(`${myWalletAddress}_${myTokenKey}`) || '[]',
+          localStorage.getItem(`${myWalletAddress}_${myWalletNetwork}_${myTokenKey}`) || '[]',
         );
         if (getMyNftWalletLocalStorage.length > 0) {
           this.$store.commit('accounts/setNftWallet', {
@@ -526,21 +485,16 @@ export default Vue.extend({
     },
     myNFTList() {
       Object.values(this.$store.state.session.tokens).map((token: any) => {
-        console.log(token.nftWallet);
         if (token.nftWallet.length !== 0) {
           this.nftCountNum++;
         }
       });
     },
-    handleGoNftInventory(tokenId: string) {
-      // this.$router.push({ name: 'nft-detail' }).catch(() => {});
+    handleGoNftInventory(nft: any) {
+      console.log(nft, 'nft2131293219372198');
+      this.$store.commit('session/setToken', nft.token.hash);
       this.$router
-        .push({
-          name: 'send',
-          params: {
-            nft: tokenId,
-          },
-        })
+        .push({ name: 'nft-detail', params: { nftid: nft.meta.token_id } })
         .catch(() => {});
     },
     GoToNftDetail() {
@@ -601,8 +555,8 @@ export default Vue.extend({
         font-size: 18px;
         line-height: 24px;
         margin-bottom: 8px;
-        margin-left: 25px;
-        width: 191px;
+        margin-left: 10px;
+        /* width: 191px; */
         .account_info_nickname_text {
           margin-right: 5px;
           word-break: break-all;
@@ -620,7 +574,7 @@ export default Vue.extend({
         background: #ecf8fd;
         border-radius: 25px;
         color: #279ecc;
-        margin-left: 25px;
+        margin-left: 10px;
         .account_info_address_text {
           font-family: 'Outfit';
           font-style: normal;
@@ -673,12 +627,9 @@ export default Vue.extend({
       flex-direction: column;
       align-items: center;
       width: 375px;
-      height: 15.8rem;
+      height: 19.8rem;
       overflow-x: hidden;
       overflow-y: hidden;
-      &.nft {
-        height: 19.8rem;
-      }
       &.scroll {
         overflow-y: scroll;
       }
@@ -710,29 +661,57 @@ export default Vue.extend({
           display: none;
         }
         .nft_inventory_list_wrapper {
+          margin-top: 4px;
+          margin-bottom: 10px;
           width: 325px;
-          /* height: 248px; */
           .row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
+
             .nft_inventory_list_wrapper_list {
               cursor: pointer;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
+
               border-radius: 4px;
               background: #f6f6f6;
-              height: 118px;
-              width: 96px;
+              height: 115px;
+              width: 150px;
               margin-bottom: 10px;
               margin-right: 10px;
               border: solid 0.01em #d0d0d0;
-              .token_id {
-                font-size: smaller;
-                word-break: break-all;
-                margin-bottom: 4px;
+
+              .frame {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+                -webkit-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+                -moz-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+                .nft_id {
+                  font-size: calc(14 / 16) * 1rem;
+                  word-break: break-all;
+                }
+                .token_name {
+                  font-size: calc(12 / 16) * 1rem;
+                  word-break: break-all;
+                  margin-bottom: 4px;
+                }
               }
+              .nft_img_wrapper {
+                height: 100%;
+                .img {
+                  width: -webkit-fill-available;
+                  box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+                  -webkit-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+                  -moz-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+                  height: 100%;
+                }
+              }
+            }
+            .nft_inventory_list_wrapper_list:hover {
+              transform: scale(1.1);
+              transition: 0.4s;
             }
           }
         }
@@ -861,14 +840,6 @@ export default Vue.extend({
           fill: #fff;
         }
       }
-    }
-  }
-}
-.footer {
-  .footer_button {
-    margin-right: 10px;
-    .button-icon {
-      margin-top: 5px;
     }
   }
 }

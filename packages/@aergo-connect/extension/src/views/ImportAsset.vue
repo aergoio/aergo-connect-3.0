@@ -1,5 +1,10 @@
 <template>
   <ScrollView orientation="horizontal">
+    <LoadingIndicator
+      :style="{ position: 'absolute', zIndex: 10, top: 0, bottom: 0, left: 0, right: 0 }"
+      v-if="isLoading"
+      :size="56"
+    />
     <Header
       button="back"
       :title="$store.state.session.option === 'token' ? `Import Asset` : `Import NFT`"
@@ -36,7 +41,8 @@
             {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
           </div>
         </div>
-        <div>Step1: Search NFT Group</div>
+
+        <div>{{ $store.state.session.option === 'nft' ? `Step1: Search NFT Group` : `` }}</div>
         <TextField
           placeholder="Name / Symbol"
           class="network_textField"
@@ -96,6 +102,7 @@
               />
             </div>
           </div>
+          <div v-else-if="results.length === 0 && inputTextField">{{ `No Searched Data` }}</div>
         </ul>
       </div>
 
@@ -115,7 +122,7 @@
               :icon="`warning2`"
             />
             <div v-if="!check">
-              <div>Contract Address</div>
+              <div>Step1: Check Contract Address</div>
               <TextField
                 placeholder="Enter the address"
                 class="contract_address"
@@ -126,21 +133,19 @@
             </div>
             <div v-if="check">
               <div class="custom_element_wrapper">
-                <div>Contract Address</div>
-                <TextField disabled :placeholder="value" class="asset_type" />
+                <div>Step1: Check Contract Address</div>
+                <TextField placeholder="Contract Address" class="asset_type" :value="value" />
               </div>
-
-              <div class="custom_element_wrapper">
-                <div>Asset Type</div>
-                <TextField disabled :placeholder="token.meta.type" class="asset_type" />
-              </div>
-              <div class="custom_element_wrapper">
-                <div>Symbol</div>
-                <TextField disabled v-model="token.meta.symbol" class="asset_type" />
-              </div>
-              <div v-if="token.meta.type !== 'ARC2'" class="custom_element_wrapper">
-                <div>Decimal</div>
-                <TextField disabled :placeholder="token.meta.decimals" class="asset_type" />
+              <div :style="{ marginTop: '10px' }">
+                <div>Step2: Input NFT ID</div>
+                <TextField placeholder="NFT ID" class="network_textField" @input="inputNftId" />
+                <ImportAssetModal v-if="importSuccessNft" :token="token" :nftData="nftData" />
+                <Notification
+                  v-if="notification"
+                  :title="notificationText"
+                  :size="300"
+                  :icon="`warning2`"
+                />
               </div>
             </div>
           </div>
@@ -166,9 +171,9 @@
         class="token_content_button"
         type="primary"
         size="large"
-        @click="customSubmit"
+        @click="importNFT"
         hover
-        >Import</Button
+        >Import NFT</Button
       >
     </template>
   </ScrollView>
@@ -181,9 +186,12 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import ImportAssetModal from '@aergo-connect/lib-ui/src/modal/ImportAssetModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
+import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
+import { useQueryContract } from '../utils/useQueryContract';
+import { isPublicChainId, PublicChainData } from '../config';
+
 export default Vue.extend({
   components: {
     Icon,
@@ -191,9 +199,9 @@ export default Vue.extend({
     ScrollView,
     TextField,
     Button,
-    Identicon,
     ImportAssetModal,
     Notification,
+    LoadingIndicator,
   },
   data() {
     return {
@@ -216,6 +224,8 @@ export default Vue.extend({
       nftData: {},
       importSuccessNft: false,
       isAddedNft: {},
+      imgUrl: '',
+      isLoading: false,
     };
   },
   watch: {
@@ -243,6 +253,9 @@ export default Vue.extend({
     },
 */
   },
+  updated() {
+    console.log(this.results, 'results');
+  },
   methods: {
     handleBack() {
       this.$router.push({
@@ -256,7 +269,9 @@ export default Vue.extend({
       this.importNftStep2 = false;
       if (this.$store.state.session.option === 'token') {
         await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/token?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC1`,
+          `https://${prefix}.aergoscan.io/${
+            this.$store.state.accounts.network
+          }/v2/token?q=(name_lower:*${query.toLowerCase()}* OR symbol_lower:*${query.toLowerCase()}*) AND type:ARC1`,
         )
           .then((res) => {
             return res.json();
@@ -267,7 +282,9 @@ export default Vue.extend({
         if (this.results) return;
       } else {
         await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/nft?q=(name:*${query}* OR symbol:*${query}*) AND type:ARC2`,
+          `https://${prefix}.aergoscan.io/${
+            this.$store.state.accounts.network
+          }/v2/nft?q=(name_lower:*${query.toLowerCase()}* OR symbol_lower:*${query.toLowerCase()}*) AND type:ARC2`,
         )
           .then((res) => {
             return res.json();
@@ -292,9 +309,6 @@ export default Vue.extend({
     inputNftId(nftId) {
       this.userInputNftId = nftId;
     },
-    async custom() {
-      console.log('custom');
-    },
     handleChangeState(state) {
       this.state = state;
     },
@@ -305,13 +319,16 @@ export default Vue.extend({
       this.value = value;
     },
     async importNFT() {
+      this.isLoading = true;
       const resp = await fetch(
         `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.token.hash} AND (account:${this.$store.state.accounts.address})&sort=blockno:desc&from=0&size=100`,
       );
 
       const response = await resp.json();
       const checkLocalStorageNftId = JSON.parse(
-        localStorage.getItem(`${this.$store.state.accounts.address}_${this.token.hash}`) || '[]',
+        localStorage.getItem(
+          `${this.$store.state.accounts.address}_${this.$store.state.accounts.network}_${this.token.hash}`,
+        ) || '[]',
       );
       this.isAddedNft = checkLocalStorageNftId.find((myNft) => {
         if (this.userInputNftId === myNft.meta.token_id) {
@@ -321,33 +338,61 @@ export default Vue.extend({
       if (response.error) {
         this.nftData = {};
         this.notification = true;
-        this.notificationText = `Error: ${response.error}`;
+        this.notificationText = `Error: ${JSON.stringify(response.error)}`;
+        return;
       } else {
         if (response.hits.length === 0) {
           this.notification = true;
           this.notificationText = `No Nft in this Wallet`;
+          this.isLoading = false;
           return;
-        } else if (this.isAddedNft?.meta?.token_id) {
+        }
+        if (this.isAddedNft?.meta?.token_id) {
           this.notification = true;
           this.notificationText = `Already Added NFT`;
+          this.isLoading = false;
+          return;
+        }
+        const filteredNft = response.hits.filter((nftData) => {
+          if (this.userInputNftId === nftData.meta.token_id) {
+            return nftData;
+          }
+        });
+        if (filteredNft.length === 0) {
+          this.notification = true;
+          this.notificationText = `Check Your NFT ID`;
+          this.isLoading = false;
           return;
         } else {
-          const filteredNft = response.hits.filter((nftData) => {
-            if (this.userInputNftId === nftData.meta.token_id) {
-              return nftData;
-            }
-          });
-          if (filteredNft.length === 0) {
-            this.notification = true;
-            this.notificationText = `Check Your NFT ID`;
+          const args = [filteredNft[0].meta.token_id, 'image_url'].flat();
+          const img_url = await this.getNftDataInHera(
+            'get_metadata',
+            filteredNft[0].meta.address,
+            args,
+          );
+          if (img_url) {
+            const addImgNft = {
+              ...filteredNft[0],
+              meta: { ...filteredNft[0].meta, img_url },
+            };
+            console.log(addImgNft, 'addImgNft!@#!@#@!#@!#');
+            await this.$store.commit('session/addNftToLocalStorage', addImgNft);
+            this.token = addImgNft.token;
+            this.nftData = addImgNft.meta;
+            this.isLoading = false;
+            this.importSuccessNft = true;
+            return;
           } else {
-            this.$store.commit('session/addNftToLocalStorage', filteredNft[0]);
+            await this.$store.commit('session/addNftToLocalStorage', filteredNft[0]);
             this.token = filteredNft[0].token;
             this.nftData = filteredNft[0].meta;
+            this.isLoading = false;
             this.importSuccessNft = true;
           }
         }
       }
+
+      // this.isLoading = false;
     },
     async handleCheck() {
       let results = [];
@@ -388,11 +433,24 @@ export default Vue.extend({
       }
     },
 
-    async customSubmit() {
-      await this.$store.dispatch('accounts/addToken', this.token);
-      await this.$store.dispatch('session/initState');
+    // async customSubmit() {
+    //   await this.$store.dispatch('accounts/addToken', this.token);
+    //   await this.$store.dispatch('session/initState');
 
-      this.importAssetModal = true;
+    //   this.importAssetModal = true;
+    // },
+    async getNftDataInHera(method, contractAddress, args) {
+      try {
+        const isPublic = await isPublicChainId(this.$store.state.accounts.network);
+        const nodeURL = await PublicChainData[this.$store.state.accounts.network]['nodeUrl'];
+        const imgUrl = isPublic
+          ? await useQueryContract(nodeURL, method, contractAddress, args)
+          : null;
+        return imgUrl;
+      } catch (e) {
+        console.log(this.token, 'token!!');
+        console.error(e, 'error Log');
+      }
     },
   },
 });

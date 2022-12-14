@@ -1,11 +1,16 @@
 <template>
   <ScrollView>
-    <LoadingBar v-if="isLoading" />
+    <LoadingIndicator
+      v-if="isLoading"
+      :size="56"
+      :style="{ position: 'absolute', zIndex: 10, top: 0, bottom: 0, left: 0, right: 0 }"
+    />
     <SendOptionsModal
       v-if="optionsModal"
       :txType="txType"
       :payload="txBody.payload"
       @updateTx="updateTx"
+      @closeOptionsModal="closeOptionsModal"
     />
     <ConfirmationModal
       v-if="confirmationModal"
@@ -18,6 +23,7 @@
       @cancel="handleCancel"
       @confirm="handlePassword"
     />
+    <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <SendFinishModal
       v-if="sendFinishModal"
       :asset="asset"
@@ -27,9 +33,8 @@
       :symbol="symbol"
       :tokenType="tokenType"
       :fee="fee"
-      @close="handleSent"
+      :userNftData="userNftData"
     />
-    <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <Header button="back" title="Send" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
@@ -60,22 +65,51 @@
           </div>
         </div>
       </div>
-      <div class="token_content_wrapper">
-        <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
-        <!-- <Identicon v-else-if="!icon" :text="asset" class="token_icon" /> -->
-        <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" />
-        <img v-else class="token_icon" :src="icon" />
+      <div :class="[tokenType === 'ARC2' ? `token_content_wrapper nft` : `token_content_wrapper`]">
+        <!-- <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" /> -->
+        <!-- <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" /> -->
+        <!-- <img v-else class="token_icon" :src="icon" /> -->
 
         <div v-if="tokenType !== 'ARC2'" class="amount_wrapper">
-          <span class="token_amount">{{ balance ? formatBalance(balance) : 0 }}</span>
+          <div class="icon_wrapper">
+            <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
+            <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" />
+            <img v-else class="token_icon" :src="icon" />
+            <span class="token_amount">{{ balance ? formatBalance(balance) : 0 }}</span>
+          </div>
           <span class="token_symbol"> {{ symbol }}</span>
         </div>
-        <div v-else class="amount_wrapper">
-          <span class="token_amount">{{ balance }}</span>
-          <span class="token_symbol"> EA </span>
+        <div v-if="tokenType === 'ARC2' && nftUiData?.meta?.img_url" class="frame">
+          <div class="nft_img_wrapper">
+            <img class="img" :src="nftUiData?.meta?.img_url" />
+            <span>{{ `#${nftUiData?.meta?.token_id}` }}</span>
+          </div>
         </div>
+        <div v-else-if="tokenType === 'ARC2'" class="frame">
+          <div
+            :style="{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+            }"
+          >
+            <span :style="{ fontSize: '0.75rem', wordBreak: 'break-all', marginBottom: '4px' }">{{
+              nftUiData?.token?.meta?.name
+            }}</span>
+            <span :style="{ fontSize: '0.875rem', wordBreak: 'break-all' }">{{
+              nftUiData?.meta?.token_id ? `#${nftUiData?.meta?.token_id}` : `Type the NFT ID`
+            }}</span>
+          </div>
+        </div>
+        <!-- <span class="token_amount">{{ nftInventory.length }}</span> -->
+        <!-- <span class="token_symbol"> EA </span> -->
       </div>
-      <div v-if="!isLoading" class="send_form_wrapper">
+      <div
+        v-if="!isLoading"
+        :class="[tokenType === 'ARC2' ? `send_form_wrapper nft` : `send_form_wrapper`]"
+      >
         <div class="flex-row">
           <div class="title">Asset</div>
 
@@ -185,7 +219,6 @@
         Show optional fields
       </div>
       <Button
-        v-if="!sendFinishModal || !isLoading"
         type="primary"
         size="large"
         @click="handleSendClick"
@@ -202,15 +235,15 @@ import Vue from 'vue';
 import SendOptionsModal from '@aergo-connect/lib-ui/src/modal/SendOptionsModal.vue';
 import ConfirmationModal from '@aergo-connect/lib-ui/src/modal/ConfirmationModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
+import SendFinishModal from '@aergo-connect/lib-ui/src/modal/SendFinishModal.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import LoadingDialog from '@aergo-connect/lib-ui/src/layouts/LoadingDialog.vue';
-import SendFinishModal from '@aergo-connect/lib-ui/src/modal/SendFinishModal.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
-import LoadingBar from '@aergo-connect/lib-ui/src/forms/LoadingBar.vue';
+import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 // for TX
 import { timedAsync } from 'timed-async/index.js';
 import Transport from '@ledgerhq/hw-transport-webusb';
@@ -225,16 +258,16 @@ export default Vue.extend({
     SendOptionsModal,
     ConfirmationModal,
     PasswordModal,
+    SendFinishModal,
     Header,
     Identicon,
     Icon,
     Button,
     LoadingDialog,
     Tx,
-    SendFinishModal,
     TextField,
     Notification,
-    LoadingBar,
+    LoadingIndicator,
   },
   data() {
     return {
@@ -275,6 +308,9 @@ export default Vue.extend({
       dialogState: 'loading',
       statusDialogTitle: 'Sending',
       statusText: '',
+      userNftData: {},
+      txHash: '',
+      nftUiData: {},
     };
   },
   async beforeMount() {
@@ -283,17 +319,28 @@ export default Vue.extend({
     else this.asset = 'AERGO';
 
     if (
-      this.$route.params.nft &&
+      this.$route.params.nftid &&
       this.$store.state.session.tokens[this.asset].meta.type == 'ARC2'
     ) {
-      this.inputAmount = this.$route.params.nft;
+      this.inputAmount = this.$route.params.nftid;
+      this.nftUiData = this.$store.state.session.tokens[this.asset].nftWallet.filter(
+        (nft) => nft.meta.token_id === this.$route.params.nftid,
+      )[0];
       this.searchResult = '';
     }
+  },
+  updated() {
+    console.log(this.nftUiData, 'nftUIData');
   },
   watch: {
     asset: function () {
       this.setParams();
-      if (this.tokenType === 'ARC2') this.getNftInventory();
+      if (this.tokenType === 'ARC2') {
+        this.getNftInventory();
+        if (this.$route.params.nftid && this.asset === this.$store.state.session.token) {
+          this.inputAmount = this.$route.params.nftid;
+        }
+      }
     },
     clipboardNotification(state) {
       if (state) {
@@ -313,6 +360,19 @@ export default Vue.extend({
             clearTimeout(time);
           };
         }, 2000);
+      }
+    },
+    txBody() {
+      if (this.txBody.payload) {
+        console.log(this.txBody.payload, 'payload??');
+      }
+    },
+    inputAmount() {
+      if (this.tokenType === 'ARC2') {
+        const filteredNft = this.nftInventory.filter(
+          (nft) => nft.meta.token_id === this.inputAmount,
+        )[0];
+        this.nftUiData = filteredNft;
       }
     },
   },
@@ -340,12 +400,8 @@ export default Vue.extend({
       this.searchResult = [...this.nftInventory];
     },
     async getNftInventory() {
-      const resp = await fetch(
-        `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.asset} AND account:${this.$store.state.accounts.address}&sort=blockno:desc&from=0&size=100`,
-      );
-      const response = await resp.json();
-      if (response.error) this.nftInventory = [];
-      else this.nftInventory = response.hits.reverse();
+      const nftWallet = this.$store.state.session.tokens[this.asset].nftWallet;
+      this.nftInventory = nftWallet.length > 0 ? nftWallet : [];
     },
 
     updateTx(txType, payload) {
@@ -394,15 +450,16 @@ export default Vue.extend({
         this.txBody.payload =
           '{"Name": "transfer", "Args": ["' + this.inputTo + '", "' + this.inputAmount + '"]}';
         this.txType = 'CALL';
+        this.userNftData = this.$store.state.session.tokens[this.asset].nftWallet.filter(
+          (nft) => nft.meta.token_id === this.inputAmount,
+        )[0];
       }
-      console.log('Init txBody', this.txBody);
       // TODO: try catch
       if (this.txBody.payload) {
         const payload = JSON.parse(this.txBody.payload);
         this.txBody.payload = JSON.stringify(payload, null, 2);
       }
       this.txBody.type = Tx.Type[this.txType];
-      console.log('txBody', this.txBody);
       this.confirmationModal = true;
     },
     handleCancel() {
@@ -419,6 +476,7 @@ export default Vue.extend({
       this.statusDialogVisible = true;
     },
     async handleConfirm() {
+      this.isLoading = true;
       console.log('Sending ..', this.txBody);
       this.passwordModal = false;
       if (!this.txBody.from) {
@@ -436,7 +494,7 @@ export default Vue.extend({
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         this.txHash = hash;
         this.setStatus('success', 'Done');
-        this.isLoading = true;
+        this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
@@ -448,21 +506,35 @@ export default Vue.extend({
         address: this.$store.state.accounts.address,
       });
       await this.$store.commit('ui/clearInput', { key: 'send' });
-      await this.$background
-        .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
-        .then((result) => {
-          this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
-        });
-      console.log('receipt', this.txReceipt);
+
+      const result = await this.$background.getTransactionReceipt(
+        this.$store.state.accounts.network,
+        this.txHash,
+      );
+      if (result.status) {
+        this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
+        if (result.status === 'SUCCESS') {
+          console.log(result, 'result in success');
+          this.sendFinishModal = true;
+          console.error(`[${result.status}]: ${result.result}`);
+        } else if (result.status === 'ERROR') {
+          console.log(result, 'result in error');
+          this.notification = true;
+          this.notificationText = `Transaction Sent Failed!${result.result.split(':')[3]}`;
+          console.error(`[${result.status}]: ${result.result}`);
+        }
+      }
+      // console.log('receipt', this.txReceipt);
       await this.$store.dispatch('session/updateBalances');
+      this.balance = await this.$store.state.session.tokens[this.asset].balance;
       this.isLoading = false;
       this.sendFinishModal = true;
     },
-    async handleSent() {
-      this.balance = await this.$store.state.session.tokens[this.asset].balance;
-      this.inputAmount = 0;
-      this.sendFinishModal = false;
-    },
+    // async handleSent() {
+    //   this.balance = await this.$store.state.session.tokens[this.asset].balance;
+    //   this.inputAmount = 0;
+    //   this.sendFinishModal = false;
+    // },
     async signWithLedger(txBody) {
       const { tx } = await this.$background.prepareTransaction(
         txBody,
@@ -558,11 +630,11 @@ export default Vue.extend({
     },
     handleSelectAsset() {
       this.selectAsset = !this.selectAsset;
-      this.inputAmount = '';
     },
     selectAssetFunc(asset) {
       this.asset = asset;
       this.selectAsset = false;
+      this.inputAmount = '';
     },
     hideAssetList() {
       this.selectAsset = false;
@@ -570,6 +642,9 @@ export default Vue.extend({
     hideNftList() {
       this.searchFocus = false;
       this.searchResult = '';
+    },
+    closeOptionsModal() {
+      this.optionsModal = false;
     },
   },
 });
@@ -675,45 +750,77 @@ export default Vue.extend({
     width: 327px;
     height: 60px;
     margin-left: 24px;
-    margin-top: 19px;
+    margin-top: 20px;
     background: #ffffff;
     /* Grey/00 */
     border: 1px solid #f6f6f6;
     /* 05 */
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    .token_icon {
-      /* Grey/02 */
-      border: 1px solid #d8d8d8;
-      width: 46px;
-      height: 46px;
-      margin-left: 14px;
-      border-radius: 50%;
-      display: flex;
+    &.nft {
+      margin-top: 10px;
+      height: 115px;
       justify-content: center;
-      align-items: center;
+      box-shadow: none;
+      border: none;
     }
+    .frame {
+      width: 150px;
+      height: 100%;
+      border: solid 0.01em #d0d0d0;
+      border-radius: 4px;
+      background: #f6f6f6;
+      box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+      -webkit-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+      -moz-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+      .nft_img_wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .img {
+          width: -webkit-fill-available;
+          height: 100%;
+        }
+      }
+    }
+
     .amount_wrapper {
-      width: 281px;
+      width: 300px;
+      margin-left: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      .icon_wrapper {
+        display: flex;
+        align-items: center;
+        .token_icon {
+          /* Grey/02 */
+          border: 1px solid #d8d8d8;
+          width: 46px;
+          height: 46px;
+          margin-left: 14px;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .token_amount {
+          margin-left: 10px;
+          margin-right: 90px;
+          font-family: 'Outfit';
+          font-style: normal;
+          font-weight: 600;
+          font-size: 20px;
+          line-height: 25px;
+          letter-spacing: -0.333333px;
+          color: #231f20;
+        }
+      }
     }
-    .token_amount {
-      width: 141px;
-      margin-left: 20px;
-      /* Headline/H3 */
-      font-family: 'Outfit';
-      font-style: normal;
-      font-weight: 600;
-      font-size: 20px;
-      line-height: 25px;
-      letter-spacing: -0.333333px;
-      /* Grey/08 */
-      color: #231f20;
-    }
+
     .token_symbol {
-      margin-right: 10px;
       /* Subtitle/S3 */
       font-family: 'Outfit';
       font-style: normal;
@@ -734,6 +841,9 @@ export default Vue.extend({
     width: 375px;
     height: 380px;
     bottom: 0px;
+    &.nft {
+      height: 345px;
+    }
     .flex-row {
       display: flex;
       align-items: center;

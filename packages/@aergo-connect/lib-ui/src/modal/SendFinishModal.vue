@@ -1,5 +1,5 @@
 <template>
-  <div v-else class="sendfinish_modal_backdrop">
+  <div class="sendfinish_modal_backdrop">
     <div class="sendfinish_modal_wrapper">
       <div class="flex-column">
         <Icon :name="`confirmation`" />
@@ -10,8 +10,8 @@
           <div class="title">Network</div>
           <div class="flex-row network">
             <div class="detail network">
-              <div class="circle" />
-              {{ $store.state.accounts.network }}
+              <div :class="`circle ${$store.state.accounts.network}`" />
+              {{ $store.state.accounts.network.toUpperCase() }}
             </div>
           </div>
         </div>
@@ -62,7 +62,9 @@
         </div>
         <div class="line" />
       </div>
-      <Button size="medium" type="primary" @click="handleOk" hover>OK</Button>
+      <Button class="finish_modal_button" size="medium" type="primary" @click="handleOk" hover
+        >OK</Button
+      >
     </div>
   </div>
 </template>
@@ -97,7 +99,12 @@ export default Vue.extend({
       // console.log('ok', this.to);
       // this.$emit('close');
       // this.$store.commit('session/setToken', token.hash);
-      this.$router.push({ name: 'token-detail' }).catch(() => {});
+      // console.log(receipt, 'receipt!');
+      if (this.$store.state.session.option === 'nft') {
+        this.$router.push({ name: 'accounts-list' });
+      } else {
+        this.$router.push({ name: 'token-detail' }).catch(() => {});
+      }
     },
   },
 });
@@ -111,11 +118,11 @@ export default Vue.extend({
   left: 0px;
   top: 0px;
   background: rgba(0, 0, 0, 0.6);
-  z-index: 2;
+  z-index: 3;
   .sendfinish_modal_wrapper {
     position: absolute;
     width: 313px;
-    height: 410px;
+    height: 425px;
     left: 31px;
     top: 83px;
     background: #ffffff;
@@ -123,8 +130,8 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     align-items: center;
-    .button {
-      margin-top: 14px;
+    .finish_modal_button {
+      margin-top: 20px;
     }
     .flex-column {
       margin-top: 24px;
@@ -206,6 +213,15 @@ export default Vue.extend({
             align-items: center;
             justify-content: flex-end;
             width: 175px;
+            &.mainnet {
+              background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+            }
+            &.testnet {
+              background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+            }
+            &.alpha {
+              background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+            }
           }
           &.address {
             text-decoration: underline;

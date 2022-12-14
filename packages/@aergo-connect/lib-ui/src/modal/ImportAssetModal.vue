@@ -19,7 +19,7 @@
         <div class="detail_wrapper">
           <div class="network_title">Network</div>
           <div class="network_state_wrapper">
-            <div class="network_state" />
+            <div :class="`network_state ${$store.state.accounts.network}`" />
             <div class="network_text">
               {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
@@ -68,9 +68,6 @@ export default Vue.extend({
       type: Object,
       default: {},
     },
-  },
-  mounted() {
-    console.log(this.token);
   },
   methods: {
     handleClick() {
@@ -138,6 +135,7 @@ export default Vue.extend({
           background: linear-gradient(133.72deg, #279ecc 0%, #e4097d 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
+          word-break: break-word;
         }
       }
     }

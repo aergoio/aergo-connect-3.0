@@ -357,7 +357,7 @@ export default Vue.extend({
       }
     }
   }
-  .token_content_wrapper {
+  /* .token_content_wrapper {
     display: flex;
     align-items: center;
     width: 327px;
@@ -365,16 +365,12 @@ export default Vue.extend({
     margin-left: 24px;
     margin-top: 19px;
     background: #ffffff;
-    /* Grey/00 */
 
     border: 1px solid #f6f6f6;
-    /* 05 */
 
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     .token_icon {
-      /* Grey/02 */
-
       border: 1px solid #d8d8d8;
       width: 46px;
       height: 46px;
@@ -393,7 +389,7 @@ export default Vue.extend({
     .token_amount {
       width: 141px;
       margin-left: 20px;
-      /* Headline/H3 */
+
 
       font-family: 'Outfit';
       font-style: normal;
@@ -402,14 +398,14 @@ export default Vue.extend({
       line-height: 25px;
       letter-spacing: -0.333333px;
 
-      /* Grey/08 */
+
 
       color: #231f20;
     }
     .token_symbol {
       width: 100%;
     }
-  }
+  } */
   .send_form_wrapper {
     /* Primary/lightsky */
 

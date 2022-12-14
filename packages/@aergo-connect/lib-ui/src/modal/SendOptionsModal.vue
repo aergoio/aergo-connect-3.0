@@ -1,5 +1,5 @@
 <template>
-  <div class="options_modal_backdrop">
+  <div class="options_modal_backdrop" @click="hideModal">
     <div class="options_modal_wrapper">
       <div class="title">Optional Fields</div>
       <div class="flex-column">
@@ -9,7 +9,7 @@
             {{ type }}
           </option>
         </select> -->
-        <div class="select_box" @click="handleSelectTxType">
+        <div class="select_box" @click="handleSelectTxType" v-click-outside="hide">
           <div class="text">{{ iTxType }}</div>
           <Icon :name="select ? `dropupblue` : `dropdownblue`" />
         </div>
@@ -67,6 +67,15 @@ export default Vue.extend({
     },
     handleSelectTxType() {
       this.select = !this.select;
+    },
+    hide() {
+      this.select = false;
+    },
+    hideModal(event) {
+      // event.stopPropagation();
+      if (event.eventPhase === 2) {
+        this.$emit('closeOptionsModal');
+      }
     },
   },
 });
@@ -150,6 +159,7 @@ export default Vue.extend({
 
         color: #454344;
         .text {
+          cursor: default;
           margin-left: 3px;
         }
       }
@@ -165,6 +175,7 @@ export default Vue.extend({
 
         border: 1px solid #279ecc;
         border-radius: 4px;
+        white-space: pre;
       }
     }
     .button {

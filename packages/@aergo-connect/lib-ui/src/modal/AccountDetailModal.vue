@@ -133,7 +133,7 @@ export default Vue.extend({
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 300;
-        font-size: 15px;
+        font-size: 14.5px;
         line-height: 19px;
         letter-spacing: -0.333333px;
         text-decoration-line: underline;

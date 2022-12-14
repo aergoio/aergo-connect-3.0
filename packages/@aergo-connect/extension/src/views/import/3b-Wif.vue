@@ -137,7 +137,6 @@ export default class Keystore extends mixins(PersistInputsMixin) {
   margin-top: 32px;
 }
 .warningInBox-wrapper {
-  margin-left: 24px;
   margin-top: 14px;
 }
 </style>

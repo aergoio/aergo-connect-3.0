@@ -13351,10 +13351,10 @@ thunky@^1.0.2:
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.1.0.tgz#5abaf714a9405db0504732bbccd2cedd9ef9537d"
   integrity sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==
 
-timed-async@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/timed-async/-/timed-async-0.3.1.tgz#6a863a839043c7e7b8d1ed514b4b492c4ce25f3f"
-  integrity sha512-9JccYCGuf5RHle1qVgq6Tyui8T42LGPR6XO9nnyq/JtMIH1LtOuWHR/kCkTYSNyaChFlxgfHw0xvqMqrIrV1vA==
+timed-async@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/timed-async/-/timed-async-1.1.0.tgz#283807ae772dfcc57f65a1b2daffc10c88f8638d"
+  integrity sha512-k4vUcFJ0Dthuq13y9KW4htH9EEmRTm0ROMT8TiWgUErmcOhXqOcn2FfTVQq5lFB+EoMSXGKttuXuy9KLpdCSyg==
 
 timers-browserify@^2.0.4:
   version "2.0.12"

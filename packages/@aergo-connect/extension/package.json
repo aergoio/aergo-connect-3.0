@@ -36,7 +36,7 @@
     "extensionizer": "^1.0.1",
     "lodash": "^4.17.21",
     "pump": "^3.0.0",
-    "timed-async": "^0.3.1",
+    "timed-async": "^1.1.0",
     "vue-click-outside": "^1.1.0",
     "vuex-persist": "^2.2.0"
   },

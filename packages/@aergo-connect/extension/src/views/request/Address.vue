@@ -162,7 +162,6 @@ export default class RequestAddress extends mixins(RequestMixin) {
     top: 0;
     left: 0;
     margin-top: 30px;
-    margin-left: 5px;
     cursor: pointer;
   }
   .account_info_img {
@@ -193,8 +192,8 @@ export default class RequestAddress extends mixins(RequestMixin) {
       font-size: 18px;
       line-height: 24px;
       margin-bottom: 8px;
-      margin-left: 25px;
-      width: 191px;
+      margin-left: 10px;
+      /* width: 191px; */
       .account_info_network_wrapper {
         display: flex;
         align-items: center;
@@ -235,12 +234,12 @@ export default class RequestAddress extends mixins(RequestMixin) {
       }
     }
     .account_info_address_wrapper {
-      width: 160px;
+      width: 175px;
       height: 24px;
       background: #ecf8fd;
       border-radius: 25px;
       color: #279ecc;
-      margin-left: 25px;
+      margin-left: 10px;
       .account_info_address_text {
         font-family: 'Outfit';
         font-style: normal;

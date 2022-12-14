@@ -16,7 +16,7 @@
               </div>
             </div>
           </div>
-          <div class="account_info_address_wrapper" @click="handleDetailAddress">
+          <div class="" @click="handleDetailAddress">
             <span class="account_info_address_text">{{
               `${$store.state.accounts.address.slice(
                 0,

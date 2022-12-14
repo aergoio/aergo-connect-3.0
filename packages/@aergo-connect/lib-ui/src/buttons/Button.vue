@@ -9,7 +9,7 @@
     @keyup.enter="handleClick"
   >
     <template v-if="loading">
-      <LoadingIndicator class="button-loading-indicator" />
+      <LoadingIndicator />
     </template>
     <template v-else>
       <slot></slot>

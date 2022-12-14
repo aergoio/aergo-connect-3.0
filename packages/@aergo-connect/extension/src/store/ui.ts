@@ -26,6 +26,7 @@ export interface UiState {
   unlocked: boolean;
   currentPage: string;
   previousPage: string;
+  dropdownClickNum: number;
 }
 
 const storeModule: Module<UiState, RootState> = {
@@ -82,6 +83,9 @@ const storeModule: Module<UiState, RootState> = {
     },
     setPreviousPage(state, page: string) {
       state.previousPage = page;
+    },
+    setDropdownClickNum(state, num: number) {
+      state.dropdownClickNum = num;
     },
   },
   actions: {

@@ -46,9 +46,15 @@ export default Vue.extend({
 
 <style lang="scss">
 .loading-indicator {
+  /* position: absolute;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  left: 0; */
   display: flex;
   align-items: center;
   justify-content: center;
+  /* z-index: 10; */
 }
 
 /* Balls */

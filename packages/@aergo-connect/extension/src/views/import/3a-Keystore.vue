@@ -12,8 +12,8 @@
         />
       </div>
       <div class="import-keystore-passwordInput">
-        <PasswordStrengthField class="size" v-model="password" type="password" autoComplete="no" />
-        <div v-if="errors.password" class="simple-left">
+        <PasswordStrengthField v-model="password" type="password" autoComplete="no" />
+        <div v-if="errors.password">
           <WarningInBox :error="errors.password" />
         </div>
       </div>
@@ -27,6 +27,7 @@
           type="primary"
           :disabled="!canContinue || loading"
           :loading="loading"
+          hover
         >
           Import
         </Button>
@@ -137,9 +138,6 @@ export default class Keystore extends mixins(PersistInputsMixin) {
   }
   .import-keystore-passwordInput {
     margin-bottom: 22px;
-    .size {
-      width: 327px;
-    }
   }
 }
 </style>

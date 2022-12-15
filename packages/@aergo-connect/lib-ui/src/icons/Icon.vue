@@ -56,12 +56,14 @@ export default Vue.extend({
   // position: relative;
   // display: inline-block;
   /* cursor: pointer; */
-  svg {
+  &.icon--back {
+    line-height: 0;
+  }
+  .svg {
     position: relative;
     display: inline-block;
     vertical-align: middle;
   }
-
   .badge {
     position: absolute;
     background: #ff337f;

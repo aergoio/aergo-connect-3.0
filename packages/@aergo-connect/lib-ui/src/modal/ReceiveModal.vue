@@ -1,15 +1,25 @@
 <template>
   <div class="receive_backdrop">
     <div class="receive_wrapper">
-      <VueQRCodeComponent class="qr" :text="inputText" :size="123"></VueQRCodeComponent>
+      <VueQRCodeComponent
+        class="qr"
+        :text="JSON.stringify(inputText).padEnd(220)"
+        :size="123"
+      ></VueQRCodeComponent>
       <div class="amount_wrapper">
-        <span>{{ `${amount} ${symbol}` }}</span>
+        <span>{{
+          `${
+            $store.state.session.tokens[this.asset].meta.type !== 'ARC2'
+              ? `${amount} ${symbol}`
+              : ''
+          }`
+        }}</span>
       </div>
       <div class="description">
         Show the above QR code to the sender. The sender can scan this QR code in the AERGO Connect
         APP to send a transaction.
       </div>
-      <Button type="gradation" @click="handleOK">OK</Button>
+      <Button type="primary" @click="handleOK" hover>OK</Button>
     </div>
   </div>
 </template>
@@ -19,6 +29,7 @@ import Vue from 'vue';
 import VueQRCodeComponent from 'vue-qrcode-component';
 import Identicon from '../content/Identicon.vue';
 import Button from '../buttons/Button.vue';
+import { jsonHighlight } from '@aergo-connect/extension/src/utils/json';
 export default Vue.extend({
   components: { Identicon, Button, VueQRCodeComponent },
 
@@ -26,6 +37,8 @@ export default Vue.extend({
     amount: Number,
     symbol: String,
     asset: String,
+    tokenName: String,
+    decimals: Number,
   },
 
   data() {
@@ -35,13 +48,22 @@ export default Vue.extend({
   },
 
   async beforeMount() {
-    this.inputText =
-      this.asset + ' ' + this.$store.state.session.address + ' ' + Number(this.amount);
+    this.inputText = {
+      type: 'AERGO_REQUEST',
+      network: this.$store.state.accounts.network,
+      address: this.$store.state.accounts.address,
+      token: this.asset,
+      token_type: this.$store.state.session.tokens[this.asset].meta.type,
+      token_name: this.tokenName,
+      amount: String(this.amount),
+      decimals: String(this.decimals),
+    };
   },
-
+  mounted() {
+    console.log(this.inputText, 'qr');
+  },
   methods: {
     handleOK() {
-      console.log('ok');
       this.$emit('confirm', 'receiveModal');
     },
   },
@@ -55,8 +77,8 @@ export default Vue.extend({
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2;
 
   .receive_wrapper {
     width: 317px;
@@ -142,7 +164,7 @@ export default Vue.extend({
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 300;
-        font-size: 15px;
+        font-size: 14.5px;
         line-height: 19px;
         letter-spacing: -0.333333px;
         text-decoration-line: underline;

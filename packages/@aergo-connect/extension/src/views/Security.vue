@@ -22,12 +22,14 @@
         <div class="description">
           This password is used to unlock your wallet and send assets only on this device.
         </div>
-        <Button type="primary" size="large" @click="handleChangePassword">Change Password</Button>
+        <Button type="primary" size="large" @click="handleChangePassword" hover
+          >Change Password</Button
+        >
       </div>
       <div class="security2_backup_wrapper">
         <div class="title">Backup Private Key</div>
         <div class="description">Protect your accounts by saving your private key.</div>
-        <Button type="primary" size="large" @click="handleBackupPrivateKey"
+        <Button type="primary" size="large" @click="handleBackupPrivateKey" hover
           >Backup Private Key</Button
         >
       </div>
@@ -44,6 +46,7 @@
                 : handleAlert(),
             ]
           "
+          hover
           >Remove Account</Button
         >
       </div>
@@ -102,7 +105,7 @@ export default Vue.extend({
 
     handleChangePassword() {
       this.$router.push({
-        name: 'setup',
+        name: 'password',
         params: { nextPage: 'accounts-list', backPage: 'security' },
       });
     },

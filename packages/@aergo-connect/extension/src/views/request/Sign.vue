@@ -1,6 +1,32 @@
 <template>
   <ScrollView class="page">
     <template #header>
+      <div class="account_info_wrapper">
+        <Icon :name="`back`" @click="handleGoBack" />
+        <Identicon :text="$store.state.accounts.address" class="account_info_img" />
+        <div class="account_info_content_wrapper">
+          <div class="account_info_nickname_wrapper">
+            <div class="account_info_nickname_text">
+              {{ $store.state.accounts.nick }}
+            </div>
+            <div class="account_info_network_wrapper">
+              <div :class="`account_info_network_circle ${$store.state.accounts.network}`" />
+              <div class="account_info_network">
+                {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+              </div>
+            </div>
+          </div>
+          <div class="" @click="handleDetailAddress">
+            <span class="account_info_address_text">{{
+              `${$store.state.accounts.address.slice(
+                0,
+                15,
+              )}...${$store.state.accounts.address.slice(-5)}`
+            }}</span>
+          </div>
+        </div>
+      </div>
+
       <div class="content" style="padding-bottom: 0">
         <div class="icon-header">
           <Icon :name="`title-request`" :size="36" />
@@ -24,12 +50,14 @@
     </div>
 
     <template #footer>
-      <div class="content">
-        <ButtonGroup horizontal>
-          <Button type="secondary" @click="cancel">Cancel</Button>
-          <Button type="primary" @click="confirm">Confirm</Button>
-        </ButtonGroup>
-      </div>
+      <ButtonGroup>
+        <Button class="button" type="font-gradation" size="small" @click="cancel">
+          <Icon class="button-icon" /><span>Cancel</span>
+        </Button>
+        <Button class="button" type="font-gradation" size="small" @click="confirm">
+          <Icon class="button-icon" /><span>Confirm</span>
+        </Button>
+      </ButtonGroup>
       <LoadingDialog
         :visible="statusDialogVisible"
         @close="statusDialogVisible = false"
@@ -47,6 +75,7 @@ import Component, { mixins } from 'vue-class-component';
 import { ScrollView, LoadingDialog } from '@aergo-connect/lib-ui/src/layouts';
 import { Button, ButtonGroup, ContinueButton } from '@aergo-connect/lib-ui/src/buttons';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
+import { Identicon } from '@aergo-connect/lib-ui/src/content';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { RequestMixin } from './mixin';
 import { timedAsync } from 'timed-async/index.js';
@@ -54,6 +83,7 @@ import { Account } from '@herajs/wallet';
 import { encodeBuffer } from '@herajs/common';
 import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
+import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 
 @Component({
   components: {
@@ -64,23 +94,25 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
     ButtonGroup,
     Heading,
     Icon,
+    Identicon,
     account: {},
+    Appear,
   },
 })
-
-
 export default class RequestSign extends mixins(RequestMixin) {
-
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
     console.log('Account Info', this.account);
   }
 
   get accountSpec() {
-    return { address: this.$store.state.accounts.address, chainId: this.$store.state.accounts.network };
+    return {
+      address: this.$store.state.accounts.address,
+      chainId: this.$store.state.accounts.network,
+    };
   }
 
-/*
+  /*
   async signWithLedger(message: Buffer, displayAsHex = false) {
     this.setStatus('loading', 'Connecting to Ledger device...');
     const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -119,7 +151,6 @@ export default class RequestSign extends mixins(RequestMixin) {
   }
 
   async confirmHandler() {
-
     if (!this.request) return;
     if (!this.account) {
       throw new Error('Could not load account, please reload page and try again.');
@@ -141,7 +172,7 @@ export default class RequestSign extends mixins(RequestMixin) {
         throw new Error(`Failed to parse message: ${e}`);
       }
     }
-/*
+    /*
     if (this.account.data.type === 'ledger') {
       const signature = await timedAsync(this.signWithLedger(buf, displayAsHex));
       return {
@@ -172,7 +203,9 @@ export default class RequestSign extends mixins(RequestMixin) {
       account,
       signature: result.signedMessage,
     };
-
+  }
+  handleGoBack() {
+    this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
   }
 }
 </script>

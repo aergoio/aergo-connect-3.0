@@ -19,6 +19,7 @@
           @change="handleFileInput"
           @blur="handleBlur"
           @keyup.enter="handleEnter"
+          @focus="handleFocusOn"
           accept=".txt"
           ref="inputElement"
         />
@@ -87,7 +88,7 @@ export default Vue.extend({
   },
   mounted() {
     if (this.autofocus) {
-      (this.$refs.inputElement as HTMLFormElement).focus();
+      (this.$refs.inputElement as HTMLFormElement).focus({ preventScroll: true });
     }
   },
   methods: {
@@ -110,6 +111,10 @@ export default Vue.extend({
         }
       };
       reader.readAsText($elem.files[0]);
+    },
+    handleFocusOn(event: any) {
+      event.target.select();
+      this.$emit('focus');
     },
   },
 });

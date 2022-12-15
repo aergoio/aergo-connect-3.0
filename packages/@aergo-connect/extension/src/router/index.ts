@@ -6,8 +6,8 @@ import AccountsContainer from '../views/Container.vue';
 import Lockscreen from '../views/Lockscreen.vue';
 import Welcome from '../views/Welcome.vue';
 import Register from '../views/Register.vue';
-import Setup from '../views/Setup.vue';
-import Create from '../views/Create.vue';
+import Password from '../views/Password.vue';
+import RegistConfirm from '../views/RegistConfirm.vue';
 import Home from '../views/Home.vue';
 import SignMessage from '../views/SignMessage.vue';
 import Security from '../views/Security.vue';
@@ -16,40 +16,16 @@ import Send from '../views/Send.vue';
 import Receive from '../views/Receive.vue';
 import TokenDetail from '../views/TokenDetail.vue';
 import NftDetail from '../views/NftDetail.vue';
+import Version from '../views/Version.vue';
+
 import ImportFormat from '../views/import/2-Format.vue';
 import ImportKeystore from '../views/import/3a-Keystore.vue';
 import ImportWif from '../views/import/3b-Wif.vue';
 import ImportSeedphrase from '../views/import/3c-Seedphrase.vue';
-
-import ConnectHw from '../views/connect-hw/1-Network.vue';
-import ConnectHwAccounts from '../views/connect-hw/2-Accounts.vue';
-import Settings from '../views/Settings.vue';
-import NetworksList from '../views/networks/List.vue';
-import NetworksUpdate from '../views/networks/Update.vue';
-
 import BackupPrivateKey from '../views/export/BackupPrivateKey.vue';
 import MnemonicSeedPhrase from '../views/export/MnemonicSeedPhrase.vue';
 import Keystore from '../views/export/Keystore.vue';
 import ExportWif from '../views/export/Wif.vue';
-
-/*
-import AccountContainer from '../views/account/Container.vue';
-import TabContainer from '../views/account/TabContainer.vue';
-import AccountDetailsContainer from '../views/account/details/Container.vue';
-import AccountDetails from '../views/account/details/Details.vue';
-import AccountExportKeystore from '../views/export/Keystore.vue';
-*/
-
-//import ViewSeedPhrase from '../views/account/seedphrase/View.vue';
-//import VerifySeedPhrase from '../views/account/seedphrase/Verify.vue';
-//import AccountSend from '../views/account/send/1-Send.vue';
-//import AccountSendConfirm from '../views/account/send/2-Confirm.vue';
-//import AccountSendSuccess from '../views/account/send/3-Success.vue';
-//import AccountHistory from '../views/account/History.vue';
-//import AccountExportWif from '../views/account/export/Wif.vue';
-//import AccountNameCreate from '../views/account/name/Create.vue';
-//import AccountNameUpdate from '../views/account/name/Update.vue';
-//import AccountSign from '../views/account/Sign.vue';
 
 import RequestContainer from '../views/request/Container.vue';
 import RequestSelectAccount from '../views/request/SelectAccount.vue';
@@ -60,6 +36,11 @@ import RequestAddress from '../views/request/Address.vue';
 import RequestSign from '../views/request/Sign.vue';
 import RequestSendTx from '../views/request/Send.vue';
 import RequestSignTx from '../views/request/SignTx.vue';
+
+import ConnectHw from '../views/connect-hw/1-Network.vue';
+import ConnectHwAccounts from '../views/connect-hw/2-Accounts.vue';
+import NetworksList from '../views/networks/List.vue';
+import NetworksUpdate from '../views/networks/Update.vue';
 
 enum R {
   None = 0,
@@ -85,155 +66,91 @@ const routes: RouteConfig[] = [
     path: '/accounts',
     component: AccountsContainer,
     children: [
-      { path: '', redirect: 'list' },
+      { path: '', redirect: '/home' },
       withMeta(
-        0,
+        1,
         { path: '/locked', name: 'lockscreen', component: Lockscreen },
         R.NoAuthCheck | R.NoTracking,
       ),
+
+      withMeta(1, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
       withMeta(
-        0,
-        { path: '/settings', name: 'settings', component: Settings },
+        2,
+        { path: '/password', name: 'password', component: Password },
         R.NoAuthCheck | R.NoTracking,
       ),
-      withMeta(0, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
-      withMeta(
-        1,
-        { path: '/setup', name: 'setup', component: Setup },
-        R.NoAuthCheck | R.NoTracking,
-      ),
-
-      withMeta(1, { path: '/register', name: 'register', component: Register }),
-
-      withMeta(1, {
-        path: 'list',
-        name: 'accounts-list',
-        component: Home,
-      }),
       withMeta(2, {
-        path: 'list/importasset/:option',
+        path: '/register',
+        name: 'register',
+        component: Register,
+      }),
+      withMeta(6, { path: '/register/confirm', name: 'regist-confirm', component: RegistConfirm }),
+
+      withMeta(2, { path: '/home', name: 'accounts-list', component: Home }),
+      withMeta(3, { path: '/home/tokendetail', name: 'token-detail', component: TokenDetail }),
+      withMeta(3, { path: '/home/nftdetail/:nftid', name: 'nft-detail', component: NftDetail }),
+      withMeta(4, {
+        path: '/home/importasset/:option',
         name: 'import-asset',
         component: ImportAsset,
       }),
-      withMeta(2, {
-        path: '/list/signmessage',
-        name: 'sign-message',
-        component: SignMessage,
-      }),
-      withMeta(2, {
-        path: '/list/security',
-        name: 'security',
-        component: Security,
-      }),
-      withMeta(2, {
-        path: '/list/send',
-        name: 'send',
-        component: Send,
-      }),
-      withMeta(2, {
-        path: '/list/receive',
-        name: 'receive',
-        component: Receive,
-      }),
-      withMeta(2, {
-        path: '/list/tokendetail/:option',
-        name: 'token-detail',
-        component: TokenDetail,
-      }),
-      withMeta(2, {
-        path: '/list/nftdetail',
-        name: 'nft-detail',
-        component: NftDetail,
-      }),
+      withMeta(4, { path: '/home/send/:nftid', name: 'send', component: Send }),
+      withMeta(3, { path: '/home/receive', name: 'receive', component: Receive }),
+      withMeta(3, { path: '/home/signmessage', name: 'sign-message', component: SignMessage }),
+      withMeta(3, { path: '/home/version', name: 'version', component: Version }),
+      withMeta(3, { path: '/home/security', name: 'security', component: Security }),
 
-      withMeta(2, {
-        path: '/account/create',
-        name: 'account-create',
-        component: Create,
-      }),
-
-      withMeta(3, {
+      withMeta(4, {
         path: '/export/BackupPrivateKey',
         name: 'account-backup',
         component: BackupPrivateKey,
       }),
-
-      withMeta(4, {
+      withMeta(5, {
         path: '/export/MnemonicSeedPhrase ',
         name: 'account-backup-mnemonic',
         component: MnemonicSeedPhrase,
       }),
-
-      withMeta(4, {
-        path: '/export/Wif ',
-        name: 'account-backup-encrypted',
-        component: ExportWif,
-      }),
-
-      withMeta(4, {
+      withMeta(5, { path: '/export/wif ', name: 'account-backup-encrypted', component: ExportWif }),
+      withMeta(5, {
         path: '/export/keystore ',
         name: 'account-backup-keystore',
         component: Keystore,
       }),
 
-      withMeta(2, {
-        path: '/import/format',
-        name: 'account-import',
-        component: ImportFormat,
-      }),
-      withMeta(3, {
+      withMeta(4, { path: '/import/format', name: 'account-import', component: ImportFormat }),
+      withMeta(5, {
         path: '/import/keystore',
         name: 'account-import-keystore',
         component: ImportKeystore,
       }),
-      withMeta(3, {
-        path: '/import/wif',
-        name: 'account-import-wif',
-        component: ImportWif,
-      }),
-      withMeta(3, {
+      withMeta(5, { path: '/import/wif', name: 'account-import-wif', component: ImportWif }),
+      withMeta(5, {
         path: '/import/seedphrase',
         name: 'account-import-seedphrase',
         component: ImportSeedphrase,
       }),
-      withMeta(2, {
-        path: 'connect-hw',
-        name: 'account-connect-hw',
-        component: ConnectHw,
-      }),
-      withMeta(3, {
-        path: 'connect-hw/accounts',
+
+      withMeta(4, { path: '/connect-hw', name: 'account-connect-hw', component: ConnectHw }),
+      withMeta(5, {
+        path: '/connect-hw/accounts',
         name: 'account-connect-hw-accounts',
         component: ConnectHwAccounts,
       }),
       withMeta(
-        4,
+        5,
         { path: 'networks', name: 'networks-list', component: NetworksList },
         R.NoTracking,
       ),
       withMeta(
-        5,
-        {
-          path: 'networks/create',
-          name: 'networks-create',
-          component: NetworksUpdate,
-        },
+        6,
+        { path: 'networks/create', name: 'networks-create', component: NetworksUpdate },
         R.NoTracking,
       ),
       withMeta(
-        5,
-        {
-          path: 'networks',
-          name: 'networks-update',
-          component: NetworksUpdate,
-        },
+        6,
+        { path: 'networks', name: 'networks-update', component: NetworksUpdate },
         R.NoTracking,
       ),
-      {
-        path: 'import/',
-        name: 'account-imported',
-        component: Create,
-      },
     ],
   },
   {
@@ -278,15 +195,11 @@ const routes: RouteConfig[] = [
 ];
 
 Vue.use(VueRouter);
+
 const router = new VueRouter({
   routes,
 });
 
-/*
-router.beforeEach(function(to, from, next) {
-  console.log('from', from.name, 'to', to.name);
-  next();
-});*/
 router.beforeEach(allowedToExitLockscreen);
 router.beforeEach(loadPersistedRoute);
 router.beforeEach(persistRoute);

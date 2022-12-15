@@ -37,6 +37,14 @@
                 : true
             "
             @click="handleModal"
+            :hover="
+              (checked || $route.params.nextPage !== 'register') &&
+              password === passwordRepeat &&
+              password.length > 0 &&
+              passwordRepeat.length > 0
+                ? true
+                : false
+            "
           >
             Set Password
           </Button>
@@ -83,7 +91,7 @@ import { encodePrivateKey } from '@herajs/crypto';
     AppearVue,
   },
 })
-export default class Setup extends mixins() {
+export default class Password extends mixins() {
   password = '';
   passwordRepeat = '';
   setting = true;

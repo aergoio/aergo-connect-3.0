@@ -4,6 +4,9 @@
 @import './_forms.scss';
 @import './variables.scss';
 @import './mixin.scss';
+select {
+  padding: 3px;
+}
 
 .content_layout {
   padding-left: 24px;

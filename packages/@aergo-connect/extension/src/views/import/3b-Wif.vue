@@ -27,6 +27,7 @@
           type="primary"
           :disabled="!canContinue || loading"
           :loading="loading"
+          hover
         >
           Import
         </Button>
@@ -94,7 +95,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
       await this.$store.dispatch('accounts/addAccount', accountSpec.address);
       await this.$store.commit('accounts/setBackup', true);
 
-      this.$router.push({ name: 'account-imported' });
+      this.$router.push({ name: 'regist-confirm' });
     } catch (e) {
       console.log(e);
       if (`${e}`.match(/invalid mac value/)) {
@@ -136,7 +137,6 @@ export default class Keystore extends mixins(PersistInputsMixin) {
   margin-top: 32px;
 }
 .warningInBox-wrapper {
-  margin-left: 24px;
   margin-top: 14px;
 }
 </style>

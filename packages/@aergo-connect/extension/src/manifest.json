@@ -10,6 +10,8 @@
 
   "content_security_policy": "script-src 'self' http://localhost:8098 'unsafe-inline' 'unsafe-eval' object-src 'self'",
 
+  "web_accessible_resources": ["test.jpg"],
+
   "icons": {
     "17": "{{./assets/img/icon-17.png}}",
     "102": "{{./assets/img/icon-102.png}}",
@@ -33,7 +35,7 @@
       "17": "{{./assets/img/icon-17.png}}",
       "34": "{{./assets/img/icon-34.png}}"
     },
-    "default_title": "Aergo Connect",
+    "default_title": "Aergo Connect 3.0",
     "default_popup": "popup.html"
   },
 

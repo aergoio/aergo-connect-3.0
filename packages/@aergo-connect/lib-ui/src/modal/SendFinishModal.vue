@@ -10,8 +10,8 @@
           <div class="title">Network</div>
           <div class="flex-row network">
             <div class="detail network">
-              <div class="circle" />
-              {{ $store.state.accounts.network }}
+              <div :class="`circle ${$store.state.accounts.network}`" />
+              {{ $store.state.accounts.network.toUpperCase() }}
             </div>
           </div>
         </div>
@@ -40,17 +40,16 @@
           <div v-if="tokenType !== 'ARC2'" class="title">Amount</div>
           <div v-else class="title">Token_ID</div>
           <div class="flex-row">
-            <div class="detail amount">{{ amount }}</div>
-            <div v-if="tokenType !== 'ARC2'" class="detail amount">{{ symbol }}</div>
+            <div v-if="tokenType !== 'ARC2'" class="detail amount">
+              {{ amount + '  ' + symbol }}
+            </div>
+            <div v-else class="detail amount">{{ amount }}</div>
           </div>
         </div>
         <div class="line" />
-        <div v-if="txReceipt" class="flex-row">
+        <div v-if="fee" class="flex-row">
           <div class="title">Fee</div>
-          <div class="detail fee">{{ `${txReceipt} aergo` }}</div>
-          <!-- <div class="detail fee">
-            {{ bigIntToString(BigInt(txReceipt.fee.split(' ')[0]), 18) || 0 }}
-          </div> -->
+          <div class="detail fee">{{ `${fee} aergo` }}</div>
         </div>
         <div v-else class="flex-row">
           <div class="title">Status</div>
@@ -59,14 +58,13 @@
         <div class="line" />
         <div class="flex-row">
           <div class="title balance">Update Balance</div>
-          <div v-if="asset === 'AERGO'" class="detail balance">
-            {{ $store.state.session.aergoBalance }}
-          </div>
-          <div v-else class="detail balance">{{ $store.state.session.tokens[asset].balance }}</div>
+          <div class="detail balance">{{ Number(balance).toFixed(3) }}</div>
         </div>
         <div class="line" />
       </div>
-      <Button size="medium" type="primary" @click="handleOk">OK</Button>
+      <Button class="finish_modal_button" size="medium" type="primary" @click="handleOk" hover
+        >OK</Button
+      >
     </div>
   </div>
 </template>
@@ -76,58 +74,37 @@ import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import ButtonGroup from '../buttons/ButtonGroup.vue';
 import Button from '../buttons/Button.vue';
-import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
+
 export default Vue.extend({
   components: { Icon, Button, ButtonGroup },
 
   props: {
+    asset: String,
     txHash: String,
     receipt: String,
     amount: String,
     symbol: String,
-    asset: String,
     tokenType: String,
+    fee: String,
   },
 
   data() {
     return {
-      txReceipt: null,
-      txData: null,
+      balance: this.$store.state.session.tokens[this.asset].balance,
     };
-  },
-
-  async mounted() {
-    console.log('txHash', this.txHash);
-    console.log('network', this.$store.state.accounts.network);
-    console.log('asset', this.asset);
-    await this.$store.dispatch('accounts/updateAccount', {
-      chainId: this.$store.state.accounts.network,
-      address: this.$store.state.accounts.address,
-    });
-
-    this.$store.commit('ui/clearInput', { key: 'send' });
-    await this.$background
-      .getTransactionReceipt(this.$store.state.accounts.network, this.txHash)
-      .then((result) => {
-        this.txReceipt = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
-      });
-    /*
-    await this.$background
-      .getTransaction(this.$store.state.accounts.network, this.txHash)
-      .then(result => {
-        this.txData = result.tx;
-        this.txData.payload = Buffer.from(Object.values(this.txData.payload)).toString();
-      });
-*/
-
-    await this.$store.dispatch('session/updateBalances');
-    console.log('receipt', this.txReceipt);
   },
 
   methods: {
     handleOk() {
-      console.log('ok', this.to);
-      this.$emit('close');
+      // console.log('ok', this.to);
+      // this.$emit('close');
+      // this.$store.commit('session/setToken', token.hash);
+      // console.log(receipt, 'receipt!');
+      if (this.$store.state.session.option === 'nft') {
+        this.$router.push({ name: 'accounts-list' });
+      } else {
+        this.$router.push({ name: 'token-detail' }).catch(() => {});
+      }
     },
   },
 });
@@ -140,12 +117,12 @@ export default Vue.extend({
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 2;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 3;
   .sendfinish_modal_wrapper {
     position: absolute;
     width: 313px;
-    height: 435px;
+    height: 425px;
     left: 31px;
     top: 83px;
     background: #ffffff;
@@ -153,6 +130,9 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     align-items: center;
+    .finish_modal_button {
+      margin-top: 20px;
+    }
     .flex-column {
       margin-top: 24px;
       display: flex;
@@ -179,7 +159,7 @@ export default Vue.extend({
       }
     }
     .detail_form {
-      height: 260px;
+      max-height: 300px;
       margin-top: 18px;
       width: 280px;
       .flex-row {
@@ -233,6 +213,15 @@ export default Vue.extend({
             align-items: center;
             justify-content: flex-end;
             width: 175px;
+            &.mainnet {
+              background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+            }
+            &.testnet {
+              background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+            }
+            &.alpha {
+              background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+            }
           }
           &.address {
             text-decoration: underline;

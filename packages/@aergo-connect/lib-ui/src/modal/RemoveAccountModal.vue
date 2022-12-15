@@ -39,7 +39,6 @@ export default Vue.extend({
       this.$emit('cancel', 'removeAccountModal');
     },
     handleGoNext() {
-      console.log('next');
       this.isNext = true;
     },
   },
@@ -54,10 +53,10 @@ export default Vue.extend({
   left: 0px;
   top: 0px;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 1;
+  z-index: 2;
   .removeAccount_modal_wrapper {
     width: 317px;
-    height: 400px;
+    height: 420px;
     position: absolute;
     left: 28px;
     top: 110px;
@@ -103,6 +102,9 @@ export default Vue.extend({
 
     .button_wrapper {
       margin-top: 33px;
+      .button-type-secondary:hover {
+        background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+      }
       .button {
         width: 289px;
       }

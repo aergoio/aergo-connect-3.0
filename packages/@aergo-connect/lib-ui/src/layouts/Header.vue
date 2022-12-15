@@ -85,7 +85,7 @@ export default Vue.extend({
   justify-content: center;
   height: 54px;
   background: #ffffff;
-  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
+  /* box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05); */
   position: relative;
   z-index: 1;
   h3 {
@@ -99,7 +99,7 @@ export default Vue.extend({
 
   .header__button {
     width: 30px;
-    height: 30px;
+    /* height: 30px; */
     position: absolute;
     top: 50%;
     transform: translate(0%, -50%);
@@ -114,9 +114,11 @@ export default Vue.extend({
         visibility: hidden;
       }
     }
-
+    .icon--back {
+      line-height: 0;
+    }
     &.right {
-      top: 60%;
+      /* top: 60%; */
       right: 20px;
       display: none;
 

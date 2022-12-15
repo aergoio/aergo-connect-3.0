@@ -11,7 +11,7 @@
           <div class="flex-row network">
             <div class="detail network">
               <div class="circle" />
-              {{ $store.state.accounts.network }}
+              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
           </div>
         </div>
@@ -28,7 +28,9 @@
           <div v-if="tokenType !== 'ARC2'" class="title">Amount</div>
           <div v-else class="title">Token_ID</div>
           <div class="flex-row">
-            <div v-if="tokenType !== 'ARC2'" class="detail amount">{{ amount }}</div>
+            <div v-if="tokenType !== 'ARC2'" class="detail amount">
+              {{ amount + '  ' + symbol }}
+            </div>
             <div v-else class="detail amount">{{ amount }}</div>
           </div>
         </div>
@@ -53,12 +55,12 @@
         <div class="flex-row">
           <div class="title">Payload</div>
           <div class="flex-row">
-            <div class="detail payload">{{ payload }}</div>
+            <div class="detail payload" v-html="formattedPayload"></div>
           </div>
         </div>
       </div>
       <ButtonGroup vertical class="button_wrapper">
-        <Button size="medium" type="primary" @click="handleOk">OK</Button>
+        <Button size="medium" type="primary" @click="handleOk" hover>OK</Button>
         <Button size="medium" type="primary-outline" @click="handleCancel">Cancel</Button>
       </ButtonGroup>
     </div>
@@ -70,6 +72,8 @@ import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import ButtonGroup from '../buttons/ButtonGroup.vue';
 import Button from '../buttons/Button.vue';
+
+import { jsonHighlight } from '@aergo-connect/extension/src/utils/json';
 export default Vue.extend({
   components: { Icon, Button, ButtonGroup },
 
@@ -81,14 +85,22 @@ export default Vue.extend({
     payload: String,
     tokenType: String,
   },
-
+  computed: {
+    formattedPayload() {
+      const payload = `${this.payload}`;
+      try {
+        JSON.parse(payload);
+        return jsonHighlight(payload);
+      } catch {
+        return `<span class="string">${payload}</span>`;
+      }
+    },
+  },
   methods: {
     handleOk() {
-      console.log('ok', this.to);
       this.$emit('confirm');
     },
     handleCancel() {
-      console.log('cancel');
       this.$emit('cancel');
     },
   },
@@ -102,14 +114,13 @@ export default Vue.extend({
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   z-index: 2;
   .confirmation_modal_wrapper {
     position: absolute;
-    width: 313px;
-    height: 435px;
-    left: 31px;
-    top: 83px;
+    max-height: 510px;
+    left: 20px;
+    top: 50px;
     background: #ffffff;
     border-radius: 8px;
     display: flex;
@@ -141,10 +152,10 @@ export default Vue.extend({
       }
     }
     .detail_form {
-      height: 200px;
-      margin-top: 18px;
-      width: 290px;
-      overflow-y: scroll;
+      max-height: 300px;
+      margin-top: 10px;
+      width: auto;
+      overflow-y: auto;
       overflow-x: hidden;
       .flex-row {
         display: flex;
@@ -192,11 +203,31 @@ export default Vue.extend({
 
           color: #686767;
           &.payload {
-            width: 178px;
-            /* overflow-y:scroll; */
+            width: 200px;
             overflow-x: hidden;
             word-break: break-all;
             text-align: left;
+            font-family: monospace;
+            white-space: pre-wrap;
+            color: #777;
+
+            .string,
+            .boolean,
+            .number,
+            .null {
+              font-weight: 500;
+            }
+            .key {
+              color: #0082c7;
+            }
+            .string {
+              color: #000;
+            }
+            .boolean,
+            .number,
+            .null {
+              color: #259603;
+            }
           }
           &.gas {
             width: 168px;
@@ -214,7 +245,7 @@ export default Vue.extend({
             word-break: break-all;
           }
           &.amount {
-            width: 178px;
+            max-width: 170px;
             font-family: 'Outfit';
             font-style: normal;
             font-weight: 400;
@@ -241,7 +272,13 @@ export default Vue.extend({
       }
     }
     .button_wrapper {
-      margin-top: 15px;
+      margin-left: 6px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      .button-type-primary-outline:hover {
+        border: 2px solid #512da8;
+        color: #512da8;
+      }
       .button {
         width: 289px;
       }

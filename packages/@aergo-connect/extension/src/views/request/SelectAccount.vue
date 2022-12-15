@@ -13,14 +13,19 @@ export default class RequestSelectAccount extends Vue {
   }
 
   async redirectToRequest() {
-
     const activeAccount = await this.$background.getActiveAccount();
     if (!activeAccount) {
       return this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
     }
 
     this.$router
-      .push({ name: 'request-select-action', params: { chainId: this.$store.state.accounts.network, address: activeAccount.data.spec.address }})
+      .push({
+        name: 'request-select-action',
+        params: {
+          chainId: this.$store.state.accounts.network,
+          address: activeAccount.data.spec.address,
+        },
+      })
       .catch(() => {});
   }
 }

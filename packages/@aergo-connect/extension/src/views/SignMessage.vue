@@ -13,14 +13,25 @@
         </div>
       </div>
       <div class="hash_result" v-if="signature">
-        <TextArea class="textarea_size" :placeholder="signature" :readonly="true" />
-        <Button class="copy_button" type="primary-outline" @click="copyText(signature)"
-          >Copy</Button
+        <TextArea
+          :class="[signature ? 'textarea_size active' : 'textarea_size']"
+          :placeholder="signature"
+          :readonly="true"
+        />
+        <Button
+          :class="[clipboardNotification ? 'copy_button active' : 'copy_button']"
+          type="primary-outline"
+          @click="copyText(signature)"
+          ><Icon
+            :name="[clipboardNotification ? `checkmarkwhite` : `copybutton`]"
+            class="copy_icon"
+          />
+          {{ clipboardNotification ? `Copied` : `Copy` }}</Button
         >
       </div>
     </div>
     <template #footer>
-      <Button type="primary" size="large" @click="handleBack">OK</Button>
+      <Button type="primary" size="large" @click="handleBack" hover>OK</Button>
     </template>
     <LoadingDialog
       :visible="statusDialogVisible"
@@ -30,7 +41,7 @@
       <p v-if="dialogState !== 'error'">{{ statusText }}</p>
       <p v-else class="error">{{ statusText }}</p>
     </LoadingDialog>
-    <ClipboardNotification v-if="clipboardNotification" />
+    <!-- <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" /> -->
   </ScrollView>
 </template>
 
@@ -41,7 +52,8 @@ import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextArea from '@aergo-connect/lib-ui/src/forms/TextArea.vue';
 import CheckboxButton from '@aergo-connect/lib-ui/src/buttons/CheckboxButton.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
+import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
+import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import Component, { mixins } from 'vue-class-component';
 import { timedAsync } from 'timed-async/index.js';
 import { Account } from '@herajs/wallet';
@@ -50,15 +62,17 @@ import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import { ScrollView, LoadingDialog } from '@aergo-connect/lib-ui/src/layouts';
 import { Watch } from 'vue-property-decorator';
+import { signMessage } from '@herajs/crypto';
 @Component({
   components: {
     Header,
     ScrollView,
     LoadingDialog,
+    Icon,
     Button,
     CheckboxButton,
     TextArea,
-    ClipboardNotification,
+    Notification,
   },
 })
 export default class RequestSign extends mixins() {
@@ -235,6 +249,7 @@ export default class RequestSign extends mixins() {
   .sign_message_text {
     width: 93px;
     margin-bottom: 10px;
+    margin-left: 7px;
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 400;
@@ -248,15 +263,80 @@ export default class RequestSign extends mixins() {
   }
   .hash_result {
     margin-top: 30px;
+    .textarea {
+      /* Caption/C2 */
+
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 18px;
+      letter-spacing: -0.333333px;
+
+      /* Grey/06 */
+
+      color: #686767;
+    }
     .textarea_size {
       height: 102px;
+      &.active {
+        /* Primary/Blue03 */
+
+        background: #ecf8fd;
+        /* Primary/Blue01 */
+
+        border: 2px solid #279ecc;
+        border-radius: 4px;
+      }
     }
     .copy_button {
       float: right;
-      width: 34px;
+      width: 89px;
       height: 19px;
       margin-top: 6px;
       margin-right: 9px;
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 19px;
+      /* identical to box height */
+
+      text-align: center;
+      letter-spacing: -0.333333px;
+
+      /* Primary/Blue01 */
+
+      color: #279ecc;
+      &.active {
+        background: #279ecc;
+        border-radius: 4px;
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 19px;
+        /* identical to box height */
+
+        text-align: center;
+        letter-spacing: -0.333333px;
+
+        /* Grey/White */
+
+        color: #ffffff;
+      }
+      .copy_icon {
+        margin-right: 5px;
+      }
+    }
+    .copy_button:hover {
+      background: #279ecc;
+      color: #ffffff;
+      .icon--copybutton {
+        path {
+          fill: #ffffff;
+        }
+      }
     }
   }
   .textarea_size {
@@ -266,9 +346,10 @@ export default class RequestSign extends mixins() {
   .sign_message_confirm {
     display: flex;
     align-items: center;
+    margin-left: 7px;
     .sign_message_hash_text {
-      margin-left: 4px;
-      margin-right: 71px;
+      margin-left: 5px;
+      margin-right: 66px;
       width: 143px;
       font-family: 'Outfit';
       font-style: normal;
@@ -284,10 +365,29 @@ export default class RequestSign extends mixins() {
       color: #686767;
     }
     .button_size {
-      margin-top: 10px;
+      margin-top: 6px;
       width: 89px;
-      height: 30px;
+      height: 28px;
     }
+    .button_size:hover {
+      background: #279ecc;
+      color: #ffffff;
+    }
+  }
+  .button-type-primary-outline {
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 19px;
+    /* identical to box height */
+
+    text-align: center;
+    letter-spacing: -0.333333px;
+
+    /* Primary/Blue01 */
+
+    color: #279ecc;
   }
 }
 </style>

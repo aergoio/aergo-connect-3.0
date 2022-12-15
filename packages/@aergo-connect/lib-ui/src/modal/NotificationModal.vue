@@ -34,14 +34,14 @@ export default Vue.extend({
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1;
   .notification_modal_wrapper {
     width: 317px;
-    height: 300px;
+    height: 250px;
     position: absolute;
     left: 28px;
-    top: 110px;
+    top: 180px;
     background: #ffffff;
     border-radius: 8px;
 
@@ -68,11 +68,9 @@ export default Vue.extend({
 
       font-family: 'Outfit';
       font-style: normal;
-      font-weight: 600;
-      font-size: 24px;
-      line-height: 30px;
+      font-weight: 400;
+      font-size: 20px;
       text-align: center;
-      letter-spacing: -0.333333px;
 
       /* Primary/Pink01 */
 

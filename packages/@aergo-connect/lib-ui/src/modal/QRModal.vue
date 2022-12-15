@@ -24,7 +24,6 @@ export default Vue.extend({
   components: { Identicon, Button, VueQRCodeComponent },
   methods: {
     handleOK() {
-      console.log('ok');
       this.$emit('cancel', 'accountDetailModal');
     },
   },
@@ -38,7 +37,7 @@ export default Vue.extend({
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1;
 
   .account_detail_wrapper {
@@ -91,7 +90,7 @@ export default Vue.extend({
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 300;
-        font-size: 15px;
+        font-size: 14.5px;
         line-height: 19px;
         letter-spacing: -0.333333px;
         text-decoration-line: underline;

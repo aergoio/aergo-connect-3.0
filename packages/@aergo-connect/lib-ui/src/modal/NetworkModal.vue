@@ -1,29 +1,29 @@
 <template>
-  <div class="network_modal_backdrop" @click="networkModalClick">
+  <div class="network_modal_backdrop" @click="(event) => networkModalClick(event)">
     <div class="network_modal_wrapper">
       <div class="network_modal_title">Select Network</div>
       <div class="network_modal_line" />
       <ul class="network_modal_ul">
         <li class="network_modal_li" @click="setNetwork('mainnet')">
           <div class="network_modal_circle1" />
-          <span class="network_modal_name">AERGO Mainnet</span>
+          <span class="network_modal_name">AERGO MAINNET</span>
           <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
         </li>
         <div class="list_line" />
         <li class="network_modal_li" @click="setNetwork('testnet')">
           <div class="network_modal_circle2" />
-          <span class="network_modal_name">AERGO Testnet</span>
+          <span class="network_modal_name">AERGO TESTNET</span>
           <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
         </li>
         <div class="list_line" />
         <li class="network_modal_li" @click="setNetwork('alpha')">
           <div class="network_modal_circle3" />
-          <span class="network_modal_name">AERGO alpha</span>
+          <span class="network_modal_name">AERGO ALPHA</span>
           <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
         </li>
         <div class="list_line" />
+        <Button type="primary" size="large" disabled>Add a network</Button>
       </ul>
-      <!-- <Button type="primary" size="x-large">Add a network</Button> -->
     </div>
   </div>
 </template>
@@ -38,20 +38,31 @@ export default Vue.extend({
     Button,
   },
   methods: {
-    networkModalClick() {
-      this.$emit('networkModalClick');
+    networkModalClick(event) {
+      if (event.eventPhase === 2) {
+        this.$emit('networkModalClick');
+      }
+      // event.stopPropagation();
+      // this.$emit('networkModalClick');
     },
 
-    setNetwork(network) {
+    async setNetwork(network) {
       this.$store.commit('accounts/setNetwork', network);
+      this.$emit('networkModalClick');
 
-      // reset account_data
-      this.$router.push({
-        name: 'accounts-list',
-        params: {
-          address: this.$store.state.accounts.address,
-        },
-      });
+      if (this.$route.name === 'request-accounts-list') {
+        return;
+      } else {
+        // reset account_data
+        await this.$router
+          .push({
+            name: 'accounts-list',
+            params: {
+              address: this.$store.state.accounts.address,
+            },
+          })
+          .catch(() => {});
+      }
     },
   },
 });
@@ -64,14 +75,14 @@ export default Vue.extend({
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 1;
   .network_modal_wrapper {
     position: absolute;
     width: 375px;
-    height: 338px;
+    height: 280px;
+    top: 320px;
     left: 0px;
-    top: 262px;
     background: #ffffff;
     box-shadow: 0px -6px 12px rgba(0, 0, 0, 0.1);
     border-top-left-radius: 20px;
@@ -99,6 +110,11 @@ export default Vue.extend({
     }
     .network_modal_ul {
       height: 294px;
+      .button {
+        margin-top: 14px;
+        margin-left: 20px;
+      }
+
       .list_line {
         margin-left: 24px;
         width: 327px;

@@ -14,6 +14,7 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    camelcase: 0,
     'prettier/prettier': [
       'error',
       {

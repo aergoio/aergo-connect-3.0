@@ -4,11 +4,19 @@ import { Account, serializeAccountSpec } from '@herajs/wallet';
 import { Amount } from '@herajs/common';
 import Vue from 'vue';
 import store from '../store';
+import { NftInventoryType, NftTokenType } from '@/types';
+import { before } from 'lodash';
 
+interface NftSessionType extends NftTokenType {
+  dropdownsState: boolean;
+  nftWallet: NftInventoryType[];
+}
 export interface SessionState {
-  tokens: any;
-  token: any;
-  //  aergoBalance: number;
+  tokens: Record<string, any>;
+  token: string;
+  currentPage: string;
+  previousPage: string;
+  option: string;
 }
 
 function getVueInstance(instance: any): Vue {
@@ -20,16 +28,11 @@ const storeModule: Module<SessionState, RootState> = {
   namespaced: true,
 
   state: {
-    token: {},
+    token: 'AERGO',
     tokens: {},
+    option: 'token',
   },
-
   actions: {
-    /*
-    aergoBalance({ state }) {
-      return state.aergoBalance;
-    },
-*/
     tokenBalance({ state }, address: string) {
       return state.tokens[address]['balance'];
     },
@@ -49,57 +52,46 @@ const storeModule: Module<SessionState, RootState> = {
       );
 
       const response = await resp.json();
-
-      //      if (response.error) return;
-      //      await commit('setTokenBalance', response.hits);
+      console.log(response, 'response');
+      if (response.error) return;
 
       const balances = { aergo: aergoBalance, others: response.hits };
 
-      console.log('UPDATE BAL', balances);
-
       await commit('setTokenBalance', balances);
-      console.log('UPDATE BAL', state.tokens);
     },
 
     async initState({ state, commit }) {
-      const tokens = await store.dispatch('accounts/tokens');
-      await commit('setTokens', tokens);
+      try {
+        const tokens = await store.dispatch('accounts/tokens');
+        await commit('setTokens', tokens);
 
-      console.log(
-        'fetch',
-        `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
-      );
+        console.log(
+          'fetch',
+          `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
+        );
 
-      const prefix = store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
+        const prefix = store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
 
-      const resp = await fetch(
-        `https://${prefix}.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
-      );
+        const resp = await fetch(
+          `https://${prefix}.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
+        );
 
-      const response = await resp.json();
+        const response = await resp.json();
 
-      console.log('resp', response);
+        await commit('updateTokens', response.hits);
+        await store.dispatch('session/updateBalances');
 
-      await commit('updateTokens', response.hits);
-      await store.dispatch('session/updateBalances');
+        // Default Token : 'AERGO'
+        // await commit('setToken', state.tokens['AERGO']);
 
-      // Default Token : 'AERGO'
-      await commit('setToken', state.tokens['AERGO']);
-      await store.commit('accounts/setSeedPhrase', '');
-      //      await commit('setToken',state.tokens['AERGO']) ;
-      //      await store.commit('accounts/setSeedPhrase','');
-
-      console.log('Out tokens', state.tokens);
+        await store.commit('accounts/setSeedPhrase', '');
+      } catch (e) {
+        console.error(e);
+      }
     },
   },
 
   mutations: {
-    /*
-    setAergoBalance(state, val: number) {
-      state.aergoBalance = val;
-    },
-*/
-
     setTokenBalance(state, balances: any) {
       // others
       Object.keys(state.tokens).forEach((hash) => {
@@ -108,7 +100,8 @@ const storeModule: Module<SessionState, RootState> = {
           if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance;
           else
             state.tokens[hash]['balance'] =
-              bal.meta.balance_float / Math.pow(10, bal.token.meta.decimals);
+              Number(bal.meta.balance) / Math.pow(10, bal.token.meta.decimals);
+          bal.meta.balance_float;
         } else {
           state.tokens[hash]['balance'] = 0;
         }
@@ -118,13 +111,11 @@ const storeModule: Module<SessionState, RootState> = {
     },
 
     setTokens(state, tokens: any) {
-      console.log('set tokens', tokens);
       if (tokens) state.tokens = tokens;
       else state.tokens = {};
     },
 
     updateTokens(state, balances: any) {
-      console.log('SET TOKENS Balances', state.tokens, balances);
       if (balances)
         balances.forEach((e) => {
           if (e.token.meta.image) {
@@ -136,6 +127,54 @@ const storeModule: Module<SessionState, RootState> = {
 
     setToken(state, token: any) {
       state.token = token;
+    },
+
+    setOption(state, option: string) {
+      state.option = option;
+    },
+    removeToken(state, token: any) {
+      state.token = '';
+      delete state.tokens[token];
+    },
+
+    addNftToLocalStorage(state, userNftData) {
+      const beforeNftData = JSON.parse(
+        localStorage.getItem(
+          `${userNftData.meta.account}_${store.state.accounts.network}_${userNftData.meta.address}`,
+        ) || '{}',
+      );
+      const array =
+        Object.values(beforeNftData).length !== 0 ? [...beforeNftData, userNftData] : [userNftData];
+      localStorage.setItem(
+        `${userNftData.meta.account}_${store.state.accounts.network}_${userNftData.meta.address}`,
+        JSON.stringify(array),
+      );
+    },
+    deleteNftInLocalStorage(state, userNftData) {
+      const beforeNftData = JSON.parse(
+        localStorage.getItem(
+          `${userNftData.meta.account}_${store.state.accounts.network}_${userNftData.meta.address}`,
+        ) || '{}',
+      );
+      const deleteUserNftDataInLocalStorage = beforeNftData.filter(
+        (nft: any) => nft.meta.token_id !== userNftData.meta.token_id,
+      );
+      localStorage.setItem(
+        `${userNftData.meta.account}_${store.state.accounts.network}_${userNftData.meta.address}`,
+        JSON.stringify(deleteUserNftDataInLocalStorage),
+      );
+    },
+    handleDropdownState(state, hash) {
+      const copiedObject = { ...state.tokens[hash] };
+      const dropdownClickNum = store.state.ui.dropdownClickNum;
+      if (copiedObject.dropdownState) {
+        copiedObject['dropdownState'] = false;
+        store.commit('ui/setDropdownClickNum', dropdownClickNum - 1);
+      } else {
+        copiedObject['dropdownState'] = true;
+        store.commit('ui/setDropdownClickNum', dropdownClickNum + 1);
+      }
+      state.tokens[hash] = copiedObject;
     },
   },
 };

@@ -83,10 +83,10 @@ const storeModule: Module<AccountsState, RootState> = {
     },
 
     async removeAccount({ state, commit }, address: string) {
-      console.log(address);
       const vue = getVueInstance(this);
       await vue.$background.removeAccount({ address: state.address, chainId: 'aergo.io' });
       commit('removeAccount');
+
       const accounts = await vue.$background.getAccounts();
       if (accounts.length !== 0) commit('setActiveAccount', accounts[0]?.data.spec.address);
       else commit('setActiveAccount', '');
@@ -100,21 +100,22 @@ const storeModule: Module<AccountsState, RootState> = {
 
     async addToken({ state, commit }, token: any) {
       let tokens = state.accounts[state.address]['token'][state.network];
-
+      console.log(tokens, 'tokens');
+      console.log(token, 'token');
+      console.log(state.accounts, 'state-addrees');
       if (!tokens) {
         tokens = {};
       }
-
       tokens[token.hash] = token;
+      const walletData = JSON.parse(localStorage.getItem(`${state.address}_${token.hash}`));
+      console.log(walletData, 'walletData!!');
       commit('setTokens', tokens);
-      //      store.dispatch('session/initState') ;
-
       console.log('Add tokens', tokens);
     },
 
-    async deleteToken({ state, commit }, token: any) {
+    async deleteToken({ state, commit }, token: string) {
       const tokens = state.accounts[state.address]['token'][state.network];
-      delete tokens[token.hash];
+      delete tokens[token];
       commit('setTokens', tokens);
 
       store.state.dispatch('session/initState');
@@ -152,7 +153,7 @@ const storeModule: Module<AccountsState, RootState> = {
     addAccount(state, address: string) {
       state.accounts[address] = {
         address: address,
-        nick: address.substr(0, 5) + '_nick',
+        nick: `${address.substr(0, 5)}_${address.substr(-5)}`,
         token: {},
       };
       console.log('addAccount', state.accounts[address]['nick']);
@@ -174,6 +175,13 @@ const storeModule: Module<AccountsState, RootState> = {
 
     setBackup(state, value: boolean) {
       state.accounts[state.address]['backup'] = value;
+    },
+    setNftWallet(state, { nftWallet, hash }) {
+      if (nftWallet.length === 0) {
+        state.accounts[state.address].token[state.network][hash]['nftWallet'] = [];
+      } else {
+        state.accounts[state.address].token[state.network][hash]['nftWallet'] = nftWallet;
+      }
     },
   },
 };

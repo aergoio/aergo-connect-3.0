@@ -5,20 +5,29 @@
       :amount="inputAmount"
       :symbol="symbol"
       :asset="asset"
+      :tokenName="tokenName"
+      :decimal="decimal"
       @confirm="handleConfirm"
     />
-    <Header button="back" title="Recieve" @backClick="handleBack" />
+    <Header button="back" title="Receive" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <div class="circle" />
+          <div :class="`circle ${$store.state.accounts.network}`" />
           <div class="network">
-            {{ this.$store.state.accounts.network || `AERGO Mainnet` }}
+            {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
           </div>
         </div>
         <div class="account_wrapper">
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
-          <div class="account_title">{{ $store.state.accounts.nick }}</div>
+          <div class="account_title">
+            {{
+              $store.state.accounts.nick.length > 17
+                ? `${$store.state.accounts.nick.slice(0, 17)}...`
+                : $store.state.accounts.nick
+            }}
+          </div>
+
           <div class="account_title_wrapper">
             <div class="account" @click="copyToClipboard($store.state.accounts.address)">
               {{
@@ -37,19 +46,69 @@
         <Icon v-else-if="!icon" class="token_icon" :name="`defaultToken`" />
         <!-- <Identicon v-else-if="!icon" :text="asset" class="token_icon" /> -->
         <img v-else class="token_icon" :src="icon" />
-        <div class="token_amount">{{ balance }}</div>
-        <div class="token_symbol">{{ symbol }}</div>
+        <div class="amount_wrapper">
+          <div class="token_amount">{{ balance ? formatBalance(balance) : 0 }}</div>
+          <div class="token_symbol">{{ symbol }}</div>
+        </div>
       </div>
 
       <div class="send_form_wrapper">
         <div class="flex-row">
           <div class="title">Asset</div>
-          <select class="select_box" v-model="asset">
-            <option v-for="token in $store.state.session.tokens" :value="token.hash">
-              {{ token.meta.name }}
-            </option>
-          </select>
+          <div v-click-outside="hide">
+            <div class="select_box" @click="handleSelectAsset">
+              <div
+                :style="{
+                  display: 'flex',
+                  alignItems: 'center',
+                }"
+              >
+                <Icon v-if="asset === 'AERGO'" :name="`aergo`" :style="{ marginLeft: '4px' }" />
+                <Icon v-else-if="!icon" :name="`defaultToken`" />
+                <img class="img" v-else :src="icon" />
+                <div
+                  :style="
+                    icon || asset === 'AERGO'
+                      ? {
+                          marginLeft: '8px',
+                          cursor: 'default',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                        }
+                      : {
+                          cursor: 'default',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                          position: 'relative',
+                          right: '5px',
+                        }
+                  "
+                >
+                  {{ tokenName }}
+                </div>
+              </div>
+              <Icon :name="selectAsset ? `dropupblue` : `dropdownblue`" />
+            </div>
+            <ul
+              v-if="selectAsset"
+              class="selectbox_asset"
+              :style="{ height: assetListStyle(), 'overflow-y': assetListScrollStyle() }"
+            >
+              <li
+                class="list"
+                v-for="token in $store.state.session.tokens"
+                :key="token.meta.hash"
+                @click="selectAssetFunc(token.hash)"
+              >
+                <img class="img" v-if="token.meta.image" :src="token.meta.image" />
+                <Icon class="aergo" v-else-if="token.hash === 'AERGO'" :name="`aergo`" />
+                <Icon v-else :name="`defaultToken`" />
+                {{ token.meta.name }}
+              </li>
+            </ul>
+          </div>
         </div>
+
         <div class="flex-row" v-if="tokenType !== 'ARC2'">
           <div class="title">Amount</div>
           <input v-model.number="inputAmount" type="text" class="text_box" />
@@ -57,18 +116,29 @@
       </div>
     </div>
     <template #footer class="footer">
-      <Button v-if="!receiveModal" type="primary" size="large" @click="handleShowQRClick"
+      <Button
+        v-if="!receiveModal"
+        type="primary"
+        size="large"
+        @click="handleShowQRClick"
+        :disabled="!inputAmount && tokenType !== 'ARC2'"
+        :hover="inputAmount || tokenType === 'ARC2'"
         >Show QR</Button
       >
     </template>
-    <ClipboardNotification v-if="clipboardNotification" />
+    <Notification
+      v-if="notification"
+      :title="notificationText"
+      :icon="notificationText === 'Copied!' ? 'check' : 'warning2'"
+      :size="notificationText !== 'Copied!' ? 250 : 100"
+    />
   </ScrollView>
 </template>
 
 <script>
 import Vue from 'vue';
 import ReceiveModal from '@aergo-connect/lib-ui/src/modal/ReceiveModal.vue';
-import ClipboardNotification from '@aergo-connect/lib-ui/src/modal/ClipboardNotification.vue';
+import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
@@ -76,22 +146,29 @@ import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 
 export default Vue.extend({
-  components: { ScrollView, ReceiveModal, Header, Identicon, Icon, Button, ClipboardNotification },
+  components: { ScrollView, ReceiveModal, Header, Identicon, Icon, Button, Notification },
   data() {
     return {
+      selectAsset: false,
       receiveModal: false,
-      clipboardNotification: false,
+      notification: false,
+      notificationText: '',
       asset: '',
       icon: '',
       balance: 0,
       tokenType: '',
       symbol: '',
-      inputAmount: '0',
+      tokenName: '',
+      inputAmount: '',
+      decimal: '',
+      token: {},
     };
   },
 
   async beforeMount() {
-    if (this.$store.state.session.token) this.asset = this.$store.state.session.token.hash;
+    this.token = await this.$store.state.session.tokens[this.$store.state.session.token];
+
+    if (this.$store.state.session.token) this.asset = this.$store.state.session.token;
     else this.asset = 'AERGO';
   },
 
@@ -101,16 +178,21 @@ export default Vue.extend({
       this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
       this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
       this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
+      this.tokenName = this.$store.state.session.tokens[this.asset]['meta']['name'];
+      this.decimal = this.$store.state.session.tokens[this.asset]['meta']['decimal'];
     },
-    clipboardNotification(state) {
+    notification(state) {
       if (state) {
         setTimeout(() => {
-          const time = (this.clipboardNotification = !state);
+          const time = (this.notification = !state);
           return () => {
             clearTimeout(time);
           };
         }, 2000);
       }
+    },
+    balance() {
+      this.$forceUpdate();
     },
   },
 
@@ -119,14 +201,57 @@ export default Vue.extend({
       this.$router.push({ name: 'accounts-list' });
     },
     handleShowQRClick() {
-      this.receiveModal = true;
+      const regex = /[^0-9]/g;
+      if (!regex.test(this.inputAmount)) {
+        this.receiveModal = true;
+      } else {
+        this.notification = true;
+        this.notificationText = 'Please input a number.';
+      }
     },
     handleConfirm() {
       this.receiveModal = false;
     },
     copyToClipboard(text) {
       navigator.clipboard.writeText(text);
-      this.clipboardNotification = true;
+      this.notification = true;
+      this.notificationText = 'Copied!';
+    },
+    formatBalance(balance) {
+      if (Number.isInteger(balance)) {
+        return balance;
+      }
+      return Number(balance).toFixed(3);
+    },
+    handleSelectAsset() {
+      this.selectAsset = !this.selectAsset;
+    },
+    selectAssetFunc(asset) {
+      this.asset = asset;
+      this.selectAsset = false;
+    },
+    assetListStyle() {
+      switch (Object.keys(this.$store.state.session.tokens).length) {
+        case 1:
+          return '43px';
+        case 2:
+          return '86px';
+        case 3:
+          return '129px';
+        default:
+          return '172px';
+      }
+    },
+    assetListScrollStyle() {
+      switch (Object.keys(this.$store.state.session.tokens).length) {
+        case 4:
+          return 'scroll';
+        default:
+          return 'hidden';
+      }
+    },
+    hide() {
+      this.selectAsset = false;
     },
   },
 });
@@ -151,9 +276,18 @@ export default Vue.extend({
         width: 4px;
         height: 4px;
         margin-right: 4px;
+        &.mainnet {
+          background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+        }
+        &.testnet {
+          background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+        }
+        &.alpha {
+          background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+        }
       }
       .network {
-        width: 84px;
+        width: 100px;
         height: 15px;
         font-family: 'Outfit';
         font-style: normal;
@@ -179,8 +313,6 @@ export default Vue.extend({
       }
       .account_title {
         margin-left: 12px;
-        width: 83px;
-        height: 20px;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
@@ -195,7 +327,7 @@ export default Vue.extend({
       .account_title_wrapper {
         display: flex;
         align-items: center;
-        margin-left: 24px;
+        margin-left: 10px;
 
         width: 120px;
         height: 22px;
@@ -221,28 +353,24 @@ export default Vue.extend({
       }
       .account_button {
         cursor: pointer;
-        margin-left: 50px;
+        margin-left: 35px;
       }
     }
   }
-  .token_content_wrapper {
+  /* .token_content_wrapper {
     display: flex;
     align-items: center;
     width: 327px;
     height: 60px;
-    margin-left: 28px;
+    margin-left: 24px;
     margin-top: 19px;
     background: #ffffff;
-    /* Grey/00 */
 
     border: 1px solid #f6f6f6;
-    /* 05 */
 
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     .token_icon {
-      /* Grey/02 */
-
       border: 1px solid #d8d8d8;
       width: 46px;
       height: 46px;
@@ -252,10 +380,16 @@ export default Vue.extend({
       justify-content: center;
       align-items: center;
     }
+    .amount_wrapper {
+      width: 281px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
     .token_amount {
       width: 141px;
       margin-left: 20px;
-      /* Headline/H3 */
+
 
       font-family: 'Outfit';
       font-style: normal;
@@ -264,27 +398,14 @@ export default Vue.extend({
       line-height: 25px;
       letter-spacing: -0.333333px;
 
-      /* Grey/08 */
+
 
       color: #231f20;
     }
     .token_symbol {
-      margin-left: 48px;
-      /* Subtitle/S3 */
-
-      font-family: 'Outfit';
-      font-style: normal;
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 20px;
-      text-align: right;
-      letter-spacing: -0.333333px;
-
-      /* Grey/08 */
-
-      color: #231f20;
+      width: 100%;
     }
-  }
+  } */
   .send_form_wrapper {
     /* Primary/lightsky */
 
@@ -294,7 +415,46 @@ export default Vue.extend({
     width: 375px;
     height: 380px;
     bottom: 0px;
+    .selectbox_asset {
+      width: 243px;
+      height: 172px;
+      position: absolute;
+      left: 105px;
+      border-radius: 3px;
+      border: 1px solid #279ecc;
+      /* overflow-y: scroll; */
+      /* overflow-x: hidden; */
+      .img {
+        margin-left: 6px;
+        margin-right: 8px;
+        height: 32px;
+        width: 32px;
+        border-radius: 50%;
+      }
+      .aergo {
+        margin-left: 10px;
+        margin-right: 10px;
+      }
 
+      .list {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        cursor: pointer;
+        /* width: 228px; */
+        height: 43px;
+        background: #ffffff;
+        border-radius: 3px;
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .list:hover {
+        background: #f6f6f6;
+      }
+    }
     .flex-row {
       display: flex;
       align-items: center;
@@ -310,11 +470,13 @@ export default Vue.extend({
         color: #279ecc;
       }
       .select_box {
+        display: flex;
+        justify-content: space-between;
         margin-left: 38px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 3px;
-        width: 245px;
-        height: 40px;
+        width: 228px;
+        height: 22px;
         /* White */
 
         background: #ffffff;
@@ -322,6 +484,15 @@ export default Vue.extend({
 
         border: 1px solid #279ecc;
         border-radius: 4px;
+        .img {
+          height: 32px;
+          width: 32px;
+          border-radius: 50%;
+        }
+        .icon--defaultToken {
+          position: relative;
+          right: 6px;
+        }
       }
       .text_box {
         margin-left: 19px;

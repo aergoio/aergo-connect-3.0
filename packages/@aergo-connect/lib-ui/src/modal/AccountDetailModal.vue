@@ -1,31 +1,37 @@
 <template>
-  <div class="account_detail_backdrop">
+  <div class="account_detail_backdrop" @click="handleBack">
     <div class="account_detail_wrapper">
       <div class="title">Account Address</div>
       <div class="flex-row">
         <Identicon :text="$store.state.accounts.address" />
-        <div>{{ $store.state.accounts.nick }}</div>
+        <div class="nick">{{ $store.state.accounts.nick }}</div>
       </div>
-      <VueQRCodeComponent :text="$store.state.accounts.address" :size="123"></VueQRCodeComponent>
+      <VueQRCodeComponent
+        :text="JSON.stringify({ type: 'AERGO_REQUEST', address: $store.state.accounts.address })"
+        :size="123"
+      ></VueQRCodeComponent>
       <div class="address_wrapper">
         <div class="address" @click="copyToClipboard($store.state.accounts.address)">
           {{ $store.state.accounts.address }}
         </div>
       </div>
-      <Button type="primary" @click="handleOK">OK</Button>
+      <ButtonGroup vertical>
+        <Button type="primary" @click="handleReceive" hover>Receive</Button>
+      </ButtonGroup>
     </div>
-    <ClipboardNotification v-if="clipboardNotification" />
+    <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
 import VueQRCodeComponent from 'vue-qrcode-component';
-import ClipboardNotification from './ClipboardNotification.vue';
+import Notification from './Notification.vue';
 import Identicon from '../content/Identicon.vue';
 import Button from '../buttons/Button.vue';
+import ButtonGroup from '../buttons/ButtonGroup.vue';
 export default Vue.extend({
-  components: { Identicon, Button, VueQRCodeComponent, ClipboardNotification },
+  components: { Identicon, ButtonGroup, Button, VueQRCodeComponent, Notification },
   data() {
     return {
       clipboardNotification: false,
@@ -44,9 +50,16 @@ export default Vue.extend({
     },
   },
   methods: {
-    handleOK() {
-      console.log('ok');
+    handleBack(event) {
+      if (event.eventPhase === 2) {
+        this.$emit('cancel', 'accountDetailModal');
+      }
+    },
+    handleButtonOK() {
       this.$emit('cancel', 'accountDetailModal');
+    },
+    handleReceive() {
+      this.$router.push({ name: 'receive' });
     },
     copyToClipboard(text) {
       navigator.clipboard.writeText(text);
@@ -63,14 +76,14 @@ export default Vue.extend({
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1;
   .account_detail_wrapper {
     width: 317px;
-    height: 400px;
+    height: 410px;
     position: absolute;
     left: 28px;
-    top: 110px;
+    top: 85px;
     background: #ffffff;
     border-radius: 8px;
 
@@ -95,12 +108,16 @@ export default Vue.extend({
       margin-top: 25px;
       margin-bottom: 15px;
       align-items: center;
+      max-width: 270px;
+      .nick {
+        margin-left: 5px;
+        word-break: break-all;
+      }
     }
     .address_wrapper {
-      margin-top: 20px;
-      margin-bottom: 25px;
+      margin-top: 15px;
+      margin-bottom: 15px;
       width: 251px;
-      height: 60px;
       /* Primary/Blue02 */
       display: flex;
       justify-content: center;
@@ -116,7 +133,7 @@ export default Vue.extend({
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 300;
-        font-size: 15px;
+        font-size: 14.5px;
         line-height: 19px;
         letter-spacing: -0.333333px;
         text-decoration-line: underline;
@@ -128,6 +145,9 @@ export default Vue.extend({
     }
     .button {
       width: 289px;
+    }
+    .button-group-vertical {
+      margin-left: 8px;
     }
   }
 }

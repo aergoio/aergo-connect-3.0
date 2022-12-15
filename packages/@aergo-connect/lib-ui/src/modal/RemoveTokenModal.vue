@@ -2,7 +2,9 @@
   <div class="removeToken_backdrop">
     <div class="removeToken_modal_wrapper">
       <Icon :name="`warning`" :size="50" />
-      <div class="removeToken_title">Remove {{ $store.state.session.token.meta.name}} ?</div>
+      <div class="removeToken_title">
+        Remove {{ $store.state.session.tokens[$store.state.session.token].meta.name }} ?
+      </div>
       <ButtonGroup class="button_wrapper" vertical>
         <ButtonVue type="secondary" size="medium" hover @click="handleConfirm">Confirm</ButtonVue>
         <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
@@ -29,8 +31,7 @@ export default Vue.extend({
       this.$store.dispatch('accounts/deleteToken', this.$store.state.session.token);
       this.$router.push({
         name: 'accounts-list',
-        params: { address: this.$store.state.accounts.address },
-       });
+      });
     },
     handleCancel() {
       this.$emit('cancel', false);
@@ -46,11 +47,11 @@ export default Vue.extend({
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1;
   .removeToken_modal_wrapper {
     width: 317px;
-    height: 400px;
+    height: 350px;
     position: absolute;
     left: 28px;
     top: 110px;

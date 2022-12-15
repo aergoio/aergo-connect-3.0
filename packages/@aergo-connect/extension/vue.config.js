@@ -50,6 +50,14 @@ module.exports = {
       .loader('url-loader')
       .tap((options) => Object.assign(options, { limit: 1 }));
 
+    config.module
+      .rule('vue')
+      .use('vue-loader')
+      .tap((options) => {
+        options.compiler = require('vue-template-babel-compiler');
+        return options;
+      });
+
     // Add content-script entry
     config.entry('content-script').add('./src/content-script.js').end();
 

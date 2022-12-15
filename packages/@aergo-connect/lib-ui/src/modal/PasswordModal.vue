@@ -73,11 +73,11 @@ export default Vue.extend({
   height: 600px;
   left: 0px;
   top: 0px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   z-index: 2;
   .password_modal_wrapper {
     width: 317px;
-    height: 400px;
+    height: 370px;
     position: absolute;
     left: 28px;
     top: 110px;
@@ -140,6 +140,7 @@ export default Vue.extend({
 
     .button_wrapper {
       margin-top: 53px;
+      margin-left: 7px;
       .button {
         width: 280px;
       }

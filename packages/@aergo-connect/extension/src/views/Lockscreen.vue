@@ -20,6 +20,7 @@
         type="primary"
         size="medium"
         @keyup.enter="unlock"
+        hover
         >Unlock</Button
       >
       <!-- <div class="password-text-wrapper">
@@ -65,18 +66,19 @@ export default class Lockscreen extends mixins() {
 
   async unlock(): Promise<void> {
     try {
-
       await this.$background.unlock({ password: this.password });
-      let nextPath = this.$store.state.ui.route.currentPath;
+      let nextPage = this.$store.state.ui.currentPage;
 
-      console.log(nextPath, 'nextPath');
+      console.log('Saved nextPage', nextPage);
 
-//      if (this.$store.state.accounts.address)  await this.$store.dispatch('session/initState');
+      if (nextPage) {
+        if (this.$store.state.accounts.address) await this.$store.dispatch('session/initState');
+      } else {
+        nextPage = 'accounts-list';
+      }
 
-      if (!nextPath || nextPath === '/' || nextPath === '/locked') {
-        nextPath = { name: 'accounts-list', }; }
-
-      this.$router.push(nextPath).catch(() => {});
+      console.log('nextPage', nextPage);
+      this.$router.push({ name: nextPage }).catch(() => {});
     } catch (e) {
       this.errors.password = `${e}`;
     }

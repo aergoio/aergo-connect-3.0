@@ -28,8 +28,9 @@ export default Vue.extend({
 <style lang="scss">
 .button-group {
   display: flex;
-  justify-content: flex-start;
-
+  margin-top: 6px;
+  width: 328px;
+  justify-content: space-between;
   &.button-group-vertical {
     flex-direction: column;
     justify-content: center;
@@ -46,7 +47,7 @@ export default Vue.extend({
       flex: 1;
     }
     > * + * {
-      margin-left: 10px;
+      margin-left: 0px;
     }
   }
 }

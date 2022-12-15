@@ -1,5 +1,5 @@
 <template>
-  <div class="side-nav-backdrop" @click="(event) => handleListModalOff(event)">
+  <div class="side-nav-backdrop fade-in-left" @click="(event) => handleListModalOff(event)">
     <div class="side-nav-wrap">
       <section class="side-nav-accounts">
         <img class="side-nav-logo" src="@aergo-connect/lib-ui/src/icons/img/nav-logo.svg" />
@@ -42,7 +42,7 @@
           <SideNavButton img="security" title="Security" @click="handleSecurity" />
           <SideNavButton img="lock" title="Lock" @click="handleLock" />
         </div>
-        <div class="side-nav-version">
+        <div class="side-nav-version" @click="handleVersion">
           <span>Version</span>
           <span>3.0</span>
           <img src="@aergo-connect/lib-ui/src/icons/img/arrow-right.svg" />
@@ -116,6 +116,9 @@ export default Vue.extend({
     handleSecurity() {
       this.$emit('securityClick');
     },
+    handleVersion() {
+      this.$router.push({ name: 'version' }).catch(() => {});
+    },
   },
   mounted() {
     //    this.$store.dispatch('accounts/fetchAccounts');
@@ -124,6 +127,22 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+.fade-in-left {
+  display: inline-block;
+  padding: 10px;
+  animation: fadeInLeft 0.5s;
+}
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .side-nav-backdrop {
   position: absolute;
   bottom: 0;
@@ -133,6 +152,7 @@ export default Vue.extend({
   display: flex;
   justify-content: center;
   align-items: center;
+
   .side-nav-wrap {
     position: absolute;
     left: 0;
@@ -140,9 +160,9 @@ export default Vue.extend({
 
     height: 546px;
     box-sizing: border-box;
-    width: 270px;
+    width: 262px;
     background: #ffffff;
-    box-shadow: 3px 0px 18px rgb(0 0 0 / 15%);
+    /* box-shadow: 3px 0px 18px rgb(0 0 0 / 15%); */
     display: flex;
     flex-direction: column;
     justify-content: space-between;

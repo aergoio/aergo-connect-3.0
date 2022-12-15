@@ -5,30 +5,30 @@
       <span class="preheader">Please select the import format.</span>
       <p class="buttons">
         <Button
-          type="primary-outline"
+          type="font-gradation"
           size="large-outline"
-          hover
           :to="{ name: 'account-import-seedphrase' }"
+          hover
         >
-          Mnemonic Seedphrase
+          <span>Mnemonic Seedphrase</span>
         </Button>
 
         <Button
-          type="primary-outline"
+          type="font-gradation"
           size="large-outline"
-          hover
           :to="{ name: 'account-import-wif' }"
+          hover
         >
-          Encrypted Private Key
+          <span>Encrypted Private Key</span>
         </Button>
 
         <Button
-          type="primary-outline"
+          type="font-gradation"
           size="large-outline"
-          hover
           :to="{ name: 'account-import-keystore' }"
+          hover
         >
-          Keystore File
+          <span>Keystore File</span>
         </Button>
       </p>
       <p class="note">
@@ -91,6 +91,11 @@ export default class Import extends mixins() {}
     margin-bottom: 20px;
     button {
       margin-bottom: 40px;
+    }
+    .button:hover {
+      .button_text {
+        color: #ffffff;
+      }
     }
   }
 

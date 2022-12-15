@@ -1,12 +1,15 @@
 <template>
   <div class="header">
-    <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]" @click="goBack">
-      <Icon :name="`${button}`" :to="to" />
+    <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]">
+      <Button :to="to" @click="buttonClick">
+        <Icon :name="`${button}`" />
+      </Button>
     </div>
-    <h3>{{ title }}</h3>
+    <h3 v-if="title && !network">{{ title }}</h3>
+    <NetworkHeader v-if="network" @networkModalClick="networkModalClick" />
     <div class="header__button right" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
-      <Icon class="refresh" name="refresh" />
-      <a type="button" class="skip__btn">Skip</a>
+      <Icon class="refresh" name="refresh" @click="refreshClick" />
+      <a type="button" class="skip__btn" @click="skipClick">Skip</a>
     </div>
     <slot></slot>
   </div>
@@ -16,9 +19,10 @@
 import Vue, { PropType } from 'vue';
 import Icon from '../icons/Icon.vue';
 import { RawLocation } from 'vue-router';
-
+import Button from '../buttons/Button.vue';
+import NetworkHeader from '../layouts/NetworkHeader.vue';
 export default Vue.extend({
-  components: { Icon },
+  components: { Icon, Button, NetworkHeader },
 
   props: {
     button: {
@@ -44,19 +48,28 @@ export default Vue.extend({
     to: {
       type: [String, Object] as PropType<RawLocation>,
     },
+    network: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
-    goBack() {
-      if (typeof this.to !== 'undefined' && this.to && typeof this.$router !== 'undefined') {
-        this.$router.push({ name: this.to, params: this.$router.history.current.params });
-      } else {
-        console.log(this.$router);
-        console.log(this.$store.state.ui.route.previousPath);
-        this.$router.push({
-          path: this.$store.state.ui.route.previousPath,
-          params: this.$router.history.current.params,
-        });
+    buttonClick() {
+      if (this.button === 'hamburger') {
+        this.$emit('hamburgerClick');
       }
+      if (this.button === 'back') {
+        this.$emit('backClick');
+      }
+    },
+    networkModalClick() {
+      this.$emit('networkModalClick');
+    },
+    refreshClick() {
+      this.$emit('refreshClick');
+    },
+    skipClick() {
+      this.$emit('skipClick');
     },
   },
 });
@@ -70,11 +83,11 @@ export default Vue.extend({
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 50px;
+  height: 54px;
   background: #ffffff;
-  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
+  /* box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05); */
   position: relative;
-
+  z-index: 1;
   h3 {
     margin: 0;
     font-weight: 500;
@@ -86,7 +99,7 @@ export default Vue.extend({
 
   .header__button {
     width: 30px;
-    height: 30px;
+    /* height: 30px; */
     position: absolute;
     top: 50%;
     transform: translate(0%, -50%);
@@ -101,9 +114,11 @@ export default Vue.extend({
         visibility: hidden;
       }
     }
-
+    .icon--back {
+      line-height: 0;
+    }
     &.right {
-      top: 60%;
+      /* top: 60%; */
       right: 20px;
       display: none;
 

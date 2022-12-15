@@ -1,8 +1,8 @@
 {
   "name": "@aergo-connect/extension",
-  "version": "2.2.0",
-  "version_name": "2.2.0",
-  "title": "Aergo Connect",
+  "version": "3.0.0",
+  "version_name": "3.0.0",
+  "title": "Aergo Connect 3.0",
   "description": "Wallet for Aergo Mainnet, Testnet, and private networks",
   "author": "Aergo team and contributors",
   "license": "MIT",
@@ -19,7 +19,8 @@
     "build-dev": "vue-cli-service build --dest dist-dev --mode development --watch --no-clean",
     "build": "vue-cli-service build --dest dist",
     "package": "mkdir -p release && cd dist && zip -r ../release/aergo-connect_${npm_package_version}.zip *",
-    "lint": "vue-cli-service lint eslint --ext .js,.vue src"
+    "lint": "vue-cli-service lint eslint --ext .js,.vue src",
+    "devtools": "vue-devtools"
   },
   "dependencies": {
     "@aergo-connect/lib-ui": "*",
@@ -33,12 +34,15 @@
     "end-of-stream": "^1.4.4",
     "extension-port-stream": "^1.0.0",
     "extensionizer": "^1.0.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "pump": "^3.0.0",
-    "timed-async": "^0.3.1",
+    "timed-async": "^1.1.0",
+    "vue-click-outside": "^1.1.0",
     "vuex-persist": "^2.2.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
+    "@babel/plugin-proposal-optional-chaining": "^7.18.9",
     "@types/ledgerhq__hw-transport-webusb": "4.70.0",
     "@types/lodash": "^4.14.149",
     "@vue/cli-plugin-babel": "*",
@@ -53,6 +57,7 @@
     "extricate-loader": "^3.0.0",
     "interpolate-loader": "^2.0.1",
     "prop-loader": "^1.0.0",
+    "vue-template-babel-compiler": "^2.0.0",
     "webpack-chrome-extension-reloader": "^1.3.0"
   }
 }

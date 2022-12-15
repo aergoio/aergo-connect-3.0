@@ -114,7 +114,6 @@ export class Api {
 
   async getAccounts() {
     const accounts = await this.controller.wallet.accountManager.getAccounts();
-    console.log(accounts);
     for (const account of accounts) {
       this.controller.trackAccount(account);
     }
@@ -194,7 +193,6 @@ export class Api {
       accountData.spec,
       accountData,
     );
-    console.log('addAccount', account);
     this.controller.trackAccount(account);
     return account.data.spec;
   }
@@ -387,22 +385,6 @@ export class Api {
     return tokenPriceCache[currency];
   }
 
-  // 시연용
-  async getAccountBalance(accountSpec: AccountSpec) {
-    const baseUrl = 'http://192.168.1.247:3000/testnet';
-    const address = new Address(accountSpec.address);
-    const q = encodeURIComponent(`${address}`);
-    const url = `${baseUrl}/accountBalance?q=${q}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data;
-    } catch (e) {
-      console.log(`[track accountBalance] Failed: ${e}`);
-      return {};
-    }
-  }
-
   async getTokenTransfers(accountSpec: AccountSpec, contractAddress: string) {
     const baseUrl = 'http://192.168.1.247:3000/testnet';
     const address = new Address(accountSpec.address);
@@ -457,7 +439,7 @@ type DnodeFunction = (...args: any[]) => void;
  * Wraps API call to use with Dnode
  */
 function wrapApiCall<Ret>(fn: ApiFunction<Ret>): DnodeFunction {
-  return async function(...args: any[]) {
+  return async function (...args: any[]) {
     const send = args.pop() as (val: Ret | { error: any }) => void;
     try {
       const result = await fn(...args);
@@ -477,7 +459,7 @@ function wrapApiCall<Ret>(fn: ApiFunction<Ret>): DnodeFunction {
 const getWrapped = (instance: Api): Record<ApiMethodNames, DnodeFunction> => {
   const keys = Object.getOwnPropertyNames(Object.getPrototypeOf(instance)) as ApiMethodNames[];
   return keys.reduce((classAsObj, key) => {
-    classAsObj[key] = wrapApiCall(((instance[key] as unknown) as ApiFunction<any>).bind(instance));
+    classAsObj[key] = wrapApiCall((instance[key] as unknown as ApiFunction<any>).bind(instance));
     return classAsObj;
   }, {} as Record<ApiMethodNames, DnodeFunction>);
 };

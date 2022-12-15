@@ -1,6 +1,6 @@
-import 'regenerator-runtime/runtime';
-
 require('../manifest.json');
+
+import 'regenerator-runtime/runtime';
 
 import extension from 'extensionizer';
 import endOfStream from 'end-of-stream';
@@ -26,6 +26,7 @@ async function setupController() {
       controller.state.set('active');
       controller.setupCommunication(portStream);
       controller.uiState.popupOpen = true;
+      console.log(remotePort, 'port');
       endOfStream(portStream, () => {
         controller.uiState.popupOpen = false;
         console.log('Closed connection with', processName);
@@ -33,11 +34,12 @@ async function setupController() {
       });
     }
   }
-  extension.runtime.onConnect.addListener(connectRemote);
 
+  extension.runtime.onConnect.addListener(connectRemote);
   // Setup idle detection
-  // extension.idle.setDetectionInterval(15);
-  extension.idle.onStateChanged.addListener(newState => {
+  extension.idle.setDetectionInterval(60);
+
+  extension.idle.onStateChanged.addListener((newState) => {
     console.log('idle onStateChanged : ' + newState);
     if (newState === 'idle' || newState === 'locked') {
       controller.lock();
@@ -57,17 +59,17 @@ if (!extension.runtime.id) {
   extension.contextMenus.create({
     title: 'Open full page',
     contexts: ['browser_action'],
-    onclick: function() {
+    onclick: function () {
       extension.tabs.create({ url: 'index.html' });
     },
   });
-  extension.contextMenus.create({
-    title: 'Settings',
-    contexts: ['browser_action'],
-    onclick: function() {
-      extension.tabs.create({ url: 'index.html#/settings' });
-    },
-  });
+  // extension.contextMenus.create({
+  //   title: 'Settings',
+  //   contexts: ['browser_action'],
+  //   onclick: function () {
+  //     extension.tabs.create({ url: 'index.html#/settings' });
+  //   },
+  // });
 
   // In dev, open a new tab for easier debugging
   if (process.env.NODE_ENV === 'development') {

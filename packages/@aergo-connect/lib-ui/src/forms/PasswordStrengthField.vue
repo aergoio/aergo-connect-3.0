@@ -1,7 +1,8 @@
 <template>
   <div>
-    <span class="input-label" v-if="label">{{ label }}</span>
+    <span class="field-title" v-if="label">{{ label }}</span>
     <TextField
+      class="simple-center"
       :type="revealPassword ? 'text' : 'password'"
       :variant="variant"
       :value="value"
@@ -24,13 +25,15 @@
         />
       </div>
     </TextField>
-    <div class="password-strength" v-if="setting">
-      <span class="input-error-text password-weak" v-if="value && passwordStrength.score < 3"
-        >Strength : Weak
+    <div v-if="setting" class="password-strength">
+      <span class="input-error-text password-weak" v-if="value && passwordStrength.score < 3">
+        Strength: Week
       </span>
-      <span class="input-error-text password-good" v-if="value && passwordStrength.score >= 3"
-        >Strength : Good
+      <span class="input-error-text password-good" v-else-if="value && passwordStrength.score >= 3"> 
+        Strength: Good
       </span>
+      <span v-else class="input-error-text password-good"> </span>
+    </div>
     </div>
   </div>
 </template>
@@ -50,6 +53,7 @@ export default Vue.extend({
   props: {
     value: String,
     label: String,
+    initPassword: String,
     variant: {
       type: String as PropType<InputVariant>,
       default: InputVariants[0],
@@ -102,7 +106,8 @@ export default Vue.extend({
 
 <style lang="scss">
 .password-strength {
-  margin-top: 10px;
+  margin-top: 0px;
+  margin-left: 28px;
 }
 .password-advice {
   color: #666;

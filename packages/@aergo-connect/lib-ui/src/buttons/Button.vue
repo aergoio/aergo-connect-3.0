@@ -3,12 +3,13 @@
     class="button"
     :class="classes"
     :disabled="disabled"
-    @click="handleClick"
     :hover="hover"
     :size="size"
+    @click="handleClick"
+    @keyup.enter="handleClick"
   >
     <template v-if="loading">
-      <LoadingIndicator class="button-loading-indicator" />
+      <LoadingIndicator />
     </template>
     <template v-else>
       <slot></slot>
@@ -81,7 +82,8 @@ export default Vue.extend({
   methods: {
     handleClick() {
       if (typeof this.to !== 'undefined' && this.to && typeof this.$router !== 'undefined') {
-        this.$router.push(this.to);
+        console.log(this.to, 'this.to');
+        this.$router.push(this.to).catch(() => {});
       } else {
         this.$emit('click');
       }
@@ -99,9 +101,9 @@ export default Vue.extend({
   font-size: (17/16) * 1em;
   /* Sizing */
   box-sizing: border-box;
-  min-height: 48px;
+  min-height: 30px;
   line-height: 3em;
-  padding: 0.5em 2.5em;
+  //  padding: 0.5em 2.5em;
   height: 48px;
   /* Borders and background */
   outline: none;
@@ -128,17 +130,28 @@ export default Vue.extend({
     opacity: 0.75;
   }
   &.button-size-small {
-    width: 157px;
+    width: 140px;
   }
   &.button-size-medium {
     width: 289px;
+    height: 44px;
+  }
+  &.button-size-medium-outline {
+    width: 285px;
+    height: 40px;
   }
   &.button-size-large {
     width: 327px;
+    height: 48px;
+  }
+  &.button-size-large-outline {
+    width: 323px;
+    height: 44px;
   }
   &.button-type-primary {
     background-color: $Blue01;
     color: #fff;
+
     &[disabled] {
       background: $Grey04;
       opacity: 0.3;
@@ -149,13 +162,27 @@ export default Vue.extend({
   }
   &.button-type-primary-outline {
     color: $Blue01;
-    outline: 2px solid $Blue01;
-    height: 46px;
+    /* outline: 2px solid $Blue01; */
+    border: 2px solid $Blue01;
+    &.hover:hover {
+      border: 2px solid transparent;
+      border-radius: 4px;
+      border-image: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+      border-image-slice: 1;
+      span {
+        background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
   }
   &.button-type-secondary {
     background-color: $Pink01;
     color: #fff;
     box-shadow: none;
+    &.hover:hover {
+      background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+    }
   }
   &.button-type-gradation {
     background: $gradation01;
@@ -166,12 +193,20 @@ export default Vue.extend({
     background: $white;
     color: $gradation04;
     box-shadow: none;
-    background-color: $Pink01;
   }
   &.button-type-secondary-outline {
     color: $Pink01;
-    outline: 2px solid $Pink01;
-    height: 46px;
+    border: 2px solid $Pink01;
+    &.hover:hover {
+      border: 2px solid transparent;
+      border-radius: 4px;
+      border-image: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+      border-image-slice: 1;
+      background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
   }
   &.button-type-gradation {
     background: $gradation04;
@@ -179,10 +214,29 @@ export default Vue.extend({
   }
   &.button-type-font-gradation {
     background: $gradation04;
-    border: 1px solid #ecf8fd;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    /* background: #ffffff; */
+    /* Primary/Blue03 */
+
+    border: 1px solid #ecf8fd;
+    /* shadow/02 */
+
+    box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
+    border-radius: 4px;
+    &.hover:hover {
+      background: $gradation04;
+    }
+    &.hover:hover span {
+      color: #fff;
+      -webkit-text-fill-color: #fff;
+    }
+    &.hover:hover path {
+      color: #fff;
+      fill: #fff;
+      -webkit-text-fill-color: #fff;
+    }
   }
   &.button-type-icon,
   &.button-type-primary-icon {

@@ -14,6 +14,7 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    camelcase: 0,
     'prettier/prettier': [
       'error',
       {
@@ -31,5 +32,18 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
+    'vue/no-unused-components': [
+      'error',
+      {
+        ignoreWhenBindingPresent: true,
+      },
+    ],
+    'vue/no-reserved-component-names': [
+      'error',
+      {
+        disallowVueBuiltInComponents: false,
+        disallowVue3BuiltInComponents: false,
+      },
+    ],
   },
 };

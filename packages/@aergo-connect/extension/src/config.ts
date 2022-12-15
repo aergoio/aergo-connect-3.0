@@ -7,29 +7,21 @@ export interface ChainConfig {
 
 export const ChainConfigs: ChainConfig[] = [
   {
-    chainId: 'testnet.aergo.io',
+    chainId: 'testnet',
     nodeUrl: 'https://testnet-api-http.aergo.io',
   },
   {
-    chainId: 'main.aergo.io',
+    chainId: 'mainnet',
     nodeUrl: 'https://mainnet-api-http.aergo.io',
   },
   {
-    chainId: 'aergo.io',
-    nodeUrl: 'https://mainnet-api-http.aergo.io',
-  },
-  {
-    chainId: 'sqltestnet.aergo.io',
-    nodeUrl: 'https://sqltestnet-api-http.aergo.io',
-  },
-  {
-    chainId: 'dev.chain',
-    nodeUrl: 'http://127.0.0.1:7845',
+    chainId: 'alpha',
+    nodeUrl: 'https://alpha-api-http.aergo.io',
   },
 ];
 
-export const PublicChainIds = tuple('aergo.io', 'testnet.aergo.io');
-type PublicChainId = typeof PublicChainIds[number];
+export const PublicChainIds = tuple('mainnet', 'testnet', 'alpha');
+export type PublicChainId = typeof PublicChainIds[number];
 
 export function isPublicChainId(chainId: string): chainId is PublicChainId {
   return PublicChainIds.indexOf(chainId as any) !== -1;
@@ -37,17 +29,25 @@ export function isPublicChainId(chainId: string): chainId is PublicChainId {
 
 export const PublicChainData: Record<
   PublicChainId,
-  { label: string; apiUrl: string; explorerUrl: string }
+  { label: string; apiUrl: string; explorerUrl: string; nodeUrl: string }
 > = {
-  'aergo.io': {
+  mainnet: {
     label: 'Mainnet',
     apiUrl: 'https://api.aergoscan.io/main',
     explorerUrl: 'https://mainnet.aergoscan.io',
+    nodeUrl: 'https://mainnet-api-http.aergo.io',
   },
-  'testnet.aergo.io': {
+  testnet: {
     label: 'Testnet',
     apiUrl: 'https://api.aergoscan.io/testnet',
     explorerUrl: 'https://testnet.aergoscan.io',
+    nodeUrl: 'https://testnet-api-http.aergo.io',
+  },
+  alpha: {
+    label: 'Alpha',
+    apiUrl: 'https://api.aergoscan.io/alpha',
+    explorerUrl: 'https://alpha.aergoscan.io',
+    nodeUrl: 'https://alpha-api-http.aergo.io',
   },
 };
 

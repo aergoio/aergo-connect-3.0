@@ -2,6 +2,7 @@ import { Module } from 'vuex';
 import { Route } from 'vue-router';
 import { RootState } from './index';
 import { Json } from '../types';
+import { Tx } from '@herajs/client';
 
 interface InputData {
   // Values get persisted into localstorage, so only use json-compatible types
@@ -15,49 +16,53 @@ const defaultSettings = {
 };
 
 export interface UiState {
-  route: {
-    currentPath: string;
-    previousPath: string;
-  };
   input: {
     [form: string]: InputData;
     settings: typeof defaultSettings;
   };
-  unlocked: boolean;
+  txTypes: any;
+  initSetupKey: string;
   idleTimeout: number;
+  unlocked: boolean;
+  currentPage: string;
+  previousPage: string;
+  dropdownClickNum: number;
 }
 
 const storeModule: Module<UiState, RootState> = {
   namespaced: true,
   state: {
-    route: {
-      currentPath: '',
-      previousPath: '',
-    },
     input: {
       settings: defaultSettings,
     },
+    txTypes: ['TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE', 'DEPLOY', 'REDEPLOY'],
+    initSetupKey: '',
+    idleTimeout: 60,
     unlocked: false,
-    idleTimeout: 1000000,
   },
   getters: {
-    getSetting: state => (keyPath: string): Json => {
-      function getKey<T extends {}>(obj: T, keyPath: string): Json {
-        const [key, rest] = keyPath.split('.', 2);
-        if (!rest) {
-          return (obj[key as keyof T] as unknown) as Json;
+    getSetting:
+      (state) =>
+      (keyPath: string): Json => {
+        function getKey<T extends {}>(obj: T, keyPath: string): Json {
+          const [key, rest] = keyPath.split('.', 2);
+          if (!rest) {
+            return obj[key as keyof T] as unknown as Json;
+          }
+          return getKey(obj[key as keyof T], rest);
         }
-        return getKey(obj[key as keyof T], rest);
-      }
-      return getKey(state.input.settings, keyPath);
-    },
+        return getKey(state.input.settings, keyPath);
+      },
   },
   mutations: {
-    setCurrentRoute(state, route: Route) {
-      if (route.fullPath === state.route.currentPath) return;
-      state.route.previousPath = state.route.currentPath;
-      state.route.currentPath = route.fullPath;
+    setUnlocked(state, unlocked) {
+      state.unlocked = unlocked;
     },
+
+    setIdleTimeout(state, time) {
+      state.idleTimeout = time;
+    },
+
     setInput(state, { key, field, value }: { key: string; field: string; value: Json }) {
       if (typeof state.input[key] === 'undefined') {
         state.input[key] = {};
@@ -70,11 +75,17 @@ const storeModule: Module<UiState, RootState> = {
     clearInput(state, { key }) {
       state.input[key] = {};
     },
-    setUnlocked(state, unlocked) {
-      state.unlocked = unlocked;
+    setInitSetupKey(state, initSetupKey) {
+      state.initSetupKey = initSetupKey;
     },
-    setIdleTimeout(state, time) {
-      state.idleTimeout = time;
+    setCurrentPage(state, page: string) {
+      state.currentPage = page;
+    },
+    setPreviousPage(state, page: string) {
+      state.previousPage = page;
+    },
+    setDropdownClickNum(state, num: number) {
+      state.dropdownClickNum = num;
     },
   },
   actions: {

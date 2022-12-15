@@ -4,7 +4,7 @@
       <div class="modal-dialog">
         <Heading tag="h2" class="modal-title" v-if="title">
           {{ title }}
-          <Button @click="$emit('close')" type="icon"><Icon name="close" :size="24"/></Button>
+          <Button @click="$emit('close')" type="icon"><Icon :name="`close`" :size="24"/></Button>
         </Heading>
         <slot></slot>
       </div>

@@ -47,7 +47,7 @@ export default Vue.extend({
       console.log('file up');
       if (!$elem || !$elem.files || $elem.files.length === 0) return;
       const reader = new FileReader();
-      reader.onload = e => {
+      reader.onload = (e) => {
         if (e.target) {
           this.$emit('file', e.target.result);
         }
@@ -73,6 +73,8 @@ export default Vue.extend({
   background-clip: content-box, border-box;
   border-radius: 4px;
   transition: box-shadow 0.1s;
+  margin-top: 10px;
+  margin-bottom: 20px;
 
   .file__upload__input {
     width: 100%;

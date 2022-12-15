@@ -1,18 +1,15 @@
 <template>
-  <div class="icon" :class="[`icon--${name}`]" :style="{ width: size + 'px' }">
-    <component :is="`icon-${name}`" :width="`${size}px`" />
+  <div class="icon" :class="[`icon--${name}`]" @click="handleClick">
+    <component :is="`icon-${name}`" />
     <div v-if="badge" class="badge">{{ badgeText }}</div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue, { PropType, FunctionalComponentOptions } from "vue";
-import { IconName } from "./types";
+import Vue, { PropType, FunctionalComponentOptions } from 'vue';
+import { IconName } from './types';
 
-function namedRequireAll(
-  context: __WebpackModuleApi.RequireContext,
-  namePrefix = ""
-) {
+function namedRequireAll(context: __WebpackModuleApi.RequireContext, namePrefix = '') {
   const icons = {} as Record<string, FunctionalComponentOptions>;
   context.keys().forEach((key) => {
     const matched = key.match(/\/(.*?)\./i);
@@ -25,19 +22,14 @@ function namedRequireAll(
 }
 
 // Load all svg icons at compile time
-const iconsContext = require.context(
-  "!!babel-loader!vue-svg-loader!./img",
-  true,
-  /\.svg$/i
-);
-const icons = namedRequireAll(iconsContext, "icon-");
+const iconsContext = require.context('!!babel-loader!vue-svg-loader!./img', true, /\.svg$/i);
+const icons = namedRequireAll(iconsContext, 'icon-');
 
 export default Vue.extend({
-  name: "Icon",
+  name: 'Icon',
   props: {
     name: {
       type: String as PropType<IconName>,
-      required: true,
     },
     size: {
       type: Number,
@@ -49,6 +41,11 @@ export default Vue.extend({
   components: {
     ...icons,
   },
+  methods: {
+    handleClick() {
+      this.$emit('click');
+    },
+  },
 });
 </script>
 
@@ -59,14 +56,14 @@ export default Vue.extend({
   // position: relative;
   // display: inline-block;
   /* cursor: pointer; */
-
-  svg {
+  &.icon--back {
+    line-height: 0;
+  }
+  .svg {
     position: relative;
-    // left: 10px;
     display: inline-block;
     vertical-align: middle;
   }
-
   .badge {
     position: absolute;
     background: #ff337f;

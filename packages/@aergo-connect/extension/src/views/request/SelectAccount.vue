@@ -1,7 +1,5 @@
 <template>
-  <div class="content">
-    Redirecting...
-  </div>
+  <div class="content">Redirecting...</div>
 </template>
 
 <script lang="ts">
@@ -13,12 +11,22 @@ export default class RequestSelectAccount extends Vue {
   mounted() {
     this.redirectToRequest();
   }
+
   async redirectToRequest() {
     const activeAccount = await this.$background.getActiveAccount();
     if (!activeAccount) {
-      return this.$router.push({ name: 'request-accounts-list' });
+      return this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
     }
-    this.$router.push({ name: 'request-select-action', params: activeAccount.data.spec });
+
+    this.$router
+      .push({
+        name: 'request-select-action',
+        params: {
+          chainId: this.$store.state.accounts.network,
+          address: activeAccount.data.spec.address,
+        },
+      })
+      .catch(() => {});
   }
 }
 </script>

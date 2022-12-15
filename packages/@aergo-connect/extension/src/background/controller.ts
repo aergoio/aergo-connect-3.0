@@ -57,6 +57,7 @@ class BackgroundController extends EventEmitter {
       // Load custom defined chains
       try {
         const customChains = await this.wallet.datastore.getIndex('settings').get('customChains');
+        console.log(this.wallet.datastore);
         if (customChains && customChains.data) {
           for (const chainId of Object.keys(customChains.data)) {
             // @ts-ignore
@@ -83,7 +84,7 @@ class BackgroundController extends EventEmitter {
       console.log('[lock] unlocked');
     });
 
-    this.wallet.accountManager.on('remove', accountSpec => {
+    this.wallet.accountManager.on('remove', (accountSpec) => {
       this.emit('update', { accountsRemoved: [accountSpec] });
     });
 
@@ -148,9 +149,9 @@ class BackgroundController extends EventEmitter {
   trackAccount(account: Account, onceCb?: (account: Account) => void) {
     const accountTracker = this.wallet.accountManager.trackAccount(account);
     this.wallet.transactionManager.trackAccount(account);
-    accountTracker.then(t => {
+    accountTracker.then((t) => {
       t.removeAllListeners('update');
-      t.on('update', account => {
+      t.on('update', (account) => {
         this.emit('update', { accounts: [account] });
         if (onceCb) {
           onceCb(account);
@@ -158,7 +159,7 @@ class BackgroundController extends EventEmitter {
         }
       });
       // Force an initial load and update with data
-      t.load().then(account => {
+      t.load().then((account) => {
         this.emit('update', { accounts: [account] });
       });
     });
@@ -227,7 +228,7 @@ class BackgroundController extends EventEmitter {
     }
     const txTracker = await this.wallet.sendTransaction(accountSpec, tx);
     console.log(txTracker, txTracker.transaction.txBody);
-    txTracker.getReceipt().then(receipt => {
+    txTracker.getReceipt().then((receipt) => {
       if (receipt.status === 'SUCCESS') {
         this.handleConfirmedTx(txTracker.transaction);
       }

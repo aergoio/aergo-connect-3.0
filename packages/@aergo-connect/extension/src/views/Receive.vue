@@ -42,12 +42,13 @@
       </div>
 
       <div class="token_content_wrapper">
-        <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
-        <Icon v-else-if="!icon" class="token_icon" :name="`defaultToken`" />
-        <!-- <Identicon v-else-if="!icon" :text="asset" class="token_icon" /> -->
-        <img v-else class="token_icon" :src="icon" />
         <div class="amount_wrapper">
-          <div class="token_amount">{{ balance ? formatBalance(balance) : 0 }}</div>
+          <div class="icon_wrapper">
+            <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
+            <Icon v-else-if="!icon" class="token_icon" :name="`defaultToken`" />
+            <img v-else class="token_icon" :src="icon" />
+            <div class="token_amount">{{ balance ? formatBalance(balance) : 0 }}</div>
+          </div>
           <div class="token_symbol">{{ symbol }}</div>
         </div>
       </div>
@@ -96,7 +97,7 @@
             >
               <li
                 class="list"
-                v-for="token in $store.state.session.tokens"
+                v-for="token in arc1Tokens"
                 :key="token.meta.hash"
                 @click="selectAssetFunc(token.hash)"
               >
@@ -162,12 +163,15 @@ export default Vue.extend({
       inputAmount: '',
       decimal: '',
       token: {},
+      arc1Tokens: [],
     };
   },
 
   async beforeMount() {
     this.token = await this.$store.state.session.tokens[this.$store.state.session.token];
-
+    this.arc1Tokens = Object.values(this.$store.state.session.tokens).filter(
+      (token) => token.meta.type === 'ARC1' || token.meta.type === 'AERGO',
+    );
     if (this.$store.state.session.token) this.asset = this.$store.state.session.token;
     else this.asset = 'AERGO';
   },
@@ -231,7 +235,7 @@ export default Vue.extend({
       this.selectAsset = false;
     },
     assetListStyle() {
-      switch (Object.keys(this.$store.state.session.tokens).length) {
+      switch (this.arc1Tokens.length) {
         case 1:
           return '43px';
         case 2:
@@ -243,7 +247,7 @@ export default Vue.extend({
       }
     },
     assetListScrollStyle() {
-      switch (Object.keys(this.$store.state.session.tokens).length) {
+      switch (this.arc1Tokens.length) {
         case 4:
           return 'scroll';
         default:

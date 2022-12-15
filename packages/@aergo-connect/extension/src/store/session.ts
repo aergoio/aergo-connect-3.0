@@ -14,8 +14,6 @@ interface NftSessionType extends NftTokenType {
 export interface SessionState {
   tokens: Record<string, any>;
   token: string;
-  currentPage: string;
-  previousPage: string;
   option: string;
 }
 
@@ -95,7 +93,7 @@ const storeModule: Module<SessionState, RootState> = {
     setTokenBalance(state, balances: any) {
       // others
       Object.keys(state.tokens).forEach((hash) => {
-        const bal = balances.others.find((element) => element.meta.address == hash);
+        const bal = balances.others.find((element: any) => element.meta.address == hash);
         if (bal) {
           if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance;
           else

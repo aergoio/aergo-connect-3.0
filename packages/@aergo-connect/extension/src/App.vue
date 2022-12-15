@@ -27,23 +27,23 @@ export default Vue.extend({
   async mounted() {
     const isSetup = await this.$background.isSetup();
     const unlocked = await this.$background.isUnlocked();
-    console.log(this.$store.state.ui.currentPage, 'currentPage');
-    console.log(this.$store.state.ui.previousPage, 'previousPage');
+    // console.log(this.$store.state.ui.currentPage, 'currentPage');
+    // console.log(this.$store.state.ui.previousPage, 'previousPage');
     if (!isSetup) {
       this.$router.push({ name: 'welcome' }).catch(() => {});
     } else if (!unlocked) {
       // Upon App launch, get initial state for 'unlocked'
       this.$router.push({ name: 'lockscreen' }).catch(() => {});
     }
-
     this.$store.commit('ui/setUnlocked', unlocked);
-    console.log('unlock', unlocked);
+    extension.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
+
+    // console.log('unlock', unlocked);
 
     //const getAccounts = await this.$background.getAccounts();
 
-    console.log('idleTimeout:' + this.$store.state.ui.idleTimeout);
-    extension.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
-
+    // console.log('idleTimeout:' + this.$store.state.ui.idleTimeout);
+    // console.log(this.$router.currentRoute, 'currentRoute!!!');
     /*
     extension.idle.onStateChanged.addListener(function(newState: IdleState) {
       console.log(newState, "State") ;
@@ -56,9 +56,9 @@ export default Vue.extend({
 
     //  extension.idle.onStateChanged.addListener(this.$background.lock());
 
-    //    const peformAuthCheck = !(
-    //      this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck
-    //    );
+    // const peformAuthCheck = !(
+    //   this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck
+    // );
 
     //    if (!unlocked && peformAuthCheck && isSetup) {
     //      this.$router.push({ name: 'lockscreen' }).catch(() => {});

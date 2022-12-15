@@ -22,9 +22,10 @@ export const allowedToExitLockscreen: NavigationGuard = (to, from, next) => {
  */
 export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
   console.log(to.fullPath, 'toFull');
-  const isStartTransition = from.fullPath === '/' && from.name === null && to.name === 'home';
+  const isStartTransition =
+    from.fullPath === '/' && from.name === null && to.name === 'accounts-list';
   if (isStartTransition) {
-    const persistedPath = store.state.ui.currentPage;
+    const persistedPath = store.state.ui.route.currentPath;
     const exclude = ['', '/', '/welcome', to.fullPath];
     if (persistedPath && exclude.indexOf(persistedPath) === -1) {
       return next(persistedPath);
@@ -38,8 +39,9 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
  */
 export const persistRoute: NavigationGuard = (to, _from, next) => {
   if (!((to.meta && to.meta.noTracking === true) || to.fullPath.match(/request/))) {
-    store.commit('ui/setCurrentPage', to.name);
-    if (_from.name != 'lockscreen') store.commit('ui/setPreviousPage', _from.name);
+    store.commit('ui/setCurrentRoute', to);
+    // store.commit('ui/setCurrentPage', to.name);
+    // if (_from.name != 'lockscreen') store.commit('ui/setPreviousPage', _from.name);
   }
   return next();
 };

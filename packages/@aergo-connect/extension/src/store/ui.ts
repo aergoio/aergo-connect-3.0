@@ -24,8 +24,10 @@ export interface UiState {
   initSetupKey: string;
   idleTimeout: number;
   unlocked: boolean;
-  currentPage: string;
-  previousPage: string;
+  route: {
+    currentPath: string;
+    previousPath: string;
+  };
   dropdownClickNum: number;
 }
 
@@ -39,6 +41,11 @@ const storeModule: Module<UiState, RootState> = {
     initSetupKey: '',
     idleTimeout: 60,
     unlocked: false,
+    route: {
+      currentPath: '',
+      previousPath: '',
+    },
+    dropdownClickNum: 0,
   },
   getters: {
     getSetting:
@@ -79,10 +86,15 @@ const storeModule: Module<UiState, RootState> = {
       state.initSetupKey = initSetupKey;
     },
     setCurrentPage(state, page: string) {
-      state.currentPage = page;
+      state.route.currentPath = page;
     },
     setPreviousPage(state, page: string) {
-      state.previousPage = page;
+      state.route.previousPath = page;
+    },
+    setCurrentRoute(state, route: Route) {
+      if (route.fullPath === state.route.currentPath) return;
+      state.route.previousPath = state.route.currentPath;
+      state.route.currentPath = route.fullPath;
     },
     setDropdownClickNum(state, num: number) {
       state.dropdownClickNum = num;

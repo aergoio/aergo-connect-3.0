@@ -66,7 +66,7 @@ const routes: RouteConfig[] = [
     path: '/accounts',
     component: AccountsContainer,
     children: [
-      { path: '', redirect: '/home' },
+      { path: '/', redirect: '/home' },
       withMeta(
         1,
         { path: '/locked', name: 'lockscreen', component: Lockscreen },

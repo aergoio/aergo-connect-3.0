@@ -11,7 +11,7 @@
           <div class="flex-row network">
             <div class="detail network">
               <div :class="`circle ${$store.state.accounts.network}`" />
-              {{ $store.state.accounts.network.toUpperCase() }}
+              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
           </div>
         </div>
@@ -176,6 +176,15 @@ export default Vue.extend({
           border-radius: 50%;
           background: #e4097d;
           margin-right: 4px;
+          &.mainnet {
+            background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+          }
+          &.testnet {
+            background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+          }
+          &.alpha {
+            background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+          }
         }
         .title {
           &.balance {
@@ -213,15 +222,6 @@ export default Vue.extend({
             align-items: center;
             justify-content: flex-end;
             width: 175px;
-            &.mainnet {
-              background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
-            }
-            &.testnet {
-              background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
-            }
-            &.alpha {
-              background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
-            }
           }
           &.address {
             text-decoration: underline;

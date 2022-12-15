@@ -10,7 +10,7 @@
           <div class="title">Network</div>
           <div class="flex-row network">
             <div class="detail network">
-              <div class="circle" />
+              <div :class="`circle ${$store.state.accounts.network}`" />
               {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
           </div>
@@ -168,8 +168,16 @@ export default Vue.extend({
           width: 4px;
           height: 4px;
           border-radius: 50%;
-          background: #e4097d;
           margin-right: 4px;
+          &.mainnet {
+            background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+          }
+          &.testnet {
+            background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+          }
+          &.alpha {
+            background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+          }
         }
         .title {
           &.gas {

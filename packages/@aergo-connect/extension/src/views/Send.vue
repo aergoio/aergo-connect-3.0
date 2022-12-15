@@ -106,10 +106,7 @@
         <!-- <span class="token_amount">{{ nftInventory.length }}</span> -->
         <!-- <span class="token_symbol"> EA </span> -->
       </div>
-      <div
-        v-if="!isLoading"
-        :class="[tokenType === 'ARC2' ? `send_form_wrapper nft` : `send_form_wrapper`]"
-      >
+      <div :class="[tokenType === 'ARC2' ? `send_form_wrapper nft` : `send_form_wrapper`]">
         <div class="flex-row">
           <div class="title">Asset</div>
 
@@ -214,7 +211,7 @@
     </LoadingDialog>
     <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
     <Notification v-if="notification" :title="notificationText" :icon="`warning2`" :size="300" />
-    <template v-if="!isLoading" #footer>
+    <template #footer>
       <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
         Show optional fields
       </div>
@@ -494,7 +491,6 @@ export default Vue.extend({
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         this.txHash = hash;
         this.setStatus('success', 'Done');
-        this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
@@ -515,6 +511,7 @@ export default Vue.extend({
         this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
         if (result.status === 'SUCCESS') {
           console.log(result, 'result in success');
+          this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
           this.sendFinishModal = true;
           console.error(`[${result.status}]: ${result.result}`);
         } else if (result.status === 'ERROR') {
@@ -522,6 +519,8 @@ export default Vue.extend({
           this.notification = true;
           this.notificationText = `Transaction Sent Failed!${result.result.split(':')[3]}`;
           console.error(`[${result.status}]: ${result.result}`);
+          this.isLoading = false;
+          return;
         }
       }
       // console.log('receipt', this.txReceipt);
@@ -757,35 +756,6 @@ export default Vue.extend({
     /* 05 */
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    &.nft {
-      margin-top: 10px;
-      height: 115px;
-      justify-content: center;
-      box-shadow: none;
-      border: none;
-    }
-    .frame {
-      width: 150px;
-      height: 100%;
-      border: solid 0.01em #d0d0d0;
-      border-radius: 4px;
-      background: #f6f6f6;
-      box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
-      -webkit-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
-      -moz-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
-      .nft_img_wrapper {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        .img {
-          width: -webkit-fill-available;
-          height: 100%;
-        }
-      }
-    }
-
     .amount_wrapper {
       width: 300px;
       margin-left: 10px;
@@ -831,6 +801,34 @@ export default Vue.extend({
       letter-spacing: -0.333333px;
       /* Grey/08 */
       color: #231f20;
+    }
+    &.nft {
+      margin-top: 10px;
+      height: 115px;
+      justify-content: center;
+      box-shadow: none;
+      border: none;
+    }
+    .frame {
+      width: 150px;
+      height: 100%;
+      border: solid 0.01em #d0d0d0;
+      border-radius: 4px;
+      background: #f6f6f6;
+      box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+      -webkit-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+      -moz-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
+      .nft_img_wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .img {
+          width: -webkit-fill-available;
+          height: 100%;
+        }
+      }
     }
   }
   .send_form_wrapper {

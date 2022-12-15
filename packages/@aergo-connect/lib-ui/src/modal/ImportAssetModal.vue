@@ -151,7 +151,20 @@ export default Vue.extend({
         .network_state_wrapper {
           @include flex__row__center;
           .network_state {
-            @include network__active__state;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+            border-radius: 50%;
+            margin-right: 2px;
+            &.mainnet {
+              background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+            }
+            &.testnet {
+              background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+            }
+            &.alpha {
+              background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+            }
           }
           .network_text {
             @include network__text;

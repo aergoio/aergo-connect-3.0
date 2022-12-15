@@ -73,7 +73,7 @@
         <span :style="token?.meta?.img_url ? { marginTop: '5px' } : { marginTop: '15px' }">{{
           `Latest Transaction Hash`
         }}</span>
-        <a
+        <span
           v-if="latestTransactionHash"
           :style="{
             wordBreak: 'break-all',
@@ -81,12 +81,11 @@
             width: '230px',
             marginTop: '5px',
             color: '#279ecc',
+            cursor: 'pointer',
           }"
-          :href="`https://${$store.state.accounts.network}.aergoscan.io/transaction/${latestTransactionHash}`"
-          target="_blank"
-          rel="noopener"
+          @click="goToLatestTransactionHash"
           >{{ latestTransactionHash }}
-        </a>
+        </span>
         <span
           v-else
           :style="{
@@ -205,7 +204,14 @@ export default Vue.extend({
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/nft/${address}/?tx=inventory&keyword=${nftName}`;
       window.open(url, '_blank');
     },
-
+    goToLatestTransactionHash() {
+      const windowFeatures = `width=${window.innerWidth * 3.75},height=${window.innerHeight * 2}`;
+      window.open(
+        `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${this.latestTransactionHash}`,
+        '',
+        windowFeatures,
+      );
+    },
     async refreshClick() {
       this.isLoading = true;
       console.log('refresh');

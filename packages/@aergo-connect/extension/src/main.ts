@@ -64,8 +64,8 @@ async function init(name: string) {
   background.on('update', function (state) {
     console.log('update from bg', state);
     const isNonAuthPage = router.currentRoute.meta && router.currentRoute.meta.noAuthCheck === true;
-    console.log(router, 'router');
-    console.log(isNonAuthPage, 'isNonAuthPage');
+    // console.log(router, 'router');
+    // console.log(isNonAuthPage, 'isNonAuthPage');
 
     if (Object.prototype.hasOwnProperty.call(state, 'unlocked')) {
       store.commit('ui/setUnlocked', state.unlocked);

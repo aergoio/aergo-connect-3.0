@@ -100,9 +100,9 @@ const storeModule: Module<AccountsState, RootState> = {
 
     async addToken({ state, commit }, token: any) {
       let tokens = state.accounts[state.address]['token'][state.network];
-      console.log(tokens, 'tokens');
-      console.log(token, 'token');
-      console.log(state.accounts, 'state-addrees');
+      // console.log(tokens, 'tokens');
+      // console.log(token, 'token');
+      // console.log(state.accounts, 'state-addrees');
       if (!tokens) {
         tokens = {};
       }
@@ -110,7 +110,7 @@ const storeModule: Module<AccountsState, RootState> = {
       const walletData = JSON.parse(localStorage.getItem(`${state.address}_${token.hash}`));
       console.log(walletData, 'walletData!!');
       commit('setTokens', tokens);
-      console.log('Add tokens', tokens);
+      // console.log('Add tokens', tokens);
     },
 
     async deleteToken({ state, commit }, token: string) {

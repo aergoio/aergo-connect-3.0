@@ -153,7 +153,7 @@ export default Vue.extend({
       this.$store.state.session.tokens[this.$store.state.session.token]['nftWallet'];
     const nft = nftWallet.filter((nft: any) => nft.meta.token_id === this.$route.params.nftid);
     this.token = nft[0];
-    console.log(this.token, 'token?!!!');
+    // console.log(this.token, 'token?!!!');
     this.getLatestTransactionHash().then((data) => {
       if (!data) {
         this.latestTransactionHash = null;

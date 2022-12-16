@@ -396,7 +396,7 @@ export default Vue.extend({
     },
     async handleCheck() {
       let results = [];
-      console.log('fetch', this.value);
+      // console.log('fetch', this.value);
 
       const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
       if (this.$store.state.session.option === 'token') {
@@ -448,7 +448,7 @@ export default Vue.extend({
           : null;
         return imgUrl;
       } catch (e) {
-        console.log(this.token, 'token!!');
+        // console.log(this.token, 'token!!');
         console.error(e, 'error Log');
       }
     },

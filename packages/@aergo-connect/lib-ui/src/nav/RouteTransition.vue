@@ -58,8 +58,8 @@ export default Vue.extend({
         transitionName = 'fade';
       } else {
         const indexDiff = from.meta.index && to.meta.index && from.meta.index - to.meta.index;
-        console.log('f', from.meta.index, from.name);
-        console.log('t', to.meta.index, to.name);
+        // console.log('f', from.meta.index, from.name);
+        // console.log('t', to.meta.index, to.name);
         transitionName = indexDiff > 0 ? `slide-right` : `slide-left`;
       }
 

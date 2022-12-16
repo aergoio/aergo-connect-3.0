@@ -76,7 +76,7 @@ async function init(name: string) {
   });
 
   //  console.log('STATE', store.state.accounts);
-  console.log('idleTimeout:' + store.state.ui.idleTimeout);
+  // console.log('idleTimeout:' + store.state.ui.idleTimeout);
   extension.idle.setDetectionInterval(store.state.ui.idleTimeout);
 }
 

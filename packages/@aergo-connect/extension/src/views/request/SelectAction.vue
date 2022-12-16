@@ -14,7 +14,6 @@ export default class RequestSelect extends Vue {
   async redirectToRequest() {
     const { action } = (await this.$store.dispatch('request/getRequest')) as ExternalRequest;
     console.log('redirect to action', action);
-
     const actionToRouteName: Record<typeof action, string> = {
       ACTIVE_ACCOUNT: 'request-address',
       SIGN: 'request-sign',
@@ -27,7 +26,6 @@ export default class RequestSelect extends Vue {
     if (this.$router.currentRoute.name === 'request-select-action') {
       this.$router.push({ name: routeName }).catch(() => {});
     }
-
   }
 }
 </script>

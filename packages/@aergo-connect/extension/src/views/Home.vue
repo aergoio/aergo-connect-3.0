@@ -318,9 +318,7 @@ export default Vue.extend({
       }
     },
   },
-  updated() {
-    console.log(this.nftCountNum, 'nftCountNum,1@#@!#@!#!@,');
-  },
+
   methods: {
     async changeNick() {
       if (this.nick.length < 12 && this.nick.length !== 0) {
@@ -491,7 +489,7 @@ export default Vue.extend({
       });
     },
     handleGoNftInventory(nft: any) {
-      console.log(nft, 'nft2131293219372198');
+      // console.log(nft, 'nft2131293219372198');
       this.$store.commit('session/setToken', nft.token.hash);
       this.$router
         .push({ name: 'nft-detail', params: { nftid: nft.meta.token_id } })

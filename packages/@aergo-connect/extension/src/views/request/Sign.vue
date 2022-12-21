@@ -15,7 +15,7 @@
             </div>
           </div>
         </div>
-        <div class="account_info_address_wrapper" @click="handleDetailAddress">
+        <div class="account_info_address_wrapper">
           <span class="account_info_address_text">{{
             `${$store.state.accounts.address.slice(0, 15)}...${$store.state.accounts.address.slice(
               -5,
@@ -97,7 +97,6 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 export default class RequestSign extends mixins(RequestMixin) {
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
-    console.log('Account Info', this.account);
   }
 
   get accountSpec() {
@@ -105,10 +104,6 @@ export default class RequestSign extends mixins(RequestMixin) {
       address: this.$store.state.accounts.address,
       chainId: this.$store.state.accounts.network,
     };
-  }
-  async mounted() {
-    console.log(this.msgToSign, 'msgToSign');
-    console.log(this.request, 'request!!!');
   }
   /*
   async signWithLedger(message: Buffer, displayAsHex = false) {

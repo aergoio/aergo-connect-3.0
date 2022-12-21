@@ -15,7 +15,7 @@
             </div>
           </div>
         </div>
-        <div class="account_info_address_wrapper" @click="handleDetailAddress">
+        <div class="account_info_address_wrapper">
           <span class="account_info_address_text">{{
             `${$store.state.accounts.address.slice(0, 15)}...${$store.state.accounts.address.slice(
               -5,
@@ -97,12 +97,6 @@ export default class TxBase extends mixins(RequestMixin) {
 
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
-    console.log('Account Info', this.account);
-  }
-  async mounted() {
-    console.log(this.request, 'request!!! , send');
-    console.log(this.$store.state.request, 'request in store');
-    console.log(this.$store.state, 'state!! store');
   }
   get accountSpec() {
     return {

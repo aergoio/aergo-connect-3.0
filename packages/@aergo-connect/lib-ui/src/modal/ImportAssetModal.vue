@@ -118,7 +118,6 @@ export default Vue.extend({
       }
       .import_asset_title {
         width: 269px;
-        height: 24px;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 500;
@@ -135,7 +134,7 @@ export default Vue.extend({
           background: linear-gradient(133.72deg, #279ecc 0%, #e4097d 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          word-break: break-word;
+          word-break: break-all;
         }
       }
     }

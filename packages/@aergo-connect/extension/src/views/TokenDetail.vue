@@ -2,13 +2,14 @@
   <ScrollView class="page">
     <HeaderVue
       button="back"
-      :title="getTitle()"
+      title="Token Detail"
       refresh
       :to="{ name: 'accounts-list' }"
       @refreshClick="refreshClick"
     />
     <!-- <LoadingIndicator v-if="isLoading" /> -->
     <RemoveModal v-if="removeModal" @cancel="handleDelete" />
+    <AccountDetailModal v-if="accountDetailModal" @cancel="(e) => handleCancel(e)" />
     <div class="token_detail_content">
       <div class="account_detail">
         <div class="direction-row">
@@ -25,7 +26,7 @@
             }}
           </div>
           <div class="account_title_wrapper">
-            <div class="account_address" @click="copyToClipboard($store.state.accounts.address)">
+            <div class="account_address" @click="handleDetailAddress">
               {{
                 `${$store.state.accounts.address.slice(
                   0,
@@ -82,10 +83,15 @@
           <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
             <div class="balance">
-              {{ token.balance ? formatBalance(token.balance) : 0 }}
+              {{ token.meta.name }}
             </div>
           </div>
-          <div class="token_symbol">{{ token.meta.symbol }}</div>
+          <div :style="{ display: 'flex' }">
+            <span :style="{ marginRight: '5px', fontWeight: '500' }">
+              {{ token.balance ? formatBalance(token.balance) : 0 }}
+            </span>
+            <span class="token_symbol">{{ token.meta.symbol }}</span>
+          </div>
         </div>
       </div>
       <div class="select_token">
@@ -101,11 +107,20 @@
           :class="[
             token.meta.symbol === 'aergo' ? 'history_list ' : 'history_list others',
             data.length === 0 ? 'history_list nothing' : 'history_list',
-            data.length > 2 ? 'history_list scroll' : 'history_list',
+            data.length > 1 ? 'history_list scroll' : 'history_list',
           ]"
         >
           <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
             <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+            <div :style="{ display: 'flex', alignItems: 'center' }">
+              <div class="tx_id" @click="gotoScanTx(item.hash)">
+                {{
+                  item.hash.split('-0').length === 2
+                    ? `TX_ID: ${item.hash.slice(0, 10)}......${item.hash.slice(-10, -2)}`
+                    : `TX_ID: ${item.hash.slice(0, 10)}......${item.hash.slice(-10)}`
+                }}
+              </div>
+            </div>
             <div class="direction_row mt4">
               <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
               <div v-else class="received">Received</div>
@@ -183,6 +198,7 @@ import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 // import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
+import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import { Amount } from '@herajs/common';
 import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
@@ -203,6 +219,7 @@ export default Vue.extend({
     Identicon,
     RemoveModal,
     Notification,
+    AccountDetailModal,
     // LoadingIndicator,
   },
 
@@ -210,6 +227,7 @@ export default Vue.extend({
     return {
       removeModal: false,
       clipboardNotification: false,
+      accountDetailModal: false,
       error: '',
       allData: [],
       data: [],
@@ -230,7 +248,9 @@ export default Vue.extend({
       await this.getAergoInfo();
     }
   },
-
+  mounted() {
+    console.log(this.data, 'data!!!!!!!!!!!@#@!#@!');
+  },
   watch: {
     filter: function () {
       if (this.filter === 'All') {
@@ -347,16 +367,23 @@ export default Vue.extend({
         this.allData = response.hits;
       }
     },
-
     handleDelete(state: boolean) {
       this.removeModal = state;
     },
 
     handleSend() {
-      this.$router.push({ name: 'send' }).catch(() => {});
+      this.$router.push({ name: 'send', params: { id: 'ARC1' } }).catch(() => {});
     },
     handleReceive() {
       this.$router.push({ name: 'receive' }).catch(() => {});
+    },
+    handleDetailAddress() {
+      this.accountDetailModal = true;
+    },
+    handleCancel(modalEvent: any) {
+      if (modalEvent === 'accountDetailModal') {
+        this.accountDetailModal = false;
+      }
     },
     copyToClipboard(text) {
       navigator.clipboard.writeText(text);
@@ -628,14 +655,11 @@ export default Vue.extend({
         /* Grey/04 */
 
         color: #9c9a9a;
-        margin-left: 15px;
+        /* margin-left: 15px; */
         word-break: break-all;
       }
     }
     .balance {
-      margin-left: 15px;
-      /* Headline/H3 */
-      width: 141px;
       height: 25px;
       font-family: 'Outfit';
       font-style: normal;
@@ -705,7 +729,6 @@ export default Vue.extend({
     flex-direction: column;
     align-items: center;
     .history_list {
-      margin-left: 10px;
       flex-direction: column;
       display: flex;
       align-items: center;
@@ -715,6 +738,7 @@ export default Vue.extend({
         overflow: hidden;
       }
       &.scroll {
+        margin-left: 10px;
         overflow-y: scroll;
       }
       &.others {
@@ -754,13 +778,14 @@ export default Vue.extend({
       .item_wrapper {
         margin-top: 10px;
         width: 327px;
-        height: 88px;
+        height: 105px;
         background: #ffffff;
         border-radius: 8px;
         &.hide {
           display: none;
         }
         .time {
+          width: 200px;
           margin-left: 16px;
           margin-top: 8px;
           font-family: 'Outfit';
@@ -773,6 +798,14 @@ export default Vue.extend({
           /* Grey/04 */
 
           color: #9c9a9a;
+        }
+        .tx_id {
+          margin-left: 16px;
+          font-size: 12.5px;
+          text-decoration-line: underline;
+          cursor: pointer;
+          word-break: break-all;
+          color: #686767;
         }
         .received {
           margin-left: 16px;

@@ -41,9 +41,15 @@
       </div>
 
       <div class="nft_detail_background">
-        <span :style="{ textAlign: 'center', fontSize: `1.1rem`, marginTop: '10px' }">{{
-          token?.token?.meta?.name
-        }}</span>
+        <span
+          :style="[
+            token?.meta?.img_url
+              ? { textAlign: 'center', fontSize: `1.1rem`, marginTop: '18px' }
+              : { textAlign: 'center', fontSize: `1.1rem`, marginTop: '38px' },
+          ]"
+        >
+          {{ token?.meta?.img_url ? token?.token?.meta?.name : '' }}
+        </span>
         <div v-if="tabState === 'inventory'" class="nft_info_wrapper">
           <img
             v-if="token?.meta?.img_url"
@@ -62,7 +68,9 @@
             }"
           >
             <span>{{ token?.token?.meta?.name }}</span>
-            <span>{{ `#${token?.meta?.token_id}` }}</span>
+            <span :style="{ wordBreak: 'break-all', margin: '8px' }">{{
+              `#${token?.meta?.token_id}`
+            }}</span>
           </div>
         </div>
         <span
@@ -84,7 +92,7 @@
             cursor: 'pointer',
           }"
           @click="goToLatestTransactionHash"
-          >{{ latestTransactionHash }}
+          >{{ `${latestTransactionHash.slice(0, 12)}......${latestTransactionHash.slice(-12)}` }}
         </span>
         <span
           v-else
@@ -151,7 +159,7 @@ export default Vue.extend({
   beforeMount() {
     const nftWallet =
       this.$store.state.session.tokens[this.$store.state.session.token]['nftWallet'];
-    const nft = nftWallet.filter((nft: any) => nft.meta.token_id === this.$route.params.nftid);
+    const nft = nftWallet.filter((nft: any) => nft.meta.token_id === this.$route.params.id);
     this.token = nft[0];
     // console.log(this.token, 'token?!!!');
     this.getLatestTransactionHash().then((data) => {
@@ -180,7 +188,7 @@ export default Vue.extend({
         .push({
           name: 'send',
           params: {
-            nft: item.meta.token_id,
+            id: item.meta.token_id,
           },
         })
         .catch(() => {});
@@ -221,10 +229,7 @@ export default Vue.extend({
     },
 
     handleSend() {
-      this.$router
-        .push({ name: 'send', params: { nftid: this.$route.params.nftid } })
-        .catch(() => {});
-      console.log('send');
+      this.$router.push({ name: 'send', params: { id: this.$route.params.id } }).catch(() => {});
     },
 
     copyToClipboard(text: string) {

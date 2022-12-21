@@ -346,6 +346,7 @@ export default Vue.extend({
         await this.getNftDataInLocalStorage();
         this.nick = await this.$store.state.accounts.nick;
         await this.myNFTList();
+        await this.checkIsUpdateNft();
         await this.$forceUpdate();
       } else {
         console.log('Other Account Loading ..');
@@ -361,6 +362,7 @@ export default Vue.extend({
     async refreshClick() {
       this.isLoading = true;
       await this.$store.dispatch('session/updateBalances');
+      await this.checkIsUpdateNft();
       this.$forceUpdate();
       this.isLoading = false;
     },
@@ -491,12 +493,45 @@ export default Vue.extend({
     handleGoNftInventory(nft: any) {
       // console.log(nft, 'nft2131293219372198');
       this.$store.commit('session/setToken', nft.token.hash);
-      this.$router
-        .push({ name: 'nft-detail', params: { nftid: nft.meta.token_id } })
-        .catch(() => {});
+      this.$router.push({ name: 'nft-detail', params: { id: nft.meta.token_id } }).catch(() => {});
     },
-    GoToNftDetail() {
-      this.$router.push({ name: 'nft-detail' }).catch(() => {});
+
+    checkIsUpdateNft() {
+      const tokens = Object.values(this.$store.state.session.tokens);
+      tokens.map((token: any) => {
+        if (token.nftWallet.length > 0) {
+          token.nftWallet.map(async (nft: any) => {
+            try {
+              if (nft.meta.token_uri && nft.meta.image_url) {
+                const tokenUri = nft.meta.token_uri;
+                const fetchData = await fetch(tokenUri);
+                const jsonData = await fetchData.json();
+                const imageUrl = jsonData.image_url;
+                if (imageUrl !== nft.meta.image_url) {
+                  const localStorageNftData = JSON.parse(
+                    localStorage.getItem(
+                      `${nft.meta.account}_${this.$store.state.accounts.network}_${nft.meta.address}`,
+                    ) || '{}',
+                  );
+                  localStorageNftData.map((userNft: any) => {
+                    if (nft.hash === userNft.hash) {
+                      userNft.meta['img_url'] = imageUrl;
+                    }
+                  });
+                  console.log(localStorageNftData, 'updatedUserNftDataInLocalStorage');
+                  localStorage.setItem(
+                    `${nft.meta.account}_${this.$store.state.accounts.network}_${nft.meta.address}`,
+                    JSON.stringify(localStorageNftData),
+                  );
+                  console.log('end To Change WalletData');
+                }
+              }
+            } catch (e) {
+              console.error(e, 'error');
+            }
+          });
+        }
+      });
     },
   },
 });
@@ -687,13 +722,13 @@ export default Vue.extend({
                 -webkit-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
                 -moz-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
                 .nft_id {
+                  margin: 4px;
                   font-size: calc(14 / 16) * 1rem;
                   word-break: break-all;
                 }
                 .token_name {
                   font-size: calc(12 / 16) * 1rem;
                   word-break: break-all;
-                  margin-bottom: 4px;
                 }
               }
               .nft_img_wrapper {

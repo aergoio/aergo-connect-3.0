@@ -75,14 +75,19 @@
             <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
             <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" />
             <img v-else class="token_icon" :src="icon" />
-            <span class="token_amount">{{ balance ? formatBalance(balance) : 0 }}</span>
+            <div class="token_amount">{{ tokenName }}</div>
           </div>
-          <span class="token_symbol"> {{ symbol }}</span>
+          <div :style="{ display: 'flex', alignItems: 'center' }">
+            <span :style="{ marginRight: '5px', fontWeight: '500' }">{{
+              balance ? formatBalance(balance) : 0
+            }}</span>
+            <span class="token_symbol"> {{ symbol }}</span>
+          </div>
         </div>
         <div v-if="tokenType === 'ARC2' && nftUiData?.meta?.img_url" class="frame">
           <div class="nft_img_wrapper">
             <img class="img" :src="nftUiData?.meta?.img_url" />
-            <span>{{ `#${nftUiData?.meta?.token_id}` }}</span>
+            <span :style="{}">{{ `#${nftUiData?.meta?.token_id}` }}</span>
           </div>
         </div>
         <div v-else-if="tokenType === 'ARC2'" class="frame">
@@ -95,10 +100,10 @@
               flexDirection: 'column',
             }"
           >
-            <span :style="{ fontSize: '0.75rem', wordBreak: 'break-all', marginBottom: '4px' }">{{
+            <span :style="{ fontSize: '0.75rem', wordBreak: 'break-all' }">{{
               nftUiData?.token?.meta?.name
             }}</span>
-            <span :style="{ fontSize: '0.875rem', wordBreak: 'break-all' }">{{
+            <span :style="{ fontSize: '0.875rem', wordBreak: 'break-all', margin: '4px' }">{{
               nftUiData?.meta?.token_id ? `#${nftUiData?.meta?.token_id}` : `Type the NFT ID`
             }}</span>
           </div>
@@ -315,13 +320,10 @@ export default Vue.extend({
     if (this.$store.state.session.token) this.asset = await this.$store.state.session.token;
     else this.asset = 'AERGO';
 
-    if (
-      this.$route.params.nftid &&
-      this.$store.state.session.tokens[this.asset].meta.type == 'ARC2'
-    ) {
-      this.inputAmount = this.$route.params.nftid;
+    if (this.$route.params.id && this.$store.state.session.tokens[this.asset].meta.type == 'ARC2') {
+      this.inputAmount = this.$route.params.id;
       this.nftUiData = this.$store.state.session.tokens[this.asset].nftWallet.filter(
-        (nft) => nft.meta.token_id === this.$route.params.nftid,
+        (nft) => nft.meta.token_id === this.$route.params.id,
       )[0];
       this.searchResult = '';
     }
@@ -334,8 +336,8 @@ export default Vue.extend({
       this.setParams();
       if (this.tokenType === 'ARC2') {
         this.getNftInventory();
-        if (this.$route.params.nftid && this.asset === this.$store.state.session.token) {
-          this.inputAmount = this.$route.params.nftid;
+        if (this.$route.params.id && this.asset === this.$store.state.session.token) {
+          this.inputAmount = this.$route.params.id;
         }
       }
     },
@@ -510,16 +512,15 @@ export default Vue.extend({
       if (result.status) {
         this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
         if (result.status === 'SUCCESS') {
-          console.log(result, 'result in success');
-          this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
-          this.sendFinishModal = true;
-          console.error(`[${result.status}]: ${result.result}`);
+          if (this.userNftData.hash) {
+            this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
+          }
+          console.log(`[${result.status}]: ${result.result}`);
         } else if (result.status === 'ERROR') {
-          console.log(result, 'result in error');
+          // console.log(result, 'result in error');
           this.notification = true;
           this.notificationText = `Transaction Sent Failed!${result.result.split(':')[3]}`;
           console.error(`[${result.status}]: ${result.result}`);
-          this.isLoading = false;
           return;
         }
       }
@@ -778,7 +779,6 @@ export default Vue.extend({
         }
         .token_amount {
           margin-left: 10px;
-          margin-right: 90px;
           font-family: 'Outfit';
           font-style: normal;
           font-weight: 600;

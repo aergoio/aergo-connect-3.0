@@ -47,9 +47,14 @@
             <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
             <Icon v-else-if="!icon" class="token_icon" :name="`defaultToken`" />
             <img v-else class="token_icon" :src="icon" />
-            <div class="token_amount">{{ balance ? formatBalance(balance) : 0 }}</div>
+            <div class="token_amount">{{ tokenName }}</div>
           </div>
-          <div class="token_symbol">{{ symbol }}</div>
+          <div :style="{ display: 'flex', alignItems: 'center' }">
+            <div :style="{ fontWeight: '500', marginRight: '5px' }">
+              {{ balance ? formatBalance(balance) : 0 }}
+            </div>
+            <div class="token_symbol">{{ symbol }}</div>
+          </div>
         </div>
       </div>
 
@@ -169,13 +174,12 @@ export default Vue.extend({
 
   async beforeMount() {
     this.token = await this.$store.state.session.tokens[this.$store.state.session.token];
-    this.arc1Tokens = Object.values(this.$store.state.session.tokens).filter(
+    this.arc1Tokens = await Object.values(this.$store.state.session.tokens).filter(
       (token) => token.meta.type === 'ARC1' || token.meta.type === 'AERGO',
     );
     if (this.$store.state.session.token) this.asset = this.$store.state.session.token;
     else this.asset = 'AERGO';
   },
-
   watch: {
     asset: function () {
       this.balance = this.$store.state.session.tokens[this.asset]['balance'];
@@ -197,6 +201,11 @@ export default Vue.extend({
     },
     balance() {
       this.$forceUpdate();
+    },
+    tokenType() {
+      if (this.tokenType === 'ARC2') {
+        this.asset = 'AERGO';
+      }
     },
   },
 

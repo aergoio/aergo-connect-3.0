@@ -71,8 +71,8 @@ if (!extension.runtime.id) {
   //   },
   // });
 
-  // In dev, open a new tab for easier debugging
-  if (process.env.NODE_ENV === 'development') {
-    extension.tabs.create({ url: 'index.html' });
-  }
+  // //? In dev, open a new tab for easier debugging
+  // if (process.env.NODE_ENV === 'development') {
+  //   extension.tabs.create({ url: 'index.html' });
+  // }
 }

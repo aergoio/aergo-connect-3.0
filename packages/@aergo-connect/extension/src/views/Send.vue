@@ -475,8 +475,6 @@ export default Vue.extend({
       this.statusDialogVisible = true;
     },
     async handleConfirm() {
-      this.isLoading = true;
-      console.log('Sending ..', this.txBody);
       this.passwordModal = false;
       if (!this.txBody.from) {
         //  This shouldn't happen normally
@@ -493,6 +491,8 @@ export default Vue.extend({
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         this.txHash = hash;
         this.setStatus('success', 'Done');
+        this.isLoading = true;
+        console.log('Sending ..', this.txBody);
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
@@ -521,6 +521,7 @@ export default Vue.extend({
           this.notification = true;
           this.notificationText = `Transaction Sent Failed!${result.result.split(':')[3]}`;
           console.error(`[${result.status}]: ${result.result}`);
+          this.isLoading = false;
           return;
         }
       }

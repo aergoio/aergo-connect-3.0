@@ -80,6 +80,7 @@
                           cursor: 'default',
                           fontSize: '16px',
                           fontWeight: '500',
+                          textOverflow: 'ellipsis',
                         }
                       : {
                           cursor: 'default',
@@ -87,6 +88,7 @@
                           fontWeight: '500',
                           position: 'relative',
                           right: '5px',
+                          textOverflow: 'ellipsis',
                         }
                   "
                 >
@@ -435,6 +437,7 @@ export default Vue.extend({
       left: 105px;
       border-radius: 3px;
       border: 1px solid #279ecc;
+      text-overflow: ellipsis;
       /* overflow-y: scroll; */
       /* overflow-x: hidden; */
       .img {

@@ -75,14 +75,19 @@
             <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
             <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" />
             <img v-else class="token_icon" :src="icon" />
-            <span class="token_amount">{{ balance ? formatBalance(balance) : 0 }}</span>
+            <div class="token_amount">{{ tokenName }}</div>
           </div>
-          <span class="token_symbol"> {{ symbol }}</span>
+          <div :style="{ display: 'flex', alignItems: 'center' }">
+            <span :style="{ marginRight: '5px', fontWeight: '500' }">{{
+              balance ? formatBalance(balance) : 0
+            }}</span>
+            <span class="token_symbol"> {{ symbol }}</span>
+          </div>
         </div>
         <div v-if="tokenType === 'ARC2' && nftUiData?.meta?.img_url" class="frame">
           <div class="nft_img_wrapper">
             <img class="img" :src="nftUiData?.meta?.img_url" />
-            <span>{{ `#${nftUiData?.meta?.token_id}` }}</span>
+            <span :style="{}">{{ `#${nftUiData?.meta?.token_id}` }}</span>
           </div>
         </div>
         <div v-else-if="tokenType === 'ARC2'" class="frame">
@@ -95,10 +100,10 @@
               flexDirection: 'column',
             }"
           >
-            <span :style="{ fontSize: '0.75rem', wordBreak: 'break-all', marginBottom: '4px' }">{{
+            <span :style="{ fontSize: '0.75rem', wordBreak: 'break-all' }">{{
               nftUiData?.token?.meta?.name
             }}</span>
-            <span :style="{ fontSize: '0.875rem', wordBreak: 'break-all' }">{{
+            <span :style="{ fontSize: '0.875rem', wordBreak: 'break-all', margin: '4px' }">{{
               nftUiData?.meta?.token_id ? `#${nftUiData?.meta?.token_id}` : `Type the NFT ID`
             }}</span>
           </div>
@@ -106,10 +111,7 @@
         <!-- <span class="token_amount">{{ nftInventory.length }}</span> -->
         <!-- <span class="token_symbol"> EA </span> -->
       </div>
-      <div
-        v-if="!isLoading"
-        :class="[tokenType === 'ARC2' ? `send_form_wrapper nft` : `send_form_wrapper`]"
-      >
+      <div :class="[tokenType === 'ARC2' ? `send_form_wrapper nft` : `send_form_wrapper`]">
         <div class="flex-row">
           <div class="title">Asset</div>
 
@@ -214,7 +216,7 @@
     </LoadingDialog>
     <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
     <Notification v-if="notification" :title="notificationText" :icon="`warning2`" :size="300" />
-    <template v-if="!isLoading" #footer>
+    <template #footer>
       <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
         Show optional fields
       </div>
@@ -318,13 +320,10 @@ export default Vue.extend({
     if (this.$store.state.session.token) this.asset = await this.$store.state.session.token;
     else this.asset = 'AERGO';
 
-    if (
-      this.$route.params.nftid &&
-      this.$store.state.session.tokens[this.asset].meta.type == 'ARC2'
-    ) {
-      this.inputAmount = this.$route.params.nftid;
+    if (this.$route.params.id && this.$store.state.session.tokens[this.asset].meta.type == 'ARC2') {
+      this.inputAmount = this.$route.params.id;
       this.nftUiData = this.$store.state.session.tokens[this.asset].nftWallet.filter(
-        (nft) => nft.meta.token_id === this.$route.params.nftid,
+        (nft) => nft.meta.token_id === this.$route.params.id,
       )[0];
       this.searchResult = '';
     }
@@ -337,8 +336,8 @@ export default Vue.extend({
       this.setParams();
       if (this.tokenType === 'ARC2') {
         this.getNftInventory();
-        if (this.$route.params.nftid && this.asset === this.$store.state.session.token) {
-          this.inputAmount = this.$route.params.nftid;
+        if (this.$route.params.id && this.asset === this.$store.state.session.token) {
+          this.inputAmount = this.$route.params.id;
         }
       }
     },
@@ -476,8 +475,6 @@ export default Vue.extend({
       this.statusDialogVisible = true;
     },
     async handleConfirm() {
-      this.isLoading = true;
-      console.log('Sending ..', this.txBody);
       this.passwordModal = false;
       if (!this.txBody.from) {
         //  This shouldn't happen normally
@@ -494,7 +491,8 @@ export default Vue.extend({
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         this.txHash = hash;
         this.setStatus('success', 'Done');
-        this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
+        this.isLoading = true;
+        console.log('Sending ..', this.txBody);
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
@@ -514,14 +512,17 @@ export default Vue.extend({
       if (result.status) {
         this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
         if (result.status === 'SUCCESS') {
-          console.log(result, 'result in success');
-          this.sendFinishModal = true;
-          console.error(`[${result.status}]: ${result.result}`);
+          if (this.userNftData.hash) {
+            this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
+          }
+          console.log(`[${result.status}]: ${result.result}`);
         } else if (result.status === 'ERROR') {
-          console.log(result, 'result in error');
+          // console.log(result, 'result in error');
           this.notification = true;
           this.notificationText = `Transaction Sent Failed!${result.result.split(':')[3]}`;
           console.error(`[${result.status}]: ${result.result}`);
+          this.isLoading = false;
+          return;
         }
       }
       // console.log('receipt', this.txReceipt);
@@ -757,6 +758,51 @@ export default Vue.extend({
     /* 05 */
     box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+    .amount_wrapper {
+      width: 300px;
+      margin-left: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .icon_wrapper {
+        display: flex;
+        align-items: center;
+        .token_icon {
+          /* Grey/02 */
+          border: 1px solid #d8d8d8;
+          width: 46px;
+          height: 46px;
+          margin-left: 14px;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .token_amount {
+          margin-left: 10px;
+          font-family: 'Outfit';
+          font-style: normal;
+          font-weight: 600;
+          font-size: 20px;
+          line-height: 25px;
+          letter-spacing: -0.333333px;
+          color: #231f20;
+        }
+      }
+    }
+
+    .token_symbol {
+      /* Subtitle/S3 */
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 20px;
+      text-align: right;
+      letter-spacing: -0.333333px;
+      /* Grey/08 */
+      color: #231f20;
+    }
     &.nft {
       margin-top: 10px;
       height: 115px;
@@ -784,53 +830,6 @@ export default Vue.extend({
           height: 100%;
         }
       }
-    }
-
-    .amount_wrapper {
-      width: 300px;
-      margin-left: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      .icon_wrapper {
-        display: flex;
-        align-items: center;
-        .token_icon {
-          /* Grey/02 */
-          border: 1px solid #d8d8d8;
-          width: 46px;
-          height: 46px;
-          margin-left: 14px;
-          border-radius: 50%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .token_amount {
-          margin-left: 10px;
-          margin-right: 90px;
-          font-family: 'Outfit';
-          font-style: normal;
-          font-weight: 600;
-          font-size: 20px;
-          line-height: 25px;
-          letter-spacing: -0.333333px;
-          color: #231f20;
-        }
-      }
-    }
-
-    .token_symbol {
-      /* Subtitle/S3 */
-      font-family: 'Outfit';
-      font-style: normal;
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 20px;
-      text-align: right;
-      letter-spacing: -0.333333px;
-      /* Grey/08 */
-      color: #231f20;
     }
   }
   .send_form_wrapper {

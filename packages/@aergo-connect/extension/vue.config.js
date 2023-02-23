@@ -6,6 +6,7 @@ module.exports = {
   pages: {
     index: 'src/main.ts',
     popup: 'src/main.ts',
+    // sandbox: 'src/main.ts',
     'popup-request': 'src/main.ts',
     background: 'src/background/main.js',
   },
@@ -18,6 +19,20 @@ module.exports = {
         },
       ]);
     }
+
+    // config
+    //   .entry('background')
+    //   .add('./src/background/main.js')
+    //   .end()
+    //   .output.filename((pathData) => {
+    //     switch (pathData.chunk.name) {
+    //       case 'background':
+    //         return '[name].js';
+    //       default:
+    //         return 'js/[name].js';
+    //     }
+    //   })
+    //   .end();
 
     // manifest.json interpolation
     config.module
@@ -60,14 +75,18 @@ module.exports = {
 
     // Add content-script entry
     config.entry('content-script').add('./src/content-script.js').end();
+    config.entry('service-worker').add('./src/background.js').end();
 
     config.optimization.minimizer('terser').tap((args) => {
       const { terserOptions } = args[0];
       terserOptions.output = { ...terserOptions.output, ascii_only: true };
       return args;
     });
+
+    config.optimization.delete('splitChunks');
   },
   configureWebpack: {
+    devtool: 'cheap-module-source-map',
     output: {
       filename: 'js/[name].js',
       chunkFilename: 'js/[name].js',

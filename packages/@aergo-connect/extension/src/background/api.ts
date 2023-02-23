@@ -481,3 +481,7 @@ export function wrapClientApi(dnodeInstance: { [key in ApiMethodNames]: any }): 
   }
   return dnodeInstance;
 }
+
+export function test(dnodeInstanceL: any) {
+  return dnodeInstanceL;
+}

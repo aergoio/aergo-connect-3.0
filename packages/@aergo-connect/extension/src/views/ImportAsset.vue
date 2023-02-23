@@ -297,10 +297,10 @@ export default Vue.extend({
       }
     },
     async select(token) {
-      console.log(token.meta);
+      console.log(token, 'token!@#@!#@!#@!#@!#');
       this.token = token;
-      await this.$store.dispatch('accounts/addToken', token);
       if (token.meta.type === 'ARC1') {
+        await this.$store.dispatch('accounts/addToken', token);
         this.importAssetModal = true;
       } else if (token.meta.type === 'ARC2') {
         this.importNftStep2 = true;
@@ -376,6 +376,7 @@ export default Vue.extend({
               meta: { ...filteredNft[0].meta, img_url },
             };
             console.log(addImgNft, 'addImgNft!@#!@#@!#@!#');
+            await this.$store.dispatch('accounts/addToken', this.token);
             await this.$store.commit('session/addNftToLocalStorage', addImgNft);
             this.token = addImgNft.token;
             this.nftData = addImgNft.meta;
@@ -383,6 +384,7 @@ export default Vue.extend({
             this.importSuccessNft = true;
             return;
           } else {
+            await this.$store.dispatch('accounts/addToken', this.token);
             await this.$store.commit('session/addNftToLocalStorage', filteredNft[0]);
             this.token = filteredNft[0].token;
             this.nftData = filteredNft[0].meta;
@@ -396,8 +398,8 @@ export default Vue.extend({
     },
     async handleCheck() {
       let results = [];
-      console.log('fetch', this.value);
-
+      // console.log('fetch', this.value);
+      // await this.$store.dispatch('session/initState');
       const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
       if (this.$store.state.session.option === 'token') {
         await fetch(
@@ -426,6 +428,7 @@ export default Vue.extend({
       this.token = results[0];
       if (results.length > 0) {
         this.check = true;
+        await this.$store.dispatch('accounts/addToken', this.token);
       } else {
         this.check = false;
         this.notification = true;
@@ -434,8 +437,8 @@ export default Vue.extend({
     },
 
     // async customSubmit() {
-    //   await this.$store.dispatch('accounts/addToken', this.token);
-    //   await this.$store.dispatch('session/initState');
+    // await this.$store.dispatch('accounts/addToken', this.token);
+    // await this.$store.dispatch('session/initState');
 
     //   this.importAssetModal = true;
     // },
@@ -448,7 +451,7 @@ export default Vue.extend({
           : null;
         return imgUrl;
       } catch (e) {
-        console.log(this.token, 'token!!');
+        // console.log(this.token, 'token!!');
         console.error(e, 'error Log');
       }
     },

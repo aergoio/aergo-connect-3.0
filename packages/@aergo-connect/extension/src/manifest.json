@@ -1,16 +1,16 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "{{prop-loader?title!../package.json}}",
   "version": "{{prop-loader?version!../package.json}}",
   "version_name": "{{prop-loader?version_name!../package.json}}",
   "description": "{{prop-loader?description!../package.json}}",
   "author": "{{prop-loader?author!../package.json}}",
   "homepage_url": "{{prop-loader?homepage!../package.json}}",
-  "minimum_chrome_version": "73",
+  "minimum_chrome_version": "92",
 
-  "content_security_policy": "script-src 'self' http://localhost:8098 'unsafe-inline' 'unsafe-eval' object-src 'self'",
-
-  "web_accessible_resources": ["test.jpg"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
 
   "icons": {
     "17": "{{./assets/img/icon-17.png}}",
@@ -19,9 +19,11 @@
   },
 
   "background": {
-    "page": "background.html",
-    "persistent": true
+    "service_worker": "js/service-worker.js"
   },
+
+  "host_permissions": ["http://www.blogger.com/"],
+  "optional_host_permissions": ["*://*/*"],
 
   "content_scripts": [
     {
@@ -30,7 +32,7 @@
     }
   ],
 
-  "browser_action": {
+  "action": {
     "default_icon": {
       "17": "{{./assets/img/icon-17.png}}",
       "34": "{{./assets/img/icon-34.png}}"

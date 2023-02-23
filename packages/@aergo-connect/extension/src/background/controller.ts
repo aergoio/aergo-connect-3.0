@@ -50,14 +50,16 @@ class BackgroundController extends EventEmitter {
       appName: 'aergo-browser-wallet',
       instanceId: this.id,
     });
+
     this.wallet.use(AergoscanTransactionScanner as any);
     this.wallet.useStorage(store).then(async () => {
       if (!this.wallet.datastore) throw new Error('wallet failed to initiate storage');
-      this.firstLoad();
+
+      // this.firstLoad(); temp
       // Load custom defined chains
       try {
         const customChains = await this.wallet.datastore.getIndex('settings').get('customChains');
-        console.log(this.wallet.datastore);
+
         if (customChains && customChains.data) {
           for (const chainId of Object.keys(customChains.data)) {
             // @ts-ignore
@@ -147,24 +149,27 @@ class BackgroundController extends EventEmitter {
   }
 
   trackAccount(account: Account, onceCb?: (account: Account) => void) {
+    console.log('this.wallet.accountManager', this.wallet.accountManager);
+    console.log('account', account);
     const accountTracker = this.wallet.accountManager.trackAccount(account);
-    this.wallet.transactionManager.trackAccount(account);
-    accountTracker.then((t) => {
-      t.removeAllListeners('update');
-      t.on('update', (account) => {
-        this.emit('update', { accounts: [account] });
-        if (onceCb) {
-          onceCb(account);
-          onceCb = undefined;
-        }
-      });
-      // Force an initial load and update with data
-      t.load().then((account) => {
-        this.emit('update', { accounts: [account] });
-      });
-    });
-    // Make an initial update (data might be empty)
-    this.emit('update', { accounts: [account] });
+
+    // this.wallet.transactionManager.trackAccount(account);
+    // accountTracker.then((t) => {
+    //   t.removeAllListeners('update');
+    //   t.on('update', (account) => {
+    //     this.emit('update', { accounts: [account] });
+    //     if (onceCb) {
+    //       onceCb(account);
+    //       onceCb = undefined;
+    //     }
+    //   });
+    //   // Force an initial load and update with data
+    //   t.load().then((account) => {
+    //     this.emit('update', { accounts: [account] });
+    //   });
+    // });
+    // // Make an initial update (data might be empty)
+    // this.emit('update', { accounts: [account] });
   }
 
   permissionRequest(request: ExternalRequest) {

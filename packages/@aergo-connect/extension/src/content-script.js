@@ -2,7 +2,7 @@
 const port = chrome.runtime.connect({ name: 'external' });
 
 // Message from website to extension
-window.addEventListener('message', event => {
+window.addEventListener('message', (event) => {
   // We only accept messages from ourselves
   if (event.source != window) return;
 
@@ -13,7 +13,7 @@ window.addEventListener('message', event => {
 });
 
 // Message from extension to website
-port.onMessage.addListener(msg => {
+port.onMessage.addListener((msg) => {
   if (msg.type !== 'AERGO_RESPONSE' && msg.type !== 'AERGO_CANCEL') return;
   // console.log('[Contentscript] Received message from extension', msg);
   const event = new CustomEvent(msg.eventName, { detail: msg.result });

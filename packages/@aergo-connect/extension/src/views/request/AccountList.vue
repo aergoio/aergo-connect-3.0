@@ -57,7 +57,15 @@ export default Vue.extend({
     async selectAccount(account: any) {
       await this.$store.commit('accounts/setActiveAccount', account.address);
       await this.$background.setActiveAccount({ chainId: 'aergo.io', address: account.address });
-      this.$router.push({ name: 'request-address' }).catch(() => {});
+      if (this.$store.state.request.currentRequest.action === 'SIGN') {
+        this.$router.push({ name: 'request-sign' }).catch(() => {});
+      } else if (this.$store.state.request.currentRequest.action === 'SEND_TX') {
+        this.$router.push({ name: 'request-send' }).catch(() => {});
+      } else if (this.$store.state.request.currentRequest.action === 'SIGN_TX') {
+        this.$router.push({ name: 'request-sign-tx' }).catch(() => {});
+      } else {
+        this.$router.push({ name: 'request-address' }).catch(() => {});
+      }
     },
     handleNetworkModalClick() {
       this.networkModal = !this.networkModal;

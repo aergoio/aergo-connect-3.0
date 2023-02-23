@@ -1,19 +1,41 @@
 <template>
   <ScrollView class="page">
-    <template #header>
-      <div class="content" style="padding-bottom: 0">
-        <div class="icon-header">
-          <Icon :name="`title-request`" :size="36" />
+    <div class="account_info_wrapper">
+      <Icon :name="`back`" @click="handleGoBack" />
+      <Identicon :text="$store.state.accounts.address" class="account_info_img" />
+      <div class="account_info_content_wrapper">
+        <div class="account_info_nickname_wrapper">
+          <div class="account_info_nickname_text">
+            {{ $store.state.accounts.nick }}
+          </div>
+          <div class="account_info_network_wrapper">
+            <div :class="`account_info_network_circle ${$store.state.accounts.network}`" />
+            <div class="account_info_network">
+              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+            </div>
+          </div>
         </div>
-        <Heading>{{ title || 'Send transaction' }}</Heading>
-        <p v-if="request">
-          The website at {{ request.origin }} wants to {{ actionVerb || 'send' }} a transaction
-          using your account.
-        </p>
+        <div class="account_info_address_wrapper">
+          <span class="account_info_address_text">{{
+            `${$store.state.accounts.address.slice(0, 15)}...${$store.state.accounts.address.slice(
+              -5,
+            )}`
+          }}</span>
+        </div>
       </div>
-    </template>
+    </div>
+    <div class="request_content" style="padding-bottom: 0">
+      <div class="icon-header">
+        <Icon :name="`title-request`" :size="36" />
+        <div class="title">{{ title || 'Send transaction' }}</div>
+      </div>
+      <div class="description">
+        The website at {{ request.origin }} wants to {{ actionVerb || 'send' }} a transaction using
+        your account.
+      </div>
+    </div>
 
-    <div class="content" style="padding-top: 0" v-if="request">
+    <div class="content" style="padding-top: 0">
       <TxConfirm :txBody="txDataDisplay" />
     </div>
 
@@ -44,6 +66,7 @@
 import Component, { mixins } from 'vue-class-component';
 import { ScrollView, LoadingDialog } from '@aergo-connect/lib-ui/src/layouts';
 import { Button, ButtonGroup, ContinueButton } from '@aergo-connect/lib-ui/src/buttons';
+import { Identicon } from '@aergo-connect/lib-ui/src/content';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { RequestMixin } from './mixin';
@@ -58,6 +81,7 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
   components: {
     ScrollView,
     LoadingDialog,
+    Identicon,
     Button,
     ContinueButton,
     ButtonGroup,
@@ -73,9 +97,7 @@ export default class TxBase extends mixins(RequestMixin) {
 
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
-    console.log('Account Info', this.account);
   }
-
   get accountSpec() {
     return {
       address: this.$store.state.accounts.address,
@@ -136,7 +158,9 @@ export default class TxBase extends mixins(RequestMixin) {
       }
     }
   }
-
+  handleGoBack() {
+    this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
+  }
   async confirmHandler(): Promise<any> {
     console.log('RequestSend confirmHandler');
     if (!this.request) return;

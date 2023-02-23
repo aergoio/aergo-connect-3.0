@@ -1,52 +1,47 @@
 <template>
   <ScrollView class="page">
-    <template #header>
-      <div class="account_info_wrapper">
-        <Icon :name="`back`" @click="handleGoBack" />
-        <Identicon :text="$store.state.accounts.address" class="account_info_img" />
-        <div class="account_info_content_wrapper">
-          <div class="account_info_nickname_wrapper">
-            <div class="account_info_nickname_text">
-              {{ $store.state.accounts.nick }}
-            </div>
-            <div class="account_info_network_wrapper">
-              <div :class="`account_info_network_circle ${$store.state.accounts.network}`" />
-              <div class="account_info_network">
-                {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
-              </div>
+    <div class="account_info_wrapper">
+      <Icon :name="`back`" @click="handleGoBack" />
+      <Identicon :text="$store.state.accounts.address" class="account_info_img" />
+      <div class="account_info_content_wrapper">
+        <div class="account_info_nickname_wrapper">
+          <div class="account_info_nickname_text">
+            {{ $store.state.accounts.nick }}
+          </div>
+          <div class="account_info_network_wrapper">
+            <div :class="`account_info_network_circle ${$store.state.accounts.network}`" />
+            <div class="account_info_network">
+              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
           </div>
-          <div class="" @click="handleDetailAddress">
-            <span class="account_info_address_text">{{
-              `${$store.state.accounts.address.slice(
-                0,
-                15,
-              )}...${$store.state.accounts.address.slice(-5)}`
-            }}</span>
-          </div>
+        </div>
+        <div class="account_info_address_wrapper">
+          <span class="account_info_address_text">{{
+            `${$store.state.accounts.address.slice(0, 15)}...${$store.state.accounts.address.slice(
+              -5,
+            )}`
+          }}</span>
         </div>
       </div>
+    </div>
 
-      <div class="content" style="padding-bottom: 0">
-        <div class="icon-header">
-          <Icon :name="`title-request`" :size="36" />
-        </div>
-        <Heading>Sign message</Heading>
-        <p v-if="request">
-          The website at {{ request.origin }} wants to sign a message using your account.
-        </p>
+    <div class="request_content" style="padding-bottom: 0">
+      <div class="icon-header">
+        <Icon :name="`title-request`" :size="36" />
+        <div class="title">Sign message</div>
       </div>
-    </template>
-
-    <p class="unsupported-error" v-if="ledgerSignHashUnsupported">
-      For security reasons, signing hashes is not supported on the Ledger app. Use a browser-stored
-      account or request support from the Dapp developer.<br />
-      Advice for developer: change the API call to pass the original message as `message` instead of
-      a precomputed `hash`.
-    </p>
-
-    <div class="sign-message" v-if="request && !ledgerSignHashUnsupported">
-      {{ msgToSign }}
+      <div class="description">
+        The website at {{ request.origin }} wants to sign a message using your account.
+      </div>
+      <p class="unsupported-error" v-if="ledgerSignHashUnsupported">
+        For security reasons, signing hashes is not supported on the Ledger app. Use a
+        browser-stored account or request support from the Dapp developer.<br />
+        Advice for developer: change the API call to pass the original message as `message` instead
+        of a precomputed `hash`.
+      </p>
+      <div class="sign-message">
+        {{ msgToSign }}
+      </div>
     </div>
 
     <template #footer>
@@ -102,7 +97,6 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 export default class RequestSign extends mixins(RequestMixin) {
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
-    console.log('Account Info', this.account);
   }
 
   get accountSpec() {
@@ -111,7 +105,6 @@ export default class RequestSign extends mixins(RequestMixin) {
       chainId: this.$store.state.accounts.network,
     };
   }
-
   /*
   async signWithLedger(message: Buffer, displayAsHex = false) {
     this.setStatus('loading', 'Connecting to Ledger device...');
@@ -136,7 +129,7 @@ export default class RequestSign extends mixins(RequestMixin) {
   }
 */
   get msgToSign() {
-    if (!this.request) return '';
+    // if (!this.request) return '';
     return this.request.data.message || this.request.data.hash;
   }
   get signSource() {
@@ -212,11 +205,14 @@ export default class RequestSign extends mixins(RequestMixin) {
 
 <style lang="scss">
 .sign-message {
+  border-radius: 4px;
   background-color: #f0f0f0;
   padding: 16px;
   margin: 0 20px;
+  margin-top: 20px;
   font-size: (14/16) * 1rem;
-  word-wrap: break-word;
+  color: #279ecc;
+  word-break: break-all;
   line-height: 1.3;
 }
 .unsupported-error {

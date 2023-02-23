@@ -14,8 +14,6 @@ interface NftSessionType extends NftTokenType {
 export interface SessionState {
   tokens: Record<string, any>;
   token: string;
-  currentPage: string;
-  previousPage: string;
   option: string;
 }
 
@@ -52,7 +50,6 @@ const storeModule: Module<SessionState, RootState> = {
       );
 
       const response = await resp.json();
-      console.log(response, 'response');
       if (response.error) return;
 
       const balances = { aergo: aergoBalance, others: response.hits };
@@ -65,10 +62,10 @@ const storeModule: Module<SessionState, RootState> = {
         const tokens = await store.dispatch('accounts/tokens');
         await commit('setTokens', tokens);
 
-        console.log(
-          'fetch',
-          `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
-        );
+        // console.log(
+        //   'fetch',
+        //   `https://api.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
+        // );
 
         const prefix = store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
 
@@ -95,7 +92,7 @@ const storeModule: Module<SessionState, RootState> = {
     setTokenBalance(state, balances: any) {
       // others
       Object.keys(state.tokens).forEach((hash) => {
-        const bal = balances.others.find((element) => element.meta.address == hash);
+        const bal = balances.others.find((element: any) => element.meta.address == hash);
         if (bal) {
           if (bal.token.meta.type === 'ARC2') state.tokens[hash]['balance'] = bal.meta.balance;
           else
@@ -119,7 +116,7 @@ const storeModule: Module<SessionState, RootState> = {
       if (balances)
         balances.forEach((e) => {
           if (e.token.meta.image) {
-            console.log('ADD TOKEN', e.token.hash);
+            // console.log('ADD TOKEN', e.token.hash);
             state.tokens[e.token.hash] = e.token;
           }
         });

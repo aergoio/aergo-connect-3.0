@@ -236,7 +236,18 @@ export default Vue.extend({
       aergoPrice: 0,
       stakingPrice: 0,
       isLoading: false,
-      token: {},
+      token: {
+        hash: 'AERGO',
+        meta: {
+          name: 'AERGO',
+          symbol: 'aergo',
+          image: '',
+          type: 'AERGO',
+          decimals: 0,
+        },
+        balance: '0',
+        nftWallet: [],
+      },
     };
   },
 

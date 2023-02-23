@@ -22,9 +22,16 @@ function getRequestId() {
 }
 
 async function init(name: string) {
+  console.log('main init', name);
   const extensionPort = extension.runtime.connect({ name });
+  console.log('extensionPort', extensionPort);
+
   const connectionStream = new PortStream(extensionPort);
+  console.log('connectionStream', connectionStream);
+
   const background = await connectToBackground(connectionStream);
+  console.log('background', background);
+
   const manifest = extension.runtime.getManifest();
   console.log(manifest, 'manifest!!!');
   Vue.use(Background, { background });
@@ -78,6 +85,8 @@ async function init(name: string) {
   //  console.log('STATE', store.state.accounts);
   // console.log('idleTimeout:' + store.state.ui.idleTimeout);
   extension.idle.setDetectionInterval(store.state.ui.idleTimeout);
+
+  console.log('main init end');
 }
 
 const elem = document.getElementById('app');

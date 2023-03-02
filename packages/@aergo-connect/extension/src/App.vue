@@ -25,7 +25,7 @@ export default Vue.extend({
   },
 
   async mounted() {
-    const isSetup = await this.$background.isSetup();
+    const isSetup = await this.$store.state.ui.initSetupKey;
     const unlocked = await this.$background.isUnlocked();
     // console.log(this.$store.state.ui.currentPage, 'currentPage');
     // console.log(this.$store.state.ui.previousPage, 'previousPage');

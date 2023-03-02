@@ -6,6 +6,7 @@ import connectToBackground from './background/client';
 import Background from './plugins/background';
 import IndexedDb from './plugins/indexeddb';
 import extension from 'extensionizer';
+// import extension from 'webextension-polyfill';
 import PortStream from 'extension-port-stream';
 // import ClickOutside from 'vue-click-outside';
 import '@aergo-connect/lib-ui/src/styles/base.scss';
@@ -89,4 +90,8 @@ async function init(name: string) {
 const elem = document.getElementById('app');
 const name = elem ? elem.getAttribute('data-name') || '' : '';
 
-init(name);
+// init(name);
+
+extension.runtime.sendMessage(name).then((results) => {
+  init(name);
+});

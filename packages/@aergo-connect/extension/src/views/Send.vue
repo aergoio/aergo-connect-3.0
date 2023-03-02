@@ -1,10 +1,10 @@
 <template>
   <ScrollView>
-    <LoadingIndicator
+    <!-- <LoadingIndicator
       v-if="isLoading"
       :size="56"
       :style="{ position: 'absolute', zIndex: 10, top: 0, bottom: 0, left: 0, right: 0 }"
-    />
+    /> -->
     <SendOptionsModal
       v-if="optionsModal"
       :txType="txType"
@@ -328,9 +328,7 @@ export default Vue.extend({
       this.searchResult = '';
     }
   },
-  updated() {
-    console.log(this.nftUiData, 'nftUIData');
-  },
+
   watch: {
     asset: function () {
       this.setParams();
@@ -440,7 +438,12 @@ export default Vue.extend({
           Number(this.inputAmount) *
           Math.pow(10, this.$store.state.session.tokens[this.asset].meta.decimals);
         this.txBody.payload =
-          '{"Name": "transfer", "Args": ["' + this.inputTo + '", "' + amount.toString() + '", ""]}';
+          '{"Name": "transfer", "Args": ["' +
+          this.inputTo +
+          '", "' +
+          // eslint-disable-next-line no-undef
+          BigInt(amount).toString() +
+          '", ""]}';
         this.txType = 'CALL';
       } else {
         // ARC2
@@ -489,16 +492,16 @@ export default Vue.extend({
       // send
       try {
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
+        console.log(hash);
         this.txHash = hash;
         this.setStatus('success', 'Done');
-        this.isLoading = true;
         console.log('Sending ..', this.txBody);
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
       }
       this.statusDialogVisible = false;
-      if (!this.isLoading) return;
+
       await this.$store.dispatch('accounts/updateAccount', {
         chainId: this.$store.state.accounts.network,
         address: this.$store.state.accounts.address,
@@ -509,6 +512,7 @@ export default Vue.extend({
         this.$store.state.accounts.network,
         this.txHash,
       );
+      console.log(result, 'result?');
       if (result.status) {
         this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
         if (result.status === 'SUCCESS') {

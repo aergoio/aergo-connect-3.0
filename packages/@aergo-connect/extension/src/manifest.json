@@ -22,8 +22,7 @@
     "service_worker": "js/service-worker.js"
   },
 
-  "host_permissions": ["http://www.blogger.com/"],
-  "optional_host_permissions": ["*://*/*"],
+  "host_permissions": ["<all_urls>"],
 
   "content_scripts": [
     {

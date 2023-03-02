@@ -15,6 +15,7 @@ history.pushState(null, null, location.href);
 window.onpopstate = function () {
   history.go(1);
 };
+
 function getRequestId() {
   const urlParams = new URLSearchParams(window.location.search);
   const requestId = urlParams.get('request');
@@ -22,18 +23,14 @@ function getRequestId() {
 }
 
 async function init(name: string) {
-  console.log('main init', name);
   const extensionPort = extension.runtime.connect({ name });
-  console.log('extensionPort', extensionPort);
 
   const connectionStream = new PortStream(extensionPort);
-  console.log('connectionStream', connectionStream);
 
   const background = await connectToBackground(connectionStream);
-  console.log('background', background);
 
-  const manifest = extension.runtime.getManifest();
-  console.log(manifest, 'manifest!!!');
+  // const manifest = extension.runtime.getManifest();
+  // console.log(manifest, 'manifest!!!');
   Vue.use(Background, { background });
   Vue.use(IndexedDb);
   Vue.directive('click-outside', {
@@ -91,4 +88,5 @@ async function init(name: string) {
 
 const elem = document.getElementById('app');
 const name = elem ? elem.getAttribute('data-name') || '' : '';
+
 init(name);

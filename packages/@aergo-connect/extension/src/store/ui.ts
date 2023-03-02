@@ -41,6 +41,7 @@ const storeModule: Module<UiState, RootState> = {
     initSetupKey: '',
     idleTimeout: 60,
     unlocked: false,
+    isSetup: false,
     route: {
       currentPath: '',
       previousPath: '',
@@ -98,6 +99,9 @@ const storeModule: Module<UiState, RootState> = {
     },
     setDropdownClickNum(state, num: number) {
       state.dropdownClickNum = num;
+    },
+    setIsSetup(state, setupState: boolean) {
+      state.isSetup = setupState;
     },
   },
   actions: {

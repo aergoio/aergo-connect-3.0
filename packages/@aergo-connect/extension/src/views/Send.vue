@@ -517,6 +517,10 @@ export default Vue.extend({
             this.statusDialogVisible = false;
             this.sendFinishModal = true;
           }, 1000);
+        } else if (result.status === 'ERROR') {
+          this.statusDialogVisible = false;
+          const errorMsg = `${result.result.split(`${result.contractaddress}:0: `)[1]}`;
+          this.setStatus('error', errorMsg);
         }
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
@@ -563,6 +567,7 @@ export default Vue.extend({
           this.$store.state.accounts.network,
         );
         if ('tx' in result) {
+          console.log(result, 'here4');
           return result.tx.hash;
         } else {
           // This shouldn't happen normally

@@ -37,9 +37,7 @@ async function setupController() {
     }
   }
 
-  extension.runtime.onConnect.addListener(connectRemote);
-  // Setup idle detection
-  extension.idle.setDetectionInterval(60);
+const controller = new BackgroundController();
 
   extension.idle.onStateChanged.addListener((newState) => {
     console.log('idle onStateChanged : ' + newState);
@@ -56,8 +54,11 @@ extension.runtime.onInstalled.addListener(() => {
   // chrome.storage.sync.set({ color });
   // console.log('Default background color set to %cgreen', `color: ${color}`);
 
-  if (!extension.runtime.id) {
-    console.error('Script needs run in extension context. Aborting');
+  if (processName === 'external') {
+    remotePort.onMessage.addListener((msg, port) => {
+      const request = ExternalRequest.fromPortMessage(port, msg);
+      controller.permissionRequest(request);
+    });
   } else {
     // setupController();
     // extension.contextMenus.removeAll();
@@ -80,6 +81,8 @@ extension.runtime.onMessage.addListener(async (request, sender, sendResponse) =>
     }
   }
 });
+// Setup idle detection
+extension.idle.setDetectionInterval(60);
 
 //////////////////////////////////////////////////////////////////////////////////
 

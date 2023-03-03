@@ -13,7 +13,6 @@ import { Address } from '@herajs/client';
 import Controller from './controller';
 import { ChainConfig } from '../config';
 import { promisifySimple } from '../utils/promisify';
-
 interface AccountSpec {
   chainId: string;
   address: string;
@@ -258,6 +257,7 @@ export class Api {
 
   async getTransactionReceipt(chainId: string, hash: string) {
     const tx = await this.controller.wallet.getClient(chainId).waitForTransactionReceipt(hash);
+    console.log(tx, 'tx?');
     return JSON.parse(JSON.stringify(tx));
   }
 

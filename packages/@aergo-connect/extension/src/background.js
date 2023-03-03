@@ -2,6 +2,7 @@ require('./manifest.json');
 
 import 'regenerator-runtime/runtime';
 
+// import extension from 'extensionizer';
 import extension from 'webextension-polyfill';
 import endOfStream from 'end-of-stream';
 import PortStream from 'extension-port-stream';
@@ -37,7 +38,9 @@ async function setupController() {
     }
   }
 
-const controller = new BackgroundController();
+  extension.runtime.onConnect.addListener(connectRemote);
+  // Setup idle detection
+  extension.idle.setDetectionInterval(60);
 
   extension.idle.onStateChanged.addListener((newState) => {
     console.log('idle onStateChanged : ' + newState);
@@ -54,11 +57,8 @@ extension.runtime.onInstalled.addListener(() => {
   // chrome.storage.sync.set({ color });
   // console.log('Default background color set to %cgreen', `color: ${color}`);
 
-  if (processName === 'external') {
-    remotePort.onMessage.addListener((msg, port) => {
-      const request = ExternalRequest.fromPortMessage(port, msg);
-      controller.permissionRequest(request);
-    });
+  if (!extension.runtime.id) {
+    console.error('Script needs run in extension context. Aborting');
   } else {
     // setupController();
     // extension.contextMenus.removeAll();
@@ -81,8 +81,6 @@ extension.runtime.onMessage.addListener(async (request, sender, sendResponse) =>
     }
   }
 });
-// Setup idle detection
-extension.idle.setDetectionInterval(60);
 
 //////////////////////////////////////////////////////////////////////////////////
 

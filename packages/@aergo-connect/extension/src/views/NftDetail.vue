@@ -44,7 +44,7 @@
         <span
           :style="[
             token?.meta?.img_url
-              ? { textAlign: 'center', fontSize: `1.1rem`, marginTop: '18px' }
+              ? { textAlign: 'center', fontSize: `1.1rem`, marginTop: '16px' }
               : { textAlign: 'center', fontSize: `1.1rem`, marginTop: '38px' },
           ]"
         >

@@ -4,6 +4,7 @@
     <div class="version_content">
       <Icon :name="`aergoMainLogo`" />
       <div class="text">Currently Version: {{ checkVersion() }}</div>
+
       <div class="text">Your app is up to date.</div>
     </div>
     <Button class="version_button" type="primary" size="large" @click="handleBack" hover>OK</Button>
@@ -59,5 +60,6 @@ export default Vue.extend({
 }
 .version_button {
   margin-left: 24px;
+  margin-top: 155px;
 }
 </style>

@@ -86,20 +86,11 @@ export default Vue.extend({
     symbol: String,
     tokenType: String,
     fee: String,
-  },
-
-  data() {
-    return {
-      balance: this.$store.state.session.tokens[this.asset].balance,
-    };
+    balance: Number,
   },
 
   methods: {
     handleOk() {
-      // console.log('ok', this.to);
-      // this.$emit('close');
-      // this.$store.commit('session/setToken', token.hash);
-      // console.log(receipt, 'receipt!');
       if (this.$store.state.session.option === 'nft') {
         this.$router.push({ name: 'accounts-list' });
       } else {

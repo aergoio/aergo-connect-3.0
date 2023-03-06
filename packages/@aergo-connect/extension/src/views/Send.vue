@@ -34,6 +34,7 @@
       :tokenType="tokenType"
       :fee="fee"
       :userNftData="userNftData"
+      :balance="balance"
     />
     <Header button="back" title="Send" @backClick="handleBack" />
     <div class="send_content_wrapper">
@@ -313,6 +314,7 @@ export default Vue.extend({
       userNftData: {},
       txHash: '',
       nftUiData: {},
+      result: {},
     };
   },
   async beforeMount() {
@@ -492,48 +494,38 @@ export default Vue.extend({
       // send
       try {
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
-        console.log(hash);
         this.txHash = hash;
+        const result = await this.$background.getTransactionReceipt(
+          this.$store.state.accounts.network,
+          this.txHash,
+        );
         this.setStatus('success', 'Done');
-        console.log('Sending ..', this.txBody);
+        if (result.status === 'SUCCESS') {
+          await this.$store.commit('ui/clearInput', { key: 'send' });
+          if (this.userNftData.hash) {
+            this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
+          }
+          // eslint-disable-next-line no-undef
+          this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
+          this.$store.dispatch('accounts/updateAccount', {
+            chainId: this.$store.state.accounts.network,
+            address: this.$store.state.accounts.address,
+          });
+          await this.$store.dispatch('session/updateBalances');
+          this.balance = await this.$store.state.session.tokens[this.asset].balance;
+          setTimeout(() => {
+            this.statusDialogVisible = false;
+            this.sendFinishModal = true;
+          }, 1000);
+        } else if (result.status === 'ERROR') {
+          this.statusDialogVisible = false;
+          const errorMsg = `${result.result.split(`${result.contractaddress}:0: `)[1]}`;
+          this.setStatus('error', errorMsg);
+        }
       } catch (e) {
         const errorMsg = `${e}`.replace('UNDEFINED_ERROR:', '');
         this.setStatus('error', errorMsg);
       }
-      this.statusDialogVisible = false;
-
-      await this.$store.dispatch('accounts/updateAccount', {
-        chainId: this.$store.state.accounts.network,
-        address: this.$store.state.accounts.address,
-      });
-      await this.$store.commit('ui/clearInput', { key: 'send' });
-
-      const result = await this.$background.getTransactionReceipt(
-        this.$store.state.accounts.network,
-        this.txHash,
-      );
-      console.log(result, 'result?');
-      if (result.status) {
-        this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
-        if (result.status === 'SUCCESS') {
-          if (this.userNftData.hash) {
-            this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
-          }
-          console.log(`[${result.status}]: ${result.result}`);
-        } else if (result.status === 'ERROR') {
-          // console.log(result, 'result in error');
-          this.notification = true;
-          this.notificationText = `Transaction Sent Failed!${result.result.split(':')[3]}`;
-          console.error(`[${result.status}]: ${result.result}`);
-          this.isLoading = false;
-          return;
-        }
-      }
-      // console.log('receipt', this.txReceipt);
-      await this.$store.dispatch('session/updateBalances');
-      this.balance = await this.$store.state.session.tokens[this.asset].balance;
-      this.isLoading = false;
-      this.sendFinishModal = true;
     },
     // async handleSent() {
     //   this.balance = await this.$store.state.session.tokens[this.asset].balance;
@@ -574,8 +566,8 @@ export default Vue.extend({
           txBody,
           this.$store.state.accounts.network,
         );
-        console.log(result, 'result!!!');
         if ('tx' in result) {
+          console.log(result, 'here4');
           return result.tx.hash;
         } else {
           // This shouldn't happen normally

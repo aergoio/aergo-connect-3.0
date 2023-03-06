@@ -90,8 +90,8 @@ async function init(name: string) {
 const elem = document.getElementById('app');
 const name = elem ? elem.getAttribute('data-name') || '' : '';
 
-// init(name);
+init(name);
 
-extension.runtime.sendMessage(name).then((results) => {
-  init(name);
-});
+// extension.runtime.sendMessage(name).then((results) => {
+//   init(name);
+// });

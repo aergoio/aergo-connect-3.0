@@ -16,6 +16,10 @@
         <AccountList :accounts="$store.state.accounts.accounts" @select="selectAccount" />
       </div>
       <NetworkModal v-if="networkModal" @networkModalClick="handleNetworkModalClick" />
+      <span class="unsupported-error" v-if="registerNewAccount"
+        >Wallet account information is required to make an external connection. Please register or
+        create wallet accounts first!</span
+      >
     </ScrollView>
   </div>
 </template>
@@ -49,9 +53,16 @@ export default Vue.extend({
   },
   data() {
     return {
+      registerNewAccount: false,
       addAccountDialogVisible: false,
       networkModal: false,
     };
+  },
+  mounted() {
+    console.log(this.$store.state.accounts, 'accounts');
+    if (!this.$store.state.accounts.accounts[this.$store.state.accounts.address]) {
+      this.registerNewAccount = true;
+    }
   },
   methods: {
     async selectAccount(account: any) {

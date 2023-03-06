@@ -68,6 +68,7 @@ export default class Register extends mixins(PersistInputsMixin) {
     await this.$store.dispatch('accounts/addAccount', account.address);
     await this.$store.commit('accounts/setSeedPhrase', mnemonic);
     await this.$store.commit('accounts/setBackup', false);
+
     console.log(this.$store.state.accounts[this.$store.state.accounts.address]);
     console.log('List', this.$background.getAccounts());
 

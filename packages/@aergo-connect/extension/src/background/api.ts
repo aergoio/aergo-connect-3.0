@@ -13,7 +13,6 @@ import { Address } from '@herajs/client';
 import Controller from './controller';
 import { ChainConfig } from '../config';
 import { promisifySimple } from '../utils/promisify';
-
 interface AccountSpec {
   chainId: string;
   address: string;

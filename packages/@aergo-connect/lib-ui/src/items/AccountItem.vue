@@ -8,6 +8,7 @@
       :class="[
         this.$route.name === 'request-accounts-list' ? 'name__wrapper request' : 'name__wrapper',
       ]"
+      @click="handleActiveAccount"
     >
       <div class="identicon-wrapper">
         <Identicon :text="address" :list="true" />
@@ -56,7 +57,13 @@ export default Vue.extend({
     return {};
   },
   computed: {},
-  methods: {},
+  methods: {
+    async handleActiveAccount() {
+      if (this.$route.name === 'request-accounts-list') {
+        this.$router.push({ name: 'request-address' }).catch(() => {});
+      }
+    },
+  },
   mounted() {
     console.log(this.$route.name, 'routerInAccountItem');
   },

@@ -162,11 +162,10 @@ export default Vue.extend({
   }
   &.button-type-primary-outline {
     color: $Blue01;
-    /* outline: 2px solid $Blue01; */
     border: 2px solid $Blue01;
     &.hover:hover {
       border: 2px solid transparent;
-      border-radius: 4px;
+      border-radius: 4px !important;
       border-image: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
       border-image-slice: 1;
       span {

@@ -52,9 +52,9 @@
         </div>
         <div class="line" />
 
-        <div class="flex-row">
+        <div class="flex-row payload-wrapper">
           <div class="title">Payload</div>
-          <div class="flex-row">
+          <div class="flex-row payload">
             <div class="detail payload" v-html="formattedPayload"></div>
           </div>
         </div>
@@ -159,6 +159,11 @@ export default Vue.extend({
       overflow-x: hidden;
       .flex-row {
         display: flex;
+        justify-content: center;
+        &.payload-wrapper {
+          margin-left: 24px;
+          max-width: 265px;
+        }
         &.network {
           align-items: center;
         }
@@ -253,7 +258,7 @@ export default Vue.extend({
             word-break: break-all;
           }
           &.amount {
-            max-width: 170px;
+            /* max-width: 170px; */
             font-family: 'Outfit';
             font-style: normal;
             font-weight: 400;
@@ -280,7 +285,6 @@ export default Vue.extend({
       }
     }
     .button_wrapper {
-      margin-left: 6px;
       margin-top: 10px;
       margin-bottom: 20px;
       .button-type-primary-outline:hover {

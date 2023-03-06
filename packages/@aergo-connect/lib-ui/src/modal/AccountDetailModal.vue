@@ -147,7 +147,6 @@ export default Vue.extend({
       width: 289px;
     }
     .button-group-vertical {
-      margin-left: 8px;
     }
   }
 }

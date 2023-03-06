@@ -59,7 +59,7 @@
         </div>
         <div class="line" />
         <div class="detail_wrapper">
-          <div :style="{ display: 'flex', flexDirection: 'column' }">
+          <div :style="{ display: 'flex', flexDirection: 'column', marginTop: '5px' }">
             <div class="detail_title">Staked Balance</div>
             <div class="detail_title staking">
               {{ staking }}
@@ -112,15 +112,15 @@
         >
           <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
             <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
-            <div :style="{ display: 'flex', alignItems: 'center' }">
-              <div class="tx_id" @click="gotoScanTx(item.hash)">
-                {{
-                  item.hash.split('-0').length === 2
-                    ? `TX_ID: ${item.hash.slice(0, 10)}......${item.hash.slice(-10, -2)}`
-                    : `TX_ID: ${item.hash.slice(0, 10)}......${item.hash.slice(-10)}`
-                }}
-              </div>
-            </div>
+            <!-- <div :style="{ display: 'flex', alignItems: 'center' }">
+                <div class="tx_id" @click="gotoScanTx(item.hash)">
+                  {{
+                    item.hash.split('-0').length === 2
+                      ? `TX_ID: ${item.hash.slice(0, 6)}......${item.hash.slice(-6, -2)}`
+                      : `TX_ID: ${item.hash.slice(0, 6)}......${item.hash.slice(-6)}`
+                  }}
+                </div>
+              </div> -->
             <div class="direction_row mt4">
               <div v-if="item.meta.from === $store.state.accounts.address" class="sent">Sent</div>
               <div v-else class="received">Received</div>
@@ -144,7 +144,16 @@
             </div>
             <div class="line"></div>
             <div class="direction_row">
-              <div
+              <div :style="{ display: 'flex', alignItems: 'center' }">
+                <div type="button" class="tx_id" @click="gotoScanTx(item.hash)">
+                  {{
+                    item.hash.split('-0').length === 2
+                      ? `TX_ID: ${item.hash.slice(0, 6)}......${item.hash.slice(-6, -2)}`
+                      : `TX_ID: ${item.hash.slice(0, 6)}......${item.hash.slice(-6)}`
+                  }}
+                </div>
+              </div>
+              <!-- <div
                 v-if="item.meta.from === $store.state.accounts.address"
                 class="address"
                 @click="gotoScanAccount(item.meta.to)"
@@ -153,12 +162,12 @@
               </div>
               <div v-else class="address" @click="gotoScanAccount(item.meta.to)">
                 {{ `From: ${item.meta.to.slice(0, 6)}...${item.meta.to.slice(-6)}` }}
-              </div>
+              </div> -->
               <div class="direction_row">
                 <div v-if="token.meta.symbol === 'aergo'" class="address type">
                   {{ getTokenType(item) }}
                 </div>
-                <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" />
+                <!-- <Icon :name="'pointer'" @click="gotoScanTx(item.hash)" /> -->
               </div>
             </div>
           </li>
@@ -259,9 +268,7 @@ export default Vue.extend({
       await this.getAergoInfo();
     }
   },
-  mounted() {
-    console.log(this.data, 'data!!!!!!!!!!!@#@!#@!');
-  },
+
   watch: {
     filter: function () {
       if (this.filter === 'All') {
@@ -308,22 +315,18 @@ export default Vue.extend({
     },
 
     gotoStake() {
-      const windowFeatures = `width=${window.innerWidth * 3.75},height=${window.innerHeight * 2}`;
-      console.log(windowFeatures, ' windowFeatures');
-      window.open('https://voting.aergo.io/about', '', windowFeatures);
+      window.open('https://voting.aergo.io/about', '_blank');
     },
     gotoScanTx(hash: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
         hash.split('-')[0]
       }/`;
-      const userWidth = window.innerWidth;
-      window.open(url, '_blank', `width=${userWidth}`);
+      window.open(url, '_blank');
     },
 
     gotoScanAccount(address: string) {
       const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
-      const userWidth = window.innerWidth;
-      window.open(url, '_blank', 'width=' + parseInt(userWidth * 0.75));
+      window.open(url, '_blank');
     },
 
     async getAergoInfo() {
@@ -585,11 +588,12 @@ export default Vue.extend({
       justify-content: space-between;
       .detail_title {
         /* Caption/C1 */
+
         margin-left: 14px;
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
-        font-size: 15px;
+        font-size: 14px;
         line-height: 19px;
         /* identical to box height */
 
@@ -679,6 +683,7 @@ export default Vue.extend({
       line-height: 25px;
       letter-spacing: -0.333333px;
       word-break: break-all;
+      text-overflow: ellipsis;
       &.sent {
         color: #231f20;
       }
@@ -811,6 +816,8 @@ export default Vue.extend({
           color: #9c9a9a;
         }
         .tx_id {
+          margin-top: 10px;
+          margin-bottom: 10px;
           margin-left: 16px;
           font-size: 12.5px;
           text-decoration-line: underline;
@@ -884,6 +891,7 @@ export default Vue.extend({
 
             color: #686767;
             &.type {
+              margin-right: 16px;
               cursor: text;
               text-decoration-line: none;
             }
@@ -928,7 +936,7 @@ export default Vue.extend({
     box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
     border-radius: 4px;
     width: 157px;
-    margin-right: 10px;
+    /* margin-right: 10px; */
     .button-icon {
       margin-top: 5px;
     }

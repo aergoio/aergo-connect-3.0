@@ -31,7 +31,7 @@
         <div class="title">Access public address</div>
       </div>
       <div class="description">
-        The website at {{ request.origin }} wants to receive your active account's public address
+        The website at {{ request?.origin }} wants to receive your active account's public address
         and chain ID.
       </div>
     </div>
@@ -40,10 +40,10 @@
       <Appear :delay="0.6">
         <ButtonGroup>
           <Button class="button" type="font-gradation" size="small" @click="cancel">
-            <Icon class="button-icon" /><span>Cancel</span>
+            <span>Cancel</span>
           </Button>
           <Button class="button" type="font-gradation" size="small" @click="confirm">
-            <Icon class="button-icon" /><span>Confirm</span>
+            <span>Confirm</span>
           </Button>
         </ButtonGroup>
       </Appear>

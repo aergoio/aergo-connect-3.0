@@ -91,6 +91,7 @@ export default Vue.extend({
 
   methods: {
     handleOk() {
+      this.$store.commit('ui/clearInput', { key: 'send' });
       if (this.$store.state.session.option === 'nft') {
         this.$router.push({ name: 'accounts-list' });
       } else {

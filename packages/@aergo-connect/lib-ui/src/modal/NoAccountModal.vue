@@ -73,7 +73,6 @@ export default Vue.extend({
     }
 
     .button_wrapper {
-      margin-left: 10px;
       margin-top: 53px;
       .button {
         width: 289px;

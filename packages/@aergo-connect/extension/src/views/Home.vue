@@ -8,11 +8,18 @@
       @hamburgerClick="hamburgerClick"
       @networkModalClick="networkModalClick"
       @refreshClick="refreshClick"
+      :isNetworkError="errorMessage === 'ERR_INTERNET_DISCONNECTED'"
     />
-    <LoadingIndicator
+    <!-- <LoadingIndicator
       :style="{ position: 'absolute', zIndex: 10, top: 0, bottom: 0, left: 0, right: 0 }"
       v-if="isLoading"
       :size="56"
+    /> -->
+    <ErrorModal
+      v-if="errorModal"
+      :errorMessage="errorMessage"
+      @cancel="handleCancel"
+      @refresh="handleRefresh"
     />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
@@ -249,7 +256,7 @@ import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
-
+import ErrorModal from '@aergo-connect/lib-ui/src/modal/ErrorModal.vue';
 export default Vue.extend({
   components: {
     NoAccountModal,
@@ -267,6 +274,7 @@ export default Vue.extend({
     Appear,
     LoadingIndicator,
     Notification,
+    ErrorModal,
   },
   data() {
     return {
@@ -288,6 +296,8 @@ export default Vue.extend({
       tokens: [],
       dropdownScroll: false,
       dropdownClickNum: 0,
+      errorModal: false,
+      errorMessage: '',
     };
   },
   beforeMount() {
@@ -317,6 +327,11 @@ export default Vue.extend({
         }, 2000);
       }
     },
+    nftCountNum() {
+      if (this.nftCountNum === 0) {
+        this.$store.commit('ui/setDropdownClickNum', 0);
+      }
+    },
   },
 
   methods: {
@@ -342,28 +357,47 @@ export default Vue.extend({
       this.tokensCount = 0;
       this.nftCountNum = 0;
       if (this.$store.state.accounts.address) {
-        await this.$store.dispatch('session/initState');
+        const response = await this.$store.dispatch('session/initState');
+        if (response === 'initError') {
+          this.errorModal = true;
+          this.errorMessage = 'ERR_INTERNET_DISCONNECTED';
+          this.isLoading = false;
+          return;
+        }
         await this.getNftDataInLocalStorage();
         this.nick = await this.$store.state.accounts.nick;
         await this.myNFTList();
         await this.checkIsUpdateNft();
         await this.$forceUpdate();
+        this.errorMessage = '';
+        this.isLoading = false;
       } else {
         console.log('Other Account Loading ..');
         const succ = await this.$store.dispatch('accounts/loadAccount');
-
+        this.isLoading = false;
+        this.errorMessage = '';
         if (!succ) {
           this.noAccountModal = true;
-        } else await this.$store.dispatch('session/InitState');
+        } else {
+          await this.$store.dispatch('session/InitState');
+        }
       }
       this.isLoading = false;
+      // this.errorMessage = '';
     },
 
     async refreshClick() {
       this.isLoading = true;
-      await this.$store.dispatch('session/updateBalances');
-      await this.checkIsUpdateNft();
-      this.$forceUpdate();
+      try {
+        await this.$store.dispatch('session/updateBalances');
+        await this.checkIsUpdateNft();
+        this.$forceUpdate();
+        this.errorModal = false;
+        this.errorMessage = '';
+      } catch (e: any) {
+        this.errorModal = true;
+        this.errorMessage = 'ERR_INTERNET_DISCONNECTED';
+      }
       this.isLoading = false;
     },
 
@@ -384,8 +418,14 @@ export default Vue.extend({
       if (modalEvent === 'accountDetailModal') {
         this.accountDetailModal = false;
       }
+      if (modalEvent === 'errorModal') {
+        this.errorModal = false;
+      }
     },
 
+    handleRefresh() {
+      this.refreshClick();
+    },
     handleConfirm() {
       this.passwordModal = false;
       this.hamburgerModal = false;
@@ -526,8 +566,10 @@ export default Vue.extend({
                   console.log('end To Change WalletData');
                 }
               }
-            } catch (e) {
-              console.error(e, 'error');
+            } catch (e: any) {
+              console.error(e, 'checkIsupdateNft Error');
+              // this.errorModal = true;
+              // this.errorMessage = e;
             }
           });
         }
@@ -545,7 +587,6 @@ export default Vue.extend({
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100%;
   .account_info_wrapper {
     display: flex;
     flex-direction: row;
@@ -594,8 +635,7 @@ export default Vue.extend({
           margin-right: 5px;
           word-break: break-all;
         }
-        .account_info_nickname_input {
-        }
+
         .account_info_nickname_button {
           cursor: pointer;
         }

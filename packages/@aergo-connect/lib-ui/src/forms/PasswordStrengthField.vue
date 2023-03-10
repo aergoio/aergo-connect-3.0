@@ -111,12 +111,12 @@ export default Vue.extend({
 }
 .password-advice {
   color: #666;
-  font-size: (14/16) * 1rem;
+  font-size: (calc(14 / 16)) * 1rem;
   display: flex;
 }
 .password-good {
   color: #279ecc;
-  font-size: (14/16) * 1rem;
+  font-size: (calc(14 / 16)) * 1rem;
   .adjustable-stroke {
     stroke: #00c789;
   }

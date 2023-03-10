@@ -44,7 +44,7 @@ export default class LoadingDialog extends Vue {
   padding: 40px 20px;
   .message {
     margin-top: 20px;
-    font-size: (13/16) * 1rem;
+    font-size: (calc(13 / 16)) * 1rem;
     color: #222222;
     p {
       margin-bottom: 0;

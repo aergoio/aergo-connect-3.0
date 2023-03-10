@@ -100,24 +100,24 @@ export default class Balance extends Vue {
   padding-bottom: 10px;
 
   .balance-label {
-    font-size: (12/16) * 1rem;
+    font-size: (calc(12 / 16)) * 1rem;
     font-weight: 500;
   }
   .account-balance {
     line-height: 34px;
-    font-size: (28/16) * 1rem;
+    font-size: (calc(8 / 16)) * 1rem;
     margin: 8px 0 5px;
 
     .value {
       font-weight: 600;
     }
     .unit {
-      font-size: (20/16) * 1rem;
+      font-size: (calc(20 / 16)) * 1rem;
     }
   }
   .balance-fiat {
     color: #666;
-    font-size: (14/16) * 1rem;
+    font-size: (calc(14 / 16)) * 1rem;
   }
 }
 </style>

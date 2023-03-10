@@ -1,21 +1,17 @@
 <template>
-  <component
-    :is="tag"
-    class="section-heading"
-    :class="{ 'is-animated': animated }"
-  >
+  <component :is="tag" class="section-heading" :class="{ 'is-animated': animated }">
     <slot></slot>
   </component>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from 'vue';
 
 export default Vue.extend({
   props: {
     tag: {
       type: String,
-      default: "h1",
+      default: 'h1',
     },
     animated: Boolean,
   },
@@ -52,7 +48,7 @@ export default Vue.extend({
   justify-content: center;
 }
 .semi-big-title {
-  font-size: (32/16) * 1rem;
+  font-size: calc(2 / 16) * 1rem;
   font-weight: 600;
 }
 </style>

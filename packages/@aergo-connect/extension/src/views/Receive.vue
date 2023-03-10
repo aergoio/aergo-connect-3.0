@@ -97,14 +97,11 @@
               </div>
               <Icon :name="selectAsset ? `dropupblue` : `dropdownblue`" />
             </div>
-            <ul
-              v-if="selectAsset"
-              class="selectbox_asset"
-              :style="{ height: assetListStyle(), 'overflow-y': assetListScrollStyle() }"
-            >
+            <ul v-if="selectAsset" class="selectbox_asset">
               <li
                 class="list"
                 v-for="token in arc1Tokens"
+                v-show="token.meta.type === tokenType"
                 :key="token.meta.hash"
                 @click="selectAssetFunc(token.hash)"
               >
@@ -119,21 +116,22 @@
 
         <div class="flex-row" v-if="tokenType !== 'ARC2'">
           <div class="title">Amount</div>
-          <input v-model.number="inputAmount" type="text" class="text_box" />
+          <input v-model.number="inputAmount" type="text" class="text_box" placeholder="0" />
+        </div>
+
+        <div class="footer">
+          <Button
+            v-if="!receiveModal"
+            type="primary"
+            size="large"
+            @click="handleShowQRClick"
+            :disabled="!inputAmount && tokenType !== 'ARC2'"
+            :hover="inputAmount || tokenType === 'ARC2'"
+            >Show QR</Button
+          >
         </div>
       </div>
     </div>
-    <template #footer class="footer">
-      <Button
-        v-if="!receiveModal"
-        type="primary"
-        size="large"
-        @click="handleShowQRClick"
-        :disabled="!inputAmount && tokenType !== 'ARC2'"
-        :hover="inputAmount || tokenType === 'ARC2'"
-        >Show QR</Button
-      >
-    </template>
     <Notification
       v-if="notification"
       :title="notificationText"
@@ -167,7 +165,7 @@ export default Vue.extend({
       tokenType: '',
       symbol: '',
       tokenName: '',
-      inputAmount: '',
+      inputAmount: '0',
       decimal: '',
       token: {},
       arc1Tokens: [],
@@ -179,11 +177,18 @@ export default Vue.extend({
     this.arc1Tokens = await Object.values(this.$store.state.session.tokens).filter(
       (token) => token.meta.type === 'ARC1' || token.meta.type === 'AERGO',
     );
-    if (this.$store.state.session.token) this.asset = this.$store.state.session.token;
-    else this.asset = 'AERGO';
+    if (this.$store.state.ui.input['receive']['inputAmount']) {
+      this.inputAmount = this.$store.state.ui.input['receive']['inputAmount'];
+    }
+    if (this.$store.state.session.token) {
+      this.asset = this.$store.state.session.token;
+    } else {
+      this.asset = 'AERGO';
+    }
   },
   watch: {
     asset: function () {
+      this.$store.commit('ui/clearInput', { key: 'receive' });
       this.balance = this.$store.state.session.tokens[this.asset]['balance'];
       this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
       this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
@@ -210,9 +215,17 @@ export default Vue.extend({
       }
     },
   },
-
+  updated() {
+    this.$store.commit('ui/setInputs', {
+      key: 'receive',
+      data: {
+        inputAmount: this.inputAmount,
+      },
+    });
+  },
   methods: {
     handleBack() {
+      this.$store.commit('ui/clearInput', { key: 'receive' });
       this.$router.push({ name: 'accounts-list' });
     },
     handleShowQRClick() {
@@ -244,26 +257,6 @@ export default Vue.extend({
     selectAssetFunc(asset) {
       this.asset = asset;
       this.selectAsset = false;
-    },
-    assetListStyle() {
-      switch (this.arc1Tokens.length) {
-        case 1:
-          return '43px';
-        case 2:
-          return '86px';
-        case 3:
-          return '129px';
-        default:
-          return '172px';
-      }
-    },
-    assetListScrollStyle() {
-      switch (this.arc1Tokens.length) {
-        case 4:
-          return 'scroll';
-        default:
-          return 'hidden';
-      }
     },
     hide() {
       this.selectAsset = false;
@@ -424,53 +417,11 @@ export default Vue.extend({
   .send_form_wrapper {
     /* Primary/lightsky */
 
-    background: #eff5f7;
+    /* background: #eff5f7;
     box-shadow: inset 0px 6px 17px -8px rgba(0, 0, 0, 0.05);
-    position: absolute;
     width: 375px;
-    height: 380px;
-    bottom: 0px;
-    .selectbox_asset {
-      width: 243px;
-      height: 172px;
-      position: absolute;
-      left: 105px;
-      border-radius: 3px;
-      border: 1px solid #279ecc;
-      text-overflow: ellipsis;
-      /* overflow-y: scroll; */
-      /* overflow-x: hidden; */
-      .img {
-        margin-left: 6px;
-        margin-right: 8px;
-        height: 32px;
-        width: 32px;
-        border-radius: 50%;
-      }
-      .aergo {
-        margin-left: 10px;
-        margin-right: 10px;
-      }
+    height: 100vh; */
 
-      .list {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-align: center;
-        -ms-flex-align: center;
-        align-items: center;
-        cursor: pointer;
-        /* width: 228px; */
-        height: 43px;
-        background: #ffffff;
-        border-radius: 3px;
-        font-size: 16px;
-        font-weight: 500;
-      }
-      .list:hover {
-        background: #f6f6f6;
-      }
-    }
     .flex-row {
       display: flex;
       align-items: center;
@@ -519,12 +470,11 @@ export default Vue.extend({
 
         border: 1px solid #279ecc;
         border-radius: 4px;
-        width: 240px;
+        width: 230px;
         height: 33px;
       }
     }
     .flex-column {
-      margin-left: 26px;
       display: flex;
       flex-direction: column;
       .title {
@@ -533,14 +483,14 @@ export default Vue.extend({
         font-weight: 400;
         font-size: 17px;
         line-height: 21px;
-        margin-top: 20px;
+        /* margin-top: 20px; */
         /* Primary/Blue01 */
 
         color: #279ecc;
       }
       .text_box {
         margin-top: 9px;
-        width: 303px;
+        width: 300px;
         height: 33px;
         background: #ffffff;
         /* Primary/Blue01 */
@@ -549,33 +499,6 @@ export default Vue.extend({
         border-radius: 4px;
       }
     }
-  }
-}
-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  .show_option {
-    margin-bottom: 20px;
-    /* Subtitle/S3_line */
-
-    font-family: 'Outfit';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 20px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    letter-spacing: -0.333333px;
-    text-decoration-line: underline;
-    /* Gradation/04 */
-
-    background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    cursor: pointer;
   }
 }
 </style>

@@ -111,25 +111,23 @@ export default Vue.extend({
       return ['select-field', `options-${this.optionsVisible ? 'visible' : 'hidden'}`];
     },
     optionDict(): OptionDict[] {
-      return this.options.map(
-        (option): OptionDict => {
-          if (isSelectOptionWithLabel(option)) {
-            return { value: option[0], label: option[1] };
-          }
-          if (isSelectOptionObject(option)) {
-            return option;
-          }
-          return { value: option, label: option };
-        },
-      );
+      return this.options.map((option): OptionDict => {
+        if (isSelectOptionWithLabel(option)) {
+          return { value: option[0], label: option[1] };
+        }
+        if (isSelectOptionObject(option)) {
+          return option;
+        }
+        return { value: option, label: option };
+      });
     },
     valueLabel(): string {
-      const selected = this.optionDict.find(option => option.value === this.value);
+      const selected = this.optionDict.find((option) => option.value === this.value);
       return selected ? selected.label : `${this.value}`;
     },
   },
   mounted() {
-    this.selectedOptionIndex = this.optionDict.findIndex(option => option.value === this.value);
+    this.selectedOptionIndex = this.optionDict.findIndex((option) => option.value === this.value);
     if (this.selectedOptionIndex === -1) {
       this.selectedOptionIndex = 0;
     }
@@ -207,7 +205,7 @@ export default Vue.extend({
   }
   &.variant-main {
     .current-value {
-      font-size: (20/16) * 1rem;
+      font-size: (calc(20 / 16)) * 1rem;
       font-weight: 500;
     }
   }
@@ -246,7 +244,7 @@ export default Vue.extend({
   }
   .dialog-options {
     .dialog-option {
-      font-size: (13/16) * 1rem;
+      font-size: (calc(13 / 16)) * 1rem;
       font-weight: 500;
       padding: 0 14px 0 24px;
       display: flex;

@@ -3,7 +3,8 @@
     <div class="removeToken_modal_wrapper">
       <Icon :name="`warning`" :size="50" />
       <div class="removeToken_title">
-        Remove {{ $store.state.session.tokens[$store.state.session.token].meta.name }} ?
+        Are you sure to hide <br />
+        {{ $store.state.session.tokens[$store.state.session.token].meta.name }} ?
       </div>
       <ButtonGroup class="button_wrapper" vertical>
         <ButtonVue type="secondary" size="medium" hover @click="handleConfirm">Confirm</ButtonVue>
@@ -25,10 +26,20 @@ export default Vue.extend({
   data() {
     return {};
   },
+  props: {
+    userNft: {
+      type: Object,
+      default: [],
+    },
+  },
+
   methods: {
     handleConfirm() {
       console.log('delete Token');
       this.$store.dispatch('accounts/deleteToken', this.$store.state.session.token);
+      if (this.$store.state.session.option === 'nft') {
+        this.$store.commit('session/deleteNftInLocalStorage', this.userNft);
+      }
       this.$router.push({
         name: 'accounts-list',
       });
@@ -96,7 +107,7 @@ export default Vue.extend({
     }
 
     .button_wrapper {
-      margin-top: 53px;
+      margin-top: 35px;
     }
     .button-group {
       .button {

@@ -1,11 +1,9 @@
 import { Module } from 'vuex';
 import { RootState } from './index';
-import { Account, serializeAccountSpec } from '@herajs/wallet';
 import { Amount } from '@herajs/common';
 import Vue from 'vue';
 import store from '../store';
 import { NftInventoryType, NftTokenType } from '@/types';
-import { before } from 'lodash';
 
 interface NftSessionType extends NftTokenType {
   dropdownsState: boolean;
@@ -45,16 +43,22 @@ const storeModule: Module<SessionState, RootState> = {
       const aergoBalance = await new Amount(val.balance).formatNumber('aergo');
 
       const prefix = store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
-      const resp = await fetch(
-        `https://${prefix}.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
-      );
+      try {
+        const resp = await fetch(
+          `https://${prefix}.aergoscan.io/${store.state.accounts.network}/v2/tokenBalance?q=${store.state.accounts.address}`,
+        );
 
-      const response = await resp.json();
-      if (response.error) return;
+        const response = await resp.json();
+        console.log(response, 'response?!! update Balance');
+        if (response.error) return;
 
-      const balances = { aergo: aergoBalance, others: response.hits };
+        const balances = { aergo: aergoBalance, others: response.hits };
 
-      await commit('setTokenBalance', balances);
+        await commit('setTokenBalance', balances);
+      } catch (e) {
+        console.error(e, 'updateBalance ERrror');
+        return e;
+      }
     },
 
     async initState({ state, commit }) {
@@ -74,7 +78,7 @@ const storeModule: Module<SessionState, RootState> = {
         );
 
         const response = await resp.json();
-
+        console.log(response, 'response?!! initState initState initState');
         await commit('updateTokens', response.hits);
         await store.dispatch('session/updateBalances');
 
@@ -83,7 +87,7 @@ const storeModule: Module<SessionState, RootState> = {
 
         await store.commit('accounts/setSeedPhrase', '');
       } catch (e) {
-        console.error(e);
+        return 'initError';
       }
     },
   },
@@ -148,18 +152,23 @@ const storeModule: Module<SessionState, RootState> = {
       );
     },
     deleteNftInLocalStorage(state, userNftData) {
+      console.log('delete ok?');
       const beforeNftData = JSON.parse(
         localStorage.getItem(
           `${userNftData.meta.account}_${store.state.accounts.network}_${userNftData.meta.address}`,
         ) || '{}',
       );
+      console.log(beforeNftData, 'beforeNftData');
       const deleteUserNftDataInLocalStorage = beforeNftData.filter(
         (nft: any) => nft.meta.token_id !== userNftData.meta.token_id,
       );
+      console.log(deleteUserNftDataInLocalStorage, 'deleteUserNftDataInLocalStorage');
       localStorage.setItem(
         `${userNftData.meta.account}_${store.state.accounts.network}_${userNftData.meta.address}`,
         JSON.stringify(deleteUserNftDataInLocalStorage),
       );
+      const dropdownClickNum = store.state.ui.dropdownClickNum;
+      store.commit('ui/setDropdownClickNum', dropdownClickNum - 1);
     },
     handleDropdownState(state, hash) {
       const copiedObject = { ...state.tokens[hash] };

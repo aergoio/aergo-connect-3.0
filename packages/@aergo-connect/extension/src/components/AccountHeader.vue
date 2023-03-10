@@ -78,7 +78,7 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
 
-    font-size: (13/16) * 1rem;
+    font-size: calc(13 / 16) * 1rem;
     line-height: 1.3;
     transform: translateY(1px);
 

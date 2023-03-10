@@ -4,16 +4,16 @@
     <div class="account_info_wrapper">
       <Icon :name="`back`" @click="handleGoBack" />
       <Identicon :text="$store.state.accounts.address" class="account_info_img" />
-      <div class="account_info_content_wrapper">
-        <div class="account_info_nickname_wrapper">
-          <div class="account_info_nickname_text">
-            {{ $store.state.accounts.nick }}
-          </div>
+      <div class="account_info_content_wrapper address">
+        <div class="account_info_nickname_wrapper address">
           <div class="account_info_network_wrapper">
             <div :class="`account_info_network_circle ${$store.state.accounts.network}`" />
             <div class="account_info_network">
               {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
+          </div>
+          <div class="account_info_nickname_text">
+            {{ $store.state.accounts.nick }}
           </div>
         </div>
         <div class="account_info_address_wrapper">
@@ -159,6 +159,7 @@ export default class RequestAddress extends mixins(RequestMixin) {
   border-radius: 8px;
   .icon--back {
     position: absolute;
+    margin-left: 15px;
     top: 0;
     left: 0;
     margin-top: 30px;
@@ -183,7 +184,13 @@ export default class RequestAddress extends mixins(RequestMixin) {
   .account_info_content_wrapper {
     display: flex;
     flex-direction: column;
+    &.address {
+      margin-left: 10px;
+    }
     .account_info_nickname_wrapper {
+      &.address {
+        flex-direction: column;
+      }
       display: flex;
       justify-content: space-between;
       font-family: 'Outfit';
@@ -191,7 +198,6 @@ export default class RequestAddress extends mixins(RequestMixin) {
       font-weight: 500;
       font-size: 18px;
       line-height: 24px;
-      margin-bottom: 8px;
       margin-left: 10px;
       /* width: 191px; */
       .account_info_network_wrapper {
@@ -239,7 +245,6 @@ export default class RequestAddress extends mixins(RequestMixin) {
       background: #ecf8fd;
       border-radius: 25px;
       color: #279ecc;
-      margin-left: 10px;
       .account_info_address_text {
         font-family: 'Outfit';
         font-style: normal;

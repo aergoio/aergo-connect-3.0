@@ -6,10 +6,7 @@
         <Identicon :text="$store.state.accounts.address" />
         <div class="nick">{{ $store.state.accounts.nick }}</div>
       </div>
-      <VueQRCodeComponent
-        :text="JSON.stringify({ type: 'AERGO_REQUEST', address: $store.state.accounts.address })"
-        :size="123"
-      ></VueQRCodeComponent>
+      <VueQRCodeComponent :text="$store.state.accounts.address" :size="123"></VueQRCodeComponent>
       <div class="address_wrapper">
         <div class="address" @click="copyToClipboard($store.state.accounts.address)">
           {{ $store.state.accounts.address }}

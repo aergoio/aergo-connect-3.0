@@ -1,27 +1,20 @@
 <template>
-  <label
-    class="component switch-button"
-    v-on:click="!disabled && $emit('input', !value)"
-  >
+  <label class="component switch-button" v-on:click="!disabled && $emit('input', !value)">
     <slot>{{ label }}</slot>
-    <span
-      class="switch-button-toggle"
-      :variant="variant"
-      :class="classes"
-    ></span>
+    <span class="switch-button-toggle" :variant="variant" :class="classes"></span>
   </label>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
-import { InputVariant } from "./types";
+import Vue, { PropType } from 'vue';
+import { InputVariant } from './types';
 
 export default Vue.extend({
-  name: "SwitchButton",
+  name: 'SwitchButton',
   props: {
     variant: {
       type: String as PropType<InputVariant>,
-      default: "default",
+      default: 'default',
     },
     value: {
       type: Boolean,
@@ -37,8 +30,8 @@ export default Vue.extend({
   computed: {
     classes(): string[] {
       return [
-        this.disabled ? "disabled" : "",
-        this.value ? "checked" : "",
+        this.disabled ? 'disabled' : '',
+        this.value ? 'checked' : '',
         `variant-${this.variant}`,
       ];
     },
@@ -47,12 +40,12 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import "../styles/variables";
+@import '../styles/variables';
 
 .component.switch-button {
   display: flex;
   align-items: center;
-  font-size: (13/16) * 1rem;
+  font-size: (calc(13 / 16)) * 1rem;
   color: #222;
 
   .switch-button-toggle {
@@ -77,7 +70,7 @@ export default Vue.extend({
 
     &:after {
       font-size: 16px;
-      content: "";
+      content: '';
       position: absolute;
       top: 0.05em;
       left: 0.1em;

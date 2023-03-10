@@ -71,6 +71,7 @@ export default Vue.extend({
   },
   methods: {
     handleClick() {
+      this.$store.commit('ui/clearInput', { key: 'importAsset' });
       this.$router.push({
         name: 'accounts-list',
       });

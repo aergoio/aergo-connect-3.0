@@ -102,8 +102,9 @@ export default Vue.extend({
     }
 
     &.is-disabled {
-      background-color: rgba(0, 0, 0, 0.05);
-      box-shadow: inset 0 0 0 2px $Grey04;
+      border: 1px solid transparent;
+      background: rgba(0, 0, 0, 0.05);
+      box-shadow: inset 0 0 0 1px $Grey04;
     }
   }
 
@@ -149,7 +150,7 @@ export default Vue.extend({
   }
 }
 .input-label {
-  font-size: (13/16) * 1rem;
+  font-size: (calc(13 / 16)) * 1rem;
   font-weight: 500;
   letter-spacing: -0.16px;
   color: rgba(34, 34, 34, 0.65);

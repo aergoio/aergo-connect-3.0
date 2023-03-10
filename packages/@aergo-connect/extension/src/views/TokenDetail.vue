@@ -70,6 +70,7 @@
           </div>
           <Button
             type="font-gradation"
+            v-if="$store.state.accounts.network === 'mainnet'"
             hover
             @click="gotoStake()"
             :style="{ height: '24px', marginRight: '8px', padding: '12px' }"
@@ -200,36 +201,25 @@
 import Vue from 'vue';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import { Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
-import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
-// import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
-import { Amount } from '@herajs/common';
 import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
-function getVueInstance(instance: any): Vue {
-  // @ts-ignore
-  return instance._vm as Vue;
-}
 
 export default Vue.extend({
   components: {
     ScrollView,
-    Button,
     ButtonGroup,
-    Heading,
-    Appear,
+    Button,
     Icon,
     HeaderVue,
     Identicon,
     RemoveModal,
     Notification,
     AccountDetailModal,
-    // LoadingIndicator,
   },
 
   data() {
@@ -262,7 +252,6 @@ export default Vue.extend({
 
   async beforeMount() {
     this.token = await this.$store.state.session.tokens[this.$store.state.session.token];
-
     await this.getTokenHistory();
     if (this.token.meta.symbol == 'aergo') {
       await this.getAergoInfo();
@@ -301,6 +290,7 @@ export default Vue.extend({
       this.stakingPrice = this.getStakingAergoInfo(this.staking.split(' ')[0]);
     },
   },
+
   methods: {
     async aergoStaking(): Promise<void> {
       const staking = await this.$background.getStaking({
@@ -679,7 +669,7 @@ export default Vue.extend({
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 600;
-      font-size: 20px;
+      font-size: 17px;
       line-height: 25px;
       letter-spacing: -0.333333px;
       word-break: break-all;
@@ -740,10 +730,13 @@ export default Vue.extend({
     margin-top: 10px;
     background: #eff5f7;
     box-shadow: inset 0px 21px 17px -19px rgba(0, 0, 0, 0.05);
-    height: 100vh;
+    height: 48vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    &.others {
+      height: 57.8vh;
+    }
     .history_list {
       flex-direction: column;
       display: flex;
@@ -934,7 +927,6 @@ export default Vue.extend({
   justify-content: space-between;
   .button {
     box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
-    border-radius: 4px;
     width: 157px;
     /* margin-right: 10px; */
     .button-icon {

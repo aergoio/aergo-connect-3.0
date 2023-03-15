@@ -62,7 +62,6 @@ import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import PasswordStrengthField from '@aergo-connect/lib-ui/src/forms/PasswordStrengthField.vue';
 import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
 import NotificationModal from '@aergo-connect/lib-ui/src/modal/NotificationModal.vue';
-import extension from 'extensionizer';
 
 export default Vue.extend({
   components: {
@@ -84,7 +83,7 @@ export default Vue.extend({
   methods: {
     handleIdleTimeout() {
       this.$store.commit('ui/setIdleTimeout', this.idleTimeout);
-      extension.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
+      chrome.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
       console.log('SET_IDLE_TIME', this.$store.state.ui.idleTimeout);
     },
     handleBack() {

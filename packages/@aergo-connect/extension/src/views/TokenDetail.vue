@@ -35,7 +35,7 @@
               }}
             </div>
             <Icon
-              v-if="token.meta.symbol !== 'aergo' && !token.meta.image"
+              v-if="token.meta.symbol !== 'aergo'"
               class="account_button"
               :name="`delete2`"
               @click="handleDelete(true)"

@@ -50,6 +50,6 @@ chrome.idle.setDetectionInterval(60);
 chrome.idle.onStateChanged.addListener((newState) => {
   console.log('idle onStateChanged : ' + newState);
   if (newState === 'idle' || newState === 'locked') {
-    controller.lock();
+    // controller.lock();
   }
 });

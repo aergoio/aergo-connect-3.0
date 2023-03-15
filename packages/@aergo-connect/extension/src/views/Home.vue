@@ -10,10 +10,16 @@
       @refreshClick="refreshClick"
       :isNetworkError="errorMessage === 'ERR_INTERNET_DISCONNECTED'"
     />
-    <LoadingIndicator
+    <!-- <LoadingIndicator
       :style="{ position: 'absolute', zIndex: 10, top: 0, bottom: 0, left: 0, right: 0 }"
       v-if="isLoading"
       :size="56"
+    /> -->
+    <ErrorModal
+      v-if="errorModal"
+      :errorMessage="errorMessage"
+      @cancel="handleCancel"
+      @refresh="handleRefresh"
     />
     <ErrorModal
       v-if="errorModal"

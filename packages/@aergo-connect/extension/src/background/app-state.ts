@@ -29,7 +29,6 @@ class AppState extends EventEmitter {
         clearTimeout(this.idleTimeout);
       }
       this.idleTimeout = setTimeout(() => {
-        console.log('idle timeout !! <- 60s');
         this.set('idle');
       }, IDLE_TIMEOUT);
     }

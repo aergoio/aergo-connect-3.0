@@ -20,14 +20,14 @@ module.exports = {
       ]);
     }
 
-    config.module
-      .rule('webextension-polyfill')
-      .test(/webextension-polyfill[\\/]dist[\\/]browser-polyfill\.js$/)
-      .use('babel-loader')
-      .loader('babel-loader')
-      .options({
-        presets: ['@babel/preset-env'],
-      });
+    // config.module
+    //   .rule('webextension-polyfill')
+    //   .test(/webextension-polyfill[\\/]dist[\\/]browser-polyfill\.js$/)
+    //   .use('babel-loader')
+    //   .loader('babel-loader')
+    //   .options({
+    //     presets: ['@babel/preset-env'],
+    //   });
 
     // config
     //   .entry('background')

@@ -64,6 +64,7 @@ const storeModule: Module<SessionState, RootState> = {
     async initState({ state, commit }) {
       try {
         const tokens = await store.dispatch('accounts/tokens');
+        console.log(tokens, 'tokens??');
         await commit('setTokens', tokens);
 
         // console.log(
@@ -79,7 +80,7 @@ const storeModule: Module<SessionState, RootState> = {
 
         const response = await resp.json();
         console.log(response, 'response?!! initState initState initState');
-        await commit('updateTokens', response.hits);
+        // await commit('updateTokens', response.hits);
         await store.dispatch('session/updateBalances');
 
         // Default Token : 'AERGO'
@@ -116,12 +117,13 @@ const storeModule: Module<SessionState, RootState> = {
       else state.tokens = {};
     },
 
-    updateTokens(state, balances: any) {
-      if (balances)
-        balances.forEach((e) => {
-          if (e.token.meta.image) {
-            // console.log('ADD TOKEN', e.token.hash);
-            state.tokens[e.token.hash] = e.token;
+    checkTokensInWallet(state, tokens: any) {
+      console.log(tokens, 'tokens?');
+      if (tokens)
+        tokens.forEach((token) => {
+          if (token.token.meta.image) {
+            // console.log('ADD TOKEN', token.token.hash);
+            state.tokens[token.token.hash] = token.token;
           }
         });
     },
@@ -139,36 +141,41 @@ const storeModule: Module<SessionState, RootState> = {
     },
 
     addNftToLocalStorage(state, userNftData) {
-      const beforeNftData = JSON.parse(
-        localStorage.getItem(
-          `${userNftData.meta.account}_${store.state.accounts.network}_${userNftData.meta.address}`,
-        ) || '{}',
-      );
-      const array =
-        Object.values(beforeNftData).length !== 0 ? [...beforeNftData, userNftData] : [userNftData];
-      localStorage.setItem(
-        `${userNftData.meta.account}_${store.state.accounts.network}_${userNftData.meta.address}`,
-        JSON.stringify(array),
+      const contractAddress = userNftData.meta.address;
+      console.log(state, 'state');
+      // console.log(userNftData, 'userNftData');
+      // state.tokens[contractAddress][`nftWallet`].push(userNftData);
+      // Vue.set(state.token[contractAddress], [`nftWallet`], userNftData);
+      state.tokens[contractAddress][`nftWallet`] = [
+        ...state.tokens[contractAddress][`nftWallet`],
+        userNftData,
+      ];
+      console.log(
+        state.tokens[contractAddress][`nftWallet`],
+        'state.tokens[contractAddress][`nftWallet`]',
       );
     },
+
     deleteNftInLocalStorage(state, userNftData) {
-      console.log('delete ok?');
-      const beforeNftData = JSON.parse(
-        localStorage.getItem(
-          `${userNftData.meta.account}_${store.state.accounts.network}_${userNftData.meta.address}`,
-        ) || '{}',
-      );
-      console.log(beforeNftData, 'beforeNftData');
-      const deleteUserNftDataInLocalStorage = beforeNftData.filter(
+      const contractAddress = userNftData.meta.address;
+      const deletedNftWallet = state.tokens[contractAddress][`nftWallet`].filter(
         (nft: any) => nft.meta.token_id !== userNftData.meta.token_id,
       );
-      console.log(deleteUserNftDataInLocalStorage, 'deleteUserNftDataInLocalStorage');
-      localStorage.setItem(
-        `${userNftData.meta.account}_${store.state.accounts.network}_${userNftData.meta.address}`,
-        JSON.stringify(deleteUserNftDataInLocalStorage),
-      );
+      console.log(deletedNftWallet, 'deletedNftWallet?');
+      if (deletedNftWallet.length === 0) {
+        store.commit('session/removeToken', contractAddress);
+      } else {
+        state.tokens[contractAddress].nftWallet = deletedNftWallet;
+      }
       const dropdownClickNum = store.state.ui.dropdownClickNum;
       store.commit('ui/setDropdownClickNum', dropdownClickNum - 1);
+    },
+    updateNftInLocalStorage(state, changedNftData) {
+      const contractAddress = changedNftData.meta.address;
+      state.tokens[contractAddress][`nftWallet`] = [
+        ...state.tokens[contractAddress][`nftWallet`],
+        changedNftData,
+      ];
     },
     handleDropdownState(state, hash) {
       const copiedObject = { ...state.tokens[hash] };

@@ -35,12 +35,14 @@ const storeModule: Module<AccountsState, RootState> = {
     lastSeedPhrase: '',
   },
 
-  getters: {},
+  // getters: {
+  //   getNftInLocalStorage: (state, { account, network, contractAddress }) => {
+  //     return state.accounts[account][`token`][network][contractAddress][`nftWallet`];
+  //   },
+  // },
 
   actions: {
     async tokens({ state, commit }) {
-      console.log('get tokens', state.accounts[state.address]['token'][state.network]);
-
       if (!state.accounts[state.address]['token'][state.network]) {
         const init_tokens = {};
         init_tokens['AERGO'] = {
@@ -61,7 +63,7 @@ const storeModule: Module<AccountsState, RootState> = {
       }
     },
 
-    async updateAccount({ commit }, { address, chainId }: AccountSpec) {
+    async updateAccount({ commit }, { address, chainId }) {
       const vue = getVueInstance(this);
       vue.$background.setActiveAccount({ address, chainId });
       const account = await vue.$background.syncAccountState({ address, chainId });
@@ -98,15 +100,12 @@ const storeModule: Module<AccountsState, RootState> = {
 
     async addToken({ state, commit }, token: any) {
       let tokens = state.accounts[state.address]['token'][state.network];
-      // console.log(tokens, 'tokens');
-      // console.log(token, 'token');
-      // console.log(state.accounts, 'state-addrees');
+
       if (!tokens) {
         tokens = {};
       }
       tokens[token.hash] = token;
-      const walletData = JSON.parse(localStorage.getItem(`${state.address}_${token.hash}`) || '{}');
-      console.log(walletData, 'walletData!!');
+
       commit('setTokens', tokens);
       // console.log('Add tokens', tokens);
     },
@@ -171,13 +170,13 @@ const storeModule: Module<AccountsState, RootState> = {
     setBackup(state, value: boolean) {
       state.accounts[state.address]['backup'] = value;
     },
-    setNftWallet(state, { nftWallet, hash }) {
-      if (nftWallet.length === 0) {
-        state.accounts[state.address].token[state.network][hash]['nftWallet'] = [];
-      } else {
-        state.accounts[state.address].token[state.network][hash]['nftWallet'] = nftWallet;
-      }
-    },
+    // setNftWallet(state, { nftWallet, hash }) {
+    //   if (nftWallet.length === 0) {
+    //     state.accounts[state.address].token[state.network][hash]['nftWallet'] = [];
+    //   } else {
+    //     state.accounts[state.address].token[state.network][hash]['nftWallet'] = nftWallet;
+    //   }
+    // },
   },
 };
 

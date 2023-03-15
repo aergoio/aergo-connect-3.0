@@ -4,7 +4,12 @@
       <Icon :name="`warning`" :size="50" />
       <div class="removeToken_title">
         Are you sure to hide <br />
-        {{ $store.state.session.tokens[$store.state.session.token].meta.name }} ?
+        {{
+          $store.state.session.option === `nft`
+            ? userNft.meta.token_id
+            : $store.state.session.tokens[$store.state.session.token].meta.name
+        }}
+        ?
       </div>
       <ButtonGroup class="button_wrapper" vertical>
         <ButtonVue type="secondary" size="medium" hover @click="handleConfirm">Confirm</ButtonVue>
@@ -36,9 +41,11 @@ export default Vue.extend({
   methods: {
     handleConfirm() {
       console.log('delete Token');
-      this.$store.dispatch('accounts/deleteToken', this.$store.state.session.token);
+
       if (this.$store.state.session.option === 'nft') {
         this.$store.commit('session/deleteNftInLocalStorage', this.userNft);
+      } else {
+        this.$store.dispatch('accounts/deleteToken', this.$store.state.session.token);
       }
       this.$router.push({
         name: 'accounts-list',
@@ -82,7 +89,8 @@ export default Vue.extend({
       line-height: 25px;
       text-align: center;
       letter-spacing: -0.333333px;
-
+      overflow: hidden;
+      text-overflow: ellipsis;
       /* Primary/Pink01 */
 
       color: #e4097d;

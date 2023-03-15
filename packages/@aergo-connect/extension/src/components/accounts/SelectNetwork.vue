@@ -21,7 +21,7 @@ import { isPublicChainId, PublicChainData } from '../../config';
 export function keys<O>(o: O): (keyof O)[] {
   return Object.keys(o) as (keyof O)[];
 }
-const DEFAULT_OPTIONS = keys(PublicChainData).map(key => [key, PublicChainData[key].label]);
+const DEFAULT_OPTIONS = keys(PublicChainData).map((key) => [key, PublicChainData[key].label]);
 
 @Component({
   components: {
@@ -34,7 +34,7 @@ export default class Create extends mixins() {
   options: string[][] = [];
 
   get processedOptions() {
-    return this.options.map(option => ({
+    return this.options.map((option) => ({
       value: option[0],
       label: option[1],
       icon: isPublicChainId(option[0]) ? 'logo' : 'network-other',
@@ -62,7 +62,7 @@ export default class Create extends mixins() {
 
 <style lang="scss">
 .button-configure-networks {
-  font-size: (13/16) * 1rem;
+  font-size: (calc(13 / 16)) * 1rem;
   color: #666;
   cursor: pointer;
 }

@@ -52,6 +52,6 @@ extension.idle.setDetectionInterval(60);
 extension.idle.onStateChanged.addListener((newState) => {
   console.log('idle onStateChanged : ' + newState);
   if (newState === 'idle' || newState === 'locked') {
-    controller.lock();
+    // controller.lock();
   }
 });

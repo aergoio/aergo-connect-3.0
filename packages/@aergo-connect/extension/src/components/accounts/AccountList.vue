@@ -193,7 +193,7 @@ export default Vue.extend({
   padding: 0;
 }
 .account-list {
-  font-size: (13/16) * 1rem;
+  font-size: (calc(13 / 16)) * 1rem;
 
   .chain-id,
   .account-address {
@@ -230,7 +230,7 @@ export default Vue.extend({
     border-bottom: 1px solid #f0f0f0;
     padding: 3px 0 10px;
     margin-left: 14px;
-    font-size: (12/16) * 1rem;
+    font-size: (calc(12 / 16)) * 1rem;
   }
   .account-item-li:last-child .account-address-balance {
     border-bottom: 0;
@@ -278,7 +278,7 @@ export default Vue.extend({
   }
   .account-label-new {
     background-color: #ff4f9f;
-    font-size: (8/16) * 1rem;
+    font-size: (calc(8 / 16)) * 1rem;
     text-transform: uppercase;
     color: #fff;
   }

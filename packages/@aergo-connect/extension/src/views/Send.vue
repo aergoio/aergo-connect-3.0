@@ -1,17 +1,5 @@
 <template>
   <ScrollView>
-    <!-- <LoadingIndicator
-      v-if="isLoading"
-      :size="56"
-      :style="{ position: 'absolute', zIndex: 10, top: 0, bottom: 0, left: 0, right: 0 }"
-    /> -->
-    <SendOptionsModal
-      v-if="optionsModal"
-      :txType="txType"
-      :payload="txBody.payload"
-      @updateTx="updateTx"
-      @closeOptionsModal="closeOptionsModal"
-    />
     <ConfirmationModal
       v-if="confirmationModal"
       :to="inputTo"
@@ -109,10 +97,13 @@
             }}</span>
           </div>
         </div>
-        <!-- <span class="token_amount">{{ nftInventory.length }}</span> -->
-        <!-- <span class="token_symbol"> EA </span> -->
       </div>
-      <div :class="[tokenType === 'ARC2' ? `send_form_wrapper nft` : `send_form_wrapper`]">
+      <div
+        :class="[
+          tokenType === 'ARC2' ? `send_form_wrapper nft` : `send_form_wrapper`,
+          optionsDropbox ? `send_form_wrapper scroll` : `send_form_wrapper`,
+        ]"
+      >
         <div class="flex-row">
           <div class="title">Asset</div>
 
@@ -152,19 +143,19 @@
             </div>
             <ul
               v-if="selectAsset"
-              class="selectbox_asset"
-              :style="{ height: assetListStyle(), 'overflow-y': assetListScrollStyle() }"
+              :class="optionsDropbox ? `selectbox_asset options` : `selectbox_asset`"
             >
               <li
                 class="list"
                 v-for="token in $store.state.session.tokens"
+                v-show="token.meta.type === tokenType"
                 :key="token.meta.hash"
                 @click="selectAssetFunc(token.hash)"
               >
                 <img class="img" v-if="token.meta.image" :src="token.meta.image" />
                 <Icon class="aergo" v-else-if="token.hash === 'AERGO'" :name="`aergo`" />
                 <Icon v-else :name="`defaultToken`" />
-                {{ token.meta.name }}
+                <span>{{ token.meta.name }}</span>
               </li>
             </ul>
           </div>
@@ -198,11 +189,58 @@
         </div>
         <div class="flex-row" v-else>
           <div class="title">Amount</div>
-          <input v-model="inputAmount" type="text" class="text_box" />
+          <input v-model="inputAmount" class="text_box" placeholder="0" defaultValue="0" min="0" />
         </div>
-        <div class="flex-column">
+        <div class="flex-column" :style="{ marginTop: '20px' }">
           <div class="title">Send to</div>
-          <input v-model="inputTo" type="text" class="text_box" />
+          <div class="text_box identicon">
+            <Identicon :text="inputTo" class="identicon" />
+            <input v-model="inputTo" type="text" class="identicon_input" />
+          </div>
+        </div>
+
+        <div class="footer">
+          <div
+            v-if="asset === `AERGO`"
+            :class="optionsDropbox ? `show_option options` : `show_option`"
+            @click="handleOptionsDropbox"
+          >
+            {{ optionsDropbox ? `Hide optional fields` : `Show optional fields` }}
+          </div>
+
+          <div v-if="optionsDropbox && tokenType === `AERGO`" class="options_modal_wrapper">
+            <div class="flex-column">
+              <div class="title">Type</div>
+              <div class="select_box" @click="handleSelectTxType" v-click-outside="hide">
+                <div class="text">{{ txType }}</div>
+                <Icon :name="select ? `dropupblue` : `dropdownblue`" />
+              </div>
+            </div>
+            <ul v-if="select" class="list_wrapper">
+              <li
+                class="list"
+                v-for="txType in $store.state.ui.txTypes"
+                :key="txType"
+                @click="selectTxType(txType)"
+              >
+                {{ txType }}
+              </li>
+            </ul>
+            <div class="flex-column" :style="{ marginTop: '10px' }">
+              <div class="title data">Data (payload)</div>
+              <input v-model="inputPayload" type="text" class="text_box" />
+            </div>
+          </div>
+
+          <Button
+            :class="optionsDropbox ? `options` : ``"
+            type="primary"
+            size="large"
+            @click="handleSendClick"
+            :disabled="!inputTo || !inputAmount"
+            :hover="inputTo && inputAmount ? true : false"
+            >Send</Button
+          >
         </div>
       </div>
     </div>
@@ -217,25 +255,11 @@
     </LoadingDialog>
     <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
     <Notification v-if="notification" :title="notificationText" :icon="`warning2`" :size="300" />
-    <template #footer>
-      <div v-if="asset === `AERGO`" class="show_option" @click="handleOptionsModal">
-        Show optional fields
-      </div>
-      <Button
-        type="primary"
-        size="large"
-        @click="handleSendClick"
-        :disabled="!inputTo || !inputAmount"
-        :hover="inputTo && inputAmount ? true : false"
-        >Send</Button
-      >
-    </template>
   </ScrollView>
 </template>
 
 <script>
 import Vue from 'vue';
-import SendOptionsModal from '@aergo-connect/lib-ui/src/modal/SendOptionsModal.vue';
 import ConfirmationModal from '@aergo-connect/lib-ui/src/modal/ConfirmationModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import SendFinishModal from '@aergo-connect/lib-ui/src/modal/SendFinishModal.vue';
@@ -258,7 +282,6 @@ import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals
 export default Vue.extend({
   components: {
     ScrollView,
-    SendOptionsModal,
     ConfirmationModal,
     PasswordModal,
     SendFinishModal,
@@ -281,12 +304,11 @@ export default Vue.extend({
       tokenType: '',
       symbol: '',
       tokenName: '',
-      inputAmount: '',
+      inputAmount: '0',
       inputTo: '',
       fee: '',
-      txType: 'TRANSFER',
       nftInventory: [],
-      optionsModal: false,
+      optionsDropbox: false,
       confirmationModal: false,
       sendFinishModal: false,
       passwordModal: false,
@@ -315,6 +337,9 @@ export default Vue.extend({
       txHash: '',
       nftUiData: {},
       result: {},
+      inputPayload: '',
+      txType: 'TRANSFER',
+      select: false,
     };
   },
   async beforeMount() {
@@ -329,10 +354,36 @@ export default Vue.extend({
       )[0];
       this.searchResult = '';
     }
-  },
 
+    this.inputTo = this.$store.state.ui.input['send']['inputTo'];
+    if (this.$store.state.ui.input['send']['inputAmount']) {
+      this.inputAmount = this.$store.state.ui.input['send']['inputAmount'];
+    }
+    if (this.$store.state.ui.input['send']['optionsDropbox']) {
+      this.optionsDropbox = this.$store.state.ui.input['send']['optionsDropbox'];
+    }
+    if (this.$store.state.ui.input['send']['inputPayload']) {
+      this.inputPayload = this.$store.state.ui.input['send']['inputPayload'];
+    }
+    if (this.$store.state.ui.input['send']['txType']) {
+      this.txType = this.$store.state.ui.input['send']['txType'];
+    }
+  },
+  updated() {
+    this.$store.commit('ui/setInputs', {
+      key: 'send',
+      data: {
+        inputTo: this.inputTo,
+        inputAmount: this.inputAmount,
+        optionsDropbox: this.optionsDropbox,
+        txType: this.txType,
+        inputPayload: this.inputPayload,
+      },
+    });
+  },
   watch: {
     asset: function () {
+      this.$store.commit('ui/clearInput', { key: 'send' });
       this.setParams();
       if (this.tokenType === 'ARC2') {
         this.getNftInventory();
@@ -351,6 +402,7 @@ export default Vue.extend({
         }, 2000);
       }
     },
+
     notification(state) {
       if (state) {
         setTimeout(() => {
@@ -361,11 +413,7 @@ export default Vue.extend({
         }, 2000);
       }
     },
-    txBody() {
-      if (this.txBody.payload) {
-        console.log(this.txBody.payload, 'payload??');
-      }
-    },
+
     inputAmount() {
       if (this.tokenType === 'ARC2') {
         const filteredNft = this.nftInventory.filter(
@@ -373,6 +421,9 @@ export default Vue.extend({
         )[0];
         this.nftUiData = filteredNft;
       }
+    },
+    inputPayload() {
+      this.txBody.payload = this.inputPayload;
     },
   },
   methods: {
@@ -403,20 +454,16 @@ export default Vue.extend({
       this.nftInventory = nftWallet.length > 0 ? nftWallet : [];
     },
 
-    updateTx(txType, payload) {
-      this.txType = txType;
-      this.txBody.payload = payload;
-      this.optionsModal = false;
-    },
     handleBack() {
+      this.$store.commit('ui/clearInput', { key: 'send' });
       this.$router
         .push({
           name: this.$store.state.session.previousPage ?? 'accounts-list',
         })
         .catch(() => {});
     },
-    handleOptionsModal() {
-      this.optionsModal = true;
+    handleOptionsDropbox() {
+      this.optionsDropbox = !this.optionsDropbox;
     },
     handleSendClick() {
       if (+this.inputAmount > +this.balance) {
@@ -433,12 +480,15 @@ export default Vue.extend({
       if (this.tokenType == 'AERGO') {
         this.txBody.to = this.inputTo;
         this.txBody.amount = `${this.inputAmount} ${this.txBody.unit}`;
+        // this.txBody.type = this.$store.state.ui.txType.indexOf(this.txBody.type);
+        console.log(this.txBody, 'txBody');
       } else if (this.tokenType == 'ARC1') {
         this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
         const amount =
           Number(this.inputAmount) *
           Math.pow(10, this.$store.state.session.tokens[this.asset].meta.decimals);
+        // eslint-disable-next-line no-undef
         this.txBody.payload =
           '{"Name": "transfer", "Args": ["' +
           this.inputTo +
@@ -459,10 +509,13 @@ export default Vue.extend({
         )[0];
       }
       // TODO: try catch
-      if (this.txBody.payload) {
-        const payload = JSON.parse(this.txBody.payload);
-        this.txBody.payload = JSON.stringify(payload, null, 2);
-      }
+      try {
+        if (this.txBody.payload) {
+          const payload = JSON.parse(this.txBody.payload);
+          this.txBody.payload = JSON.stringify(payload, null, 2);
+        }
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
       this.txBody.type = Tx.Type[this.txType];
       this.confirmationModal = true;
     },
@@ -501,7 +554,6 @@ export default Vue.extend({
         );
         this.setStatus('success', 'Done');
         if (result.status === 'SUCCESS') {
-          await this.$store.commit('ui/clearInput', { key: 'send' });
           if (this.userNftData.hash) {
             this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
           }
@@ -562,6 +614,7 @@ export default Vue.extend({
     async sendTransaction(txBody) {
       this.setStatus('loading', 'Sending to network...');
       try {
+        console.log(this.txBody, 'txbody? payload ??');
         const result = await this.$background.sendTransaction(
           txBody,
           this.$store.state.accounts.network,
@@ -595,30 +648,6 @@ export default Vue.extend({
           return '172px';
       }
     },
-    assetListStyle() {
-      switch (Object.keys(this.$store.state.session.tokens).length) {
-        case 1:
-          return '43px';
-        case 2:
-          return '86px';
-        case 3:
-          return '129px';
-        default:
-          return '172px';
-      }
-    },
-    assetListScrollStyle() {
-      switch (Object.keys(this.$store.state.session.tokens).length) {
-        case 1:
-          return 'hidden';
-        case 2:
-          return 'hidden';
-        case 3:
-          return 'hidden';
-        default:
-          return 'scroll';
-      }
-    },
     formatBalance(balance) {
       if (Number.isInteger(balance)) {
         return balance;
@@ -640,8 +669,16 @@ export default Vue.extend({
       this.searchFocus = false;
       this.searchResult = '';
     },
-    closeOptionsModal() {
-      this.optionsModal = false;
+
+    selectTxType(txType) {
+      this.txType = txType;
+      this.select = false;
+    },
+    handleSelectTxType() {
+      this.select = !this.select;
+    },
+    hide() {
+      this.select = false;
     },
   },
 });
@@ -652,6 +689,7 @@ export default Vue.extend({
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: 90vh;
   .account_detail_wrapper {
     display: flex;
     flex-direction: column;
@@ -829,13 +867,63 @@ export default Vue.extend({
     }
   }
   .send_form_wrapper {
-    /* Primary/lightsky */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background: #eff5f7;
     box-shadow: inset 0px 6px 17px -8px rgba(0, 0, 0, 0.05);
-    position: absolute;
     width: 375px;
-    height: 380px;
-    bottom: 0px;
+    height: 100vh;
+    margin-top: 20px;
+    .selectbox_asset {
+      &.options {
+        position: sticky;
+      }
+      width: 243px;
+      /* height: 172px; */
+      position: absolute;
+      left: 105px;
+      border-radius: 3px;
+      border: 1px solid #279ecc;
+      text-overflow: ellipsis;
+      /* overflow-y: scroll; */
+      /* overflow-x: hidden; */
+      .img {
+        margin-left: 6px;
+        margin-right: 8px;
+        height: 32px;
+        width: 32px;
+        border-radius: 50%;
+      }
+      .aergo {
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      .list {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        cursor: pointer;
+        /* width: 228px; */
+        height: 43px;
+        background: #ffffff;
+        border-radius: 3px;
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .list:hover {
+        background: #f6f6f6;
+      }
+    }
+
+    &.scroll {
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
     &.nft {
       height: 345px;
     }
@@ -874,8 +962,8 @@ export default Vue.extend({
         /* Primary/Blue01 */
         border: 1px solid #279ecc;
         border-radius: 4px;
-        width: 240px;
-        height: 33px;
+        width: 230px;
+        height: 45px;
       }
       .text-field {
         margin-left: 26px;
@@ -896,8 +984,8 @@ export default Vue.extend({
         .search_list_wrapper {
           height: 172px;
           position: absolute;
-          left: 104px;
-          top: 115px;
+          left: 105px;
+          top: 374px;
           border-radius: 3px;
           border: 1px solid #279ecc;
           overflow-y: scroll;
@@ -937,20 +1025,39 @@ export default Vue.extend({
       }
     }
     .flex-column {
-      margin-left: 26px;
       display: flex;
       flex-direction: column;
+
       .title {
         font-family: 'Outfit';
         font-style: normal;
         font-weight: 400;
         font-size: 17px;
         line-height: 21px;
-        margin-top: 20px;
+        /* margin-top: 20px; */
         /* Primary/Blue01 */
         color: #279ecc;
       }
       .text_box {
+        &.identicon {
+          height: 45px;
+          display: flex;
+          align-items: center;
+          .identicon {
+            width: 40px;
+            height: 40px;
+          }
+          .identicon_input {
+            background-color: transparent;
+            border: 0;
+            flex: 1;
+            padding: 0 12px;
+            outline: none;
+            width: 250px;
+            line-height: 1.3;
+            resize: none;
+          }
+        }
         /* Caption/C3 */
         word-break: break-all;
         font-family: 'Outfit';
@@ -972,32 +1079,140 @@ export default Vue.extend({
         border-radius: 4px;
       }
     }
-  }
-}
-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 1;
-  .show_option {
-    margin-bottom: 20px;
-    /* Subtitle/S3_line */
-    font-family: 'Outfit';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 20px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    letter-spacing: -0.333333px;
-    text-decoration-line: underline;
-    /* Gradation/04 */
-    background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    cursor: pointer;
+    .footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+
+      .button {
+        position: absolute;
+        bottom: 30px;
+        &.options {
+          position: relative;
+          top: 20px;
+          margin-bottom: 40px;
+        }
+      }
+
+      .show_option {
+        margin-bottom: 20px;
+        &.options {
+          margin-bottom: none;
+        }
+        /* Subtitle/S3_line */
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 20px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        letter-spacing: -0.333333px;
+        text-decoration-line: underline;
+        /* Gradation/04 */
+        background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        cursor: pointer;
+      }
+
+      .options_modal_wrapper {
+        border-radius: 8px;
+        .flex-column {
+          display: flex;
+          flex-direction: column;
+          .title {
+            width: 37px;
+            height: 21px;
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 17px;
+            line-height: 21px;
+
+            /* Grey/06 */
+
+            color: #686767;
+            &.data {
+              width: 114px;
+            }
+          }
+          .select_box {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-radius: 3px;
+            /* White */
+            background: #ffffff;
+            /* Primary/Blue01 */
+            border: 1px solid #279ecc;
+            border-radius: 4px;
+
+            margin-top: 9px;
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 17px;
+            line-height: 21px;
+
+            color: #454344;
+            .text {
+              cursor: default;
+              margin-left: 3px;
+            }
+          }
+
+          .text_box {
+            margin-top: 14px;
+            height: 36px;
+
+            /* White */
+
+            background: #ffffff;
+            /* Primary/Blue01 */
+
+            border: 1px solid #279ecc;
+            border-radius: 4px;
+            white-space: pre;
+          }
+        }
+      }
+      .list_wrapper {
+        z-index: 2;
+        cursor: pointer;
+        height: 172px;
+        position: static;
+        bottom: 7px;
+        width: 320px;
+        border-radius: 3px;
+        border: 1px solid #279ecc;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        .list {
+          z-index: 2;
+          padding-left: 10px;
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-align: center;
+          -ms-flex-align: center;
+          align-items: center;
+          cursor: pointer;
+          height: 43px;
+          background: #ffffff;
+          border-radius: 3px;
+          font-size: 16px;
+          font-weight: 500;
+        }
+        .list:hover {
+          background: #f6f6f6;
+        }
+      }
+    }
   }
 }
 </style>

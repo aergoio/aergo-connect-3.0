@@ -32,7 +32,7 @@ export default class HistoryList extends Vue {
 
 <style lang="scss">
 .transaction-filter {
-  font-size: (13/16) * 1rem;
+  font-size: (calc(13 / 16)) * 1rem;
   font-weight: 500;
   color: #777;
   list-style: none;

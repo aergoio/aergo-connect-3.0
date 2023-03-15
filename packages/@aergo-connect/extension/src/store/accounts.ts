@@ -1,7 +1,5 @@
 import { Module } from 'vuex';
 import { RootState } from './index';
-import { Account, serializeAccountSpec } from '@herajs/wallet';
-import { Amount } from '@herajs/common';
 import Vue from 'vue';
 
 export interface AccountsState {
@@ -107,7 +105,7 @@ const storeModule: Module<AccountsState, RootState> = {
         tokens = {};
       }
       tokens[token.hash] = token;
-      const walletData = JSON.parse(localStorage.getItem(`${state.address}_${token.hash}`));
+      const walletData = JSON.parse(localStorage.getItem(`${state.address}_${token.hash}`) || '{}');
       console.log(walletData, 'walletData!!');
       commit('setTokens', tokens);
       // console.log('Add tokens', tokens);
@@ -117,9 +115,6 @@ const storeModule: Module<AccountsState, RootState> = {
       const tokens = state.accounts[state.address]['token'][state.network];
       delete tokens[token];
       commit('setTokens', tokens);
-
-      store.state.dispatch('session/initState');
-      console.log('deleteToken', token);
     },
   },
 

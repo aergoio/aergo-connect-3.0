@@ -9,6 +9,7 @@
         :error="error"
         :class="classes"
       >
+        <Identicon v-if="identicon" :text="value" :style="{ marginLeft: '8px' }" />
         <input
           :value="value"
           :type="type"
@@ -45,11 +46,13 @@ import {
 } from './types';
 import InputContainer from './InputContainer.vue';
 import Icon from '../icons/Icon.vue';
+import { Identicon } from '../content';
 
 export default Vue.extend({
   components: {
     InputContainer,
     Icon,
+    Identicon,
   },
 
   props: {
@@ -79,6 +82,7 @@ export default Vue.extend({
       default: 'error',
     },
     autoComplete: String,
+    identicon: Boolean,
   },
 
   computed: {
@@ -125,7 +129,7 @@ export default Vue.extend({
   input {
     border: 0;
     flex: 1;
-    padding: 15px;
+    padding: 12px;
     outline: none;
     background-color: transparent;
     width: 100px;
@@ -134,19 +138,19 @@ export default Vue.extend({
 
   &.variant-default {
     input {
-      font-size: (14/16) * 1rem;
+      font-size: (calc(14 / 16)) * 1rem;
       border-radius: 3px;
     }
   }
 
   &.variant-main {
     input {
-      font-size: (20/16) * 1rem;
+      font-size: (calc(20 / 16)) * 1rem;
       font-weight: 500;
       padding-left: 4px;
     }
     &.type-password input {
-      font-size: (36/16) * 1rem;
+      font-size: (calc(6 / 16)) * 1rem;
       padding-top: 7px;
       padding-bottom: 7px;
       overflow: hidden;

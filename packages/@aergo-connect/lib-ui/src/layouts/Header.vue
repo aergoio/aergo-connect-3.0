@@ -6,7 +6,12 @@
       </Button>
     </div>
     <h3 v-if="title && !network">{{ title }}</h3>
-    <NetworkHeader v-if="network" @networkModalClick="networkModalClick" />
+    <NetworkHeader
+      :class="isNetworkError ? 'ml20' : ''"
+      v-if="network"
+      @networkModalClick="networkModalClick"
+    />
+    <Icon class="network-error" v-if="isNetworkError" :name="`warning2`" :size="30" />
     <div class="header__button right" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
       <Icon class="refresh" name="refresh" @click="refreshClick" />
       <a type="button" class="skip__btn" @click="skipClick">Skip</a>
@@ -49,6 +54,10 @@ export default Vue.extend({
       type: [String, Object] as PropType<RawLocation>,
     },
     network: {
+      type: Boolean,
+      default: false,
+    },
+    isNetworkError: {
       type: Boolean,
       default: false,
     },
@@ -96,7 +105,9 @@ export default Vue.extend({
     color: $Grey07;
     margin-left: 12px;
   }
-
+  .ml20 {
+    margin-left: 20px;
+  }
   .header__button {
     width: 30px;
     /* height: 30px; */

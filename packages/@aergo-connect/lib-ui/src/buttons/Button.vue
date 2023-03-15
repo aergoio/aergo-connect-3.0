@@ -98,7 +98,7 @@ export default Vue.extend({
 .button {
   /* Typography */
   font-weight: 500;
-  font-size: (17/16) * 1em;
+  font-size: (calc(17 / 16)) * 1em;
   /* Sizing */
   box-sizing: border-box;
   min-height: 30px;
@@ -108,9 +108,9 @@ export default Vue.extend({
   /* Borders and background */
   outline: none;
   border: 0;
-  border-radius: 3px;
+  /* border-radius: 3px; */
   background-color: transparent;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   /* Content alignment */
   display: flex;
   text-decoration: none;
@@ -165,7 +165,7 @@ export default Vue.extend({
     border: 2px solid $Blue01;
     &.hover:hover {
       border: 2px solid transparent;
-      border-radius: 4px !important;
+      /* border-radius: 4px !important; */
       border-image: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
       border-image-slice: 1;
       span {
@@ -198,7 +198,7 @@ export default Vue.extend({
     border: 2px solid $Pink01;
     &.hover:hover {
       border: 2px solid transparent;
-      border-radius: 4px;
+      /* border-radius: 4px; */
       border-image: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
       border-image-slice: 1;
       background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
@@ -223,7 +223,7 @@ export default Vue.extend({
     /* shadow/02 */
 
     box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
-    border-radius: 4px;
+    /* border-radius: 4px; */
     &.hover:hover {
       background: $gradation04;
     }

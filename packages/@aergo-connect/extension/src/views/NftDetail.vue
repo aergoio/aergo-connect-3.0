@@ -12,6 +12,7 @@
       :size="56"
       :style="{ position: 'absolute', zIndex: 10, top: 0, bottom: 0, left: 0, right: 0 }"
     />
+    <RemoveModal v-if="removeModal" @cancel="handleDelete" :userNft="token" />
     <div class="nft_detail_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
@@ -36,6 +37,7 @@
                 )}...${$store.state.accounts.address.slice(-6)}`
               }}
             </div>
+            <Icon class="account_button" :name="`delete2`" @click="handleDelete(true)" />
           </div>
         </div>
       </div>
@@ -127,6 +129,8 @@ import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
+import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
+
 export default Vue.extend({
   components: {
     ScrollView,
@@ -137,6 +141,7 @@ export default Vue.extend({
     Identicon,
     Notification,
     LoadingIndicator,
+    RemoveModal,
   },
 
   data() {
@@ -161,6 +166,7 @@ export default Vue.extend({
       this.$store.state.session.tokens[this.$store.state.session.token]['nftWallet'];
     const nft = nftWallet.filter((nft: any) => nft.meta.token_id === this.$route.params.id);
     this.token = nft[0];
+
     // console.log(this.token, 'token?!!!');
     this.getLatestTransactionHash().then((data) => {
       if (!data) {
@@ -238,6 +244,9 @@ export default Vue.extend({
       const jsonData = await fetchUrl.json();
       const responseData = await jsonData.hits[0];
       return responseData?.meta?.tx_id;
+    },
+    handleDelete(state) {
+      this.removeModal = state;
     },
   },
 });
@@ -838,7 +847,6 @@ export default Vue.extend({
   justify-content: space-between;
   .button {
     box-shadow: 0px 4px 13px rgba(119, 153, 166, 0.25);
-    border-radius: 4px;
     width: 157px;
     .button-icon {
       margin-right: 9.49px;

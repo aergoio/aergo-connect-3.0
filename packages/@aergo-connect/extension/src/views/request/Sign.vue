@@ -210,7 +210,7 @@ export default class RequestSign extends mixins(RequestMixin) {
   padding: 16px;
   margin: 0 20px;
   margin-top: 20px;
-  font-size: (14/16) * 1rem;
+  font-size: (calc(14 / 16)) * 1rem;
   color: #279ecc;
   word-break: break-all;
   line-height: 1.3;

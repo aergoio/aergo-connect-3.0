@@ -30,13 +30,13 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
-import { InputVariant, InputVariants, InputStates, InputState } from "./types";
-import InputContainer from "./InputContainer.vue";
-import Identicon from "../content/Identicon.vue";
-import Icon from "../icons/Icon.vue";
+import Vue, { PropType } from 'vue';
+import { InputVariant, InputVariants, InputStates, InputState } from './types';
+import InputContainer from './InputContainer.vue';
+import Identicon from '../content/Identicon.vue';
+import Icon from '../icons/Icon.vue';
 
-import { Address } from "@herajs/common";
+import { Address } from '@herajs/common';
 
 function sanitizeInput(text: string): string {
   try {
@@ -70,41 +70,32 @@ export default Vue.extend({
     },
     error: {
       type: String,
-      default: "",
+      default: '',
     },
     autoComplete: String,
   },
   computed: {
     classes(): string[] {
-      return ["text-field", "address-field"];
+      return ['text-field', 'address-field'];
     },
     sanitizedValue() {
       try {
         const address = new Address(this.value);
         return `${address}`;
       } catch (e) {
-        return "";
+        return '';
       }
     },
   },
   methods: {
     handleInput(event: InputEvent): void {
-      this.$emit(
-        "input",
-        sanitizeInput((event.target as HTMLFormElement).value)
-      );
+      this.$emit('input', sanitizeInput((event.target as HTMLFormElement).value));
     },
     handleBlur(event: FocusEvent): void {
-      this.$emit(
-        "blur",
-        sanitizeInput((event.target as HTMLFormElement).value)
-      );
+      this.$emit('blur', sanitizeInput((event.target as HTMLFormElement).value));
     },
     handleEnter(event: KeyboardEvent): void {
-      this.$emit(
-        "submit",
-        sanitizeInput((event.target as HTMLFormElement).value)
-      );
+      this.$emit('submit', sanitizeInput((event.target as HTMLFormElement).value));
     },
   },
 });
@@ -124,21 +115,21 @@ export default Vue.extend({
     outline: none;
     background-color: transparent;
     width: 100px;
-    font-size: (13/16) * 1rem;
+    font-size: (calc(13 / 16)) * 1rem;
     line-height: 1.3;
     resize: none;
   }
 
   &.variant-default {
     input {
-      font-size: (14/16) * 1rem;
+      font-size: (calc(14 / 16)) * 1rem;
       border-radius: 3px;
     }
   }
 
   &.variant-main {
     input {
-      font-size: (20/16) * 1rem;
+      font-size: (calc(20 / 16)) * 1rem;
       font-weight: 500;
       padding-left: 4px;
     }

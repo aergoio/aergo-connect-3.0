@@ -1,16 +1,14 @@
 <template>
-  <div class="noAccount_backdrop">
-    <div class="noAccount_modal_wrapper">
+  <div class="error-modal_backdrop">
+    <div class="error-modal_wrapper">
       <Icon :name="`warning`" :size="100" />
-      <div class="noAccount_text">
-        <span class="highlight">No Accounts </span>
-        <span>resgistered on this wallet. Would you like to add an Account?</span>
+      <div class="error-modal_text">
+        <!-- <span class="highlight">No Accounts </span> -->
+        <span class="highlight">{{ errorMessage }}</span>
       </div>
-      <ButtonGroup class="button_wrapper" vertical>
-        <ButtonVue type="secondary" hover size="medium" :to="{ name: 'register' }"
-          >Add Account</ButtonVue
-        >
-        <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
+      <ButtonGroup class="button_wrapper" horizontal>
+        <ButtonVue type="secondary" hover size="small" @click="handleRefresh">Refresh</ButtonVue>
+        <ButtonVue type="secondary-outline" hover size="small" @click="handleCancel"
           >Cancel</ButtonVue
         >
       </ButtonGroup>
@@ -25,16 +23,25 @@ import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import ButtonVue from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 export default Vue.extend({
   components: { Icon, ButtonGroup, ButtonVue },
+  props: {
+    errorMessage: {
+      type: String,
+      default: '',
+    },
+  },
   methods: {
+    handleRefresh() {
+      this.$emit('refresh');
+    },
     handleCancel() {
-      this.$emit('cancel', 'noAccountModal');
+      this.$emit('cancel', 'errorModal');
     },
   },
 });
 </script>
 
 <style lang="scss">
-.noAccount_backdrop {
+.error-modal_backdrop {
   position: absolute;
   width: 375px;
   height: 600px;
@@ -42,12 +49,12 @@ export default Vue.extend({
   top: 0px;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1;
-  .noAccount_modal_wrapper {
+  .error-modal_wrapper {
     width: 317px;
-    height: 400px;
+    height: 294px;
     position: absolute;
     left: 28px;
-    top: 110px;
+    top: 170px;
     background: #ffffff;
     border-radius: 8px;
 
@@ -56,12 +63,12 @@ export default Vue.extend({
     justify-content: center;
     align-items: center;
 
-    .noAccount_text {
+    .error-modal_text {
       width: 259px;
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 600;
-      font-size: 20px;
+      font-size: 17px;
       line-height: 25px;
       text-align: center;
       letter-spacing: -0.333333px;
@@ -74,22 +81,23 @@ export default Vue.extend({
 
     .button_wrapper {
       margin-top: 53px;
+      width: 300px;
       .button {
         width: 289px;
       }
       /* .add_account:hover {
-        background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
-      } */
+          background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+        } */
       /* .cancel:hover {
-        border: 2px solid transparent;
-        border-radius: 4px;
-        border-image: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
-        border-image-slice: 1;
-        background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      } */
+          border: 2px solid transparent;
+          border-radius: 4px;
+          border-image: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+          border-image-slice: 1;
+          background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        } */
     }
   }
 }

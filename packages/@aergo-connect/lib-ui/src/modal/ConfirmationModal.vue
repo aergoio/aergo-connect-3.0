@@ -61,7 +61,9 @@
       </div>
       <ButtonGroup vertical class="button_wrapper">
         <Button size="medium" type="primary" @click="handleOk" hover>OK</Button>
-        <Button size="medium" type="primary-outline" @click="handleCancel">Cancel</Button>
+        <Button size="medium" type="primary-outline" @click="handleCancel" hover
+          ><span>Cancel</span></Button
+        >
       </ButtonGroup>
     </div>
   </div>
@@ -287,10 +289,7 @@ export default Vue.extend({
     .button_wrapper {
       margin-top: 10px;
       margin-bottom: 20px;
-      .button-type-primary-outline:hover {
-        border: 2px solid #512da8;
-        color: #512da8;
-      }
+
       .button {
         width: 289px;
       }

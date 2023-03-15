@@ -163,7 +163,7 @@ export default class HistoryList extends Vue {
     border-bottom: 1px solid #eee;
     display: flex;
     cursor: pointer;
-    font-size: (12/16) * 1rem;
+    font-size: (calc(12 / 16)) * 1rem;
     padding: 12px 8px;
 
     &:last-child {

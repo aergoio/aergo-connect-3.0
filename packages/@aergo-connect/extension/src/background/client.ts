@@ -2,7 +2,9 @@ import Dnode from 'dnode/browser.js';
 import { EventEmitter } from 'events';
 import { wrapClientApi, ApiMethods } from './api';
 
-export default function connectToBackground(connectionStream: any): Promise<any> {
+export default function connectToBackground(
+  connectionStream: any,
+): Promise<ApiMethods & EventEmitter> {
   return new Promise((resolve) => {
     console.log('connecting to background...');
 

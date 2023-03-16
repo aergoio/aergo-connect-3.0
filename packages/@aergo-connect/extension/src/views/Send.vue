@@ -147,7 +147,7 @@
             >
               <li
                 class="list"
-                v-for="token in $store.state.session.tokens"
+                v-for="token in getTokens"
                 v-show="token.meta.type === tokenType"
                 :key="token.meta.hash"
                 @click="selectAssetFunc(token.hash)"
@@ -342,14 +342,22 @@ export default Vue.extend({
       select: false,
     };
   },
+  computed: {
+    getTokens() {
+      return this.$store.getters[`accounts/getTokens`];
+    },
+  },
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
-    if (this.$store.state.session.token) this.asset = await this.$store.state.session.token;
-    else this.asset = 'AERGO';
+    if (this.$store.state.accounts.selectedToken) {
+      this.asset = await this.$store.state.accounts.selectedToken;
+    } else {
+      this.asset = 'AERGO';
+    }
 
-    if (this.$route.params.id && this.$store.state.session.tokens[this.asset].meta.type == 'ARC2') {
+    if (this.$route.params.id && this.getTokens[this.asset].meta.type == 'ARC2') {
       this.inputAmount = this.$route.params.id;
-      this.nftUiData = this.$store.state.session.tokens[this.asset].nftWallet.filter(
+      this.nftUiData = this.getTokens[this.asset].nftWallet.filter(
         (nft) => nft.meta.token_id === this.$route.params.id,
       )[0];
       this.searchResult = '';
@@ -387,7 +395,7 @@ export default Vue.extend({
       this.setParams();
       if (this.tokenType === 'ARC2') {
         this.getNftInventory();
-        if (this.$route.params.id && this.asset === this.$store.state.session.token) {
+        if (this.$route.params.id && this.asset === this.$store.state.accounts.selectedToken) {
           this.inputAmount = this.$route.params.id;
         }
       }
@@ -428,12 +436,12 @@ export default Vue.extend({
   },
   methods: {
     async setParams() {
-      this.balance = this.$store.state.session.tokens[this.asset]['balance'];
-      this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
-      this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
-      this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
-      this.tokenHash = this.$store.state.session.tokens[this.asset].hash;
-      this.tokenName = this.$store.state.session.tokens[this.asset]['meta']['name'];
+      this.balance = this.getTokens[this.asset]['balance'];
+      this.tokenType = this.getTokens[this.asset]['meta']['type'];
+      this.icon = this.getTokens[this.asset]['meta']['image'];
+      this.symbol = this.getTokens[this.asset]['meta']['symbol'];
+      this.tokenHash = this.getTokens[this.asset].hash;
+      this.tokenName = this.getTokens[this.asset]['meta']['name'];
     },
     async selectNFT(item) {
       this.inputAmount = item.meta.token_id;
@@ -450,7 +458,7 @@ export default Vue.extend({
       this.searchResult = [...this.nftInventory];
     },
     async getNftInventory() {
-      const nftWallet = this.$store.state.session.tokens[this.asset].nftWallet;
+      const nftWallet = this.getTokens[this.asset].nftWallet;
       this.nftInventory = nftWallet.length > 0 ? nftWallet : [];
     },
 
@@ -458,7 +466,7 @@ export default Vue.extend({
       this.$store.commit('ui/clearInput', { key: 'send' });
       this.$router
         .push({
-          name: this.$store.state.session.previousPage ?? 'accounts-list',
+          name: this.$store.state.ui.route.previousPage ?? 'accounts-list',
         })
         .catch(() => {});
     },
@@ -483,11 +491,10 @@ export default Vue.extend({
         // this.txBody.type = this.$store.state.ui.txType.indexOf(this.txBody.type);
         console.log(this.txBody, 'txBody');
       } else if (this.tokenType == 'ARC1') {
-        this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
+        this.txBody.to = this.getTokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
         const amount =
-          Number(this.inputAmount) *
-          Math.pow(10, this.$store.state.session.tokens[this.asset].meta.decimals);
+          Number(this.inputAmount) * Math.pow(10, this.getTokens[this.asset].meta.decimals);
         // eslint-disable-next-line no-undef
         this.txBody.payload =
           '{"Name": "transfer", "Args": ["' +
@@ -499,12 +506,12 @@ export default Vue.extend({
         this.txType = 'CALL';
       } else {
         // ARC2
-        this.txBody.to = this.$store.state.session.tokens[this.asset].hash;
+        this.txBody.to = this.getTokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
         this.txBody.payload =
           '{"Name": "transfer", "Args": ["' + this.inputTo + '", "' + this.inputAmount + '"]}';
         this.txType = 'CALL';
-        this.userNftData = this.$store.state.session.tokens[this.asset].nftWallet.filter(
+        this.userNftData = this.getTokens[this.asset].nftWallet.filter(
           (nft) => nft.meta.token_id === this.inputAmount,
         )[0];
       }
@@ -555,7 +562,7 @@ export default Vue.extend({
         this.setStatus('success', 'Done');
         if (result.status === 'SUCCESS') {
           if (this.userNftData.hash) {
-            this.$store.commit('session/deleteNftInLocalStorage', this.userNftData);
+            this.$store.commit('accounts/deleteNftInLocalStorage', this.userNftData);
           }
           // eslint-disable-next-line no-undef
           this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
@@ -563,8 +570,8 @@ export default Vue.extend({
             chainId: this.$store.state.accounts.network,
             address: this.$store.state.accounts.address,
           });
-          await this.$store.dispatch('session/updateBalances');
-          this.balance = await this.$store.state.session.tokens[this.asset].balance;
+          await this.$store.dispatch('accounts/initState');
+          this.balance = await this.getTokens[this.asset].balance;
           setTimeout(() => {
             this.statusDialogVisible = false;
             this.sendFinishModal = true;
@@ -580,7 +587,7 @@ export default Vue.extend({
       }
     },
     // async handleSent() {
-    //   this.balance = await this.$store.state.session.tokens[this.asset].balance;
+    //   this.balance = await this.getTokens[this.asset].balance;
     //   this.inputAmount = 0;
     //   this.sendFinishModal = false;
     // },

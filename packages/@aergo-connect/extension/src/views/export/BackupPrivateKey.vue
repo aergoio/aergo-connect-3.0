@@ -78,12 +78,6 @@ export default Vue.extend({
       } else {
         this.$router.push({ name: 'security' });
       }
-      // if (
-      //   this.$store.state.session.previousPage === 'account-backup-mnemonic' ||
-      //   this.$store.state.session.previousPage === 'account-backup-keystore' ||
-      //   this.$store.state.session.previousPage === 'account-backup-encrypted'
-      // ) {
-      // }
     },
   },
 });

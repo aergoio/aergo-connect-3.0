@@ -171,17 +171,21 @@ export default Vue.extend({
       arc1Tokens: [],
     };
   },
-
+  computed: {
+    getTokens() {
+      return this.$store.getters[`accounts/getTokens`];
+    },
+  },
   async beforeMount() {
-    this.token = await this.$store.state.session.tokens[this.$store.state.session.token];
-    this.arc1Tokens = await Object.values(this.$store.state.session.tokens).filter(
+    this.token = await this.getTokens[this.$store.state.accounts.selectedToken];
+    this.arc1Tokens = await Object.values(this.getTokens).filter(
       (token) => token.meta.type === 'ARC1' || token.meta.type === 'AERGO',
     );
     if (this.$store.state.ui.input['receive']['inputAmount']) {
       this.inputAmount = this.$store.state.ui.input['receive']['inputAmount'];
     }
-    if (this.$store.state.session.token) {
-      this.asset = this.$store.state.session.token;
+    if (this.$store.state.accounts.selectedToken) {
+      this.asset = this.$store.state.accounts.selectedToken;
     } else {
       this.asset = 'AERGO';
     }
@@ -189,12 +193,12 @@ export default Vue.extend({
   watch: {
     asset: function () {
       this.$store.commit('ui/clearInput', { key: 'receive' });
-      this.balance = this.$store.state.session.tokens[this.asset]['balance'];
-      this.tokenType = this.$store.state.session.tokens[this.asset]['meta']['type'];
-      this.icon = this.$store.state.session.tokens[this.asset]['meta']['image'];
-      this.symbol = this.$store.state.session.tokens[this.asset]['meta']['symbol'];
-      this.tokenName = this.$store.state.session.tokens[this.asset]['meta']['name'];
-      this.decimal = this.$store.state.session.tokens[this.asset]['meta']['decimal'];
+      this.balance = this.getTokens[this.asset]['balance'];
+      this.tokenType = this.getTokens[this.asset]['meta']['type'];
+      this.icon = this.getTokens[this.asset]['meta']['image'];
+      this.symbol = this.getTokens[this.asset]['meta']['symbol'];
+      this.tokenName = this.getTokens[this.asset]['meta']['name'];
+      this.decimal = this.getTokens[this.asset]['meta']['decimal'];
     },
     notification(state) {
       if (state) {

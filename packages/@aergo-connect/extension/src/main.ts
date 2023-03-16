@@ -5,12 +5,11 @@ import store from './store';
 import connectToBackground from './background/client';
 import Background from './plugins/background';
 import IndexedDb from './plugins/indexeddb';
-import extension from 'extensionizer';
-// import extension from 'webextension-polyfill';
+import './plugins/directives';
 import PortStream from 'extension-port-stream';
-// import ClickOutside from 'vue-click-outside';
 import '@aergo-connect/lib-ui/src/styles/base.scss';
 import { enforceRequest } from './router/guards';
+
 Vue.config.productionTip = false;
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
@@ -23,40 +22,43 @@ function getRequestId() {
   return requestId;
 }
 
-async function init(name: string) {
-  const extensionPort = extension.runtime.connect({ name });
-
+async function setupBackground(extensionPort: any) {
   const connectionStream = new PortStream(extensionPort);
-
   const background = await connectToBackground(connectionStream);
-
-  // const manifest = extension.runtime.getManifest();
-  // console.log(manifest, 'manifest!!!');
-  Vue.use(Background, { background });
-  Vue.use(IndexedDb);
-  Vue.directive('click-outside', {
-    bind: function (el, binding, vnode) {
-      el.clickOutsideEvent = function (event) {
-        // here I check that click was outside the el and his children
-        if (!(el == event.target || el.contains(event.target))) {
-          // and if it did, call method provided in attribute value
-          vnode.context[binding.expression](event);
-        }
-      };
-      document.body.addEventListener('click', el.clickOutsideEvent);
-    },
-    unbind: function (el) {
-      document.body.removeEventListener('click', el.clickOutsideEvent);
-    },
+  // React to state updates from background
+  background.on('update', function (state) {
+    console.log('update from bg', state);
+    const isNonAuthPage = router.currentRoute.meta && router.currentRoute.meta.noAuthCheck === true;
+    if (Object.prototype.hasOwnProperty.call(state, 'unlocked')) {
+      store.commit('ui/setUnlocked', state.unlocked);
+      if (!state.unlocked && !isNonAuthPage) {
+        router.push({ name: 'lockscreen' });
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(state, 'accounts')) {
+      store.commit('accounts/setAccounts', state.accounts);
+    }
+    if (Object.prototype.hasOwnProperty.call(state, 'accountsRemoved')) {
+      store.commit('accounts/removeAccounts', state.accountsRemoved);
+    }
   });
-  const requestId = getRequestId();
+  return background;
+}
 
+async function init(name: string) {
+  const extensionPort = chrome.runtime.connect({ name });
+  console.log(extensionPort, 'extensionPort?');
+  Vue.use(Background, { background: await setupBackground(extensionPort) });
+  Vue.use(IndexedDb);
+
+  const requestId = getRequestId();
+  console.log(requestId, 'requestId?');
   if (requestId) {
     router.beforeEach(enforceRequest);
     store.commit('request/setRequestId', requestId);
   }
 
-  new Vue({
+  const vue = new Vue({
     router,
     store,
     render: (h) => h(App),
@@ -65,33 +67,19 @@ async function init(name: string) {
     },
   }).$mount('#app');
 
-  // React to state updates from background
-  background.on('update', function (state) {
-    console.log('update from bg', state);
-    const isNonAuthPage = router.currentRoute.meta && router.currentRoute.meta.noAuthCheck === true;
-    // console.log(router, 'router');
-    // console.log(isNonAuthPage, 'isNonAuthPage');
-
-    if (Object.prototype.hasOwnProperty.call(state, 'unlocked')) {
-      store.commit('ui/setUnlocked', state.unlocked);
-      if (state.unlocked === false && !isNonAuthPage) {
-        router.push({ name: 'lockscreen' });
-      }
-    }
+  // Need to reconnect when background disconnects
+  // https://stackoverflow.com/questions/66618136/persistent-service-worker-in-chrome-extension
+  extensionPort.onDisconnect.addListener(async () => {
+    const extensionPort = chrome.runtime.connect({ name });
+    console.log(extensionPort, 'extensionPort?22');
+    vue.$setBackground(await setupBackground(extensionPort));
   });
+  // React to state updates from background
 
-  //  console.log('STATE', store.state.accounts);
-  // console.log('idleTimeout:' + store.state.ui.idleTimeout);
-  extension.idle.setDetectionInterval(store.state.ui.idleTimeout);
-
-  console.log('main init end');
+  chrome.idle.setDetectionInterval(store.state.ui.idleTimeout);
 }
 
 const elem = document.getElementById('app');
 const name = elem ? elem.getAttribute('data-name') || '' : '';
 
 init(name);
-
-// extension.runtime.sendMessage(name).then((results) => {
-//   init(name);
-// });

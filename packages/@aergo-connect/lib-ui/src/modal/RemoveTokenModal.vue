@@ -5,9 +5,9 @@
       <div class="removeToken_title">
         Are you sure to hide <br />
         {{
-          $store.state.session.option === `nft`
+          $store.state.accounts.option === `nft`
             ? userNft.meta.token_id
-            : $store.state.session.tokens[$store.state.session.token].meta.name
+            : getTokens[$store.state.accounts.selectedToken].meta.name
         }}
         ?
       </div>
@@ -31,6 +31,11 @@ export default Vue.extend({
   data() {
     return {};
   },
+  computed: {
+    getTokens() {
+      return this.$store.getters[`accounts/getTokens`];
+    },
+  },
   props: {
     userNft: {
       type: Object,
@@ -42,10 +47,10 @@ export default Vue.extend({
     handleConfirm() {
       console.log('delete Token');
 
-      if (this.$store.state.session.option === 'nft') {
-        this.$store.commit('session/deleteNftInLocalStorage', this.userNft);
+      if (this.$store.state.accounts.option === 'nft') {
+        this.$store.commit('accounts/deleteNftInLocalStorage', this.userNft);
       } else {
-        this.$store.dispatch('accounts/deleteToken', this.$store.state.session.token);
+        this.$store.dispatch('accounts/deleteToken', this.$store.state.accounts.selectedToken);
       }
       this.$router.push({
         name: 'accounts-list',

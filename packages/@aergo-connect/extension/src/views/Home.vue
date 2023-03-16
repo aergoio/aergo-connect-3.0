@@ -10,16 +10,10 @@
       @refreshClick="refreshClick"
       :isNetworkError="errorMessage === 'ERR_INTERNET_DISCONNECTED'"
     />
-    <!-- <LoadingIndicator
+    <LoadingIndicator
       :style="{ position: 'absolute', zIndex: 10, top: 0, bottom: 0, left: 0, right: 0 }"
       v-if="isLoading"
       :size="56"
-    /> -->
-    <ErrorModal
-      v-if="errorModal"
-      :errorMessage="errorMessage"
-      @cancel="handleCancel"
-      @refresh="handleRefresh"
     />
     <ErrorModal
       v-if="errorModal"
@@ -103,7 +97,7 @@
           :class="[tokensCount > 4 ? 'token_list_ul scroll' : 'token_list_ul']"
         >
           <li
-            v-for="token in $store?.state?.session?.tokens"
+            v-for="token in getTokens"
             class="token_list_li"
             :key="token.hash"
             @click="handleToken(token)"
@@ -163,7 +157,7 @@
           ]"
         >
           <li
-            v-for="token in $store?.state?.session?.tokens"
+            v-for="token in getTokens"
             :class="[myNFTCount(token?.hash) ? `token_list_li` : `token_list_li none`]"
             :key="token?.hash"
           >
@@ -205,7 +199,7 @@
             <ul class="nft_inventory_list_wrapper" v-if="token?.dropdownState">
               <div class="row">
                 <li
-                  v-for="(nftWalletItem, i) in $store?.state?.session?.tokens[token.hash].nftWallet"
+                  v-for="(nftWalletItem, i) in getTokens[token.hash].nftWallet"
                   :key="`${i + nftWalletItem?.hash}`"
                   class="nft_inventory_list_wrapper_list"
                   @click="handleGoNftInventory(nftWalletItem)"
@@ -293,6 +287,7 @@ export default Vue.extend({
       notification: false,
       notificationText: '',
       network: this.$store?.state?.accounts?.network,
+      address: this.$store?.state?.accounts?.address,
       tab: 'token',
       tokensCount: 0,
       nftCountNum: 0,
@@ -308,11 +303,12 @@ export default Vue.extend({
   },
   beforeMount() {
     this.initAccount();
-    this.tab = this.$store.state.session.option || 'token';
+    this.tab = this.$store.state.accounts.option || 'token';
   },
   mounted() {
     console.log(this.nftCountNum, 'nftCountnum');
   },
+
   watch: {
     $route(to, from) {
       this.refreshClick();
@@ -342,7 +338,15 @@ export default Vue.extend({
       }
     },
   },
-
+  computed: {
+    getTokens() {
+      return this.$store.getters[`accounts/getTokens`];
+    },
+  },
+  // updated() {
+  //   console.log(this.getTokens);
+  //   console.log(this.$store, 'store');
+  // },
   methods: {
     async changeNick() {
       if (this.nick.length < 12 && this.nick.length !== 0) {
@@ -366,7 +370,7 @@ export default Vue.extend({
       this.tokensCount = 0;
       this.nftCountNum = 0;
       if (this.$store.state.accounts.address) {
-        const response = await this.$store.dispatch('session/initState');
+        const response = await this.$store.dispatch('accounts/initState');
         if (response === 'initError') {
           this.errorModal = true;
           this.errorMessage = 'ERR_INTERNET_DISCONNECTED';
@@ -388,7 +392,7 @@ export default Vue.extend({
         if (!succ) {
           this.noAccountModal = true;
         } else {
-          await this.$store.dispatch('session/initState');
+          await this.$store.dispatch('accounts/initState');
         }
       }
       this.isLoading = false;
@@ -398,7 +402,7 @@ export default Vue.extend({
     async refreshClick() {
       this.isLoading = true;
       try {
-        await this.$store.dispatch('session/updateBalances');
+        await this.initAccount();
         await this.checkIsUpdateNft();
         this.$forceUpdate();
         this.errorModal = false;
@@ -462,26 +466,26 @@ export default Vue.extend({
     },
 
     handleToken(token: any) {
-      this.$store.commit('session/setToken', token.hash);
+      this.$store.commit('accounts/setSelectedToken', token.hash);
       this.$router.push({ name: 'token-detail' }).catch(() => {});
     },
 
     handleNft(nft: any) {
-      this.$store.commit('session/setToken', nft.hash);
-      this.$store.commit('session/handleDropdownState', nft.hash);
+      this.$store.commit('accounts/setSelectedToken', nft.hash);
+      this.$store.commit('accounts/handleDropdownState', nft.hash);
 
-      if (this.$store.state.session.tokens[nft.hash].nftWallet.length > 3) {
+      if (this.getTokens[nft.hash].nftWallet.length > 3) {
         this.dropdownScroll = true;
       }
     },
 
     handleImportAsset(to: string) {
       if (to === 'token') {
-        this.$store.commit('session/setOption', 'token');
+        this.$store.commit('accounts/setOption', 'token');
         this.$router.push({ name: 'import-asset', params: { option: 'token' } }).catch(() => {});
       }
       if (to === 'nft') {
-        this.$store.commit('session/setOption', 'nft');
+        this.$store.commit('accounts/setOption', 'nft');
         this.$router.push({ name: 'import-asset', params: { option: 'nft' } }).catch(() => {});
       }
     },
@@ -494,10 +498,11 @@ export default Vue.extend({
     },
     handleChangeTab(value: string) {
       this.tab = value;
-      this.$store.commit('session/setOption', value);
+      this.$store.commit('accounts/setOption', value);
     },
 
     formatBalance(balance) {
+      console.log(balance, 'balance???????????');
       if (Number.isInteger(balance)) {
         return balance;
       }
@@ -524,17 +529,17 @@ export default Vue.extend({
     //   });
     // },
     myNFTCount(hash: any) {
-      if (!this.$store.state.session.tokens[hash].nftWallet) {
+      if (!this.getTokens[hash].nftWallet) {
         return null;
       } else {
-        if (this.$store.state.session.tokens[hash].nftWallet.length > 2) {
+        if (this.getTokens[hash].nftWallet.length > 2) {
           this.dropdownScroll = true;
         }
-        return this.$store.state.session.tokens[hash].nftWallet.length;
+        return this.getTokens[hash].nftWallet.length;
       }
     },
     myNFTList() {
-      Object.values(this.$store.state.session.tokens).map((token: any) => {
+      Object.values(this.getTokens).map((token: any) => {
         if (token?.nftWallet) {
           console.log('here', token.nftWallet);
           this.nftCountNum++;
@@ -542,12 +547,12 @@ export default Vue.extend({
       });
     },
     handleGoNftInventory(nft: any) {
-      this.$store.commit('session/setToken', nft.token.hash);
+      this.$store.commit('accounts/setSelectedToken', nft.token.hash);
       this.$router.push({ name: 'nft-detail', params: { id: nft.meta.token_id } }).catch(() => {});
     },
 
     checkIsUpdateNft() {
-      const tokens = Object.values(this.$store.state.session.tokens);
+      const tokens = Object.values(this.getTokens);
       tokens.map((token: any) => {
         if (token?.nftWallet) {
           token.nftWallet.map(async (nft: any) => {
@@ -564,10 +569,7 @@ export default Vue.extend({
                   //   contractAddress: nft.meta.address,
                   // });
 
-                  const localStorageNftData =
-                    this.$store.state.accounts.accounts[nft.meta.account][`token`][
-                      this.$store.state.accounts.network
-                    ][nft.meta.address];
+                  const localStorageNftData = this.getTokens[nft.meta.address];
 
                   console.log(localStorageNftData, 'localStorageNftData');
 
@@ -577,7 +579,7 @@ export default Vue.extend({
                     }
                   });
                   console.log(localStorageNftData, 'updatedUserNftDataInLocalStorage');
-                  this.$store.commit('session/updateNftInLocalstorage', localStorageNftData);
+                  // this.$store.commit('accounts/updateNftInLocalstorage', localStorageNftData);
                   console.log('end To Change WalletData');
                 }
               }

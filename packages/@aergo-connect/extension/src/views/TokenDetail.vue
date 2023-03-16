@@ -249,9 +249,13 @@ export default Vue.extend({
       },
     };
   },
-
+  computed: {
+    getTokens() {
+      return this.$store.getters[`accounts/getTokens`];
+    },
+  },
   async beforeMount() {
-    this.token = await this.$store.state.session.tokens[this.$store.state.session.token];
+    this.token = await this.getTokens[this.$store.state.accounts.selectedToken];
     await this.getTokenHistory();
     if (this.token.meta.symbol == 'aergo') {
       await this.getAergoInfo();

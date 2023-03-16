@@ -8,11 +8,7 @@
       ></VueQRCodeComponent>
       <div class="amount_wrapper">
         <span>{{
-          `${
-            $store.state.session.tokens[this.asset].meta.type !== 'ARC2'
-              ? `${amount} ${symbol}`
-              : ''
-          }`
+          `${getTokens[this.asset].meta.type !== 'ARC2' ? `${amount} ${symbol}` : ''}`
         }}</span>
       </div>
       <div class="description">
@@ -46,14 +42,18 @@ export default Vue.extend({
       inputText: '',
     };
   },
-
+  computed: {
+    getTokens() {
+      return this.$store.getters[`accounts/getTokens`];
+    },
+  },
   async beforeMount() {
     this.inputText = {
       type: 'AERGO_REQUEST',
       network: this.$store.state.accounts.network,
       address: this.$store.state.accounts.address,
       token: this.asset,
-      token_type: this.$store.state.session.tokens[this.asset].meta.type,
+      token_type: this.getTokens[this.asset].meta.type,
       token_name: this.tokenName,
       amount: String(this.amount),
       decimals: String(this.decimals),

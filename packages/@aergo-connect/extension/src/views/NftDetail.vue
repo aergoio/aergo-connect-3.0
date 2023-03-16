@@ -160,10 +160,14 @@ export default Vue.extend({
       latestTransactionHash: '' || null,
     };
   },
+  computed: {
+    getTokens() {
+      return this.$store.getters[`accounts/getTokens`];
+    },
+  },
 
   beforeMount() {
-    const nftWallet =
-      this.$store.state.session.tokens[this.$store.state.session.token]['nftWallet'];
+    const nftWallet = this.getTokens[this.$store.state.accounts.selectedToken]['nftWallet'];
     const nft = nftWallet.filter((nft: any) => nft.meta.token_id === this.$route.params.id);
     this.token = nft[0];
 

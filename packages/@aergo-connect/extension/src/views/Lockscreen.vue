@@ -63,14 +63,24 @@ export default class Lockscreen extends mixins() {
   get canContinue(): boolean {
     return Boolean(this.password);
   }
-
+  async beforeMount(): Promise<void> {
+    const isSetup = await this.$background.isSetup();
+    if (!isSetup) {
+      this.$router.push({ name: 'welcome' });
+    }
+  }
+  async mounted() {
+    await this.$background.lock();
+  }
   async unlock(): Promise<void> {
     try {
       await this.$background.unlock({ password: this.password });
       let nextPage = this.$store.state.ui.route.currentPath;
 
       if (nextPage) {
-        if (this.$store.state.accounts.address) await this.$store.dispatch('session/initState');
+        if (this.$store.state.accounts.address) {
+          await this.$store.dispatch('accounts/initState');
+        }
         this.$router.push({ path: nextPage }).catch(() => {});
       } else {
         nextPage = 'accounts-list';

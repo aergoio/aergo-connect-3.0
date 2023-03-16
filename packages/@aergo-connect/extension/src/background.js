@@ -2,7 +2,6 @@ require('./manifest.json');
 
 import 'regenerator-runtime/runtime';
 
-import extension from 'webextension-polyfill';
 import endOfStream from 'end-of-stream';
 import PortStream from 'extension-port-stream';
 
@@ -11,18 +10,17 @@ import { ExternalRequest } from './background/request';
 
 const controller = new BackgroundController();
 
-extension.runtime.onConnect.addListener(function connectRemote(remotePort) {
+chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
   const processName = remotePort.name;
   console.log('Establishing connection with', remotePort);
   function deleteTimer(port) {
-    console.log(port, 'deleteTimer Port');
     if (port._timer) {
       clearTimeout(port._timer);
       delete port._timer;
     }
   }
   function forceReconnect(port) {
-    console.log(port, 'forceReconnect Port');
+    console.log(port, 'reconnect start');
     deleteTimer(port);
     port.disconnect();
   }
@@ -47,9 +45,9 @@ extension.runtime.onConnect.addListener(function connectRemote(remotePort) {
   remotePort._timer = setTimeout(forceReconnect, 250e3, remotePort);
 });
 // Setup idle detection
-extension.idle.setDetectionInterval(60);
+chrome.idle.setDetectionInterval(60);
 
-extension.idle.onStateChanged.addListener((newState) => {
+chrome.idle.onStateChanged.addListener((newState) => {
   console.log('idle onStateChanged : ' + newState);
   if (newState === 'idle' || newState === 'locked') {
     // controller.lock();

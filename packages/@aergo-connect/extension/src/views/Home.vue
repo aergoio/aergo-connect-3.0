@@ -21,12 +21,6 @@
       @cancel="handleCancel"
       @refresh="handleRefresh"
     />
-    <ErrorModal
-      v-if="errorModal"
-      :errorMessage="errorMessage"
-      @cancel="handleCancel"
-      @refresh="handleRefresh"
-    />
     <NoAccountModal v-if="noAccountModal" @cancel="handleCancel" />
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
     <AccountDetailModal v-if="accountDetailModal" @cancel="(e) => handleCancel(e)" />
@@ -314,6 +308,7 @@ export default Vue.extend({
   mounted() {
     console.log(this.nftCountNum, 'nftCountnum');
   },
+
   watch: {
     $route(to, from) {
       this.refreshClick();

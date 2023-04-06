@@ -36,7 +36,6 @@ export class Api {
   }
 
   async unlock({ password }: { password: string }) {
-    console.log('unlocking...');
     await this.controller.unlock(password);
     return true;
   }
@@ -73,7 +72,7 @@ export class Api {
     }
   }
 
-  async addNetwork({ chainId, nodeUrl, scanApiUrl }: ChainConfig) {
+  async addNetwork({ chainId, nodeUrl, scanApiUrl, scanExplorerUrl }: ChainConfig) {
     this.controller.wallet.useChain({ chainId, nodeUrl });
     let chains: Record<string, ChainConfig> = {};
     if (!this.controller.wallet.datastore) throw new Error('cannot open datastore');
@@ -83,7 +82,7 @@ export class Api {
     } catch (e) {
       // not found
     }
-    chains[chainId] = { chainId, nodeUrl, scanApiUrl };
+    chains[chainId] = { chainId, nodeUrl, scanApiUrl, scanExplorerUrl };
     await this.controller.wallet.datastore.getIndex('settings').put({
       key: 'customChains',
       data: chains as any,

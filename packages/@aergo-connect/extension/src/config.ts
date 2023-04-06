@@ -3,20 +3,24 @@ const tuple = <T extends string[]>(...args: T) => args;
 export interface ChainConfig {
   chainId: string;
   nodeUrl: string;
+  scanApiUrl?: string;
 }
 
 export const ChainConfigs: ChainConfig[] = [
   {
-    chainId: 'testnet',
-    nodeUrl: 'https://testnet-api-http.aergo.io',
-  },
-  {
     chainId: 'mainnet',
     nodeUrl: 'https://mainnet-api-http.aergo.io',
+    scanApiUrl: 'https://api.aergoscan.io/mainnet/v2',
+  },
+  {
+    chainId: 'testnet',
+    nodeUrl: 'https://testnet-api-http.aergo.io',
+    scanApiUrl: 'https://api.aergoscan.io/testnet/v2',
   },
   {
     chainId: 'alpha',
     nodeUrl: 'https://alpha-api-http.aergo.io',
+    scanApiUrl: 'https://api2-alpha.aergoscan.io/v2',
   },
 ];
 
@@ -29,23 +33,23 @@ export function isPublicChainId(chainId: string): chainId is PublicChainId {
 
 export const PublicChainData: Record<
   PublicChainId,
-  { label: string; apiUrl: string; explorerUrl: string; nodeUrl: string }
+  { label: string; scanApiUrl: string; explorerUrl: string; nodeUrl: string }
 > = {
   mainnet: {
     label: 'Mainnet',
-    apiUrl: 'https://api.aergoscan.io/main',
+    scanApiUrl: 'https://api.aergoscan.io/mainnet/v2',
     explorerUrl: 'https://mainnet.aergoscan.io',
     nodeUrl: 'https://mainnet-api-http.aergo.io',
   },
   testnet: {
     label: 'Testnet',
-    apiUrl: 'https://api.aergoscan.io/testnet',
+    scanApiUrl: 'https://api.aergoscan.io/testnet/v2',
     explorerUrl: 'https://testnet.aergoscan.io',
     nodeUrl: 'https://testnet-api-http.aergo.io',
   },
   alpha: {
     label: 'Alpha',
-    apiUrl: 'https://api.aergoscan.io/alpha',
+    scanApiUrl: 'https://api2-alpha.aergoscan.io/v2',
     explorerUrl: 'https://alpha.aergoscan.io',
     nodeUrl: 'https://alpha-api-http.aergo.io',
   },

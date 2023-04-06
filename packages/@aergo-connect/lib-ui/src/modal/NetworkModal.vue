@@ -3,40 +3,57 @@
     <div class="network_modal_wrapper">
       <div class="network_modal_title">Select Network</div>
       <div class="network_modal_line" />
-      <ul class="network_modal_ul">
-        <li class="network_modal_li" @click="setNetwork('mainnet')">
-          <div class="network_modal_circle1" />
-          <span class="network_modal_name">AERGO MAINNET</span>
-          <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
+      <ul :class="chains.length > 3 ? `network_modal_ul scroll` : `network_modal_ul`">
+        <li
+          class="network_modal_li"
+          v-for="(chain, idx) in chains"
+          v-bind:key="chain.chainId"
+          @click="setNetwork(chain.chainId)"
+        >
+          <div class="flex-row">
+            <div :class="`network_modal_circle${idx < 3 ? idx + 1 : 3}`" />
+            <span> {{ `AERGO ${chain.chainId.toLocaleUpperCase()}` }}</span>
+          </div>
+          <div class="list_line" />
         </li>
-        <div class="list_line" />
-        <li class="network_modal_li" @click="setNetwork('testnet')">
-          <div class="network_modal_circle2" />
-          <span class="network_modal_name">AERGO TESTNET</span>
-          <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
-        </li>
-        <div class="list_line" />
-        <li class="network_modal_li" @click="setNetwork('alpha')">
-          <div class="network_modal_circle3" />
-          <span class="network_modal_name">AERGO ALPHA</span>
-          <!-- <Icon class="network_modal_icon" :name="`networkcheck`" /> -->
-        </li>
-        <div class="list_line" />
-        <Button type="primary" size="large" disabled>Add a network</Button>
       </ul>
+      <Button class="configure_button" type="primary" size="large" @click="addNetworkClick" hover
+        >Configure Network</Button
+      >
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import Button from '../buttons/Button.vue';
+import { ChainConfigs } from '@aergo-connect/extension/src/config';
 export default Vue.extend({
   components: {
     Icon,
     Button,
   },
+  data() {
+    return {
+      options: [],
+      chains: [...ChainConfigs],
+    };
+  },
+  created() {
+    this.fetchNetworks();
+  },
+  // computed: {
+  //   proceedOptions() {
+  //     return this.options.map((option) => {
+  //       return {
+  //         value: option[0],
+  //         label: option[1],
+  //       };
+  //     });
+  //   },
+  // },
+
   methods: {
     networkModalClick(event) {
       if (event.eventPhase === 2) {
@@ -63,6 +80,21 @@ export default Vue.extend({
           })
           .catch(() => {});
       }
+    },
+
+    addNetworkClick() {
+      this.$router.push({ name: 'networks-list' });
+    },
+
+    async fetchNetworks() {
+      const chains = Object.values(await this.$background.getNetworks()) as any;
+      if (chains) {
+        this.chains.push(...chains);
+      }
+      // if (chains) {
+      //   const optionArray = [...chains.map((item: any) => [item.chainId, item.chainId])] as never[];
+      //   this.options = optionArray;
+      // }
     },
   },
 });
@@ -109,25 +141,30 @@ export default Vue.extend({
       box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
     }
     .network_modal_ul {
-      height: 294px;
+      height: 170px;
+      &.scroll {
+        overflow-y: scroll;
+      }
       .button {
         margin-top: 14px;
         margin-left: 20px;
       }
 
-      .list_line {
-        margin-left: 24px;
-        width: 327px;
-        height: 1px;
-        background: #f0f0f0;
-        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
-      }
       .network_modal_li {
-        height: 50px;
         cursor: pointer;
-        display: flex;
-        align-items: center;
+        .list_line {
+          margin-left: 24px;
+          width: 327px;
+          height: 1px;
+          background: #f0f0f0;
+          box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
+        }
 
+        .flex-row {
+          height: 50px;
+          display: flex;
+          align-items: center;
+        }
         .network_modal_circle1 {
           margin-left: 34px;
           margin-right: 10px;
@@ -173,6 +210,10 @@ export default Vue.extend({
 
         background: #f6f6f6;
       }
+    }
+
+    .configure_button {
+      margin-left: 24px;
     }
   }
 }

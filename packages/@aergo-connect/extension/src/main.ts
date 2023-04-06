@@ -25,12 +25,14 @@ function getRequestId() {
 async function setupBackground(extensionPort: any) {
   const connectionStream = new PortStream(extensionPort);
   const background = await connectToBackground(connectionStream);
+  // console.log(background, 'background?');
   // React to state updates from background
   background.on('update', function (state) {
     console.log('update from bg', state);
     const isNonAuthPage = router.currentRoute.meta && router.currentRoute.meta.noAuthCheck === true;
     if (Object.prototype.hasOwnProperty.call(state, 'unlocked')) {
       store.commit('ui/setUnlocked', state.unlocked);
+      chrome.idle.setDetectionInterval(store.state.ui.idleTimeout);
       if (!state.unlocked && !isNonAuthPage) {
         router.push({ name: 'lockscreen' });
       }
@@ -74,9 +76,6 @@ async function init(name: string) {
     console.log(extensionPort, 'extensionPort?22');
     vue.$setBackground(await setupBackground(extensionPort));
   });
-  // React to state updates from background
-
-  chrome.idle.setDetectionInterval(store.state.ui.idleTimeout);
 }
 
 const elem = document.getElementById('app');

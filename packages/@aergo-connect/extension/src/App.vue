@@ -23,6 +23,7 @@ export default Vue.extend({
     //   this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck
     // );
     const unlocked = await this.$background.isUnlocked();
+
     console.log(unlocked, 'unlocked');
     this.$store.commit('ui/setUnlocked', unlocked);
 

@@ -105,6 +105,12 @@ export default class RequestSign extends mixins(RequestMixin) {
       chainId: this.$store.state.accounts.network,
     };
   }
+  // get account(): Account {
+  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
+  // }
+  created() {
+    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
+  }
   /*
   async signWithLedger(message: Buffer, displayAsHex = false) {
     this.setStatus('loading', 'Connecting to Ledger device...');

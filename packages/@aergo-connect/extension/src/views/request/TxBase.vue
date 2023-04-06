@@ -104,6 +104,9 @@ export default class TxBase extends mixins(RequestMixin) {
       chainId: this.$store.state.accounts.network,
     };
   }
+  // get account(): Account {
+  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
+  // }
 
   get txDataDisplay() {
     if (!this.request) return {};

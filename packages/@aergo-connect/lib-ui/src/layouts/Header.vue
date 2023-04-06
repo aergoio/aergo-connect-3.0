@@ -2,7 +2,7 @@
   <div class="header">
     <div class="header__button left" :class="[buttonHide ? `button__hide` : ``]">
       <Button :to="to" @click="buttonClick">
-        <Icon :name="`${button}`" />
+        <Icon :name="`${button}`" class="button-icon" />
       </Button>
     </div>
     <h3 v-if="title && !network">{{ title }}</h3>
@@ -124,9 +124,20 @@ export default Vue.extend({
       &.button__hide {
         visibility: hidden;
       }
+
+      .button-icon {
+        &:hover {
+          transform: scale(1.2);
+          transition: 0.2s;
+        }
+      }
     }
     .icon--back {
       line-height: 0;
+      &:hover {
+        transform: scale(1.3);
+        transition: 0.2s;
+      }
     }
     &.right {
       /* top: 60%; */
@@ -140,6 +151,10 @@ export default Vue.extend({
         }
         .skip__btn {
           visibility: visible;
+          &:hover {
+            transform: scale(1.3);
+            transition: 0.4s;
+          }
         }
       }
 
@@ -151,6 +166,10 @@ export default Vue.extend({
         }
         .refresh {
           display: inline;
+          &:hover {
+            transform: scale(1.3);
+            transition: 0.4s;
+          }
         }
         .skip__btn {
           display: none;

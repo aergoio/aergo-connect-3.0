@@ -193,9 +193,16 @@
         </div>
         <div class="flex-column" :style="{ marginTop: '20px' }">
           <div class="title">Send to</div>
-          <div class="text_box identicon">
+          <div
+            :class="txType !== 'MULTICALL' ? `text_box identicon` : `text_box identicon disabled`"
+          >
             <Identicon :text="inputTo" class="identicon" />
-            <input v-model="inputTo" type="text" class="identicon_input" />
+            <input
+              v-model="inputTo"
+              type="text"
+              class="identicon_input"
+              :disabled="txType === 'MULTICALL'"
+            />
           </div>
         </div>
 
@@ -237,7 +244,7 @@
             type="primary"
             size="large"
             @click="handleSendClick"
-            :disabled="!inputTo || !inputAmount"
+            :disabled="(!inputTo && txType !== 'MULTICALL') || !inputAmount"
             :hover="inputTo && inputAmount ? true : false"
             >Send</Button
           >
@@ -432,6 +439,11 @@ export default Vue.extend({
     },
     inputPayload() {
       this.txBody.payload = this.inputPayload;
+    },
+    txType() {
+      if (this.txType === 'MULTICALL') {
+        this.inputTo = '';
+      }
     },
   },
   methods: {
@@ -1064,6 +1076,12 @@ export default Vue.extend({
             line-height: 1.3;
             resize: none;
           }
+        }
+        &.disabled {
+          border-color: #9c9a9a;
+          /* border: 1px solid transparent; */
+          /* background: rgba(0, 0, 0, 0.05); */
+          /* box-shadow: inset 0 0 0 1px #9c9a9a; */
         }
         /* Caption/C3 */
         word-break: break-all;

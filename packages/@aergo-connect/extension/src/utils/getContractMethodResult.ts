@@ -7,7 +7,7 @@ import {
 } from '@herajs/client';
 import { ensureDelay } from 'timed-async';
 
-export const useQueryContract = async (
+export const getContractMethodResult = async (
   nodeURL: string,
   method: string,
   contractAddress: string,

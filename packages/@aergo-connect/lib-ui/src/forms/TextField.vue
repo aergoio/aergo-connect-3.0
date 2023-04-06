@@ -28,7 +28,7 @@
       </InputContainer>
       <div class="input-error-text" :class="errorType" v-if="error">
         <Icon :name="`danger`" :size="16" />
-        <span>{{ error }}</span>
+        <span :style="{ maxWidth: '300px' }">{{ error }}</span>
       </div>
     </label>
   </div>

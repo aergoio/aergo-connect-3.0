@@ -20,6 +20,7 @@ const storeModule: Module<RequestState, RootState> = {
   },
   actions: {
     async getRequest({ commit, state }, requestId?: string) {
+      console.log(state, 'state?statestatestatestatestate');
       if (state.currentRequest) {
         return state.currentRequest;
       }

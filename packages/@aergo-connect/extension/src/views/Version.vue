@@ -17,6 +17,8 @@ import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
+// import extension from 'webextension-polyfill';
+
 export default Vue.extend({
   components: { ScrollView, Header, Icon, Button },
   methods: {

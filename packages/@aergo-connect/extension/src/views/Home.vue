@@ -8,7 +8,8 @@
       @hamburgerClick="hamburgerClick"
       @networkModalClick="networkModalClick"
       @refreshClick="refreshClick"
-      :isNetworkError="errorMessage === 'ERR_INTERNET_DISCONNECTED'"
+      :isNetworkError="errorMessage !== ''"
+      @mouseEnter="handleMouseEnter"
     />
     <LoadingIndicator
       :style="{ position: 'absolute', zIndex: 10, top: 0, bottom: 0, left: 0, right: 0 }"
@@ -305,9 +306,6 @@ export default Vue.extend({
     this.initAccount();
     this.tab = this.$store.state.accounts.option || 'token';
   },
-  mounted() {
-    console.log(this.nftCountNum, 'nftCountnum');
-  },
 
   watch: {
     $route(to, from) {
@@ -322,10 +320,10 @@ export default Vue.extend({
       this.initAccount();
     },
 
-    notification(state) {
-      if (state) {
+    notification(notificationState) {
+      if (notificationState) {
         setTimeout(() => {
-          const time = (this.notification = !state);
+          const time = (this.notification = !notificationState);
           return () => {
             clearTimeout(time);
           };
@@ -343,10 +341,6 @@ export default Vue.extend({
       return this.$store.getters[`accounts/getTokens`];
     },
   },
-  // updated() {
-  //   console.log(this.getTokens);
-  //   console.log(this.$store, 'store');
-  // },
   methods: {
     async changeNick() {
       if (this.nick.length < 12 && this.nick.length !== 0) {
@@ -367,36 +361,40 @@ export default Vue.extend({
 
     async initAccount() {
       this.isLoading = true;
-      this.tokensCount = 0;
-      this.nftCountNum = 0;
-      if (this.$store.state.accounts.address) {
-        const response = await this.$store.dispatch('accounts/initState');
-        if (response === 'initError') {
-          this.errorModal = true;
-          this.errorMessage = 'ERR_INTERNET_DISCONNECTED';
+      try {
+        this.tokensCount = 0;
+        this.nftCountNum = 0;
+        if (this.$store.state.accounts.address) {
+          const response = await this.$store.dispatch('accounts/initState');
+          if (response === 'initError') {
+            this.errorModal = true;
+            this.errorMessage = 'ERR_INTERNET_DISCONNECTED';
+            return;
+          }
+          this.nick = await this.$store.state.accounts.nick;
+          await this.myNFTList();
+          await this.checkIsUpdateNft();
+          await this.$forceUpdate();
+          console.log('here? 1');
+          this.errorMessage = '';
           this.isLoading = false;
-          return;
-        }
-        // await this.getNftDataInLocalStorage();
-        this.nick = await this.$store.state.accounts.nick;
-        await this.myNFTList();
-        await this.checkIsUpdateNft();
-        await this.$forceUpdate();
-        this.errorMessage = '';
-        this.isLoading = false;
-      } else {
-        console.log('Other Account Loading ..');
-        const succ = await this.$store.dispatch('accounts/loadAccount');
-        this.isLoading = false;
-        this.errorMessage = '';
-        if (!succ) {
-          this.noAccountModal = true;
         } else {
-          await this.$store.dispatch('accounts/initState');
+          console.log('Other Account Loading ..');
+          const succ = await this.$store.dispatch('accounts/loadAccount');
+          this.errorMessage = '';
+          if (!succ) {
+            this.noAccountModal = true;
+          } else {
+            await this.$store.dispatch('accounts/initState');
+          }
         }
+      } catch (e) {
+        console.error(e, 'error');
+        this.errorModal = true;
+        this.errorMessage = `${e}`;
+      } finally {
+        this.isLoading = false;
       }
-      this.isLoading = false;
-      // this.errorMessage = '';
     },
 
     async refreshClick() {
@@ -405,14 +403,17 @@ export default Vue.extend({
         await this.initAccount();
         await this.checkIsUpdateNft();
         this.$forceUpdate();
-        this.errorModal = false;
-        this.errorMessage = '';
+        // console.log('here 2?');
+        // this.errorModal = false;
+        // this.errorMessage = '';
       } catch (e: any) {
-        console.error(e, 'error what');
+        console.error(e, 'error');
         this.errorModal = true;
-        this.errorMessage = 'ERR_INTERNET_DISCONNECTED';
+        // this.errorMessage = 'ERR_INTERNET_DISCONNECTED';
+        this.errorMessage = e;
+      } finally {
+        this.isLoading = false;
       }
-      this.isLoading = false;
     },
 
     hamburgerClick() {
@@ -420,20 +421,22 @@ export default Vue.extend({
     },
 
     handleCancel(modalEvent: any) {
-      if (modalEvent === 'noAccountModal') {
-        this.$background.lock();
-      }
-
-      if (modalEvent === 'passwordModal') {
-        this.passwordModal = false;
-        this.hamburgerModal = false;
-      }
-
-      if (modalEvent === 'accountDetailModal') {
-        this.accountDetailModal = false;
-      }
-      if (modalEvent === 'errorModal') {
-        this.errorModal = false;
+      switch (modalEvent) {
+        case 'noAccountModal':
+          this.$background.lock();
+          break;
+        case 'passwordModal':
+          this.passwordModal = false;
+          this.hamburgerModal = false;
+          break;
+        case 'accountDetailModal':
+          this.accountDetailModal = false;
+          break;
+        case 'errorModal':
+          this.errorModal = false;
+          break;
+        default:
+        // handle default case here
       }
     },
 
@@ -451,6 +454,10 @@ export default Vue.extend({
     },
     handleSelect() {
       this.hamburgerModal = false;
+    },
+    handleMouseEnter() {
+      this.notification = true;
+      this.notificationText = this.errorMessage;
     },
     networkModalClick() {
       this.networkModal = !this.networkModal;
@@ -502,7 +509,6 @@ export default Vue.extend({
     },
 
     formatBalance(balance) {
-      console.log(balance, 'balance???????????');
       if (Number.isInteger(balance)) {
         return balance;
       }

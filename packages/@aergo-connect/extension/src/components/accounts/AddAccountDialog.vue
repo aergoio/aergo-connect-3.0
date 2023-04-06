@@ -36,8 +36,6 @@
 </template>
 
 <script lang="ts">
-import extension from 'extensionizer';
-
 import { ModalDialog } from '@aergo-connect/lib-ui/src/layouts';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
 
@@ -61,13 +59,13 @@ export default class AddAccountDialog extends Vue {
   openConnectHardwareWalletTab() {
     const name = (this.$root as any).name;
     if (name === 'popup') {
-      extension.tabs.create({ url: 'index.html#/accounts/connect-hw' });
+      chrome.tabs.create({ url: 'index.html#/accounts/connect-hw' });
     } else {
       this.$router.push({ name: 'account-connect-hw' });
     }
   }
-  onChangeIdleTimeout(seconds?: number) {
-    extension.idle.setDetectionInterval(seconds);
+  onChangeIdleTimeout(seconds: number) {
+    chrome.idle.setDetectionInterval(seconds);
     this.$store.commit('ui/setIdleTimeout', seconds);
   }
 }

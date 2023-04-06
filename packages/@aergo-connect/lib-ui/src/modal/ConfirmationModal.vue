@@ -10,7 +10,7 @@
           <div class="title">Network</div>
           <div class="flex-row network">
             <div class="detail network">
-              <div :class="`circle ${$store.state.accounts.network}`" />
+              <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
               {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
           </div>

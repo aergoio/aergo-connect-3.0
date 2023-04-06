@@ -36,7 +36,7 @@
           :icon="`warning2`"
         />
         <div class="network_wrapper">
-          <div :class="`network_circle ${$store.state.accounts.network}`" />
+          <!-- <div :class="`network_circle ${$store.state.accounts.network}`" /> -->
           <div class="network_text">
             {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
           </div>
@@ -119,7 +119,7 @@
       <div v-if="tabState === `custom`">
         <div class="custom_wrapper">
           <div class="network_wrapper">
-            <div :class="`network_circle ${$store.state.accounts.network}`" />
+            <!-- <div :class="`network_circle ${$store.state.accounts.network}`" /> -->
             <div class="network_text">
               {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
@@ -239,10 +239,11 @@ import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import ImportAssetModal from '@aergo-connect/lib-ui/src/modal/ImportAssetModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
-import { useQueryContract } from '../utils/useQueryContract';
+import { getContractMethodResult } from '../utils/getContractMethodResult';
 import { Identicon } from '@aergo-connect/lib-ui/src/content';
 import { isPublicChainId, PublicChainData } from '../config';
 import { debounce } from 'lodash';
+import { getScanApiUrl } from '../utils/chain-urls';
 
 export default Vue.extend({
   components: {
@@ -279,7 +280,6 @@ export default Vue.extend({
       importSuccessNft: false,
       imgUrl: '',
       isLoading: false,
-      network: this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api',
     };
   },
   watch: {
@@ -357,13 +357,12 @@ export default Vue.extend({
       });
     },
 
-    fetchToScan: debounce(function (query, network, tokenType) {
+    fetchToScan: debounce(function (query, tokenType) {
       this.inputTextField = query;
-      fetch(
-        `https://${network}.aergoscan.io/${
-          this.$store.state.accounts.network
-        }/v2/token?q=(name_lower:*${query.toLowerCase()}* OR symbol_lower:*${query.toLowerCase()}*) AND type:${tokenType}`,
-      )
+      const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
+      const searchTokenListUrl = `${scanApiUrl}/token?q=(name_lower:*${query.toLowerCase()}* OR symbol_lower:*${query.toLowerCase()}*) AND type:${tokenType}`;
+
+      fetch(searchTokenListUrl)
         .then((res) => {
           return res.json();
         })
@@ -379,16 +378,15 @@ export default Vue.extend({
       this.userInputNftId = '';
 
       if (this.$store.state.accounts.option === 'token') {
-        this.fetchToScan(query, this.network, 'ARC1');
+        this.fetchToScan(query, 'ARC1');
       } else {
-        this.fetchToScan(query, this.network, 'ARC2');
+        this.fetchToScan(query, 'ARC2');
       }
     },
     async select(token) {
       this.token = token;
       this.inputTextField = token.meta.name;
       this.contractAddress = token.hash;
-      console.log(token, 'token?!');
       if (token.meta.type === 'ARC1') {
         if ([token.hash]?.hash) {
           this.notification = true;
@@ -419,10 +417,10 @@ export default Vue.extend({
       this.contractAddress = contractAddress;
     },
 
-    checkScanApi(network, tokenType, contractAddress) {
-      fetch(
-        `https://${network}.aergoscan.io/${this.$store.state.accounts.network}/v2/${tokenType}?q=_id:${contractAddress}`,
-      )
+    checkScanApi(tokenType, contractAddress) {
+      const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
+      const checkScanApiUrl = `${scanApiUrl}/${tokenType}?q=_id:${contractAddress}`;
+      fetch(checkScanApiUrl)
         .then((res) => {
           return res.json();
         })
@@ -434,9 +432,9 @@ export default Vue.extend({
     async handleCheck() {
       try {
         if (this.$store.state.accounts.option === 'token') {
-          this.token = await this.checkScanApi(this.network, `token`, this.contractAddress);
+          this.token = await this.checkScanApi(`token`, this.contractAddress);
         } else {
-          this.token = await this.checkScanApi(this.network, `nft`, this.contractAddress);
+          this.token = await this.checkScanApi(`nft`, this.contractAddress);
         }
         this.check = true;
       } catch (e) {
@@ -446,104 +444,149 @@ export default Vue.extend({
         this.notificationText = `Please Check Contract Address.`;
       }
     },
-
     async importNFT() {
       this.isLoading = true;
 
       try {
-        const resp = await fetch(
-          `https://${this.network}.aergoscan.io/${this.$store.state.accounts.network}/v2/nftInventory?q=address:${this.contractAddress} AND (account:${this.$store.state.accounts.address})&sort=blockno:desc&from=0&size=100`,
-        );
+        const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
+        const getNftInventoryUrl = `${scanApiUrl}/nftInventory?q=address:${this.contractAddress} AND (account:${this.$store.state.accounts.address})&sort=blockno:desc&from=0&size=100`;
+        const resp = await fetch(getNftInventoryUrl);
         const response = await resp.json();
-        if (response.hits.length === 0) {
-          this.notification = true;
-          this.notificationText = `No Nft in this Wallet`;
-          this.isLoading = false;
-          return;
-        }
+        const filteredNft = response.hits.filter(
+          (nft) =>
+            nft.meta.token_id ===
+            (this.tabState === 'search' ? this.userInputNftId : this.customInputNftId),
+        );
 
-        const filteredNft = response.hits.filter((nft) => {
-          if (this.tabState === 'search') {
-            if (nft.meta.token_id === this.userInputNftId) {
-              return nft;
-            }
-          } else {
-            if (nft.meta.token_id === this.customInputNftId) {
-              return nft;
-            }
-          }
-        });
-
-        if (!this.getTokens[this.contractAddress]) {
-          await this.$store.dispatch('accounts/addToken', {
-            ...filteredNft[0].token,
-            nftWallet: [],
-          });
-          await this.$store.dispatch('accounts/initState');
-        }
-
-        const checkLocalStorageNftId = await this.getTokens[this.contractAddress][`nftWallet`];
-
-        if (checkLocalStorageNftId.length > 0) {
-          const isAddedNft = checkLocalStorageNftId.find((myNft) => {
-            if (this.tabState === 'search') {
-              if (this.userInputNftId === myNft.meta.token_id) {
-                return myNft;
-              }
-            } else {
-              if (this.customInputNftId === myNft.meta.token_id) {
-                return myNft;
-              }
-            }
-          });
-          if (isAddedNft?.meta?.token_id) {
-            this.notification = true;
-            this.notificationText = `Already Added ARC2 NFT`;
-            this.isLoading = false;
-            return;
-          }
-        }
         if (filteredNft.length === 0) {
           this.notification = true;
           this.notificationText = `Check Your NFT ID`;
-          this.isLoading = false;
-          return;
         } else {
-          const args = [filteredNft[0].meta.token_id, 'image_url'].flat();
-          const img_url = await this.getNftDataInHera(
-            'get_metadata',
-            filteredNft[0].meta.address,
-            args,
-          );
-          console.log(img_url, 'img_url?');
-          if (img_url) {
-            const addImgNft = {
-              ...filteredNft[0],
-              meta: { ...filteredNft[0].meta, img_url },
-            };
-            console.log(addImgNft, 'addImgNft?');
-            this.token = addImgNft.token;
-            this.nftData = addImgNft.meta;
-            await this.$store.commit('accounts/addNftToLocalStorage', addImgNft);
+          const nftId = filteredNft[0].meta.token_id;
+          const img_url = await this.getNftDataInHera('get_metadata', filteredNft[0].meta.address, [
+            nftId,
+            'image_url',
+          ]);
+          const addImgNft = { ...filteredNft[0], meta: { ...filteredNft[0].meta, img_url } };
+          this.token = addImgNft.token;
+          this.nftData = addImgNft.meta;
+          const checkLocalStorageNftId = this.getTokens[this.contractAddress]?.nftWallet || [];
+          if (checkLocalStorageNftId.some((myNft) => myNft.meta.token_id === nftId)) {
+            this.notification = true;
+            this.notificationText = `Already Added ARC2 NFT`;
           } else {
-            console.log('here', filteredNft[0]);
-            this.token = filteredNft[0].token;
-            this.nftData = filteredNft[0].meta;
-            await this.$store.commit('accounts/addNftToLocalStorage', filteredNft[0]);
+            await this.$store.dispatch('accounts/addToken', { ...addImgNft.token, nftWallet: [] });
+            await this.$store.dispatch('accounts/initState');
+            await this.$store.commit('accounts/addNftToLocalStorage', addImgNft);
+            this.importSuccessNft = true;
           }
-          this.isLoading = false;
-          this.importSuccessNft = true;
         }
       } catch (error) {
         console.error(error);
         this.nftData = {};
         this.notification = true;
         this.notificationText = `Error: ${JSON.stringify(error)}`;
+      } finally {
         this.isLoading = false;
-        return;
       }
-      this.isLoading = false;
     },
+    // async importNFT() {
+    //   this.isLoading = true;
+
+    //   try {
+    //     const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
+    //     const getNftInventoryUrl = `${scanApiUrl}/nftInventory?q=address:${this.contractAddress} AND (account:${this.$store.state.accounts.address})&sort=blockno:desc&from=0&size=100`;
+    //     const resp = await fetch(getNftInventoryUrl);
+    //     const response = await resp.json();
+    //     if (response.hits.length === 0) {
+    //       this.notification = true;
+    //       this.notificationText = `No Nft in this Wallet`;
+    //       this.isLoading = false;
+    //       return;
+    //     }
+
+    //     const filteredNft = response.hits.filter((nft) => {
+    //       if (this.tabState === 'search') {
+    //         if (nft.meta.token_id === this.userInputNftId) {
+    //           return nft;
+    //         }
+    //       } else {
+    //         if (nft.meta.token_id === this.customInputNftId) {
+    //           return nft;
+    //         }
+    //       }
+    //     });
+
+    //     if (!this.getTokens[this.contractAddress]) {
+    //       await this.$store.dispatch('accounts/addToken', {
+    //         ...filteredNft[0].token,
+    //         nftWallet: [],
+    //       });
+    //       await this.$store.dispatch('accounts/initState');
+    //     }
+
+    //     const checkLocalStorageNftId = await this.getTokens[this.contractAddress][`nftWallet`];
+
+    //     if (checkLocalStorageNftId.length > 0) {
+    //       const isAddedNft = checkLocalStorageNftId.find((myNft) => {
+    //         if (this.tabState === 'search') {
+    //           if (this.userInputNftId === myNft.meta.token_id) {
+    //             return myNft;
+    //           }
+    //         } else {
+    //           if (this.customInputNftId === myNft.meta.token_id) {
+    //             return myNft;
+    //           }
+    //         }
+    //       });
+    //       if (isAddedNft?.meta?.token_id) {
+    //         this.notification = true;
+    //         this.notificationText = `Already Added ARC2 NFT`;
+    //         this.isLoading = false;
+    //         return;
+    //       }
+    //     }
+    //     if (filteredNft.length === 0) {
+    //       this.notification = true;
+    //       this.notificationText = `Check Your NFT ID`;
+    //       this.isLoading = false;
+    //       return;
+    //     } else {
+    //       const args = [filteredNft[0].meta.token_id, 'image_url'].flat();
+    //       const img_url = await this.getNftDataInHera(
+    //         'get_metadata',
+    //         filteredNft[0].meta.address,
+    //         args,
+    //       );
+    //       console.log(img_url, 'img_url?');
+    //       if (img_url) {
+    //         const addImgNft = {
+    //           ...filteredNft[0],
+    //           meta: { ...filteredNft[0].meta, img_url },
+    //         };
+    //         console.log(addImgNft, 'addImgNft?');
+    //         this.token = addImgNft.token;
+    //         this.nftData = addImgNft.meta;
+    //         await this.$store.commit('accounts/addNftToLocalStorage', addImgNft);
+    //       } else {
+    //         console.log('here', filteredNft[0]);
+    //         this.token = filteredNft[0].token;
+    //         this.nftData = filteredNft[0].meta;
+    //         await this.$store.commit('accounts/addNftToLocalStorage', filteredNft[0]);
+    //       }
+    //       this.isLoading = false;
+    //       this.importSuccessNft = true;
+    //     }
+    //   } catch (error) {
+    //     console.error(error);
+    //     this.nftData = {};
+    //     this.notification = true;
+    //     this.notificationText = `Error: ${JSON.stringify(error)}`;
+    //     this.isLoading = false;
+    //     return;
+    //   }
+    //   this.isLoading = false;
+    // },
 
     async importAsset() {
       if (this.getTokens[this.token.hash]?.hash) {
@@ -555,12 +598,12 @@ export default Vue.extend({
       }
     },
 
-    async getNftDataInHera(method, contractAddress, args) {
+    async getNftImageUrl(method, contractAddress, args) {
       try {
         const isPublic = await isPublicChainId(this.$store.state.accounts.network);
         const nodeURL = await PublicChainData[this.$store.state.accounts.network]['nodeUrl'];
         const imgUrl = isPublic
-          ? await useQueryContract(nodeURL, method, contractAddress, args)
+          ? await getContractMethodResult(nodeURL, method, contractAddress, args)
           : null;
         return imgUrl;
       } catch (e) {

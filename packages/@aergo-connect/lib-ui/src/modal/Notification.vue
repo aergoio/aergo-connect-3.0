@@ -41,22 +41,25 @@ export default Vue.extend({
   z-index: 3;
   padding: 8px;
   background: #fff;
-  border: #f0f0f0;
-  border-style: solid;
-  border-width: 0.1px;
+  /* border: #f0f0f0; */
+  /* border-style: solid; */
+  /* border-width: 0.1px; */
+  /* height: 100%; */
+  height: 40px;
+  border: solid 1px #f0f0f0;
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  height: 20px;
   .icon--warning2 {
     padding-top: 10px;
   }
   .alert-text {
-    color: #279ecc;
+    color: #e4097d;
     margin-right: 5px;
     width: 100%;
+    padding: 8px;
   }
   animation: fadeIn 0.5s;
   @keyframes fadeIn {

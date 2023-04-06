@@ -1,8 +1,10 @@
+import { ChainConfigs, ChainConfig } from './../config';
 import { Module } from 'vuex';
 import { RootState } from './index';
 import { Amount } from '@herajs/common';
 import Vue from 'vue';
 import store from '../store';
+import { getScanApiUrl } from '@/utils/chain-urls';
 
 export interface AccountsState {
   accounts: {
@@ -13,12 +15,12 @@ export interface AccountsState {
         mainnet: any;
         testnet: any;
         alpha: any;
-        // [network: string]: any;
+        [network: string]: any;
       };
     };
   };
-
   network: string;
+  networksPath: ChainConfig[];
   address: string;
   nick: string;
   selectedToken: string;
@@ -37,6 +39,7 @@ const storeModule: Module<AccountsState, RootState> = {
   state: {
     accounts: {},
     network: 'testnet',
+    networksPath: ChainConfigs,
     address: '',
     nick: '',
     selectedToken: 'AERGO',
@@ -58,24 +61,14 @@ const storeModule: Module<AccountsState, RootState> = {
         chainId: state.network,
       });
       const aergoBalance = await new Amount(val.balance).formatNumber('aergo');
-      const isAlpha = state.network === 'alpha' ? 'api-alpha' : 'api';
+      console.log(aergoBalance, 'aergoBalance?');
       try {
-        if (!state.accounts[state.address]['tokens'][state.network]['AERGO']) {
-          await commit('setAergo');
-        }
-
-        const resp = await fetch(
-          `https://${isAlpha}.aergoscan.io/${state.network}/v2/tokenBalance?q=${state.address}`,
-        );
-
+        const scanApiUrl = getScanApiUrl(state);
+        const getTokenBalanceUrl = `${scanApiUrl}/tokenBalance?q=${state.address}`;
+        const resp = await fetch(getTokenBalanceUrl);
         const response = await resp.json();
-        console.log(response, 'response?');
         const balances = { aergo: aergoBalance, others: response.hits };
-
-        // if (response.error) return;
-        // Default Token : 'AERGO'
-        // await commit('setToken', state[state.address][`tokens`][state.network]['AERGO']);
-
+        console.log(balances, 'balances?');
         await commit('setTokenBalance', balances);
         await commit('setSeedPhrase', '');
       } catch (e) {
@@ -159,7 +152,6 @@ const storeModule: Module<AccountsState, RootState> = {
     },
 
     setTokenBalance(state, balances: any) {
-      console.log(balances, 'balances?');
       // others
       Object.keys(state.accounts[state.address][`tokens`][state.network]).forEach((hash) => {
         const bal = balances.others.find((element: any) => element.meta.address == hash);
@@ -214,9 +206,64 @@ const storeModule: Module<AccountsState, RootState> = {
       state.accounts[address] = {
         address: address,
         nick: `${address.substr(0, 5)}_${address.substr(-5)}`,
-        tokens: { mainnet: {}, testnet: {}, alpha: {} },
+        tokens: {
+          mainnet: {
+            AERGO: {
+              hash: 'AERGO',
+              meta: {
+                name: 'AERGO',
+                symbol: 'aergo',
+                image: '',
+                type: 'AERGO',
+                decimals: 0,
+              },
+              balance: '0',
+            },
+          },
+          testnet: {
+            AERGO: {
+              hash: 'AERGO',
+              meta: {
+                name: 'AERGO',
+                symbol: 'aergo',
+                image: '',
+                type: 'AERGO',
+                decimals: 0,
+              },
+              balance: '0',
+            },
+          },
+          alpha: {
+            AERGO: {
+              hash: 'AERGO',
+              meta: {
+                name: 'AERGO',
+                symbol: 'aergo',
+                image: '',
+                type: 'AERGO',
+                decimals: 0,
+              },
+              balance: '0',
+            },
+          },
+        },
       };
-      console.log('addAccount', state.accounts[address]['nick']);
+      const setAergo = {
+        AERGO: {
+          hash: 'AERGO',
+          meta: {
+            name: 'AERGO',
+            symbol: 'aergo',
+            image: '',
+            type: 'AERGO',
+            decimals: 0,
+          },
+          balance: '0',
+        },
+      };
+      if (!state.accounts[address].tokens[state.network]) {
+        state.accounts[address].tokens[state.network] = setAergo;
+      }
     },
 
     setNick(state, nick: string) {
@@ -236,6 +283,22 @@ const storeModule: Module<AccountsState, RootState> = {
     },
     setNetwork(state, network: string) {
       state.network = network;
+      const setAergo = {
+        AERGO: {
+          hash: 'AERGO',
+          meta: {
+            name: 'AERGO',
+            symbol: 'aergo',
+            image: '',
+            type: 'AERGO',
+            decimals: 0,
+          },
+          balance: '0',
+        },
+      };
+      if (!state.accounts[state.address].tokens[network]) {
+        state.accounts[state.address].tokens[network] = setAergo;
+      }
     },
 
     setBackup(state, value: boolean) {
@@ -296,6 +359,33 @@ const storeModule: Module<AccountsState, RootState> = {
       }
       const dropdownClickNum = store.state.ui.dropdownClickNum;
       store.commit('ui/setDropdownClickNum', dropdownClickNum - 1);
+    },
+    setNetworkPath(state, networkPath) {
+      const addChainId = networkPath.chainId;
+      if (addChainId === 'mainnet' || addChainId === 'alpha' || addChainId === 'testnet') return;
+      const findChainId = state.networksPath.find(
+        (network) => network.chainId === networkPath.chainId,
+      );
+      if (!findChainId) {
+        state.networksPath = [...state.networksPath, networkPath];
+      }
+    },
+    updateNetworkPath(state, { updateNetworkName, networkPath }) {
+      const removedNetworkPath = state.networksPath.filter(
+        (network) => network.chainId !== updateNetworkName,
+      );
+      console.log(removedNetworkPath, 'removedNetworkPath');
+      state.networksPath = [...removedNetworkPath, networkPath];
+    },
+    removeNetworkPath(state, chainId) {
+      delete state.accounts[state.address].tokens[chainId];
+      const removedNetworkPath = state.networksPath.filter(
+        (network) => network.chainId !== chainId,
+      );
+      state.networksPath = [...removedNetworkPath];
+    },
+    removeNetwork(state) {
+      state.network = state.networksPath[0].chainId;
     },
   },
 };

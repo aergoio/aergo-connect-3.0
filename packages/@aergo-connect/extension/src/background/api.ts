@@ -72,7 +72,7 @@ export class Api {
     }
   }
 
-  async addNetwork({ chainId, nodeUrl }: ChainConfig) {
+  async addNetwork({ chainId, nodeUrl, scanApiUrl, scanExplorerUrl }: ChainConfig) {
     this.controller.wallet.useChain({ chainId, nodeUrl });
     let chains: Record<string, ChainConfig> = {};
     if (!this.controller.wallet.datastore) throw new Error('cannot open datastore');
@@ -82,7 +82,7 @@ export class Api {
     } catch (e) {
       // not found
     }
-    chains[chainId] = { chainId, nodeUrl };
+    chains[chainId] = { chainId, nodeUrl, scanApiUrl, scanExplorerUrl };
     await this.controller.wallet.datastore.getIndex('settings').put({
       key: 'customChains',
       data: chains as any,
@@ -177,7 +177,9 @@ export class Api {
     });
     return true;
   }
-
+  // async removeWallet({ address }) {
+  //   await this.controller.wallet.accountManager.removeAccount({ address });
+  // }
   async setActiveAccount({ chainId, address }: AccountSpec) {
     await this.controller.setActiveAccount({ chainId, address });
     return true;

@@ -44,7 +44,6 @@ export default Vue.extend({
     top: 180px;
     background: #ffffff;
     border-radius: 8px;
-
     display: flex;
     flex-direction: column;
     justify-content: center;

@@ -11,7 +11,13 @@
       v-if="network"
       @networkModalClick="networkModalClick"
     />
-    <Icon class="network-error" v-if="isNetworkError" :name="`warning2`" :size="30" />
+    <Icon
+      class="network-error"
+      v-if="isNetworkError"
+      :name="`warning2`"
+      :size="30"
+      @mouseEnter="handleMouseEnter"
+    />
     <div class="header__button right" :class="[skip ? 'skip__on' : refresh ? 'refresh__on' : '']">
       <Icon class="refresh" name="refresh" @click="refreshClick" />
       <a type="button" class="skip__btn" @click="skipClick">Skip</a>
@@ -79,6 +85,9 @@ export default Vue.extend({
     },
     skipClick() {
       this.$emit('skipClick');
+    },
+    handleMouseEnter() {
+      this.$emit('mouseEnter');
     },
   },
 });

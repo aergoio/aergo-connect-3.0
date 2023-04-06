@@ -11,10 +11,21 @@
           @click="setNetwork(chain.chainId)"
         >
           <div class="flex-row">
-            <div :class="`network_modal_circle${idx < 3 ? idx + 1 : 3}`" />
-            <span> {{ `AERGO ${chain.chainId.toLocaleUpperCase()}` }}</span>
+            <div :style="{ display: 'flex', alignItems: 'center' }">
+              <Icon class="network-icon" :name="idx < 3 ? `aergo` : `network-other`" :size="36" />
+              <span>{{
+                idx < 3
+                  ? `AERGO ${chain.chainId.toLocaleUpperCase()}`
+                  : `${chain.chainId.toLocaleUpperCase()}`
+              }}</span>
+            </div>
+            <Icon
+              v-if="$store.state.accounts.network === chain.chainId"
+              class="checkmark-icon"
+              name="checkmark"
+            />
           </div>
-          <div class="list_line" />
+          <div :class="idx === 2 && chains.length > 3 ? `custom_line` : `list_line`" />
         </li>
       </ul>
       <Button class="configure_button" type="primary" size="large" @click="addNetworkClick" hover
@@ -53,7 +64,6 @@ export default Vue.extend({
   //     });
   //   },
   // },
-
   methods: {
     networkModalClick(event) {
       if (event.eventPhase === 2) {
@@ -101,6 +111,8 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+@import '../styles/variables';
+
 .network_modal_backdrop {
   position: absolute;
   width: 375px;
@@ -152,6 +164,14 @@ export default Vue.extend({
 
       .network_modal_li {
         cursor: pointer;
+        .custom_line {
+          margin-left: 24px;
+          width: 327px;
+          height: 1px;
+          background: $gradation05;
+          box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
         .list_line {
           margin-left: 24px;
           width: 327px;
@@ -164,31 +184,32 @@ export default Vue.extend({
           height: 50px;
           display: flex;
           align-items: center;
+          justify-content: space-between;
+          .network-icon {
+            margin-left: 22px;
+            margin-right: 10px;
+          }
+
+          .checkmark-icon {
+            margin-right: 10px;
+          }
         }
-        .network_modal_circle1 {
+        /* .network_modal_circle {
           margin-left: 34px;
           margin-right: 10px;
           width: 8px;
           height: 8px;
-          background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
           border-radius: 50%;
-        }
-        .network_modal_circle2 {
-          margin-left: 34px;
-          margin-right: 10px;
-          width: 8px;
-          height: 8px;
-          background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
-          border-radius: 50%;
-        }
-        .network_modal_circle3 {
-          margin-left: 34px;
-          margin-right: 10px;
-          width: 8px;
-          height: 8px;
-          background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
-          border-radius: 50%;
-        }
+          &1 {
+            background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+          }
+          &2 {
+            background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+          }
+          &3 {
+            background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
+          }
+        } */
 
         .network_modal_name {
           font-family: 'Outfit';

@@ -79,7 +79,6 @@ export default class AccountsList extends Vue {
   }
   async fetchNetworks() {
     const chains = await this.$background.getNetworks();
-    console.log(chains, 'chains');
     this.networks = Object.values(chains) as any;
   }
   isPublicChainId(chainId: string) {
@@ -90,7 +89,8 @@ export default class AccountsList extends Vue {
       return;
     }
     await this.$background.removeNetwork({ chainId });
-    this.$store.commit('accounts/removeNetwork', chainId);
+    this.$store.commit('accounts/removeNetwork');
+    this.$store.commit('accounts/removeNetworkPath', chainId);
     this.fetchNetworks();
   }
 }

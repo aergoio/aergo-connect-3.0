@@ -9,7 +9,7 @@ export function getExplorerUrl(chainId: string, path: string): string {
   if (!isPublicChainId(chainId)) {
     return '';
   }
-  const base = PublicChainData[chainId].explorerUrl;
+  const base = PublicChainData[chainId].scanExplorerUrl;
   return `${base}/${path}`;
 }
 
@@ -22,6 +22,18 @@ export function getApiUrl(chainId: string, path: string): string {
   if (!isPublicChainId(chainId)) {
     return '';
   }
-  const base = PublicChainData[chainId].apiUrl;
+  const base = PublicChainData[chainId].scanApiUrl;
   return `${base}/${path}`;
+}
+
+export function getScanApiUrl(state) {
+  const networkPath = state.networksPath.find((network) => network.chainId === state.network);
+
+  return networkPath ? networkPath.scanApiUrl : '';
+}
+
+export function getScanExplorerUrl(state) {
+  const networkPath = state.networksPath.find((network) => network.chainId === state.network);
+
+  return networkPath ? networkPath.scanExplorerUrl : '';
 }

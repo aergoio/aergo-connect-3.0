@@ -6,7 +6,7 @@
       <div class="account_info_content_wrapper address">
         <div class="account_info_nickname_wrapper address">
           <div class="account_info_network_wrapper">
-            <div :class="`account_info_network_circle ${$store.state.accounts.network}`" />
+            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.network}`" /> -->
             <div class="account_info_network">
               {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>

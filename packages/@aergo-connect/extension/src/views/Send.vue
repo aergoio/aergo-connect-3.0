@@ -28,7 +28,7 @@
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <div :class="`circle ${$store.state.accounts.network}`" />
+          <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
           <div class="network">
             {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
           </div>
@@ -282,7 +282,7 @@ import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.v
 import { timedAsync } from 'timed-async/index.js';
 import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
-import { Tx } from '@herajs/client';
+import { Address, Tx } from '@herajs/client';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
 
@@ -485,16 +485,68 @@ export default Vue.extend({
     handleOptionsDropbox() {
       this.optionsDropbox = !this.optionsDropbox;
     },
+    validateAddress(address) {
+      try {
+        const validateAddressValue = new Address(address);
+        console.log(validateAddressValue, 'validateAddressValue');
+        if (address.length !== 52) {
+          return false;
+        } else if (
+          !validateAddressValue.equal(address) ||
+          validateAddressValue.encoded !== address
+        ) {
+          return false;
+        }
+        return true;
+      } catch (e) {
+        console.error(e, 'error');
+      }
+    },
+    // validateAmount(amount) {
+    //   const amountRegex = /^[0-9]*\.?[0-9]{0,3}$/;
+    //   return amountRegex.test(amount);
+    // },
+    validateAmount(amount) {
+      const amountRegex = /^[0-9]*\.?[0-9]{0,3}$/;
+      if (!amountRegex.test(amount)) {
+        return false;
+      }
+      const num = parseFloat(amount);
+      if (isNaN(num)) {
+        return false;
+      }
+      return true;
+    },
+    processAmount(amount) {
+      if (!this.validateAmount(amount)) {
+        if (!amount.match(/[0-9]/g)) {
+          return 'Please enter a number';
+        } else if (amount.split('.')[1]?.length > 3) {
+          return 'Only allowed up to 3 decimals';
+        } else {
+          return 'Invalid input Value';
+        }
+      }
+    },
     handleSendClick() {
       if (+this.inputAmount > +this.balance) {
         this.notification = true;
         this.notificationText = 'Not Enough Balance.';
         return;
       }
-      const amountRegex = /^\d*.?\d{0,3}$/;
-      if (!amountRegex.test(this.inputAmount) && this.tokenType !== 'ARC2') {
+      if (!this.validateAmount(this.inputAmount) && this.tokenType !== 'ARC2') {
         this.notification = true;
-        this.notificationText = 'Please Input a Number in Amount.';
+        this.notificationText = this.processAmount(this.inputAmount);
+        return;
+        // this.notification = true;
+        // this.notificationText = 'Please Input a Number in Amount.';
+        // return;
+      }
+      // console.log(this.inputTo, 'inputTo');
+      console.log(this.validateAddress(this.inputTo), 'validateAddress');
+      if (!this.validateAddress(this.inputTo)) {
+        this.notification = true;
+        this.notificationText = 'Please Check your Address.';
         return;
       }
       if (this.tokenType == 'AERGO') {

@@ -13,7 +13,7 @@
     <div class="token_detail_content">
       <div class="account_detail">
         <div class="direction-row">
-          <div :class="`circle ${$store.state.accounts.network}`" />
+          <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
           <div class="network">{{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}</div>
         </div>
         <div class="account">
@@ -208,6 +208,7 @@ import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
+import { getScanApiUrl, getScanExplorerUrl } from '../utils/chain-urls';
 
 export default Vue.extend({
   components: {
@@ -312,14 +313,14 @@ export default Vue.extend({
       window.open('https://voting.aergo.io/about', '_blank');
     },
     gotoScanTx(hash: string) {
-      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
-        hash.split('-')[0]
-      }/`;
+      const scanExplorerUrl = getScanExplorerUrl(this.$store.state.accounts);
+      const url = `${scanExplorerUrl}/transaction/${hash.split('-')[0]}/`;
       window.open(url, '_blank');
     },
 
     gotoScanAccount(address: string) {
-      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
+      const scanExplorerUrl = getScanExplorerUrl(this.$store.state.accounts);
+      const url = `${scanExplorerUrl}/account/${address}/`;
       window.open(url, '_blank');
     },
 
@@ -356,21 +357,23 @@ export default Vue.extend({
     },
 
     async getTokenHistory(): Promise<void> {
-      const prefix = this.$store.state.accounts.network === 'alpha' ? 'api-alpha' : 'api';
+      const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
+      const getTransactionUrl = `${scanApiUrl}/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=10000&sort=ts:desc`;
+      const getTokenTransferUrl = `${scanApiUrl}/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}&size=10000&sort=ts:desc`;
+
       let resp;
       if (this.token.meta.symbol === 'aergo') {
-        resp = await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=10000&sort=ts:desc`,
-        );
+        resp = await fetch(getTransactionUrl);
       } else {
-        resp = await fetch(
-          `https://${prefix}.aergoscan.io/${this.$store.state.accounts.network}/v2/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}&size=10000&sort=ts:desc`,
-        );
+        resp = await fetch(getTokenTransferUrl);
       }
 
       const response = await resp.json();
-      if (response.error) this.data = [];
-      else {
+      if (response.error) {
+        this.data = [];
+        this.allData = [];
+        console.error(response.error);
+      } else {
         this.data = response.hits;
         this.allData = response.hits;
       }

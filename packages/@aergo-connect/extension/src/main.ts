@@ -32,17 +32,18 @@ async function setupBackground(extensionPort: any) {
     const isNonAuthPage = router.currentRoute.meta && router.currentRoute.meta.noAuthCheck === true;
     if (Object.prototype.hasOwnProperty.call(state, 'unlocked')) {
       store.commit('ui/setUnlocked', state.unlocked);
-      chrome.idle.setDetectionInterval(store.state.ui.idleTimeout);
       if (!state.unlocked && !isNonAuthPage) {
         router.push({ name: 'lockscreen' });
+      } else if (state.unlocked) {
+        chrome.idle.setDetectionInterval(store.state.ui.idleTimeout);
       }
     }
-    if (Object.prototype.hasOwnProperty.call(state, 'accounts')) {
-      store.commit('accounts/setAccounts', state.accounts);
-    }
-    if (Object.prototype.hasOwnProperty.call(state, 'accountsRemoved')) {
-      store.commit('accounts/removeAccounts', state.accountsRemoved);
-    }
+    // if (Object.prototype.hasOwnProperty.call(state, 'accounts')) {
+    //   store.commit('accounts/setAccounts', state.accounts);
+    // }
+    // if (Object.prototype.hasOwnProperty.call(state, 'accountsRemoved')) {
+    //   store.commit('accounts/removeAccounts', state.accountsRemoved);
+    // }
   });
   return background;
 }

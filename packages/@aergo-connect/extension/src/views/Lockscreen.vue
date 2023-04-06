@@ -74,8 +74,6 @@ export default class Lockscreen extends mixins() {
   // }
   async unlock(): Promise<void> {
     try {
-      console.log('unlock Start');
-      console.log(this.$background, 'background what?');
       await this.$background.unlock({ password: this.password });
       let nextPath = this.$store.state.ui.route.currentPath;
 

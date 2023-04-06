@@ -13,7 +13,7 @@
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <div :class="`circle ${$store.state.accounts.network}`" />
+          <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
           <div class="network">
             {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
           </div>

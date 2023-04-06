@@ -10,7 +10,7 @@
           <div class="title">Network</div>
           <div class="flex-row network">
             <div class="detail network">
-              <div :class="`circle ${$store.state.accounts.network}`" />
+              <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
               {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
           </div>
@@ -58,7 +58,7 @@
         <div class="line" />
         <div class="flex-row">
           <div class="title balance">Update Balance</div>
-          <div class="detail balance">{{ Number(balance).toFixed(3) }}</div>
+          <div class="detail balance">{{ String(Number(balance).toFixed(3)) }}</div>
         </div>
         <div class="line" />
       </div>
@@ -92,7 +92,7 @@ export default Vue.extend({
   methods: {
     handleOk() {
       this.$store.commit('ui/clearInput', { key: 'send' });
-      if (this.$store.state.session.option === 'nft') {
+      if (this.$store.state.accounts.option === 'nft') {
         this.$router.push({ name: 'accounts-list' });
       } else {
         this.$router.push({ name: 'token-detail' }).catch(() => {});

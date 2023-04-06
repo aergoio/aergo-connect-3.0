@@ -59,7 +59,6 @@ export default Vue.extend({
     };
   },
   mounted() {
-    console.log(this.$store.state.accounts, 'accounts');
     if (!this.$store.state.accounts.accounts[this.$store.state.accounts.address]) {
       this.registerNewAccount = true;
     }
@@ -67,7 +66,14 @@ export default Vue.extend({
   methods: {
     async selectAccount(account: any) {
       await this.$store.commit('accounts/setActiveAccount', account.address);
-      await this.$background.setActiveAccount({ chainId: 'aergo.io', address: account.address });
+      await this.$background.setActiveAccount({
+        chainId: `${
+          this.$store.state.accounts.network === 'mainnet'
+            ? `aergo.io`
+            : `${this.$store.state.accounts.network}.aergo.io`
+        }`,
+        address: account.address,
+      });
       if (this.$store.state.request.currentRequest.action === 'SIGN') {
         this.$router.push({ name: 'request-sign' }).catch(() => {});
       } else if (this.$store.state.request.currentRequest.action === 'SEND_TX') {

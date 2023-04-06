@@ -37,7 +37,7 @@ const storeModule: Module<UiState, RootState> = {
     input: {
       settings: defaultSettings,
     },
-    txTypes: ['TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE', 'DEPLOY', 'REDEPLOY'],
+    txTypes: ['TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE'],
     initSetupKey: '',
     idleTimeout: 60,
     unlocked: false,

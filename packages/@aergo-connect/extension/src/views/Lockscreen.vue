@@ -65,27 +65,31 @@ export default class Lockscreen extends mixins() {
   }
   async beforeMount(): Promise<void> {
     const isSetup = await this.$background.isSetup();
-    if (!isSetup) {
+    if (!isSetup && !this.$store.state.ui.initSetupKey) {
       this.$router.push({ name: 'welcome' });
     }
   }
-  async mounted() {
-    await this.$background.lock();
-  }
+  // async mounted() {
+  //   await this.$background.lock();
+  // }
   async unlock(): Promise<void> {
     try {
       await this.$background.unlock({ password: this.password });
-      let nextPage = this.$store.state.ui.route.currentPath;
+      let nextPath = this.$store.state.ui.route.currentPath;
 
-      if (nextPage) {
-        if (this.$store.state.accounts.address) {
-          await this.$store.dispatch('accounts/initState');
-        }
-        this.$router.push({ path: nextPage }).catch(() => {});
-      } else {
-        nextPage = 'accounts-list';
-        this.$router.push({ name: nextPage }).catch(() => {});
+      if (!nextPath || nextPath === '/' || nextPath === '/locked') {
+        nextPath = { name: 'accounts-list' };
       }
+      this.$router.push(nextPath);
+      // if (nextPage) {
+      //   if (this.$store.state.accounts.address) {
+      //     await this.$store.dispatch('accounts/initState');
+      //   }
+      //   this.$router.push({ path: nextPage }).catch(() => {});
+      // } else {
+      //   nextPage = 'accounts-list';
+      //   this.$router.push({ name: nextPage }).catch(() => {});
+      // }
     } catch (e) {
       this.errors.password = `${e}`;
     }

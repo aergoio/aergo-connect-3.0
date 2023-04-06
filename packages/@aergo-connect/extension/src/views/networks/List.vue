@@ -1,17 +1,16 @@
 <template>
   <div class="account-list-view">
     <ScrollView>
-      <template #header>
-        <div class="account-list-header">
-          <BackButton />
-          <Heading tag="h2">
-            Custom networks
-            <Button :to="{ name: 'networks-create' }" type="icon"
-              ><Icon :name="`add`" :size="24"
-            /></Button>
-          </Heading>
-        </div>
-      </template>
+      <Header button="back" :title="`Custom Network`" :to="{ name: 'accounts-list' }" />
+      <div class="account-list-header">
+        <Heading tag="h2" class="heading">
+          Add Custom Networks
+          <Button :to="{ name: 'networks-create' }" type="icon" class="add_button"
+            ><Icon :name="`add`" :size="24"
+          /></Button>
+        </Heading>
+      </div>
+
       <div class="account-list-wrap">
         <ul class="networks-list">
           <router-link
@@ -42,13 +41,19 @@
           </router-link>
         </ul>
       </div>
-      <div class="content note" v-if="!networks.length">No custom networks configured yet.</div>
+      <div
+        :style="{ fontSize: '1rem', textAlign: 'center', marginTop: '10px' }"
+        class="content note"
+        v-if="!networks.length"
+      >
+        No custom networks configured yet.
+      </div>
     </ScrollView>
   </div>
 </template>
 
 <script lang="ts">
-import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
+import { Header, ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { Button, BackButton } from '@aergo-connect/lib-ui/src/buttons';
@@ -60,6 +65,7 @@ import { ChainConfig, isPublicChainId } from '../../config';
 @Component({
   components: {
     ScrollView,
+    Header,
     Heading,
     Button,
     BackButton,
@@ -83,12 +89,24 @@ export default class AccountsList extends Vue {
       return;
     }
     await this.$background.removeNetwork({ chainId });
+    this.$store.commit('accounts/removeNetwork');
+    this.$store.commit('accounts/removeNetworkPath', chainId);
     this.fetchNetworks();
   }
 }
 </script>
 
 <style lang="scss">
+.account-list-header {
+  .heading {
+    font-size: 1rem;
+  }
+  .add_button:hover {
+    transform: scale(1.3);
+    transition: 0.2s;
+  }
+}
+
 .networks-list {
   list-style: none;
   margin: 0;

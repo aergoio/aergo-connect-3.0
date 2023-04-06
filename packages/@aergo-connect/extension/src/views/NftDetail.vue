@@ -16,7 +16,7 @@
     <div class="nft_detail_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <div :class="`circle ${$store.state.accounts.network}`" />
+          <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
           <div class="network">{{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}</div>
         </div>
         <div class="account_wrapper">
@@ -130,6 +130,7 @@ import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
+import { getScanApiUrl, getScanExplorerUrl } from '../utils/chain-urls';
 
 export default Vue.extend({
   components: {
@@ -205,26 +206,25 @@ export default Vue.extend({
     },
 
     gotoScanTx(hash: string) {
-      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${
-        hash.split('-')[0]
-      }/`;
+      const scanExplorerUrl = getScanExplorerUrl(this.$store.state.accounts);
+      const url = `${scanExplorerUrl}/transaction/${hash.split('-')[0]}/`;
       window.open(url, '_blank');
     },
 
     gotoScanAccount(address: string) {
-      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/account/${address}/`;
+      const scanExplorerUrl = getScanExplorerUrl(this.$store.state.accounts);
+      const url = `${scanExplorerUrl}/account/${address}/`;
       window.open(url, '_blank');
     },
 
     gotoScanNft(address: string, nftName: string) {
-      const url = `https://${this.$store.state.accounts.network}.aergoscan.io/nft/${address}/?tx=inventory&keyword=${nftName}`;
+      const scanExplorerUrl = getScanExplorerUrl(this.$store.state.accounts);
+      const url = `${scanExplorerUrl}/nft/${address}/?tx=inventory&keyword=${nftName}`;
       window.open(url, '_blank');
     },
     goToLatestTransactionHash() {
-      window.open(
-        `https://${this.$store.state.accounts.network}.aergoscan.io/transaction/${this.latestTransactionHash}`,
-        '_blank',
-      );
+      const scanExplorerUrl = getScanExplorerUrl(this.$store.state.accounts);
+      window.open(`${scanExplorerUrl}/transaction/${this.latestTransactionHash}`, '_blank');
     },
     async refreshClick() {
       this.isLoading = true;
@@ -243,8 +243,9 @@ export default Vue.extend({
       this.clipboardNotification = true;
     },
     async getLatestTransactionHash() {
-      const url = `https://api.aergoscan.io/${this.$store.state.accounts.network}/v2/nftTransfers?q=address:${this.token?.meta?.address} AND token_id:${this.token?.meta?.token_id}&sort=ts:desc&from=0&size=1`;
-      const fetchUrl = await fetch(url);
+      const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
+      const getNftTransferUrl = `${scanApiUrl}/nftTransfers?q=address:${this.token?.meta?.address} AND token_id:${this.token?.meta?.token_id}&sort=ts:desc&from=0&size=1`;
+      const fetchUrl = await fetch(getNftTransferUrl);
       const jsonData = await fetchUrl.json();
       const responseData = await jsonData.hits[0];
       return responseData?.meta?.tx_id;

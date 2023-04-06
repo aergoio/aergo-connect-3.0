@@ -1,10 +1,7 @@
 require('./manifest.json');
-
 import 'regenerator-runtime/runtime';
-
 import endOfStream from 'end-of-stream';
 import PortStream from 'extension-port-stream';
-
 import BackgroundController from './background/controller';
 import { ExternalRequest } from './background/request';
 
@@ -20,7 +17,7 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
     }
   }
   function forceReconnect(port) {
-    console.log(port, 'reconnect start');
+    controller.setupCommunication(port);
     deleteTimer(port);
     port.disconnect();
   }
@@ -44,12 +41,13 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
   }
   remotePort._timer = setTimeout(forceReconnect, 250e3, remotePort);
 });
+
 // Setup idle detection
 chrome.idle.setDetectionInterval(60);
 
 chrome.idle.onStateChanged.addListener((newState) => {
   console.log('idle onStateChanged : ' + newState);
   if (newState === 'idle' || newState === 'locked') {
-    // controller.lock();
+    controller.lock();
   }
 });

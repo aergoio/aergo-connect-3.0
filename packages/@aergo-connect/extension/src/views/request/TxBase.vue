@@ -6,7 +6,7 @@
       <div class="account_info_content_wrapper address">
         <div class="account_info_nickname_wrapper address">
           <div class="account_info_network_wrapper">
-            <div :class="`account_info_network_circle ${$store.state.accounts.network}`" />
+            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.network}`" /> -->
             <div class="account_info_network">
               {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
             </div>
@@ -104,6 +104,9 @@ export default class TxBase extends mixins(RequestMixin) {
       chainId: this.$store.state.accounts.network,
     };
   }
+  // get account(): Account {
+  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
+  // }
 
   get txDataDisplay() {
     if (!this.request) return {};

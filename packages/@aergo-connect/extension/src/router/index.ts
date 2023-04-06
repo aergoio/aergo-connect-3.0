@@ -136,21 +136,9 @@ const routes: RouteConfig[] = [
         name: 'account-connect-hw-accounts',
         component: ConnectHwAccounts,
       }),
-      withMeta(
-        5,
-        { path: 'networks', name: 'networks-list', component: NetworksList },
-        R.NoTracking,
-      ),
-      withMeta(
-        6,
-        { path: 'networks/create', name: 'networks-create', component: NetworksUpdate },
-        R.NoTracking,
-      ),
-      withMeta(
-        6,
-        { path: 'networks', name: 'networks-update', component: NetworksUpdate },
-        R.NoTracking,
-      ),
+      withMeta(5, { path: 'networks', name: 'networks-list', component: NetworksList }),
+      withMeta(6, { path: 'networks/create', name: 'networks-create', component: NetworksUpdate }),
+      withMeta(6, { path: 'networks/update', name: 'networks-update', component: NetworksUpdate }),
     ],
   },
   {

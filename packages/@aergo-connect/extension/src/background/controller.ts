@@ -75,7 +75,6 @@ class BackgroundController extends EventEmitter {
     for (const chain of config.ChainConfigs) {
       this.wallet.useChain(chain);
     }
-    console.log(this.wallet.keyManager, 'this.wallet.keyManager?');
 
     this.wallet.keyManager.on('lock', () => {
       this.emit('update', { unlocked: false });
@@ -153,23 +152,23 @@ class BackgroundController extends EventEmitter {
     console.log('account', account);
     const accountTracker = this.wallet.accountManager.trackAccount(account);
 
-    // this.wallet.transactionManager.trackAccount(account);
-    // accountTracker.then((t) => {
-    //   t.removeAllListeners('update');
-    //   t.on('update', (account) => {
-    //     this.emit('update', { accounts: [account] });
-    //     if (onceCb) {
-    //       onceCb(account);
-    //       onceCb = undefined;
-    //     }
-    //   });
-    //   // Force an initial load and update with data
-    //   t.load().then((account) => {
-    //     this.emit('update', { accounts: [account] });
-    //   });
-    // });
-    // // Make an initial update (data might be empty)
-    // this.emit('update', { accounts: [account] });
+    this.wallet.transactionManager.trackAccount(account);
+    accountTracker.then((t) => {
+      t.removeAllListeners('update');
+      t.on('update', (account) => {
+        this.emit('update', { accounts: [account] });
+        if (onceCb) {
+          onceCb(account);
+          onceCb = undefined;
+        }
+      });
+      // Force an initial load and update with data
+      t.load().then((account) => {
+        this.emit('update', { accounts: [account] });
+      });
+    });
+    // Make an initial update (data might be empty)
+    this.emit('update', { accounts: [account] });
   }
 
   permissionRequest(request: ExternalRequest) {
@@ -186,6 +185,9 @@ class BackgroundController extends EventEmitter {
         top: window.top,
         left,
       });
+      // chrome.windows.remove({
+      //   url: chrome.runtime.getURL(`popup-request.html?request=${this.lastRequestId}`),
+      // });
     });
   }
 

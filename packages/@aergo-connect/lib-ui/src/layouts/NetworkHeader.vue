@@ -1,8 +1,8 @@
 <template>
   <div class="network_content" @click="networkModalClick">
-    <div :class="`network_circle ${network}`" />
+    <!-- <div :class="`network_circle ${network}`" /> -->
     <span class="network_name">
-      {{ `AERGO ${network.toUpperCase()}` }}
+      {{ network }}
     </span>
   </div>
 </template>
@@ -18,10 +18,14 @@ export default Vue.extend({
   computed: {
     network() {
       const network = this.$store.state.accounts.network;
-      if (!network) {
-        return 'mainnet';
+      if (network === 'mainnet') {
+        return `AERGO ${network.toUpperCase()}`;
+      } else if (network === 'testnet') {
+        return `AERGO ${network.toUpperCase()}`;
+      } else if (network === 'alpha') {
+        return `AERGO ${network.toUpperCase()}`;
       } else {
-        return network;
+        return `${network.toUpperCase()}`;
       }
     },
   },
@@ -34,7 +38,7 @@ export default Vue.extend({
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  .network_circle {
+  /* .network_circle {
     background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
     width: 6px;
     height: 6px;
@@ -49,7 +53,7 @@ export default Vue.extend({
     &.alpha {
       background: linear-gradient(133.72deg, #84ceeb 0%, #f894c8 100%);
     }
-  }
+  } */
   .network_name {
     font-family: 'Outfit';
     font-style: normal;

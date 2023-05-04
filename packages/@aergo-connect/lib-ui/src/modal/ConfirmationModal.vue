@@ -10,8 +10,7 @@
           <div class="title">Network</div>
           <div class="flex-row network">
             <div class="detail network">
-              <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
-              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+              {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>
           </div>
         </div>
@@ -121,8 +120,8 @@ export default Vue.extend({
   .confirmation_modal_wrapper {
     position: absolute;
     max-height: 510px;
-    left: 20px;
-    top: 50px;
+    left: 25px;
+    top: 80px;
     background: #ffffff;
     border-radius: 8px;
     display: flex;
@@ -282,7 +281,7 @@ export default Vue.extend({
       .line {
         margin-top: 4px;
         /* Grey/01 */
-        width: 265px;
+        /* width: 265px; */
         border: 1px solid #f0f0f0;
       }
     }

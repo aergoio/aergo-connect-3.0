@@ -3,10 +3,10 @@ import { ApiMethods } from '../background/api';
 
 export default class Background {
   static install(Vue: VueConstructor, { background }: any) {
-    console.log(background, 'background1');
+    // console.log(background, 'background1');
     Vue.prototype.$background = background;
     Vue.prototype.$setBackground = (background: any) => {
-      console.log(background, 'background2?');
+      // console.log(background, 'background2?');
       Vue.prototype.$background = background;
     };
   }

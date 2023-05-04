@@ -21,7 +21,7 @@ export const allowedToExitLockscreen: NavigationGuard = (to, from, next) => {
  * or whenever selecting an account during permission request
  */
 export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
-  console.log(to.fullPath, 'toFull');
+  // console.log(to.fullPath, 'toFull');
   const isStartTransition =
     from.fullPath === '/' && from.name === null && to.name === 'accounts-list';
   if (isStartTransition) {

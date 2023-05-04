@@ -63,14 +63,14 @@ export default class Register extends mixins(PersistInputsMixin) {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: 'aergo.io',
     });
-    console.log(mnemonic, 'mnemonic');
+    // console.log(mnemonic, 'mnemonic');
 
     await this.$store.dispatch('accounts/addAccount', account.address);
     await this.$store.commit('accounts/setSeedPhrase', mnemonic);
     await this.$store.commit('accounts/setBackup', false);
 
-    console.log(this.$store.state.accounts[this.$store.state.accounts.address]);
-    console.log('List', this.$background.getAccounts());
+    // console.log(this.$store.state.accounts[this.$store.state.accounts.address]);
+    // console.log('List', this.$background.getAccounts());
 
     this.$router.push({
       name: 'regist-confirm',

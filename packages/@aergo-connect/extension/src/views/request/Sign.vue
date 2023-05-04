@@ -6,9 +6,9 @@
       <div class="account_info_content_wrapper address">
         <div class="account_info_nickname_wrapper address">
           <div class="account_info_network_wrapper">
-            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.network}`" /> -->
+            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.chainId}`" /> -->
             <div class="account_info_network">
-              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+              {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>
           </div>
           <div class="account_info_nickname_text">
@@ -102,7 +102,7 @@ export default class RequestSign extends mixins(RequestMixin) {
   get accountSpec() {
     return {
       address: this.$store.state.accounts.address,
-      chainId: this.$store.state.accounts.network,
+      chainId: this.$store.state.accounts.chainId,
     };
   }
   // get account(): Account {

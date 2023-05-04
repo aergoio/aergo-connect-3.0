@@ -11,18 +11,25 @@ export class AergoscanTransactionScanner {
     return (next: Function) =>
       async ({ account, blockno, limit }: { account: Account; blockno: number; limit: number }) => {
         const chainId = account.data.spec.chainId;
-        if (chainId !== 'testnet.aergo.io' && chainId !== 'aergo.io') {
+        if (
+          chainId !== 'testnet.aergo.io' &&
+          chainId !== 'aergo.io' &&
+          chainId !== 'alpha.aergo.io'
+        ) {
           return next({ account, blockno, limit });
         }
         let baseUrl;
         if (chainId == 'testnet.aergo.io') {
-          baseUrl = 'https://api.aergoscan.io/testnet';
+          baseUrl = 'https://api2-testnet.aergoscan.io/v2';
         }
         if (chainId == 'aergo.io') {
-          baseUrl = 'https://api.aergoscan.io/main';
+          baseUrl = 'https://api2-mainnet.aergoscan.io/v2';
+        }
+        if (chainId === 'alpha.aergo.io') {
+          baseUrl = 'https://api2-mainnet.aergoscan.io/v2';
         }
         // demo 용
-        baseUrl = 'https://api2-mainnet.aergoscan.io/main';
+        // baseUrl = 'https://api2-mainnet.aergoscan.io/v2';
 
         const address = new Address(account.data.spec.address);
         const q = encodeURIComponent(`(from:${address} OR to:${address}) AND blockno:>${blockno}`);
@@ -37,7 +44,7 @@ export class AergoscanTransactionScanner {
           console.log(
             `[track account] Got ${data.hits.length} (of ${data.total}) txs for ${address} since ${blockno}.`,
           );
-          console.log(data);
+          // console.log(data);
           return data.hits.map(
             (tx: any) =>
               new Transaction(tx.hash, {
@@ -63,6 +70,7 @@ export class AergoscanTransactionScanner {
   fetchAccountTransactions(wallet: Wallet) {
     return () => async (account: Account) => {
       const accountSpec = wallet.accountManager.getCompleteAccountSpec(account.data.spec);
+      console.log(accountSpec, 'accountSpec');
       const { bestHeight } = await wallet.getClient(accountSpec.chainId).blockchain();
       // @ts-ignore
       return this.fetchAccountTransactionsBefore(wallet)(async () => [])({

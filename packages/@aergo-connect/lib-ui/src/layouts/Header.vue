@@ -32,6 +32,7 @@ import Icon from '../icons/Icon.vue';
 import { RawLocation } from 'vue-router';
 import Button from '../buttons/Button.vue';
 import NetworkHeader from '../layouts/NetworkHeader.vue';
+
 export default Vue.extend({
   components: { Icon, Button, NetworkHeader },
 
@@ -68,6 +69,7 @@ export default Vue.extend({
       default: false,
     },
   },
+
   methods: {
     buttonClick() {
       if (this.button === 'hamburger') {

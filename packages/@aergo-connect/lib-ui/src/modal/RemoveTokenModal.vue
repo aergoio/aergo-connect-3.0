@@ -45,7 +45,7 @@ export default Vue.extend({
 
   methods: {
     handleConfirm() {
-      console.log('delete Token');
+      // console.log('delete Token');
 
       if (this.$store.state.accounts.option === 'nft') {
         this.$store.commit('accounts/deleteNftInLocalStorage', this.userNft);

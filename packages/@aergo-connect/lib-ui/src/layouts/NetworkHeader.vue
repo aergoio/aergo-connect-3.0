@@ -1,8 +1,8 @@
 <template>
   <div class="network_content" @click="networkModalClick">
-    <!-- <div :class="`network_circle ${network}`" /> -->
+    <!-- <div :class="`network_circle ${networkName}`" /> -->
     <span class="network_name">
-      {{ network }}
+      {{ networkName }}
     </span>
   </div>
 </template>
@@ -16,16 +16,16 @@ export default Vue.extend({
     },
   },
   computed: {
-    network() {
-      const network = this.$store.state.accounts.network;
-      if (network === 'mainnet') {
-        return `AERGO ${network.toUpperCase()}`;
-      } else if (network === 'testnet') {
-        return `AERGO ${network.toUpperCase()}`;
-      } else if (network === 'alpha') {
-        return `AERGO ${network.toUpperCase()}`;
+    networkName() {
+      const chainLabel = this.$store.state.accounts.chainLabel;
+      if (chainLabel === 'mainnet') {
+        return `AERGO MAINNET`;
+      } else if (chainLabel === 'testnet') {
+        return `AERGO TESTNET`;
+      } else if (chainLabel === 'alpha') {
+        return `AERGO ALPHA`;
       } else {
-        return `${network.toUpperCase()}`;
+        return chainLabel.toUpperCase();
       }
     },
   },

@@ -95,7 +95,7 @@ export default class RequestSign extends mixins() {
   get accountSpec() {
     return {
       address: this.$store.state.accounts.address,
-      chainId: this.$store.state.accounts.network,
+      chainId: this.$store.state.accounts.chainId,
     };
   }
 
@@ -199,10 +199,10 @@ export default class RequestSign extends mixins() {
     };
 
     if (!this.isHashed) {
-      console.log('hash check no');
+      // console.log('hash check no');
       callData.message = Array.from(Uint8Array.from(buf));
     } else {
-      console.log('hash check yes');
+      // console.log('hash check yes');
       callData.hash = Array.from(Uint8Array.from(buf));
     }
     const result = await timedAsync(this.$background.signMessage(callData));

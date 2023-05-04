@@ -8,13 +8,25 @@
       @refreshClick="refreshClick"
     />
     <!-- <LoadingIndicator v-if="isLoading" /> -->
+    <SendFinishModal
+      v-if="receiptModal"
+      :asset="$store.state.accounts.selectedToken"
+      :txHash="selectedData[`hash`]"
+      :receipt="selectedData[`meta`][`to`]"
+      :amount="amount"
+      :symbol="token.meta.symbol"
+      :tokenType="token.meta.type"
+      :fee="fee"
+      :balance="+token.balance"
+      @clickOk="handleViewReceiptClose"
+    />
     <RemoveModal v-if="removeModal" @cancel="handleDelete" />
     <AccountDetailModal v-if="accountDetailModal" @cancel="(e) => handleCancel(e)" />
     <div class="token_detail_content">
       <div class="account_detail">
         <div class="direction-row">
-          <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
-          <div class="network">{{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}</div>
+          <!-- <div :class="`circle ${$store.state.accounts.chainId}`" /> -->
+          <div class="network">{{ networkName }}</div>
         </div>
         <div class="account">
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
@@ -70,7 +82,7 @@
           </div>
           <Button
             type="font-gradation"
-            v-if="$store.state.accounts.network === 'mainnet'"
+            v-if="$store.state.accounts.chainId === 'aergo.io'"
             hover
             @click="gotoStake()"
             :style="{ height: '24px', marginRight: '8px', padding: '12px' }"
@@ -111,8 +123,23 @@
             data.length > 1 ? 'history_list scroll' : 'history_list',
           ]"
         >
-          <li v-for="item in data" :key="item.meta.tx_id" class="item_wrapper">
-            <div class="time">{{ item.meta.ts.slice(0, 16) }}</div>
+          <li v-for="(item, index) in data" :key="item.meta.tx_id" class="item_wrapper">
+            <div class="row">
+              <span class="time">{{ item.meta.ts.slice(0, 16) }}</span>
+              <div v-if="index === 0">
+                <span
+                  v-if="lastestTransactionState === `PENDING` && getScanApi"
+                  class="status pending"
+                  >PENDING</span
+                >
+                <span v-else class="status complete" @click="handleViewReceipt(item)"
+                  >COMPLETE</span
+                >
+              </div>
+              <div v-else>
+                <span class="status complete" @click="handleViewReceipt(item)">COMPLETE</span>
+              </div>
+            </div>
             <!-- <div :style="{ display: 'flex', alignItems: 'center' }">
                 <div class="tx_id" @click="gotoScanTx(item.hash)">
                   {{
@@ -128,16 +155,20 @@
               <div class="direction_row">
                 <div v-if="item.meta.from === $store.state.accounts.address" class="balance sent">
                   {{
-                    item.meta.amount_float === 0
-                      ? `${getBalance(item.meta.amount_float)}`
-                      : `- ${getBalance(item.meta.amount_float)}`
+                    getScanApi
+                      ? item.meta.amount_float === 0
+                        ? `${getBalance(item.meta.amount_float)}`
+                        : `- ${getBalance(item.meta.amount_float)}`
+                      : `- ${bigIntToString(BigInt(item.meta.amount), 18)}`
                   }}
                 </div>
                 <div v-else class="balance received">
                   {{
-                    item.meta.amount_float === 0
-                      ? `${getBalance(item.meta.amount_float)}`
-                      : `+ ${getBalance(item.meta.amount_float)}`
+                    getScanApi
+                      ? item.meta.amount_float === 0
+                        ? `${getBalance(item.meta.amount_float)}`
+                        : `+ ${getBalance(item.meta.amount_float)}`
+                      : `+ ${bigIntToString(BigInt(item.meta.amount), 18)}`
                   }}
                 </div>
                 <div class="token_symbol">{{ token.meta.symbol }}</div>
@@ -146,7 +177,11 @@
             <div class="line"></div>
             <div class="direction_row">
               <div :style="{ display: 'flex', alignItems: 'center' }">
-                <div type="button" class="tx_id" @click="gotoScanTx(item.hash)">
+                <div
+                  type="button"
+                  class="tx_id"
+                  @click="getScanExplorerApi ? gotoScanTx(item.hash) : copyToClipboard(item.hash)"
+                >
                   {{
                     item.hash.split('-0').length === 2
                       ? `TX_ID: ${item.hash.slice(0, 6)}......${item.hash.slice(-6, -2)}`
@@ -206,9 +241,30 @@ import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
+import SendFinishModal from '@aergo-connect/lib-ui/src/modal/SendFinishModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import { bigIntToString } from '@aergo-connect/extension/src/utils/checkDecimals';
 import { getScanApiUrl, getScanExplorerUrl } from '../utils/chain-urls';
+import { Transaction } from '@herajs/wallet';
+import { TxTypes } from '@herajs/common';
+
+interface Data {
+  hash: string;
+  meta: {
+    amount?: string;
+    amount_float?: number;
+    blockno?: number;
+    category?: string;
+    from?: string;
+    method?: string;
+    status?: string;
+    to?: string;
+    token_transfers?: number;
+    ts?: string;
+    type?: string;
+    payload?: object;
+  };
+}
 
 export default Vue.extend({
   components: {
@@ -221,6 +277,7 @@ export default Vue.extend({
     RemoveModal,
     Notification,
     AccountDetailModal,
+    SendFinishModal,
   },
 
   data() {
@@ -228,9 +285,11 @@ export default Vue.extend({
       removeModal: false,
       clipboardNotification: false,
       accountDetailModal: false,
+      receiptModal: false,
       error: '',
-      allData: [],
-      data: [],
+      allData: [] as Data[],
+      data: [] as Data[],
+      txData: [] as Transaction[],
       filter: 'All',
       staking: '0',
       aergoPrice: 0,
@@ -248,13 +307,47 @@ export default Vue.extend({
         balance: '0',
         nftWallet: [],
       },
+      sendStatus: {},
+      selectedData: {},
+      lastestTransactionState: 'PENDING',
     };
   },
   computed: {
     getTokens() {
       return this.$store.getters[`accounts/getTokens`];
     },
+    fee() {
+      return this.sendStatus[`fee`]
+        ? // eslint-disable-next-line no-undef
+          bigIntToString(BigInt(this.sendStatus[`fee`].split(' ')[0]), 18)
+        : '0';
+    },
+    amount() {
+      // eslint-disable-next-line no-undef
+      return bigIntToString(BigInt(this.selectedData[`meta`][`amount`]), 18);
+    },
+    networkName() {
+      const chainId = this.$store.state.accounts.chainId;
+      if (chainId === ('aergo.io' || 'testnet.aergo.io' || 'alpha.aergo.io')) {
+        return `AERGO ${chainId.toUpperCase()}`;
+      } else {
+        return `${chainId.toUpperCase()}`;
+      }
+    },
+    getScanExplorerApi() {
+      const network = this.$store.state.accounts.networksPath.filter(
+        (network) => network.chainId === this.$store.state.accounts.chainId,
+      )[0].scanExplorerUrl;
+      return network;
+    },
+    getScanApi() {
+      const scanApiUrl = this.$store.state.accounts.networksPath.filter(
+        (network) => network.chainId === this.$store.state.accounts.chainId,
+      )[0].scanApiUrl;
+      return scanApiUrl;
+    },
   },
+
   async beforeMount() {
     this.token = await this.getTokens[this.$store.state.accounts.selectedToken];
     await this.getTokenHistory();
@@ -294,17 +387,30 @@ export default Vue.extend({
     staking() {
       this.stakingPrice = this.getStakingAergoInfo(this.staking.split(' ')[0]);
     },
+    async selectedData() {
+      this.sendStatus = await this.getSendStatus(this.selectedData);
+    },
+    // txData() {
+    //   console.log(this.txData, 'txData');
+    // },
+    // data() {
+    //   console.log(this.data, 'data?');
+    // },
   },
 
   methods: {
+    bigIntToString(bigInt, decimals) {
+      return bigIntToString(bigInt, decimals);
+    },
     async aergoStaking(): Promise<void> {
       const staking = await this.$background.getStaking({
-        chainId: this.$store.state.accounts.network,
+        chainId: this.$store.state.accounts.chainId,
         address: this.$store.state.accounts.address,
       });
 
       if (!staking) this.staking = '0';
       else {
+        // eslint-disable-next-line no-undef
         this.staking = `${bigIntToString(BigInt(staking.amount.split(' ')[0]), 18) || 0} aergo`;
       }
     },
@@ -328,13 +434,17 @@ export default Vue.extend({
       await this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
         this.aergoPrice = this.token.balance * priceInfo.price;
       });
-
-      this.aergoStaking();
+      if (
+        this.$store.state.accounts.chainId === 'aergo.io' ||
+        this.$store.state.accounts.chainId === 'testnet.aergo.io'
+      ) {
+        this.aergoStaking();
+      }
     },
 
     async getStakingAergoInfo(staking: any) {
       await this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
-        console.log(staking);
+        // console.log(staking);
         this.stakingPrice = staking * priceInfo.price;
       });
     },
@@ -348,7 +458,7 @@ export default Vue.extend({
     },
 
     async refreshClick() {
-      console.log('refresh');
+      // console.log('refresh');
       this.isLoading = true;
       await this.getTokenHistory();
       await this.getAergoInfo();
@@ -357,25 +467,71 @@ export default Vue.extend({
     },
 
     async getTokenHistory(): Promise<void> {
-      const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
-      const getTransactionUrl = `${scanApiUrl}/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=10000&sort=ts:desc`;
-      const getTokenTransferUrl = `${scanApiUrl}/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}&size=10000&sort=ts:desc`;
+      if (!this.getScanApi) {
+        // console.log('here have to get History');
+        const accountTx = await this.$background.getAccountTx({
+          address: this.$store.state.accounts.address,
+          chainId: this.$store.state.accounts.chainId,
+        });
 
-      let resp;
-      if (this.token.meta.symbol === 'aergo') {
-        resp = await fetch(getTransactionUrl);
-      } else {
-        resp = await fetch(getTokenTransferUrl);
-      }
+        //transaction Receipt and Make Data Type
+        accountTx.map(async (txData) => {
+          // console.log(txData, 'txData');
+          const hash = txData.data.hash;
+          const data = {
+            hash,
+            meta: {
+              amount: txData.data.amount.split(' ')[0],
+              from: txData.data.from,
+              to: txData.data.to,
+              type: String(txData.data.type),
+              ts: txData.data.ts,
+              status: txData.data.status,
+              payload: txData.txBody?.payload,
+            },
+          };
+          this.data.push(data);
+        });
 
-      const response = await resp.json();
-      if (response.error) {
-        this.data = [];
-        this.allData = [];
-        console.error(response.error);
+        // this.data = accountTx;
       } else {
-        this.data = response.hits;
-        this.allData = response.hits;
+        const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
+        const getTransactionUrl = `${scanApiUrl}/transactions?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address})&size=10000&sort=ts:desc`;
+        const getTokenTransferUrl = `${scanApiUrl}/tokenTransfers?q=(from:${this.$store.state.accounts.address} OR to:${this.$store.state.accounts.address}) AND address:${this.token.hash}&size=10000&sort=ts:desc`;
+
+        let resp;
+        if (this.token.meta.symbol === 'aergo') {
+          resp = await fetch(getTransactionUrl);
+        } else {
+          resp = await fetch(getTokenTransferUrl);
+        }
+
+        const response = await resp.json();
+        // this.accountState = await this.getAccountTx();
+        // this.transactionState = await this.getSendTransaction();
+
+        if (response.error) {
+          this.data = [];
+          this.allData = [];
+          console.error(response.error);
+        } else {
+          this.data = response.hits;
+          this.allData = response.hits;
+          if (this.$store.state.accounts.lastestSendHash === this.data[0][`hash`]) {
+            const result = await this.$background.getTransactionReceipt(
+              this.$store.state.accounts.chainId,
+              this.data[0][`hash`],
+            );
+            if (result[`status`] !== 'SUCCESS') {
+              this.lastestTransactionState = 'PENDING';
+            } else {
+              this.lastestTransactionState = 'COMPLETE';
+              this.$store.commit('accounts/getLastestSendHash', '');
+            }
+          } else {
+            this.lastestTransactionState = 'COMPLETE';
+          }
+        }
       }
     },
     handleDelete(state: boolean) {
@@ -396,12 +552,25 @@ export default Vue.extend({
         this.accountDetailModal = false;
       }
     },
+    async handleViewReceipt(item) {
+      this.selectedData = item;
+      // console.log(item, 'item');
+      // this.sendStatus = await this.getSendStatus(item);
+      this.receiptModal = true;
+    },
+    handleViewReceiptClose() {
+      this.receiptModal = false;
+    },
     copyToClipboard(text) {
       navigator.clipboard.writeText(text);
       this.clipboardNotification = true;
     },
     getTokenType(item) {
-      if (!item.meta.category && !item.meta.method) {
+      if (!item.meta.category && !item.meta.method && item.meta.type) {
+        // console.log(TxTypes, 'txTypes');
+
+        return `Type : ${TxTypes[item.meta.type].toUpperCase()}`;
+      } else if (!item.meta.category && !item.meta.method && !item.meta.type) {
         return `Type : CALL`;
       } else {
         return `Type: ${item.meta.category.toUpperCase()}`;
@@ -412,6 +581,24 @@ export default Vue.extend({
         return balance;
       }
       return Number(balance).toFixed(3);
+    },
+    async getSendStatus(data) {
+      return await this.$background.getTransactionReceipt(
+        this.$store.state.accounts.chainId,
+        data[`hash`],
+      );
+    },
+    // async getSendTransaction() {
+    //   return await this.$background.getTransaction(
+    //     this.$store.state.accounts.chainId,
+    //     this.$store.state.accounts.lastestSendHash,
+    //   );
+    // },
+    async getAccountTx() {
+      return await this.$background.getAccountTx({
+        chainId: this.$store.state.accounts.chainId,
+        address: this.$store.state.accounts.address,
+      });
     },
   },
 });
@@ -794,27 +981,55 @@ export default Vue.extend({
       .item_wrapper {
         margin-top: 10px;
         width: 327px;
-        height: 105px;
+        height: 100px;
         background: #ffffff;
         border-radius: 8px;
         &.hide {
           display: none;
         }
-        .time {
-          width: 200px;
-          margin-left: 16px;
-          margin-top: 8px;
-          font-family: 'Outfit';
-          font-style: normal;
-          font-weight: 300;
-          font-size: 12px;
-          line-height: 15px;
-          letter-spacing: -0.333333px;
+        .row {
+          display: flex;
+          justify-content: space-between;
+          .time {
+            width: 200px;
+            margin-left: 16px;
+            margin-top: 8px;
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 300;
+            font-size: 12px;
+            line-height: 15px;
+            letter-spacing: -0.333333px;
 
-          /* Grey/04 */
+            /* Grey/04 */
 
-          color: #9c9a9a;
+            color: #9c9a9a;
+          }
+          .status {
+            margin-top: 6px;
+            margin-right: 10px;
+            display: inline-block;
+            min-width: 10px;
+            padding: 3px 7px;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            border-radius: 10px;
+            &.pending {
+              background-color: #5c3ce0;
+            }
+
+            &.complete {
+              background-color: #11d899;
+              cursor: pointer;
+            }
+          }
         }
+
         .tx_id {
           margin-top: 10px;
           margin-bottom: 10px;

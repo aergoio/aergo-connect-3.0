@@ -30,7 +30,7 @@ export function parseToBigInt(input: string, decimals: number) {
 
 function printParsed(input: string, decimals: number) {
   const vals = parseToBigInt(input, decimals);
-  global.console.log(`${input}(${decimals}):=>  ${vals}`);
+  //   global.console.log(`${input}(${decimals}):=>  ${vals}`);
 }
 
 // printParsed("1.12233", 18);

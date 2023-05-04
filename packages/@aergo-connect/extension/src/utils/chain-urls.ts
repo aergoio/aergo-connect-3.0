@@ -27,13 +27,11 @@ export function getApiUrl(chainId: string, path: string): string {
 }
 
 export function getScanApiUrl(state) {
-  const networkPath = state.networksPath.find((network) => network.chainId === state.network);
-
+  const networkPath = state.networksPath.find((network) => network.chainId === state.chainId);
   return networkPath ? networkPath.scanApiUrl : '';
 }
 
 export function getScanExplorerUrl(state) {
-  const networkPath = state.networksPath.find((network) => network.chainId === state.network);
-
+  const networkPath = state.networksPath.find((network) => network.chainId === state.chainId);
   return networkPath ? networkPath.scanExplorerUrl : '';
 }

@@ -69,7 +69,7 @@ export default Vue.extend({
     visible: { type: Boolean, default: false },
   },
   mounted() {
-    console.log(this.$route.params);
+    // console.log(this.$route.params);
   },
   methods: {
     handleBack() {

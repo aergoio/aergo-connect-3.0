@@ -50,7 +50,7 @@ export default Vue.extend({
   async beforeMount() {
     this.inputText = {
       type: 'AERGO_REQUEST',
-      network: this.$store.state.accounts.network,
+      network: this.$store.state.accounts.chainId,
       address: this.$store.state.accounts.address,
       token: this.asset,
       token_type: this.getTokens[this.asset].meta.type,
@@ -60,7 +60,7 @@ export default Vue.extend({
     };
   },
   mounted() {
-    console.log(this.inputText, 'qr');
+    // console.log(this.inputText, 'qr');
   },
   methods: {
     handleOK() {

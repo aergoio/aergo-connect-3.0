@@ -17,7 +17,7 @@
             tag="li"
             :to="{
               name: 'networks-update',
-              params: { chainId: network.chainId },
+              params: { chainId: network.chainId, label: network.label },
             }"
             class="network-list-item"
             v-for="network in networks"
@@ -30,6 +30,7 @@
               />
             </span>
             <div class="network-info">
+              <span class="chain-id">{{ network.label }}</span>
               <span class="chain-id">{{ network.chainId }}</span>
               <span class="network-actions">
                 <span class="node-url">{{ network.nodeUrl }}</span>
@@ -76,6 +77,9 @@ export default class AccountsList extends Vue {
   networks: ChainConfig[] = [];
   created() {
     this.fetchNetworks();
+  }
+  updated() {
+    console.log(this.networks, 'networks');
   }
   async fetchNetworks() {
     const chains = await this.$background.getNetworks();

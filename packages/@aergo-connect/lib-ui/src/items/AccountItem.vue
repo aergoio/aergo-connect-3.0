@@ -65,7 +65,7 @@ export default Vue.extend({
     },
   },
   mounted() {
-    console.log(this.$route.name, 'routerInAccountItem');
+    // console.log(this.$route.name, 'routerInAccountItem');
   },
 });
 </script>

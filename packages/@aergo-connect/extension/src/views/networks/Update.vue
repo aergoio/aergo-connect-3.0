@@ -10,13 +10,13 @@
         <TextField
           label="Network Name"
           v-model="networkName"
-          :state="!availableNetwork ? 'invalid' : 'initial'"
+          :state="availableNetwork && networkName ? 'valid' : !networkName ? 'initial' : 'invalid'"
         />
         <TextField
           label="Node URL (http://... or https://...)"
           v-model="nodeUrl"
-          :state="nodeUrlTested ? 'valid' : nodeUrlValid && !nodeUrlError ? 'loading' : 'invalid'"
-          :error="!nodeUrlTested ? nodeUrlError : ''"
+          :state="nodeUrlUiState"
+          :error="nodeUrlError"
           :style="{ marginTop: '10px' }"
         />
         <TextField
@@ -29,26 +29,32 @@
         />
         <TextField
           v-if="nodeUrlTested"
-          label="ScanApi URL (http://... or https://...)"
+          label="ScanApi URL (Optional)"
           v-model="scanApiUrl"
-          :state="scanApiUrlValid && scanApiUrlTested ? 'valid' : 'invalid'"
+          :state="scanApiUiState"
           :style="{ marginTop: '10px' }"
         />
         <TextField
           v-if="nodeUrlTested"
-          label="ScanExplorer URL (http://... or https://...)"
+          label="ScanExplorer URL (Optional)"
           v-model="scanExplorerUrl"
-          :state="scanExplorerUrlValid && scanExplorerUrlTested ? 'valid' : 'invalid'"
+          :state="scanExplorerUiState"
           :style="{ marginTop: '10px' }"
         />
       </div>
       <template #footer>
         <div class="content">
-          <ButtonGroup horizontal>
-            <Button type="primary" :disabled="!canSave" @click="save" :hover="canSave">Save</Button>
-          </ButtonGroup>
+          <Button
+            :style="{ marginLeft: '-9px', width: '336px' }"
+            type="primary"
+            :disabled="!canSave"
+            @click="save"
+            :hover="canSave"
+            >Save</Button
+          >
         </div>
       </template>
+      <Notification v-if="notification" :title="notificationText" :size="300" :icon="`warning2`" />
     </ScrollView>
   </div>
 </template>
@@ -59,6 +65,7 @@ import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { Button, BackButton, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
 import { TextField } from '@aergo-connect/lib-ui/src/forms';
+import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 
 import { Vue, Component, Watch } from 'vue-property-decorator';
 // @ts-ignore
@@ -74,13 +81,15 @@ import { ChainInfo } from '@herajs/client/types/rpc_pb';
     Button,
     BackButton,
     TextField,
+    Notification,
   },
 })
 export default class NetworkUpdate extends Vue {
   networkName = '';
-  paramsNetworkName = '';
-  // chainId = '';
+  // paramsNetworkName = '';
+  chainId = '';
   chainIdReadonly = false;
+  paramsName = '';
   nodeUrl = '';
   scanApiUrl = '';
   scanExplorerUrl = '';
@@ -91,6 +100,8 @@ export default class NetworkUpdate extends Vue {
   scanExplorerUrlTested = false;
   availableNetwork = true;
   chainInfo = ChainInfo;
+  notification = false;
+  notificationText = '';
 
   get chainIdValid() {
     return (
@@ -109,71 +120,122 @@ export default class NetworkUpdate extends Vue {
     return this.scanApiUrl.length > 0 && this.scanApiUrl.match(urlRegexWithV2AndNoTrailingSlash);
   }
   get scanExplorerUrlValid() {
-    const urlRegexWithNoTrailingSlash =
-      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)(?<!\/)$/;
+    const regex = /^(?:https?:\/\/)?[\w.-]+(?:\.[\w]{2,}){1,}(?:\/)?$/;
     return (
-      this.scanExplorerUrl.length > 0 && this.scanExplorerUrl.match(urlRegexWithNoTrailingSlash)
+      this.scanExplorerUrl.length > 0 &&
+      this.scanExplorerUrl.slice(-1) !== '/' &&
+      regex.test(this.scanExplorerUrl)
     );
   }
   get canSave() {
-    return (
-      this.chainIdValid &&
-      this.nodeUrlTested &&
-      this.scanApiUrlTested &&
-      this.scanExplorerUrlTested &&
-      this.availableNetwork
-    );
+    if (this.scanApiUrl || this.scanExplorerUrl) {
+      return (
+        this.chainIdValid &&
+        this.nodeUrlTested &&
+        this.availableNetwork &&
+        this.scanApiUrlTested &&
+        this.scanExplorerUrlTested
+      );
+    } else {
+      return this.chainIdValid && this.nodeUrlTested && this.availableNetwork;
+    }
+  }
+
+  get nodeUrlUiState() {
+    if (this.nodeUrlTested) {
+      return 'valid';
+    } else {
+      if (this.nodeUrlValid && !this.nodeUrlError) {
+        return 'loading';
+      } else if (this.nodeUrlError) {
+        return 'invalid';
+      } else {
+        return 'initial';
+      }
+    }
+  }
+
+  get scanApiUiState() {
+    if (!this.scanApiUrl) {
+      return 'initial';
+    } else {
+      if (this.scanApiUrlValid && this.scanApiUrlTested) {
+        return 'valid';
+      } else {
+        return 'invalid';
+      }
+    }
+  }
+  get scanExplorerUiState() {
+    if (!this.scanExplorerUrl) {
+      return 'initial';
+    } else {
+      if (this.scanExplorerUrlValid && this.scanExplorerUrlTested) {
+        return 'valid';
+      } else {
+        return 'invalid';
+      }
+    }
   }
 
   beforeMount() {
-    if (this.$store.state.ui.input[`networks`][`paramsNetworkName`]) {
-      this.paramsNetworkName = this.$store.state.ui.input[`networks`][`paramsNetworkName`];
-    }
+    // if (this.$store.state.ui.input[`networks`][`paramsNetworkName`]) {
+    //   this.paramsNetworkName = this.$store.state.ui.input[`networks`][`paramsNetworkName`];
+    // }
     if (this.$store.state.ui.input[`networks`][`networkName`]) {
       this.networkName = this.$store.state.ui.input[`networks`][`networkName`];
     }
     if (this.$store.state.ui.input[`networks`][`nodeUrl`]) {
       this.nodeUrl = this.$store.state.ui.input[`networks`][`nodeUrl`];
     }
-    // if (this.$store.state.ui.input[`networks`][`chainId`]) {
-    //   this.chainId = this.$store.state.ui.input[`networks`][`chainId`];
-    // }
+    if (this.$store.state.ui.input[`networks`][`chainId`]) {
+      this.chainId = this.$store.state.ui.input[`networks`][`chainId`];
+    }
     if (this.$store.state.ui.input[`networks`][`scanApiUrl`]) {
       this.scanApiUrl = this.$store.state.ui.input[`networks`][`scanApiUrl`];
     }
     if (this.$store.state.ui.input[`networks`][`scanExplorerUrl`]) {
       this.scanExplorerUrl = this.$store.state.ui.input[`networks`][`scanExplorerUrl`];
     }
+    if (this.$store.state.ui.input[`networks`][`paramsName`]) {
+      this.paramsName = this.$store.state.ui.input[`networks`][`paramsName`];
+    }
   }
 
   async mounted() {
     if (this.$route.params.chainId) {
       // Load existing chain data for update
-      this.networkName = this.$route.params.chainId;
+      this.networkName = this.$route.params.label;
+      this.chainId = this.$route.params.chainId;
       this.nodeUrl = 'Loading...';
       const chains = await this.$background.getNetworks();
-      const chain = chains[this.networkName] as any;
+      // console.log(chains, 'chains');
+      const chain = chains[this.chainId] as any;
       this.nodeUrl = chain['nodeUrl'];
       this.scanApiUrl = chain['scanApiUrl'];
       this.scanExplorerUrl = chain['scanExplorerUrl'];
       this.chainIdReadonly = true;
+      this.paramsName = this.$route.params.chainId;
     }
-    if (this.paramsNetworkName) {
-      this.networkName = this.paramsNetworkName;
+    if (this.paramsName) {
       this.chainIdReadonly = true;
     }
+    // if (this.paramsNetworkName) {
+    //   this.networkName = this.paramsNetworkName;
+    //   this.chainIdReadonly = true;
+    // }
   }
 
   updated() {
     this.$store.commit('ui/setInputs', {
       key: 'networks',
       data: {
-        paramsNetworkName: this.$route.params.chainId || this.paramsNetworkName,
+        chainId: this.chainId,
         networkName: this.networkName,
         nodeUrl: this.nodeUrl,
-        // chainId: this.chainInfo.chainid.magic,
         scanApiUrl: this.scanApiUrl,
         scanExplorerUrl: this.scanExplorerUrl,
+        paramsName: this.paramsName,
       },
     });
   }
@@ -209,10 +271,12 @@ export default class NetworkUpdate extends Vue {
     const aergo = new AergoClient({}, new GrpcWebProvider({ url: this.nodeUrl }));
     try {
       await aergo.blockchain();
+      console.log(aergo, 'aergoBlockChain1');
       this.chainInfo = await aergo.getChainInfo();
       this.nodeUrlTested = true;
+      this.chainId = this.chainInfo.chainid.magic;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       this.nodeUrlError = `${e}`;
     }
   }
@@ -226,13 +290,13 @@ export default class NetworkUpdate extends Vue {
       const response = await res.json();
       try {
         //TODO: '여기있는 데이터에 chainId를 가져와서 chainId 유효성 검사 해야함.'
-        console.log(
-          response[0].hash,
-          '여기있는 데이터에 chainId를 가져와서 chainId 유효성 검사 해야함.',
-        );
+        // console.log(
+        //   response[0].hash,
+        //   '여기있는 데이터에 chainId를 가져와서 chainId 유효성 검사 해야함.',
+        // );
         await aergo.blockchain();
+        console.log(aergo, 'aergoBlockChain2');
         this.chainInfo = await aergo.getChainInfo();
-        console.log(this.chainInfo.chainid.magic, 'this.chainInfo.chainid.magic?');
         if (response[0].hash === this.chainInfo.chainid.magic && this.scanApiUrlValid) {
           this.scanApiUrlTested = true;
         } else {
@@ -254,7 +318,6 @@ export default class NetworkUpdate extends Vue {
         const consensusRes = await fetch(consensusUrl);
         const accountRes = await fetch(accountUrl);
 
-        //TODO: axios 추가
         // const [consensusRes, accountRes] = await Promise.all([
         //   axios.get(consensusUrl),
         //   axios.get(accountUrl),
@@ -275,40 +338,64 @@ export default class NetworkUpdate extends Vue {
     }
   }
 
+  @Watch('notification')
+  notificationMethod(state) {
+    if (state) {
+      setTimeout(() => {
+        const time = (this.notification = !state);
+        return () => {
+          clearTimeout(time);
+        };
+      }, 2000);
+    }
+  }
+
   async save() {
-    if (
-      !this.nodeUrlValid ||
-      !this.chainIdValid ||
-      !this.scanApiUrlTested ||
-      !this.scanExplorerUrlTested ||
-      !this.availableNetwork
-    ) {
+    if (!this.nodeUrlValid || !this.chainIdValid || !this.availableNetwork) {
       return; // 필수 조건을 만족하지 않으면 실행하지 않음
     }
 
     const networkPath = {
-      chainId: this.networkName,
+      label: this.networkName,
+      chainId: this.chainId,
       nodeUrl: this.nodeUrl,
       scanApiUrl: this.scanApiUrl,
       scanExplorerUrl: this.scanExplorerUrl,
     };
 
-    await this.$store.commit('accounts/setNetwork', this.networkName);
+    await this.$store.commit('accounts/setChainId', this.chainId);
     if (this.chainIdReadonly) {
+      // update network
       const updateObject = {
-        updateNetworkName: this.paramsNetworkName,
+        updateNetworkName: this.paramsName,
         networkPath: networkPath,
       };
-      await this.$background.removeNetwork({ chainId: this.paramsNetworkName });
-      await this.$background.addNetwork(networkPath);
+      await this.$background.updateNetwork(updateObject);
+      await this.$forceUpdate();
       this.$store.commit('accounts/updateNetworkPath', updateObject);
     } else {
-      await this.$background.addNetwork(networkPath);
-      this.$store.commit('accounts/setNetworkPath', networkPath);
+      // add network
+      const alreadyAddedNetwork = this.$store.state.accounts.networksPath.filter((network) => {
+        console.log(network.label, 'network');
+        console.log(this.networkName, 'networkName');
+        if (network.label === this.networkName) {
+          return network;
+        }
+      });
+      console.log(alreadyAddedNetwork, 'alreadyAddedNetwork');
+      if (alreadyAddedNetwork.length > 0) {
+        this.notification = true;
+        this.notificationText = `This Network is already added. [${this.chainId}]`;
+        return;
+      } else {
+        await this.$background.addNetwork(networkPath);
+        this.$store.commit('accounts/setNetworkPath', networkPath);
+      }
     }
 
     this.$store.commit('ui/clearInput', { key: 'networks' });
     this.$router.push({ name: 'networks-list' });
+    await this.$store.commit('accounts/setActiveAccount', this.$store.state.accounts.address);
   }
 
   backClick() {

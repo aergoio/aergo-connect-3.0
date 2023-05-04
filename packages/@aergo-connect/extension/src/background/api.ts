@@ -72,7 +72,7 @@ export class Api {
     }
   }
 
-  async addNetwork({ chainId, nodeUrl, scanApiUrl, scanExplorerUrl }: ChainConfig) {
+  async addNetwork({ label, chainId, nodeUrl, scanApiUrl, scanExplorerUrl }: ChainConfig) {
     this.controller.wallet.useChain({ chainId, nodeUrl });
     let chains: Record<string, ChainConfig> = {};
     if (!this.controller.wallet.datastore) throw new Error('cannot open datastore');
@@ -82,12 +82,44 @@ export class Api {
     } catch (e) {
       // not found
     }
-    chains[chainId] = { chainId, nodeUrl, scanApiUrl, scanExplorerUrl };
+    chains[chainId] = { label, chainId, nodeUrl, scanApiUrl, scanExplorerUrl };
     await this.controller.wallet.datastore.getIndex('settings').put({
       key: 'customChains',
       data: chains as any,
     });
     return true;
+  }
+
+  async updateNetwork(updateObject) {
+    let chains: Record<string, ChainConfig> = {};
+    if (!this.controller.wallet.datastore) throw new Error('cannot open datastore');
+    try {
+      chains = (await this.controller.wallet.datastore.getIndex('settings').get('customChains'))
+        .data as any;
+    } catch (e) {
+      // not found
+    }
+    console.log(updateObject, 'updateObject');
+
+    console.log(chains, 'chains1');
+    const { updateNetworkName, networkPath } = updateObject;
+    if (updateNetworkName !== networkPath.chainId) {
+      console.log('here ?');
+      chains[networkPath.chainId] = { ...networkPath };
+      delete chains[updateNetworkName];
+      await this.controller.wallet.useChain({
+        chainId: networkPath.chainId,
+        nodeUrl: networkPath.nodeUrl,
+      });
+    } else {
+      chains[updateNetworkName] = { ...networkPath };
+    }
+    await this.controller.wallet.datastore.getIndex('settings').put({
+      key: 'customChains',
+      data: chains as any,
+    });
+
+    console.log(chains, 'chains2');
   }
 
   async removeNetwork({ chainId }: { chainId: string }) {
@@ -113,6 +145,7 @@ export class Api {
 
   async getAccounts() {
     const accounts = await this.controller.wallet.accountManager.getAccounts();
+    console.log(accounts, 'accounts');
     for (const account of accounts) {
       this.controller.trackAccount(account);
     }
@@ -190,11 +223,14 @@ export class Api {
   }
 
   async addAccount(accountData: Account['data']): Promise<AccountSpec> {
+    console.log(accountData, 'accountData');
     const account = await this.controller.wallet.accountManager.addAccount(
       accountData.spec,
       accountData,
     );
+    console.log(account, 'accout');
     this.controller.trackAccount(account);
+    console.log(this.controller.trackAccount(account), 'this.controller.trackAccount(account);');
     return account.data.spec;
   }
 
@@ -374,7 +410,7 @@ export class Api {
     };
     const query = new URLSearchParams(params).toString();
     const url = `https://api.coingecko.com/api/v3/simple/token_price/ethereum?${query}`;
-    console.log('url=' + url);
+    // console.log('url=' + url);
     const response = await fetch(url);
     const data = await response.json();
     const tokenData = data[params.contract_addresses];
@@ -397,8 +433,8 @@ export class Api {
     const size = 1000;
     const offset = 0;
     const url = `${baseUrl}/tokenTransfers?q=${q}&size=${size}&from=${offset}&sort=ts:desc`;
-    console.log('getTokenTransfers');
-    console.log(url);
+    // console.log('getTokenTransfers');
+    // console.log(url);
     try {
       const response = await fetch(url);
       const data = await response.json();

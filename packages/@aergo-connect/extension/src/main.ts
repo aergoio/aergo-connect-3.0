@@ -29,6 +29,7 @@ async function setupBackground(extensionPort: any) {
   // React to state updates from background
   background.on('update', function (state) {
     console.log('update from bg', state);
+    // console.log(state.accounts, 'accounts');
     const isNonAuthPage = router.currentRoute.meta && router.currentRoute.meta.noAuthCheck === true;
     if (Object.prototype.hasOwnProperty.call(state, 'unlocked')) {
       store.commit('ui/setUnlocked', state.unlocked);
@@ -50,12 +51,12 @@ async function setupBackground(extensionPort: any) {
 
 async function init(name: string) {
   const extensionPort = chrome.runtime.connect({ name });
-  console.log(extensionPort, 'extensionPort?');
+  // console.log(extensionPort, 'extensionPort?');
   Vue.use(Background, { background: await setupBackground(extensionPort) });
   Vue.use(IndexedDb);
 
   const requestId = getRequestId();
-  console.log(requestId, 'requestId?');
+  // console.log(requestId, 'requestId?');
   if (requestId) {
     router.beforeEach(enforceRequest);
     store.commit('request/setRequestId', requestId);
@@ -74,7 +75,7 @@ async function init(name: string) {
   // https://stackoverflow.com/questions/66618136/persistent-service-worker-in-chrome-extension
   extensionPort.onDisconnect.addListener(async () => {
     const extensionPort = chrome.runtime.connect({ name });
-    console.log(extensionPort, 'extensionPort?22');
+    // console.log(extensionPorqt, 'extensionPort?22');
     vue.$setBackground(await setupBackground(extensionPort));
   });
 }

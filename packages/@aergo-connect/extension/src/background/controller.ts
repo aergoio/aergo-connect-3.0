@@ -49,26 +49,27 @@ class BackgroundController extends EventEmitter {
       appName: 'aergo-browser-wallet',
       instanceId: this.id,
     });
-
+    console.log(this.wallet, 'wallet');
     this.wallet.use(AergoscanTransactionScanner as any);
     this.wallet.useStorage(store).then(async () => {
       if (!this.wallet.datastore) throw new Error('wallet failed to initiate storage');
 
-      // this.firstLoad(); temp
+      // this.firstLoad();
+      //temp
       // Load custom defined chains
       try {
         const customChains = await this.wallet.datastore.getIndex('settings').get('customChains');
-
         if (customChains && customChains.data) {
           for (const chainId of Object.keys(customChains.data)) {
-            // @ts-ignore
             this.wallet.useChain({
               chainId,
-              nodeUrl: customChains.data[chainId]?.toString(),
+              // @ts-ignore
+              nodeUrl: customChains.data[chainId]?.nodeUrl,
             });
           }
         }
       } catch (e) {
+        console.log('not Found');
         // not found
       }
     });
@@ -148,8 +149,6 @@ class BackgroundController extends EventEmitter {
   }
 
   trackAccount(account: Account, onceCb?: (account: Account) => void) {
-    console.log('this.wallet.accountManager', this.wallet.accountManager);
-    console.log('account', account);
     const accountTracker = this.wallet.accountManager.trackAccount(account);
 
     this.wallet.transactionManager.trackAccount(account);

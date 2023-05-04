@@ -12,7 +12,7 @@
       @confirm="handlePassword"
     />
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
-    <SendFinishModal
+    <!-- <SendFinishModal
       v-if="sendFinishModal"
       :asset="asset"
       :txHash="txHash"
@@ -23,14 +23,14 @@
       :fee="fee"
       :userNftData="userNftData"
       :balance="balance"
-    />
+    /> -->
     <Header button="back" title="Send" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
+          <!-- <div :class="`circle ${$store.state.accounts.chainId}`" /> -->
           <div class="network">
-            {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+            {{ networkName }}
           </div>
         </div>
         <div class="account_wrapper">
@@ -353,6 +353,14 @@ export default Vue.extend({
     getTokens() {
       return this.$store.getters[`accounts/getTokens`];
     },
+    networkName() {
+      const chainId = this.$store.state.accounts.chainId;
+      if (chainId === ('aergo.io' || 'testnet.aergo.io' || 'alpha.aergo.io')) {
+        return `AERGO ${chainId.toUpperCase()}`;
+      } else {
+        return `${chainId.toUpperCase()}`;
+      }
+    },
   },
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
@@ -487,8 +495,13 @@ export default Vue.extend({
     },
     validateAddress(address) {
       try {
+        const aergoGovernance = ['aergo.system', 'aergo.name', 'aergo.enterprise'];
+
         const validateAddressValue = new Address(address);
-        console.log(validateAddressValue, 'validateAddressValue');
+        // console.log(validateAddressValue, 'validateAddressValue');
+        if (aergoGovernance.includes(address)) {
+          return true;
+        }
         if (address.length !== 52) {
           return false;
         } else if (
@@ -543,7 +556,7 @@ export default Vue.extend({
         // return;
       }
       // console.log(this.inputTo, 'inputTo');
-      console.log(this.validateAddress(this.inputTo), 'validateAddress');
+      // console.log(this.validateAddress(this.inputTo), 'validateAddress');
       if (!this.validateAddress(this.inputTo)) {
         this.notification = true;
         this.notificationText = 'Please Check your Address.';
@@ -553,7 +566,7 @@ export default Vue.extend({
         this.txBody.to = this.inputTo;
         this.txBody.amount = `${this.inputAmount} ${this.txBody.unit}`;
         // this.txBody.type = this.$store.state.ui.txType.indexOf(this.txBody.type);
-        console.log(this.txBody, 'txBody');
+        // console.log(this.txBody, 'txBody');
       } else if (this.tokenType == 'ARC1') {
         this.txBody.to = this.getTokens[this.asset].hash;
         this.txBody.amount = `0 ${this.txBody.unit}`;
@@ -620,7 +633,7 @@ export default Vue.extend({
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         this.txHash = hash;
         const result = await this.$background.getTransactionReceipt(
-          this.$store.state.accounts.network,
+          this.$store.state.accounts.chainId,
           this.txHash,
         );
         this.setStatus('success', 'Done');
@@ -631,14 +644,19 @@ export default Vue.extend({
           // eslint-disable-next-line no-undef
           this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
           this.$store.dispatch('accounts/updateAccount', {
-            chainId: this.$store.state.accounts.network,
             address: this.$store.state.accounts.address,
+            chainId: this.$store.state.accounts.chainId,
           });
           await this.$store.dispatch('accounts/initState');
-          this.balance = await this.getTokens[this.asset].balance;
+          // this.balance = await this.getTokens[this.asset].balance;
           setTimeout(() => {
             this.statusDialogVisible = false;
-            this.sendFinishModal = true;
+            this.$store.commit('ui/clearInput', { key: 'send' });
+            if (this.$store.state.accounts.option === 'nft') {
+              this.$router.push({ name: 'accounts-list' });
+            } else {
+              this.$router.push({ name: 'token-detail' }).catch(() => {});
+            }
           }, 1000);
         } else if (result.status === 'ERROR') {
           this.statusDialogVisible = false;
@@ -658,7 +676,7 @@ export default Vue.extend({
     async signWithLedger(txBody) {
       const { tx } = await this.$background.prepareTransaction(
         txBody,
-        this.$store.state.accounts.network,
+        this.$store.state.accounts.chainId,
       );
       tx.payload = txBody.payload;
       this.setStatus('loading', 'Connecting to Ledger device...');
@@ -685,13 +703,14 @@ export default Vue.extend({
     async sendTransaction(txBody) {
       this.setStatus('loading', 'Sending to network...');
       try {
-        console.log(this.txBody, 'txbody? payload ??');
+        // console.log(this.txBody, 'txbody? payload ??');
         const result = await this.$background.sendTransaction(
           txBody,
-          this.$store.state.accounts.network,
+          this.$store.state.accounts.chainId,
         );
         if ('tx' in result) {
-          console.log(result, 'here4');
+          // console.log(result, 'here4');
+          this.$store.commit('accounts/getLastestSendHash', result.tx.hash);
           return result.tx.hash;
         } else {
           // This shouldn't happen normally

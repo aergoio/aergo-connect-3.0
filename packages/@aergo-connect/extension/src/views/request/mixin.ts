@@ -19,7 +19,7 @@ export class RequestMixin extends Vue {
 
   async mounted() {
     this.request = await this.$store.dispatch('request/getRequest');
-    console.log(this.request, 'requset in externalRequest');
+    // console.log(this.request, 'requset in externalRequest');
     if (!this.$store.state.accounts.address) {
       this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
     }

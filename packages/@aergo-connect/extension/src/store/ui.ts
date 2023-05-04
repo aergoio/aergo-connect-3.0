@@ -28,7 +28,6 @@ export interface UiState {
     currentPath: string;
     previousPath: string;
   };
-  dropdownClickNum: number;
 }
 
 const storeModule: Module<UiState, RootState> = {
@@ -45,7 +44,6 @@ const storeModule: Module<UiState, RootState> = {
       currentPath: '',
       previousPath: '',
     },
-    dropdownClickNum: 0,
   },
   getters: {
     getSetting:
@@ -95,9 +93,6 @@ const storeModule: Module<UiState, RootState> = {
       if (route.fullPath === state.route.currentPath) return;
       state.route.previousPath = state.route.currentPath;
       state.route.currentPath = route.fullPath;
-    },
-    setDropdownClickNum(state, num: number) {
-      state.dropdownClickNum = num;
     },
   },
   actions: {

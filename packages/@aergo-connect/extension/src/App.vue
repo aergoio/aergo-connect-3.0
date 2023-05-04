@@ -24,7 +24,7 @@ export default Vue.extend({
     // );
     const unlocked = await this.$background.isUnlocked();
 
-    console.log(unlocked, 'unlocked');
+    // console.log(unlocked, 'unlocked');
     this.$store.commit('ui/setUnlocked', unlocked);
 
     if (!unlocked) {

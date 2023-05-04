@@ -2,7 +2,7 @@
   <ScrollView>
     <Header
       button="hamburger"
-      :title="$store?.state?.accounts?.network"
+      :title="networkName"
       refresh
       network
       @hamburgerClick="hamburgerClick"
@@ -148,15 +148,7 @@
             />
           </li>
         </ul>
-
-        <ul
-          v-if="tab === `nft`"
-          :class="[
-            nftCountNum > 2 || dropdownScroll || $store?.state?.ui?.dropdownClickNum > 1
-              ? 'token_list_ul scroll'
-              : 'token_list_ul',
-          ]"
-        >
+        <ul v-if="tab === `nft`" class="token_list_ul nft scroll">
           <li
             v-for="token in getTokens"
             :class="[myNFTCount(token?.hash) ? `token_list_li` : `token_list_li none`]"
@@ -200,7 +192,7 @@
             <ul class="nft_inventory_list_wrapper" v-if="token?.dropdownState">
               <div class="row">
                 <li
-                  v-for="(nftWalletItem, i) in getTokens[token.hash].nftWallet"
+                  v-for="(nftWalletItem, i) in token?.nftWallet"
                   :key="`${i + nftWalletItem?.hash}`"
                   class="nft_inventory_list_wrapper_list"
                   @click="handleGoNftInventory(nftWalletItem)"
@@ -229,6 +221,7 @@
         <button
           class="token_list_button"
           @click="[tab === 'token' ? handleImportAsset('token') : handleImportAsset('nft')]"
+          :disabled="!getScanApi"
         >
           <Icon name="plus" class="token_list_button_img" />
           <span class="token_list_button_text">{{
@@ -287,7 +280,7 @@ export default Vue.extend({
       accountDetailModal: false,
       notification: false,
       notificationText: '',
-      network: this.$store?.state?.accounts?.network,
+      chainId: this.$store?.state?.accounts?.chainId,
       address: this.$store?.state?.accounts?.address,
       tab: 'token',
       tokensCount: 0,
@@ -296,23 +289,19 @@ export default Vue.extend({
       nick: this.$store.state.accounts.nick,
       isLoading: false,
       tokens: [],
-      dropdownScroll: false,
-      dropdownClickNum: 0,
       errorModal: false,
       errorMessage: '',
+      isAddedNft: false,
     };
   },
-  beforeMount() {
+
+  async beforeMount() {
     this.initAccount();
     this.tab = this.$store.state.accounts.option || 'token';
   },
 
   watch: {
-    $route(to, from) {
-      this.refreshClick();
-    },
-
-    '$store.state.accounts.network': function () {
+    '$store.state.accounts.chainId': function () {
       this.initAccount();
     },
 
@@ -330,17 +319,32 @@ export default Vue.extend({
         }, 2000);
       }
     },
-    nftCountNum() {
-      if (this.nftCountNum === 0) {
-        this.$store.commit('ui/setDropdownClickNum', 0);
-      }
-    },
   },
+
   computed: {
     getTokens() {
       return this.$store.getters[`accounts/getTokens`];
     },
+    getScanApi() {
+      const scanApiUrl = this.$store.state.accounts.networksPath.filter(
+        (network) => network.chainId === this.$store.state.accounts.chainId,
+      )[0].scanApiUrl;
+      return scanApiUrl;
+    },
+    getChainId() {
+      const chainId = this.$store.state.accounts.networksPath.filter(
+        (network) => network.chainId === this.$store.state.accounts.chainId,
+      )[0].scanApiUrl;
+      return chainId;
+    },
+    networkName() {
+      const networkLabel = this.$store.state.accounts.networksPath.filter(
+        (network) => network.chainId === this.$store.state.accounts.chainId,
+      )[0].label;
+      return networkLabel;
+    },
   },
+
   methods: {
     async changeNick() {
       if (this.nick.length < 12 && this.nick.length !== 0) {
@@ -360,22 +364,16 @@ export default Vue.extend({
     },
 
     async initAccount() {
-      this.isLoading = true;
       try {
+        this.isLoading = true;
         this.tokensCount = 0;
         this.nftCountNum = 0;
         if (this.$store.state.accounts.address) {
-          const response = await this.$store.dispatch('accounts/initState');
-          if (response === 'initError') {
-            this.errorModal = true;
-            this.errorMessage = 'ERR_INTERNET_DISCONNECTED';
-            return;
-          }
+          await this.$store.dispatch('accounts/initState');
           this.nick = await this.$store.state.accounts.nick;
           await this.myNFTList();
           await this.checkIsUpdateNft();
           await this.$forceUpdate();
-          console.log('here? 1');
           this.errorMessage = '';
           this.isLoading = false;
         } else {
@@ -384,14 +382,14 @@ export default Vue.extend({
           this.errorMessage = '';
           if (!succ) {
             this.noAccountModal = true;
-          } else {
-            await this.$store.dispatch('accounts/initState');
           }
+          //  else {
+          //   await this.$store.dispatch('accounts/initState');
+          // }
         }
       } catch (e) {
-        console.error(e, 'error');
         this.errorModal = true;
-        this.errorMessage = `${e}`;
+        this.errorMessage = `CONNECTION_TIMED_OUT: ${e}`;
       } finally {
         this.isLoading = false;
       }
@@ -477,13 +475,11 @@ export default Vue.extend({
       this.$router.push({ name: 'token-detail' }).catch(() => {});
     },
 
-    handleNft(nft: any) {
-      this.$store.commit('accounts/setSelectedToken', nft.hash);
-      this.$store.commit('accounts/handleDropdownState', nft.hash);
-
-      if (this.getTokens[nft.hash].nftWallet.length > 3) {
-        this.dropdownScroll = true;
-      }
+    handleNft(token) {
+      const dropdownState = !this.getTokens[token.hash][`dropdownState`];
+      this.$store.commit('accounts/setSelectedToken', token.hash);
+      this.$store.commit('accounts/handleDropdownState', { hash: token.hash, dropdownState });
+      this.$forceUpdate();
     },
 
     handleImportAsset(to: string) {
@@ -516,13 +512,13 @@ export default Vue.extend({
     },
     // getNftDataInLocalStorage() {
     //   const myWalletAddress = this.$store.state.accounts.address;
-    //   const myWalletNetwork = this.$store.state.accounts.network;
+    //   const myWalletChainId = this.$store.state.accounts.chainId;
     //   const myTokenList =
-    //     this.$store.state.accounts.accounts[myWalletAddress].token[myWalletNetwork];
+    //     this.$store.state.accounts.accounts[myWalletAddress].token[myWalletChainId];
     //   const myTokenListKeys = Object.keys(myTokenList);
     //   myTokenListKeys.map((myTokenKey) => {
     //     const getMyNftWalletLocalStorage = JSON.parse(
-    //       localStorage.getItem(`${myWalletAddress}_${myWalletNetwork}_${myTokenKey}`) || '[]',
+    //       localStorage.getItem(`${myWalletAddress}_${myWalletChainId}_${myTokenKey}`) || '[]',
     //     );
     //     if (getMyNftWalletLocalStorage.length > 0) {
     //       this.$store.commit('accounts/setNftWallet', {
@@ -538,9 +534,6 @@ export default Vue.extend({
       if (!this.getTokens[hash].nftWallet) {
         return null;
       } else {
-        if (this.getTokens[hash].nftWallet.length > 2) {
-          this.dropdownScroll = true;
-        }
         return this.getTokens[hash].nftWallet.length;
       }
     },
@@ -567,11 +560,14 @@ export default Vue.extend({
                 const tokenUri = nft.meta.token_uri;
                 const fetchData = await fetch(tokenUri);
                 const jsonData = await fetchData.json();
+                console.log(jsonData, 'jsonData');
                 const imageUrl = jsonData.image_url;
+                console.log(imageUrl, 'imageUrl');
                 if (imageUrl !== nft.meta.image_url) {
+                  console.log(nft, 'nft???');
                   // const localStorageNftData = await this.$store.getters.getNftInLocalStorage({
                   //   account: nft.meta.account,
-                  //   network: this.$store.state.accounts.network,
+                  //   chainId: this.$store.state.accounts.chainId,
                   //   contractAddress: nft.meta.address,
                   // });
 
@@ -726,6 +722,10 @@ export default Vue.extend({
       height: 19.8rem;
       overflow-x: hidden;
       overflow-y: hidden;
+      &.nft {
+        margin-left: 14px;
+        width: 405px;
+      }
       &.scroll {
         overflow-y: scroll;
       }
@@ -908,6 +908,14 @@ export default Vue.extend({
       cursor: pointer;
       margin-top: 10px;
       margin-bottom: 10px;
+
+      &[disabled] {
+        cursor: not-allowed;
+        background: $Grey02;
+        color: #fff;
+        outline-color: #fff;
+        opacity: 0.3;
+      }
       .token_list_button_text {
         /* Caption/C3 */
         font-family: 'Outfit';
@@ -925,7 +933,7 @@ export default Vue.extend({
         flex-grow: 0;
       }
     }
-    .token_list_button:hover {
+    .token_list_button:not([disabled]):hover {
       background: #279ecc;
 
       .token_list_button_text {

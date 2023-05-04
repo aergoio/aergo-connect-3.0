@@ -1,6 +1,7 @@
 const tuple = <T extends string[]>(...args: T) => args;
 
 export interface ChainConfig {
+  label: string;
   chainId: string;
   nodeUrl: string;
   scanExplorerUrl?: string;
@@ -9,19 +10,22 @@ export interface ChainConfig {
 
 export const ChainConfigs: ChainConfig[] = [
   {
-    chainId: 'mainnet',
+    label: 'mainnet',
+    chainId: 'aergo.io',
     nodeUrl: 'https://mainnet-api-http.aergo.io',
     scanExplorerUrl: 'https://mainnet.aergoscan.io',
     scanApiUrl: 'https://api2-mainnet.aergoscan.io/v2',
   },
   {
-    chainId: 'testnet',
+    label: 'testnet',
+    chainId: 'testnet.aergo.io',
     nodeUrl: 'https://testnet-api-http.aergo.io',
     scanExplorerUrl: 'https://testnet.aergoscan.io',
     scanApiUrl: 'https://api2-testnet.aergoscan.io/v2',
   },
   {
-    chainId: 'alpha',
+    label: 'alpha',
+    chainId: 'alpha.aergo.io',
     nodeUrl: 'https://alpha-api-http.aergo.io',
     scanExplorerUrl: 'https://alpha.aergoscan.io',
     scanApiUrl: 'https://api2-alpha.aergoscan.io/v2',
@@ -37,22 +41,25 @@ export function isPublicChainId(chainId: string): chainId is PublicChainId {
 
 export const PublicChainData: Record<
   PublicChainId,
-  { label: string; scanApiUrl: string; scanExplorerUrl: string; nodeUrl: string }
+  { label: string; chainId: string; scanApiUrl: string; scanExplorerUrl: string; nodeUrl: string }
 > = {
   mainnet: {
-    label: 'Mainnet',
+    label: 'mainnet',
+    chainId: 'aergo.io',
     scanApiUrl: 'https://api.aergoscan.io/mainnet/v2',
     scanExplorerUrl: 'https://mainnet.aergoscan.io',
     nodeUrl: 'https://mainnet-api-http.aergo.io',
   },
   testnet: {
-    label: 'Testnet',
+    label: 'testnet',
+    chainId: 'testnet.aergo.io',
     scanApiUrl: 'https://api.aergoscan.io/testnet/v2',
     scanExplorerUrl: 'https://testnet.aergoscan.io',
     nodeUrl: 'https://testnet-api-http.aergo.io',
   },
   alpha: {
-    label: 'Alpha',
+    label: 'alpha',
+    chainId: 'alpha.aergo.io',
     scanApiUrl: 'https://api2-alpha.aergoscan.io/v2',
     scanExplorerUrl: 'https://alpha.aergoscan.io',
     nodeUrl: 'https://alpha-api-http.aergo.io',

@@ -14,7 +14,7 @@ async function setupController() {
 
   function connectRemote(remotePort) {
     const processName = remotePort.name;
-    console.log('Establishing connection with', processName);
+    // console.log('Establishing connection with', processName);
 
     if (processName === 'external') {
       remotePort.onMessage.addListener((msg, port) => {
@@ -26,10 +26,10 @@ async function setupController() {
       controller.state.set('active');
       controller.setupCommunication(portStream);
       controller.uiState.popupOpen = true;
-      console.log(remotePort, 'port');
+      // console.log(remotePort, 'port');
       endOfStream(portStream, () => {
         controller.uiState.popupOpen = false;
-        console.log('Closed connection with', processName);
+        // console.log('Closed connection with', processName);
         controller.state.set('inactive');
       });
     }
@@ -40,15 +40,15 @@ async function setupController() {
   extension.idle.setDetectionInterval(60);
 
   extension.idle.onStateChanged.addListener((newState) => {
-    console.log('idle onStateChanged : ' + newState);
+    // console.log('idle onStateChanged : ' + newState);
     if (newState === 'idle' || newState === 'locked') {
       controller.lock();
     }
   });
 }
 
-console.log('AERGO Wallet Background Script');
-console.log('Extension ID', extension.runtime.id);
+// console.log('AERGO Wallet Background Script');
+// console.log('Extension ID', extension.runtime.id);
 
 if (!extension.runtime.id) {
   console.error('Script needs run in extension context. Aborting');

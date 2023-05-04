@@ -22,7 +22,7 @@ export default class RequestSelectAccount extends Vue {
       .push({
         name: 'request-select-action',
         params: {
-          chainId: this.$store.state.accounts.network,
+          chainId: this.$store.state.accounts.chainId,
           address: activeAccount.data.spec.address,
         },
       })

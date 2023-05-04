@@ -16,8 +16,8 @@
     <div class="nft_detail_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
-          <div class="network">{{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}</div>
+          <!-- <div :class="`circle ${$store.state.accounts.chainId}`" /> -->
+          <div class="network">{{ networkName }}</div>
         </div>
         <div class="account_wrapper">
           <Identicon :text="$store.state.accounts.address" class="account_icon" />
@@ -165,6 +165,14 @@ export default Vue.extend({
     getTokens() {
       return this.$store.getters[`accounts/getTokens`];
     },
+    networkName() {
+      const chainId = this.$store.state.accounts.chainId;
+      if (chainId === ('aergo.io' || 'testnet.aergo.io' || 'alpha.aergo.io')) {
+        return `AERGO ${chainId.toUpperCase()}`;
+      } else {
+        return `${chainId.toUpperCase()}`;
+      }
+    },
   },
 
   beforeMount() {
@@ -228,7 +236,7 @@ export default Vue.extend({
     },
     async refreshClick() {
       this.isLoading = true;
-      console.log('refresh');
+      // console.log('refresh');
       // if (this.tabState === 'inventory') await this.getNftInventory();
       // else await this.getNftHistory();
       this.isLoading = false;

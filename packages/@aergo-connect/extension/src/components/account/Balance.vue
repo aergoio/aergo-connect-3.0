@@ -82,7 +82,7 @@ export default class Balance extends Vue {
     return {};
   }
   get balanceOfGem() {
-    console.log('balanceOfGem');
+    // console.log('balanceOfGem');
     return this.balances?.objects;
   }
 

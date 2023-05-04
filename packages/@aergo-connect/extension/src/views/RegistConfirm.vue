@@ -70,7 +70,7 @@ export default class RegistConfirm extends mixins() {
     this.address = await this.$store.state.accounts.address;
     this.nick = await this.$store.state.accounts.nick;
 
-    console.log('created in ', this.nick, this.address);
+    // console.log('created in ', this.nick, this.address);
   }
   async goBackup() {
     this.$store.commit('accounts/setNick', this.nick);
@@ -87,7 +87,7 @@ export default class RegistConfirm extends mixins() {
   }
 
   async goHome() {
-    console.log('created', this.$store.state.accounts.nick);
+    // console.log('created', this.$store.state.accounts.nick);
     this.$store.commit('accounts/setNick', this.nick);
     this.$router.push({ name: 'accounts-list' });
   }

@@ -67,11 +67,7 @@ export default Vue.extend({
     async selectAccount(account: any) {
       await this.$store.commit('accounts/setActiveAccount', account.address);
       await this.$background.setActiveAccount({
-        chainId: `${
-          this.$store.state.accounts.network === 'mainnet'
-            ? `aergo.io`
-            : `${this.$store.state.accounts.network}.aergo.io`
-        }`,
+        chainId: `${this.$store.state.accounts.chainId}`,
         address: account.address,
       });
       if (this.$store.state.request.currentRequest.action === 'SIGN') {

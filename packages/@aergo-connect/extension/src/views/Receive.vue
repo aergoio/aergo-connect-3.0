@@ -13,9 +13,9 @@
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
+          <!-- <div :class="`circle ${$store.state.accounts.chainId}`" /> -->
           <div class="network">
-            {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+            {{ networkName }}
           </div>
         </div>
         <div class="account_wrapper">
@@ -174,6 +174,14 @@ export default Vue.extend({
   computed: {
     getTokens() {
       return this.$store.getters[`accounts/getTokens`];
+    },
+    networkName() {
+      const chainId = this.$store.state.accounts.chainId;
+      if (chainId === ('aergo.io' || 'testnet.aergo.io' || 'alpha.aergo.io')) {
+        return `AERGO ${chainId.toUpperCase()}`;
+      } else {
+        return `${chainId.toUpperCase()}`;
+      }
     },
   },
   async beforeMount() {

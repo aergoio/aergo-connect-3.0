@@ -88,12 +88,12 @@ export default class AccountBalanceList extends Vue {
   }
 
   get balanceOfCoin() {
-    console.log('balanceOfCoin');
+    // console.log('balanceOfCoin');
     return this.balances?.coin;
   }
 
   get balanceOfGem() {
-    console.log('balanceOfGem');
+    // console.log('balanceOfGem');
     return this.balances?.objects;
   }
 

@@ -3,15 +3,15 @@
     <div class="sendfinish_modal_wrapper">
       <div class="flex-column">
         <Icon :name="`confirmation`" />
-        <div class="title">Transaction Sent!</div>
+        <div class="title">Transaction Receipt</div>
       </div>
       <div class="detail_form">
         <div class="flex-row">
           <div class="title">Network</div>
           <div class="flex-row network">
             <div class="detail network">
-              <!-- <div :class="`circle ${$store.state.accounts.network}`" /> -->
-              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+              <!-- <div :class="`circle ${$store.state.accounts.chainId}`" /> -->
+              {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>
           </div>
         </div>
@@ -19,13 +19,9 @@
         <div class="flex-row">
           <div class="title">Hash</div>
           <div class="flex-row">
-            <a
-              class="detail address"
-              :href="`https://${$store.state.accounts.network}.aergoscan.io/transaction/${txHash}`"
-              target="blank"
-            >
+            <span class="detail address" @click="goToScanTx(txHash)" :style="{ cursor: 'pointer' }">
               {{ txHash }}
-            </a>
+            </span>
           </div>
         </div>
         <div class="line" />
@@ -56,11 +52,11 @@
           <div class="detail fee">No Receipt</div>
         </div>
         <div class="line" />
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="title balance">Update Balance</div>
           <div class="detail balance">{{ String(Number(balance).toFixed(3)) }}</div>
-        </div>
-        <div class="line" />
+        </div> -->
+        <!-- <div class="line" /> -->
       </div>
       <Button class="finish_modal_button" size="medium" type="primary" @click="handleOk" hover
         >OK</Button
@@ -74,6 +70,7 @@ import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import ButtonGroup from '../buttons/ButtonGroup.vue';
 import Button from '../buttons/Button.vue';
+import { getScanExplorerUrl } from '@aergo-connect/extension/src/utils/chain-urls';
 
 export default Vue.extend({
   components: { Icon, Button, ButtonGroup },
@@ -90,13 +87,21 @@ export default Vue.extend({
   },
 
   methods: {
+    // handleOk() {
+    //   this.$store.commit('ui/clearInput', { key: 'send' });
+    //   if (this.$store.state.accounts.option === 'nft') {
+    //     this.$router.push({ name: 'accounts-list' });
+    //   } else {
+    //     this.$router.push({ name: 'token-detail' }).catch(() => {});
+    //   }
+    // },
+    goToScanTx(hash) {
+      const scanExplorerUrl = getScanExplorerUrl(this.$store.state.accounts);
+      const url = `${scanExplorerUrl}/transaction/${hash}`;
+      window.open(url, '_blank');
+    },
     handleOk() {
-      this.$store.commit('ui/clearInput', { key: 'send' });
-      if (this.$store.state.accounts.option === 'nft') {
-        this.$router.push({ name: 'accounts-list' });
-      } else {
-        this.$router.push({ name: 'token-detail' }).catch(() => {});
-      }
+      this.$emit('clickOk', false);
     },
   },
 });
@@ -114,9 +119,9 @@ export default Vue.extend({
   .sendfinish_modal_wrapper {
     position: absolute;
     width: 313px;
-    height: 425px;
+    height: 395px;
     left: 31px;
-    top: 83px;
+    top: 90px;
     background: #ffffff;
     border-radius: 8px;
     display: flex;
@@ -218,7 +223,7 @@ export default Vue.extend({
           &.address {
             text-decoration: underline;
             margin-left: 28px;
-            width: 178px;
+            width: 185px;
             text-align: right;
             word-break: break-all;
             &.nounderline {
@@ -248,7 +253,7 @@ export default Vue.extend({
       .line {
         margin-top: 4px;
         /* Grey/01 */
-        width: 265px;
+        /* width: 265px; */
         border: 1px solid #f0f0f0;
       }
     }

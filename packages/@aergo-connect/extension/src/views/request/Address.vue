@@ -1,15 +1,15 @@
 <template>
   <ScrollView class="page">
-    <!-- <Header :title="$store.state.accounts.network" network /> -->
+    <!-- <Header :title="$store.state.accounts.chainId" network /> -->
     <div class="account_info_wrapper">
       <Icon :name="`back`" @click="handleGoBack" />
       <Identicon :text="$store.state.accounts.address" class="account_info_img" />
       <div class="account_info_content_wrapper address">
         <div class="account_info_nickname_wrapper address">
           <div class="account_info_network_wrapper">
-            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.network}`" /> -->
+            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.chainId}`" /> -->
             <div class="account_info_network">
-              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+              {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>
           </div>
           <div class="account_info_nickname_text">
@@ -86,9 +86,7 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 export default class RequestAddress extends mixins(RequestMixin) {
   async confirmHandler() {
     const address = this.$store.state.accounts.address;
-    let chainId = '';
-    if (this.$store.state.accounts.network === 'mainnet') chainId = 'aergo.io';
-    else chainId = `${this.$store.state.accounts.network}.aergo.io`;
+    const chainId = this.$store.state.accounts.chainId;
     return {
       account: {
         address,

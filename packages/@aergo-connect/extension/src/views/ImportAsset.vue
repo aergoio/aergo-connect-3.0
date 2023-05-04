@@ -36,9 +36,9 @@
           :icon="`warning2`"
         />
         <div class="network_wrapper">
-          <!-- <div :class="`network_circle ${$store.state.accounts.network}`" /> -->
+          <!-- <div :class="`network_circle ${$store.state.accounts.chainId}`" /> -->
           <div class="network_text">
-            {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+            {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
           </div>
         </div>
 
@@ -119,9 +119,9 @@
       <div v-if="tabState === `custom`">
         <div class="custom_wrapper">
           <div class="network_wrapper">
-            <!-- <div :class="`network_circle ${$store.state.accounts.network}`" /> -->
+            <!-- <div :class="`network_circle ${$store.state.accounts.chainId}`" /> -->
             <div class="network_text">
-              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+              {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>
           </div>
           <div class="custom_detail_wrapper">
@@ -347,6 +347,12 @@ export default Vue.extend({
     getTokens() {
       return this.$store.getters[`accounts/getTokens`];
     },
+    getNodeUrl() {
+      const nodeUrl = this.$store.state.accounts.networksPath.filter(
+        (network) => network.chainId === this.$store.state.accounts.chainId,
+      )[0].nodeUrl;
+      return nodeUrl;
+    },
   },
   methods: {
     handleBack() {
@@ -367,9 +373,9 @@ export default Vue.extend({
           return res.json();
         })
         .then((data) => {
-          console.log(data, 'data?');
+          // console.log(data, 'data?');
           this.results = [...data.hits];
-          console.log(this.results, 'this.results');
+          // console.log(this.results, 'this.results');
         });
     }, 500),
 
@@ -457,16 +463,18 @@ export default Vue.extend({
             nft.meta.token_id ===
             (this.tabState === 'search' ? this.userInputNftId : this.customInputNftId),
         );
-
+        console.log(filteredNft, 'filteredNft');
         if (filteredNft.length === 0) {
           this.notification = true;
           this.notificationText = `Check Your NFT ID`;
         } else {
           const nftId = filteredNft[0].meta.token_id;
-          const img_url = await this.getNftDataInHera('get_metadata', filteredNft[0].meta.address, [
+          console.log(nftId, 'nftId');
+          const img_url = await this.getNftImageUrl('get_metadata', filteredNft[0].meta.address, [
             nftId,
             'image_url',
           ]);
+          console.log(img_url, 'img_url');
           const addImgNft = { ...filteredNft[0], meta: { ...filteredNft[0].meta, img_url } };
           this.token = addImgNft.token;
           this.nftData = addImgNft.meta;
@@ -475,8 +483,15 @@ export default Vue.extend({
             this.notification = true;
             this.notificationText = `Already Added ARC2 NFT`;
           } else {
-            await this.$store.dispatch('accounts/addToken', { ...addImgNft.token, nftWallet: [] });
-            await this.$store.dispatch('accounts/initState');
+            if (checkLocalStorageNftId.length === 0) {
+              // console.log(addImgNft, 'addImgNft');
+              await this.$store.dispatch('accounts/addToken', {
+                ...addImgNft.token,
+                dropdownState: true,
+                nftWallet: [],
+              });
+              // await this.$store.dispatch('accounts/initState');
+            }
             await this.$store.commit('accounts/addNftToLocalStorage', addImgNft);
             this.importSuccessNft = true;
           }
@@ -600,11 +615,12 @@ export default Vue.extend({
 
     async getNftImageUrl(method, contractAddress, args) {
       try {
-        const isPublic = await isPublicChainId(this.$store.state.accounts.network);
-        const nodeURL = await PublicChainData[this.$store.state.accounts.network]['nodeUrl'];
-        const imgUrl = isPublic
-          ? await getContractMethodResult(nodeURL, method, contractAddress, args)
-          : null;
+        const imgUrl = await getContractMethodResult(
+          this.getNodeUrl,
+          method,
+          contractAddress,
+          args,
+        );
         return imgUrl;
       } catch (e) {
         console.error(e, 'error Log');

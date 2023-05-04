@@ -126,7 +126,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
   @Watch('seedPhrase', { immediate: true, deep: true })
   exampleMethod() {
     this.validateSeedPhrase();
-    console.log(this.errors);
+    // console.log(this.errors);
   }
 
   async loadKeystore(): Promise<void> {
@@ -157,7 +157,7 @@ export default class Keystore extends mixins(PersistInputsMixin) {
         name: 'regist-confirm',
       });
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       this.errors.derivationPath = `${e}`;
     } finally {
       this.loading = false;

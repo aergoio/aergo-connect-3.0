@@ -9,7 +9,7 @@ const controller = new BackgroundController();
 
 chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
   const processName = remotePort.name;
-  console.log('Establishing connection with', remotePort);
+  // console.log('Establishing connection with', remotePort);
   function deleteTimer(port) {
     if (port._timer) {
       clearTimeout(port._timer);
@@ -35,7 +35,7 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
 
     endOfStream(portStream, () => {
       controller.uiState.popupOpen = false;
-      console.log('Closed connection with', processName);
+      // console.log('Closed connection with', processName);
       controller.state.set('inactive');
     });
   }
@@ -46,7 +46,7 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
 chrome.idle.setDetectionInterval(60);
 
 chrome.idle.onStateChanged.addListener((newState) => {
-  console.log('idle onStateChanged : ' + newState);
+  // console.log('idle onStateChanged : ' + newState);
   if (newState === 'idle' || newState === 'locked') {
     controller.lock();
   }

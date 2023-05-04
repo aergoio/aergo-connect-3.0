@@ -44,7 +44,7 @@ export default Vue.extend({
     // },
     handleFileInput(): void {
       const $elem = this.$refs.inputElement as HTMLInputElement;
-      console.log('file up');
+      // console.log('file up');
       if (!$elem || !$elem.files || $elem.files.length === 0) return;
       const reader = new FileReader();
       reader.onload = (e) => {

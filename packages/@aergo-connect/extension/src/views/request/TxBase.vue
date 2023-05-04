@@ -6,9 +6,9 @@
       <div class="account_info_content_wrapper address">
         <div class="account_info_nickname_wrapper address">
           <div class="account_info_network_wrapper">
-            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.network}`" /> -->
+            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.chainId}`" /> -->
             <div class="account_info_network">
-              {{ `AERGO ${$store.state.accounts.network.toUpperCase()}` }}
+              {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>
           </div>
           <div class="account_info_nickname_text">
@@ -101,7 +101,7 @@ export default class TxBase extends mixins(RequestMixin) {
   get accountSpec() {
     return {
       address: this.$store.state.accounts.address,
-      chainId: this.$store.state.accounts.network,
+      chainId: this.$store.state.accounts.chainId,
     };
   }
   // get account(): Account {
@@ -137,7 +137,7 @@ export default class TxBase extends mixins(RequestMixin) {
   async signWithLedger(txBody: any) {
     const { tx } = await this.$background.prepareTransaction(
       txBody,
-      this.$store.state.accounts.network,
+      this.$store.state.accounts.chainId,
     );
     tx.payload = txBody.payload;
     this.setStatus('loading', 'Connecting to Ledger device...');
@@ -165,7 +165,7 @@ export default class TxBase extends mixins(RequestMixin) {
     this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
   }
   async confirmHandler(): Promise<any> {
-    console.log('RequestSend confirmHandler');
+    // console.log('RequestSend confirmHandler');
     if (!this.request) return;
     let txBody = {
       ...this.request.data,
@@ -173,7 +173,7 @@ export default class TxBase extends mixins(RequestMixin) {
       from: this.$store.state.accounts.address,
     };
 
-    console.log('txBody', txBody);
+    // console.log('txBody', txBody);
 
     if (!this.account) {
       // This shouldn't happen normally
@@ -194,10 +194,10 @@ export default class TxBase extends mixins(RequestMixin) {
       this.setStatus('loading', 'Calculating signature...');
       const result = await this.$background.signTransaction(
         txBody,
-        this.$store.state.accounts.network,
+        this.$store.state.accounts.chainId,
       );
 
-      console.log('sign', result);
+      // console.log('sign', result);
 
       if ('tx' in result) {
         return {
@@ -208,10 +208,10 @@ export default class TxBase extends mixins(RequestMixin) {
     } else {
       this.setStatus('loading', 'Sending to network...');
       const result = await timedAsync(
-        this.$background.sendTransaction(txBody, this.$store.state.accounts.network),
+        this.$background.sendTransaction(txBody, this.$store.state.accounts.chainId),
       );
 
-      console.log('noSign', result);
+      // console.log('noSign', result);
 
       if ('tx' in result) {
         return {

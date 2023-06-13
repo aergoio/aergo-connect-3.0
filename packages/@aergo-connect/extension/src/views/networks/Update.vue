@@ -11,6 +11,7 @@
           label="Network Name"
           v-model="networkName"
           :state="availableNetwork && networkName ? 'valid' : !networkName ? 'initial' : 'invalid'"
+          :disabled="chainIdReadonly"
         />
         <TextField
           label="Node URL (http://... or https://...)"
@@ -134,7 +135,8 @@ export default class NetworkUpdate extends Vue {
         this.nodeUrlTested &&
         this.availableNetwork &&
         this.scanApiUrlTested &&
-        this.scanExplorerUrlTested
+        this.scanExplorerUrlTested &&
+        this.scanExplorerUrlValid
       );
     } else {
       return this.chainIdValid && this.nodeUrlTested && this.availableNetwork;
@@ -179,9 +181,6 @@ export default class NetworkUpdate extends Vue {
   }
 
   beforeMount() {
-    // if (this.$store.state.ui.input[`networks`][`paramsNetworkName`]) {
-    //   this.paramsNetworkName = this.$store.state.ui.input[`networks`][`paramsNetworkName`];
-    // }
     if (this.$store.state.ui.input[`networks`][`networkName`]) {
       this.networkName = this.$store.state.ui.input[`networks`][`networkName`];
     }
@@ -209,21 +208,16 @@ export default class NetworkUpdate extends Vue {
       this.chainId = this.$route.params.chainId;
       this.nodeUrl = 'Loading...';
       const chains = await this.$background.getNetworks();
-      // console.log(chains, 'chains');
-      const chain = chains[this.chainId] as any;
+      const chain = chains[this.networkName] as any;
       this.nodeUrl = chain['nodeUrl'];
       this.scanApiUrl = chain['scanApiUrl'];
       this.scanExplorerUrl = chain['scanExplorerUrl'];
       this.chainIdReadonly = true;
-      this.paramsName = this.$route.params.chainId;
+      this.paramsName = this.$route.params.label;
     }
     if (this.paramsName) {
       this.chainIdReadonly = true;
     }
-    // if (this.paramsNetworkName) {
-    //   this.networkName = this.paramsNetworkName;
-    //   this.chainIdReadonly = true;
-    // }
   }
 
   updated() {
@@ -271,7 +265,6 @@ export default class NetworkUpdate extends Vue {
     const aergo = new AergoClient({}, new GrpcWebProvider({ url: this.nodeUrl }));
     try {
       await aergo.blockchain();
-      console.log(aergo, 'aergoBlockChain1');
       this.chainInfo = await aergo.getChainInfo();
       this.nodeUrlTested = true;
       this.chainId = this.chainInfo.chainid.magic;
@@ -295,7 +288,6 @@ export default class NetworkUpdate extends Vue {
         //   '여기있는 데이터에 chainId를 가져와서 chainId 유효성 검사 해야함.',
         // );
         await aergo.blockchain();
-        console.log(aergo, 'aergoBlockChain2');
         this.chainInfo = await aergo.getChainInfo();
         if (response[0].hash === this.chainInfo.chainid.magic && this.scanApiUrlValid) {
           this.scanApiUrlTested = true;
@@ -311,31 +303,31 @@ export default class NetworkUpdate extends Vue {
 
   @Watch('scanExplorerUrl')
   async onScanExplorerUrlChanged() {
-    if (this.scanExplorerUrl) {
-      try {
-        const consensusUrl = `${this.scanExplorerUrl}/consensus`;
-        const accountUrl = `${this.scanExplorerUrl}/account/${this.$store.state.accounts.address}`;
-        const consensusRes = await fetch(consensusUrl);
-        const accountRes = await fetch(accountUrl);
+    // if (this.scanExplorerUrl) {
+    try {
+      const consensusUrl = `${this.scanExplorerUrl}/consensus`;
+      const accountUrl = `${this.scanExplorerUrl}/account/${this.$store.state.accounts.address}`;
+      const consensusRes = await fetch(consensusUrl);
+      const accountRes = await fetch(accountUrl);
 
-        // const [consensusRes, accountRes] = await Promise.all([
-        //   axios.get(consensusUrl),
-        //   axios.get(accountUrl),
-        // ]);
-        if (consensusRes.status === 200 && accountRes.status === 200) {
-          this.scanExplorerUrlTested = true;
-        } else {
-          this.scanExplorerUrlTested = false;
-        }
-      } catch (e) {
+      // const [consensusRes, accountRes] = await Promise.all([
+      //   axios.get(consensusUrl),
+      //   axios.get(accountUrl),
+      // ]);
+      if (consensusRes.status === 200 && accountRes.status === 200) {
+        this.scanExplorerUrlTested = true;
+      } else {
         this.scanExplorerUrlTested = false;
-        console.error(e);
-      } finally {
-        if (this.scanExplorerUrlTested === undefined) {
-          this.scanExplorerUrlTested = false;
-        }
+      }
+    } catch (e) {
+      this.scanExplorerUrlTested = false;
+      console.error(e);
+    } finally {
+      if (this.scanExplorerUrlTested === undefined) {
+        this.scanExplorerUrlTested = false;
       }
     }
+    // }
   }
 
   @Watch('notification')
@@ -362,30 +354,27 @@ export default class NetworkUpdate extends Vue {
       scanApiUrl: this.scanApiUrl,
       scanExplorerUrl: this.scanExplorerUrl,
     };
+    const publicChains = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
 
-    await this.$store.commit('accounts/setChainId', this.chainId);
     if (this.chainIdReadonly) {
       // update network
       const updateObject = {
         updateNetworkName: this.paramsName,
         networkPath: networkPath,
       };
-      await this.$background.updateNetwork(updateObject);
+      await this.$background.addNetwork(networkPath);
       await this.$forceUpdate();
       this.$store.commit('accounts/updateNetworkPath', updateObject);
     } else {
       // add network
       const alreadyAddedNetwork = this.$store.state.accounts.networksPath.filter((network) => {
-        console.log(network.label, 'network');
-        console.log(this.networkName, 'networkName');
         if (network.label === this.networkName) {
           return network;
         }
       });
-      console.log(alreadyAddedNetwork, 'alreadyAddedNetwork');
       if (alreadyAddedNetwork.length > 0) {
         this.notification = true;
-        this.notificationText = `This Network is already added. [${this.chainId}]`;
+        this.notificationText = `This Network is already added. [${this.networkName}]`;
         return;
       } else {
         await this.$background.addNetwork(networkPath);
@@ -396,6 +385,10 @@ export default class NetworkUpdate extends Vue {
     this.$store.commit('ui/clearInput', { key: 'networks' });
     this.$router.push({ name: 'networks-list' });
     await this.$store.commit('accounts/setActiveAccount', this.$store.state.accounts.address);
+    await this.$store.commit('accounts/setChain', {
+      chainId: this.chainId,
+      chainLabel: this.networkName,
+    });
   }
 
   backClick() {

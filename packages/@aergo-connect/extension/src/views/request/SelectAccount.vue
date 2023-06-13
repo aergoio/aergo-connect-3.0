@@ -17,12 +17,15 @@ export default class RequestSelectAccount extends Vue {
     if (!activeAccount) {
       return this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
     }
-
+    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+      ? this.$store.state.accounts.chainId
+      : this.$store.state.accounts.chainLabel;
     this.$router
       .push({
         name: 'request-select-action',
         params: {
-          chainId: this.$store.state.accounts.chainId,
+          chainId,
           address: activeAccount.data.spec.address,
         },
       })

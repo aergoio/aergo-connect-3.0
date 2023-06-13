@@ -33,18 +33,6 @@ function printParsed(input: string, decimals: number) {
   //   global.console.log(`${input}(${decimals}):=>  ${vals}`);
 }
 
-// printParsed("1.12233", 18);
-// printParsed("1.12233", 2);
-// printParsed("300", 3);
-// printParsed("1.12233a"); // ? 파싱이 안됨
-// printParsed("a1.12233"); // ? 파싱이 안됨.
-// printParsed("0.1000", 2); // ? 10
-// printParsed("0.1000", 18); // ?
-// printParsed("000.1010", 2);
-// printParsed("000.1010", 18);
-// printParsed("555.12345678901234567890123456789", 2); // ? 55512 뒤에 짜름.
-// printParsed("555.12345678901234567890123456789", 18);
-
 Number.prototype.countDecimals = function () {
   if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
 
@@ -60,17 +48,6 @@ String.prototype.countDecimals = function () {
   }
   return this.split('-')[1] || 0;
 };
-
-// global.console.log((23.453453453).countDecimals()); // 9
-// global.console.log((0.0000000001).countDecimals()); // 10
-// global.console.log((1.00000000000027).countDecimals()); // 13
-// global.console.log((101).countDecimals()); // 0
-
-// // const p1 = "1.12233";
-// global.console.log("1.12233".countDecimals()); // 5
-// global.console.log("1.12233000".countDecimals()); // 5
-// global.console.log("334".countDecimals()); // 0
-// global.console.log("334.1234567890123456789".countDecimals()); // 14
 
 // userRatioX,Y 는 string, decimalsX,Y는 숫자
 function Swapper(userRatioX: string, userRatioY: string, decimalsX: number, decimalsY: number) {

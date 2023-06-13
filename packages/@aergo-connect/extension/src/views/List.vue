@@ -70,17 +70,8 @@ export default Vue.extend({
   props: {},
   computed: {
     accounts(): any[] {
-      // const accounts = this.$store.state.accounts.accounts;
-      // console.log('List ORG', accounts);
-      // const ac = Object.values(this.$store.state.accounts.accounts);
-      // console.log('List ORG', ac);
       return Object.values(this.$store.state.accounts.accounts);
     },
-    /*
-      const accounts = Object.values(this.$background.getAccounts()) ;
-      console.log("List", accounts);
-      console.log("List", this.$background.getAccounts()) ;
-*/
   },
 
   methods: {
@@ -92,14 +83,6 @@ export default Vue.extend({
       event.stopPropagation();
       this.isAccountsListOpened = !this.isAccountsListOpened;
     },
-
-    // handleRemoveModal() {
-    //   this.$emit('removeModalClick');
-    // },
-    // handleAlert() {
-    //   console.log('notification');
-    //   this.$emit('notificationModalClick');
-    // },
 
     async handleSelect(account: any) {
       const address = account.address;

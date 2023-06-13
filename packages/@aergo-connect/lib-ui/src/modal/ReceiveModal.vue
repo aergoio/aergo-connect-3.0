@@ -25,7 +25,7 @@ import Vue from 'vue';
 import VueQRCodeComponent from 'vue-qrcode-component';
 import Identicon from '../content/Identicon.vue';
 import Button from '../buttons/Button.vue';
-import { jsonHighlight } from '@aergo-connect/extension/src/utils/json';
+
 export default Vue.extend({
   components: { Identicon, Button, VueQRCodeComponent },
 
@@ -58,9 +58,6 @@ export default Vue.extend({
       amount: String(this.amount),
       decimals: String(this.decimals),
     };
-  },
-  mounted() {
-    // console.log(this.inputText, 'qr');
   },
   methods: {
     handleOK() {

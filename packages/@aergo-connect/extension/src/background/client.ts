@@ -6,8 +6,6 @@ export default function connectToBackground(
   connectionStream: any,
 ): Promise<ApiMethods & EventEmitter> {
   return new Promise((resolve) => {
-    // console.log('connecting to background...');
-
     const eventEmitter = new EventEmitter();
     const dnode = Dnode({
       sendUpdate: function (state: any) {
@@ -17,7 +15,6 @@ export default function connectToBackground(
     });
     connectionStream.pipe(dnode).pipe(connectionStream);
     dnode.once('remote', function (backgroundManager: any) {
-      // console.log('connected to remote');
       backgroundManager.on = eventEmitter.on.bind(eventEmitter);
       resolve(wrapClientApi(backgroundManager) as ApiMethods & EventEmitter);
     });

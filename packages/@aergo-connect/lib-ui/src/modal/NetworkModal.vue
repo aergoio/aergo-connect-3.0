@@ -59,29 +59,19 @@ export default Vue.extend({
     this.fetchNetworks();
   },
 
-  // computed: {
-  //   proceedOptions() {
-  //     return this.options.map((option) => {
-  //       return {
-  //         value: option[0],
-  //         label: option[1],
-  //       };
-  //     });
-  //   },
-  // },
   methods: {
     networkModalClick(event) {
       if (event.eventPhase === 2) {
         this.$emit('networkModalClick');
       }
-      // event.stopPropagation();
-      // this.$emit('networkModalClick');
     },
 
     async setChainId(chain) {
-      await this.$store.commit('accounts/setChainId', chain.chainId);
+      await this.$store.commit('accounts/setChain', {
+        chainId: chain.chainId,
+        chainLabel: chain.label,
+      });
       await this.$store.commit('accounts/setActiveAccount', this.$store.state.accounts.address);
-      await this.$store.commit('accounts/setChainLabel', chain.label);
       this.$emit('networkModalClick');
 
       if (this.$route.name === 'request-accounts-list') {

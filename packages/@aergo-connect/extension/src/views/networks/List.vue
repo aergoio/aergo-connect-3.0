@@ -34,7 +34,9 @@
               <span class="chain-id">{{ network.chainId }}</span>
               <span class="network-actions">
                 <span class="node-url">{{ network.nodeUrl }}</span>
-                <span class="delete-button" @click.prevent.stop="removeNetwork(network.chainId)"
+                <span
+                  class="delete-button"
+                  @click.prevent.stop="removeNetwork(network.label, network.chainId)"
                   ><Icon :name="`trash`" :size="10"
                 /></span>
               </span>
@@ -78,9 +80,6 @@ export default class AccountsList extends Vue {
   created() {
     this.fetchNetworks();
   }
-  updated() {
-    console.log(this.networks, 'networks');
-  }
   async fetchNetworks() {
     const chains = await this.$background.getNetworks();
     this.networks = Object.values(chains) as any;
@@ -88,13 +87,13 @@ export default class AccountsList extends Vue {
   isPublicChainId(chainId: string) {
     return isPublicChainId(chainId);
   }
-  async removeNetwork(chainId: string) {
-    if (!confirm(`Are you sure you want to remove the custom network ${chainId}?`)) {
+  async removeNetwork(label: string, chainId: string) {
+    if (!confirm(`Are you sure you want to remove the custom network ${label}?`)) {
       return;
     }
-    await this.$background.removeNetwork({ chainId });
+    await this.$background.removeNetwork({ label });
     this.$store.commit('accounts/removeNetwork');
-    this.$store.commit('accounts/removeNetworkPath', chainId);
+    this.$store.commit('accounts/removeNetworkPath', { chainId, label });
     this.fetchNetworks();
   }
 }

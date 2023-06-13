@@ -68,9 +68,7 @@ export default Vue.extend({
   props: {
     visible: { type: Boolean, default: false },
   },
-  mounted() {
-    // console.log(this.$route.params);
-  },
+
   methods: {
     handleBack() {
       if (this.$route.params.from === 'register') {

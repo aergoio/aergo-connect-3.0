@@ -25,10 +25,9 @@
 </template>
 
 <script lang="ts">
-import { ScrollView, Header } from '@aergo-connect/lib-ui/src/layouts';
+import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import AccountList from '../../components/accounts/AccountList.vue';
-import { Button } from '@aergo-connect/lib-ui/src/buttons';
 import HeaderLogo from '@aergo-connect/lib-ui/src/icons/HeaderLogo.vue';
 import NetworkHeader from '@aergo-connect/lib-ui/src/layouts/NetworkHeader.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
@@ -44,9 +43,7 @@ export default Vue.extend({
   components: {
     ScrollView,
     Heading,
-    Button,
     AccountList,
-    Header,
     HeaderLogo,
     NetworkHeader,
     NetworkModal,
@@ -66,8 +63,12 @@ export default Vue.extend({
   methods: {
     async selectAccount(account: any) {
       await this.$store.commit('accounts/setActiveAccount', account.address);
+      const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+      const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+        ? this.$store.state.accounts.chainId
+        : this.$store.state.accounts.chainLabel;
       await this.$background.setActiveAccount({
-        chainId: `${this.$store.state.accounts.chainId}`,
+        chainId,
         address: account.address,
       });
       if (this.$store.state.request.currentRequest.action === 'SIGN') {

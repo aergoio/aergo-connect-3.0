@@ -19,7 +19,6 @@
         <div class="detail_wrapper">
           <div class="network_title">Network</div>
           <div class="network_state_wrapper">
-            <div :class="`network_state ${$store.state.accounts.chainId}`" />
             <div class="network_text">
               {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>

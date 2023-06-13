@@ -122,8 +122,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
-import { Button } from '@aergo-connect/lib-ui/src/buttons';
-import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
@@ -135,8 +133,6 @@ import { getScanApiUrl, getScanExplorerUrl } from '../utils/chain-urls';
 export default Vue.extend({
   components: {
     ScrollView,
-    Button,
-    Heading,
     Icon,
     HeaderVue,
     Identicon,
@@ -180,7 +176,6 @@ export default Vue.extend({
     const nft = nftWallet.filter((nft: any) => nft.meta.token_id === this.$route.params.id);
     this.token = nft[0];
 
-    // console.log(this.token, 'token?!!!');
     this.getLatestTransactionHash().then((data) => {
       if (!data) {
         this.latestTransactionHash = null;
@@ -236,7 +231,6 @@ export default Vue.extend({
     },
     async refreshClick() {
       this.isLoading = true;
-      // console.log('refresh');
       // if (this.tabState === 'inventory') await this.getNftInventory();
       // else await this.getNftHistory();
       this.isLoading = false;

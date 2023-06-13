@@ -2,18 +2,17 @@
   <ScrollView>
     <ReceiveModal
       v-if="receiveModal"
-      :amount="inputAmount"
+      :amount="+inputAmount"
       :symbol="symbol"
       :asset="asset"
       :tokenName="tokenName"
-      :decimal="decimal"
+      :decimals="decimals"
       @confirm="handleConfirm"
     />
     <Header button="back" title="Receive" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
-          <!-- <div :class="`circle ${$store.state.accounts.chainId}`" /> -->
           <div class="network">
             {{ networkName }}
           </div>
@@ -126,7 +125,7 @@
             size="large"
             @click="handleShowQRClick"
             :disabled="!inputAmount && tokenType !== 'ARC2'"
-            :hover="inputAmount || tokenType === 'ARC2'"
+            :hover="!!inputAmount || tokenType === 'ARC2'"
             >Show QR</Button
           >
         </div>
@@ -146,13 +145,11 @@ import Vue from 'vue';
 import ReceiveModal from '@aergo-connect/lib-ui/src/modal/ReceiveModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
-import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
-import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 
 export default Vue.extend({
-  components: { ScrollView, ReceiveModal, Header, Identicon, Icon, Button, Notification },
+  components: { ScrollView, ReceiveModal, Identicon, Icon, Notification },
   data() {
     return {
       selectAsset: false,
@@ -166,7 +163,7 @@ export default Vue.extend({
       symbol: '',
       tokenName: '',
       inputAmount: '0',
-      decimal: '',
+      decimals: '',
       token: {},
       arc1Tokens: [],
     };
@@ -206,7 +203,7 @@ export default Vue.extend({
       this.icon = this.getTokens[this.asset]['meta']['image'];
       this.symbol = this.getTokens[this.asset]['meta']['symbol'];
       this.tokenName = this.getTokens[this.asset]['meta']['name'];
-      this.decimal = this.getTokens[this.asset]['meta']['decimal'];
+      this.decimals = this.getTokens[this.asset]['meta']['decimals'];
     },
     notification(state) {
       if (state) {
@@ -241,14 +238,38 @@ export default Vue.extend({
       this.$router.push({ name: 'accounts-list' });
     },
     handleShowQRClick() {
-      const regex = /[^0-9]/g;
-      if (!regex.test(this.inputAmount)) {
+      const testInputAmount = this.validateAmount(this.inputAmount);
+      if (testInputAmount) {
         this.receiveModal = true;
       } else {
         this.notification = true;
-        this.notificationText = 'Please input a number.';
+        this.notificationText = this.processAmount(this.inputAmount);
       }
     },
+
+    validateAmount(amount) {
+      const amountRegex = /^[0-9]*\.?[0-9]{0,3}$/;
+      if (!amountRegex.test(amount)) {
+        return false;
+      }
+      const num = parseFloat(amount);
+      if (isNaN(num)) {
+        return false;
+      }
+      return true;
+    },
+    processAmount(amount) {
+      if (!this.validateAmount(amount)) {
+        if (!amount.toString().match(/[0-9]/g)) {
+          return 'Please enter a number';
+        } else if (amount.toString().split('.')[1]?.length > 3) {
+          return 'Only allowed up to 3 decimals';
+        } else {
+          return 'Invalid input Value';
+        }
+      }
+    },
+
     handleConfirm() {
       this.receiveModal = false;
     },

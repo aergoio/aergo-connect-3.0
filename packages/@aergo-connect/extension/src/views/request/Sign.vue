@@ -6,7 +6,6 @@
       <div class="account_info_content_wrapper address">
         <div class="account_info_nickname_wrapper address">
           <div class="account_info_network_wrapper">
-            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.chainId}`" /> -->
             <div class="account_info_network">
               {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>
@@ -74,10 +73,9 @@ import { Identicon } from '@aergo-connect/lib-ui/src/content';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { RequestMixin } from './mixin';
 import { timedAsync } from 'timed-async/index.js';
-import { Account } from '@herajs/wallet';
-import { encodeBuffer } from '@herajs/common';
-import Transport from '@ledgerhq/hw-transport-webusb';
-import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
+// import { encodeBuffer } from '@herajs/common';
+// import Transport from '@ledgerhq/hw-transport-webusb';
+// import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 
 @Component({
@@ -100,14 +98,16 @@ export default class RequestSign extends mixins(RequestMixin) {
   }
 
   get accountSpec() {
+    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+      ? this.$store.state.accounts.chainId
+      : this.$store.state.accounts.chainLabel;
     return {
       address: this.$store.state.accounts.address,
-      chainId: this.$store.state.accounts.chainId,
+      chainId,
     };
   }
-  // get account(): Account {
-  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  // }
+
   created() {
     this.$store.dispatch('accounts/updateAccount', this.accountSpec);
   }

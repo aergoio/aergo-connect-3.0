@@ -32,7 +32,10 @@ import { PublicChainIds, PublicChainData } from '../../config';
 
 import Component, { mixins } from 'vue-class-component';
 
-const publicChainOptions = PublicChainIds.map(chainId => [chainId, PublicChainData[chainId].label]);
+const publicChainOptions = PublicChainIds.map((chainId) => [
+  chainId,
+  PublicChainData[chainId].label,
+]);
 
 @Component({
   components: {

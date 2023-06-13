@@ -145,11 +145,13 @@ import Vue from 'vue';
 import ReceiveModal from '@aergo-connect/lib-ui/src/modal/ReceiveModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
+import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
+import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 
 export default Vue.extend({
-  components: { ScrollView, ReceiveModal, Identicon, Icon, Notification },
+  components: { ScrollView, ReceiveModal, Header, Identicon, Icon, Button, Notification },
   data() {
     return {
       selectAsset: false,

@@ -236,15 +236,19 @@
 <script lang="ts">
 import Vue from 'vue';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
+import { Header } from '@aergo-connect/lib-ui/src/layouts';
 import List from './List.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
+import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
+import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
+import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import ErrorModal from '@aergo-connect/lib-ui/src/modal/ErrorModal.vue';
 // @ts-ignore
@@ -257,10 +261,14 @@ export default Vue.extend({
     PasswordModal,
     AccountDetailModal,
     Icon,
+    Heading,
     Identicon,
+    Button,
     ButtonGroup,
     List,
+    Header,
     ScrollView,
+    Appear,
     LoadingIndicator,
     Notification,
     ErrorModal,
@@ -526,6 +534,7 @@ export default Vue.extend({
 
     async checkIsUpdateNft() {
       const tokens = await Object.values(this.getTokens);
+      console.log(tokens, 'tokens');
       tokens.map((token: any) => {
         if (token?.nftWallet) {
           token.nftWallet.map(async (nft: any) => {

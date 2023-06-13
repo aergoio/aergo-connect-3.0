@@ -48,7 +48,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
-import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextArea from '@aergo-connect/lib-ui/src/forms/TextArea.vue';
 import CheckboxButton from '@aergo-connect/lib-ui/src/buttons/CheckboxButton.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
@@ -57,12 +56,12 @@ import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import Component, { mixins } from 'vue-class-component';
 import { timedAsync } from 'timed-async/index.js';
 import { Account } from '@herajs/wallet';
-import { encodeBuffer } from '@herajs/common';
-import Transport from '@ledgerhq/hw-transport-webusb';
-import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
+// import { encodeBuffer } from '@herajs/common';
+// import Transport from '@ledgerhq/hw-transport-webusb';
+// import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import { ScrollView, LoadingDialog } from '@aergo-connect/lib-ui/src/layouts';
 import { Watch } from 'vue-property-decorator';
-import { signMessage } from '@herajs/crypto';
+// import { signMessage } from '@herajs/crypto';
 @Component({
   components: {
     Header,
@@ -93,12 +92,15 @@ export default class RequestSign extends mixins() {
   }
 
   get accountSpec() {
+    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+      ? this.$store.state.accounts.chainId
+      : this.$store.state.accounts.chainLabel;
     return {
       address: this.$store.state.accounts.address,
-      chainId: this.$store.state.accounts.chainId,
+      chainId,
     };
   }
-
   get account(): Account {
     return this.$background.getActiveAccount();
   }
@@ -178,7 +180,6 @@ export default class RequestSign extends mixins() {
     /*
     const account = await this.account ;
 
-    console.log("account", account) ;
     if (account.data.type && account.data.type === 'ledger') {
       if (this.isHashed) { }
       this.signature = await timedAsync(this.signWithLedger(buf, displayAsHex));
@@ -199,10 +200,8 @@ export default class RequestSign extends mixins() {
     };
 
     if (!this.isHashed) {
-      // console.log('hash check no');
       callData.message = Array.from(Uint8Array.from(buf));
     } else {
-      // console.log('hash check yes');
       callData.hash = Array.from(Uint8Array.from(buf));
     }
     const result = await timedAsync(this.$background.signMessage(callData));

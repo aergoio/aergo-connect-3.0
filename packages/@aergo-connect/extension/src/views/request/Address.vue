@@ -1,11 +1,13 @@
 <template>
   <ScrollView class="page">
+    <!-- <Header :title="$store.state.accounts.chainId" network /> -->
     <div class="account_info_wrapper">
       <Icon :name="`back`" @click="handleGoBack" />
       <Identicon :text="$store.state.accounts.address" class="account_info_img" />
       <div class="account_info_content_wrapper address">
         <div class="account_info_nickname_wrapper address">
           <div class="account_info_network_wrapper">
+            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.chainId}`" /> -->
             <div class="account_info_network">
               {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>
@@ -115,6 +117,7 @@ export default class RequestAddress extends mixins(RequestMixin) {
   .title {
     margin-top: 8px;
     margin-left: 10px;
+    /* Headline/H3 */
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 600;
@@ -123,17 +126,23 @@ export default class RequestAddress extends mixins(RequestMixin) {
     letter-spacing: -0.333333px;
     margin-bottom: 10px;
 
+    /* Grey/08 */
+
     color: #231f20;
   }
   .description {
     margin-left: 24px;
     margin-right: 24px;
+    /* Subtitle/S3 */
+
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 400;
     font-size: 16px;
     line-height: 18px;
     letter-spacing: -0.333333px;
+
+    /* Grey/06 */
 
     color: #686767;
   }
@@ -192,6 +201,7 @@ export default class RequestAddress extends mixins(RequestMixin) {
       font-size: 18px;
       line-height: 24px;
       margin-left: 10px;
+      /* width: 191px; */
       .account_info_network_wrapper {
         display: flex;
         align-items: center;
@@ -225,6 +235,8 @@ export default class RequestAddress extends mixins(RequestMixin) {
       .account_info_nickname_text {
         margin-right: 5px;
       }
+      .account_info_nickname_input {
+      }
       .account_info_nickname_button {
         cursor: pointer;
       }
@@ -241,6 +253,7 @@ export default class RequestAddress extends mixins(RequestMixin) {
         font-weight: 300;
         font-size: 12px;
         line-height: 15px;
+        /* identical to box height */
         letter-spacing: -0.333333px;
         width: 148.32px;
         height: 16px;

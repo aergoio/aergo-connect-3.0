@@ -25,9 +25,10 @@
 </template>
 
 <script lang="ts">
-import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
+import { ScrollView, Header } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import AccountList from '../../components/accounts/AccountList.vue';
+import { Button } from '@aergo-connect/lib-ui/src/buttons';
 import HeaderLogo from '@aergo-connect/lib-ui/src/icons/HeaderLogo.vue';
 import NetworkHeader from '@aergo-connect/lib-ui/src/layouts/NetworkHeader.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
@@ -43,7 +44,9 @@ export default Vue.extend({
   components: {
     ScrollView,
     Heading,
+    Button,
     AccountList,
+    Header,
     HeaderLogo,
     NetworkHeader,
     NetworkModal,

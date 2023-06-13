@@ -25,7 +25,7 @@ import Vue from 'vue';
 import VueQRCodeComponent from 'vue-qrcode-component';
 import Identicon from '../content/Identicon.vue';
 import Button from '../buttons/Button.vue';
-
+import { jsonHighlight } from '@aergo-connect/extension/src/utils/json';
 export default Vue.extend({
   components: { Identicon, Button, VueQRCodeComponent },
 

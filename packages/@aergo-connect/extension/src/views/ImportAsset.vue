@@ -231,24 +231,31 @@
 
 <script>
 import Vue from 'vue';
+import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
+import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import ImportAssetModal from '@aergo-connect/lib-ui/src/modal/ImportAssetModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import { getContractMethodResult } from '../utils/getContractMethodResult';
+import { Identicon } from '@aergo-connect/lib-ui/src/content';
+import { isPublicChainId, PublicChainData } from '../config';
 import { debounce } from 'lodash';
 import { getScanApiUrl } from '../utils/chain-urls';
 
 export default Vue.extend({
   components: {
     Icon,
+    Header,
     ScrollView,
     TextField,
+    Button,
     ImportAssetModal,
     Notification,
     LoadingIndicator,
+    Identicon,
   },
   data() {
     return {

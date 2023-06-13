@@ -19,11 +19,6 @@
                 <Icon :name="'logo'" :size="36" />
               </span>
             </div>
-            <!--            <div style="display: flex; flex-direction: column">-->
-            <!--              &lt;!&ndash;            <span class="account-balance-amount">115.00571 AERGO</span>&ndash;&gt;-->
-            <!--&lt;!&ndash;              <FormattedToken class="account-balance" :value="balanceOfCoin.meta.balance"/>&ndash;&gt;-->
-            <!--&lt;!&ndash;              <span style="display: block; padding-bottom: 0px; margin-top: -10px">$35.2</span>&ndash;&gt;-->
-            <!--            </div>-->
             <FormattedToken class="account-balance" :value="balanceOfCoin.meta.balance" />
           </div>
         </div>
@@ -45,7 +40,6 @@
           <span class="account-icon">
             <Icon :name="'aergo-gem'" :size="36" />
           </span>
-          <!--        <span class="account-balance-amount">200,000.00 GEM</span>-->
           <FormattedToken
             class="account-balance"
             :value="object.token.meta.balance + ' aer'"
@@ -76,7 +70,6 @@ export default class AccountBalanceList extends Vue {
   @Prop({ type: Boolean, default: false }) readonly canDelete!: boolean;
 
   mounted() {
-    //this.activeAccount = await this.$background.getActiveAccount();
     this.$store.dispatch('accounts/fetchAccountBalances', { ...this.accountSpec });
   }
 
@@ -88,12 +81,10 @@ export default class AccountBalanceList extends Vue {
   }
 
   get balanceOfCoin() {
-    // console.log('balanceOfCoin');
     return this.balances?.coin;
   }
 
   get balanceOfGem() {
-    // console.log('balanceOfGem');
     return this.balances?.objects;
   }
 
@@ -102,9 +93,13 @@ export default class AccountBalanceList extends Vue {
   }
 
   get accountSpec() {
+    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+      ? this.$store.state.accounts.chainId
+      : this.$store.state.accounts.chainLabel;
     return {
       address: this.$route.params.address,
-      chainId: this.$route.params.chainId,
+      chainId,
     };
   }
 }

@@ -120,9 +120,13 @@ export default class Import extends mixins(PersistInputsMixin) {
     for (let i = from; i < to; i++) {
       const path = "m/44'/441'/0'/0/" + i;
       const address = await app.getWalletAddress(path);
+      const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+      const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+        ? this.$store.state.accounts.chainId
+        : this.$store.state.accounts.chainLabel;
       const spec = {
         address: `${address}`,
-        chainId: this.chainId,
+        chainId,
       };
       const account = new Account(
         serializeAccountSpec(spec),

@@ -26,8 +26,7 @@
 </template>
 
 <script lang="ts">
-import { InputStates, InputState } from './types';
-import Vue, { PropType } from 'vue';
+import Vue from 'vue';
 export default Vue.extend({
   props: {
     error: String,
@@ -36,15 +35,9 @@ export default Vue.extend({
   data() {
     return { files: null as File | null };
   },
-  computed: {},
   methods: {
-    // fileSelected(e: React.ChangeEvent<HTMLInputElement>): void {
-    //   this.files = e.target.files;
-    //   console.log('this.file', this.files);
-    // },
     handleFileInput(): void {
       const $elem = this.$refs.inputElement as HTMLInputElement;
-      // console.log('file up');
       if (!$elem || !$elem.files || $elem.files.length === 0) return;
       const reader = new FileReader();
       reader.onload = (e) => {

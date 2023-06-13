@@ -6,7 +6,6 @@
       <div class="account_info_content_wrapper address">
         <div class="account_info_nickname_wrapper address">
           <div class="account_info_network_wrapper">
-            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.chainId}`" /> -->
             <div class="account_info_network">
               {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>
@@ -72,7 +71,6 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { RequestMixin } from './mixin';
 import TxConfirm from '../../components/account/TxConfirm.vue';
 import { timedAsync } from 'timed-async/index.js';
-import { Account } from '@herajs/wallet';
 import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
@@ -99,14 +97,15 @@ export default class TxBase extends mixins(RequestMixin) {
     this.account = await this.$background.getActiveAccount();
   }
   get accountSpec() {
+    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+      ? this.$store.state.accounts.chainId
+      : this.$store.state.accounts.chainLabel;
     return {
       address: this.$store.state.accounts.address,
-      chainId: this.$store.state.accounts.chainId,
+      chainId,
     };
   }
-  // get account(): Account {
-  //   return this.$store.getters['accounts/getAccount'](this.accountSpec);
-  // }
 
   get txDataDisplay() {
     if (!this.request) return {};
@@ -135,10 +134,7 @@ export default class TxBase extends mixins(RequestMixin) {
     this.$store.dispatch('accounts/updateAccount', this.accountSpec);
   }
   async signWithLedger(txBody: any) {
-    const { tx } = await this.$background.prepareTransaction(
-      txBody,
-      this.$store.state.accounts.chainId,
-    );
+    const { tx } = await this.$background.prepareTransaction(txBody, this.accountSpec.chainId);
     tx.payload = txBody.payload;
     this.setStatus('loading', 'Connecting to Ledger device...');
     const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -165,15 +161,12 @@ export default class TxBase extends mixins(RequestMixin) {
     this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
   }
   async confirmHandler(): Promise<any> {
-    // console.log('RequestSend confirmHandler');
     if (!this.request) return;
     let txBody = {
       ...this.request.data,
       payload: Array.from(this.payloadParsed),
       from: this.$store.state.accounts.address,
     };
-
-    // console.log('txBody', txBody);
 
     if (!this.account) {
       // This shouldn't happen normally
@@ -192,12 +185,7 @@ export default class TxBase extends mixins(RequestMixin) {
 
     if (this.actionVerb === 'sign') {
       this.setStatus('loading', 'Calculating signature...');
-      const result = await this.$background.signTransaction(
-        txBody,
-        this.$store.state.accounts.chainId,
-      );
-
-      // console.log('sign', result);
+      const result = await this.$background.signTransaction(txBody, this.accountSpec.chainId);
 
       if ('tx' in result) {
         return {
@@ -208,10 +196,8 @@ export default class TxBase extends mixins(RequestMixin) {
     } else {
       this.setStatus('loading', 'Sending to network...');
       const result = await timedAsync(
-        this.$background.sendTransaction(txBody, this.$store.state.accounts.chainId),
+        this.$background.sendTransaction(txBody, this.accountSpec.chainId),
       );
-
-      // console.log('noSign', result);
 
       if ('tx' in result) {
         return {

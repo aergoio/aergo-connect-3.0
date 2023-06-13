@@ -1,6 +1,5 @@
 <template>
   <div id="app" :class="`page-${$router.currentRoute.name}`">
-    <!-- <router-view /> -->
     <RouteTransition>
       <router-view />
     </RouteTransition>
@@ -9,13 +8,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import LoadingDialog from '@aergo-connect/lib-ui/src/layouts/LoadingDialog.vue';
 import RouteTransition from '@aergo-connect/lib-ui/src/nav/RouteTransition.vue';
 
 export default Vue.extend({
   components: {
     RouteTransition,
-    LoadingDialog,
   },
 
   async mounted() {
@@ -23,8 +20,6 @@ export default Vue.extend({
     //   this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck
     // );
     const unlocked = await this.$background.isUnlocked();
-
-    // console.log(unlocked, 'unlocked');
     this.$store.commit('ui/setUnlocked', unlocked);
 
     if (!unlocked) {

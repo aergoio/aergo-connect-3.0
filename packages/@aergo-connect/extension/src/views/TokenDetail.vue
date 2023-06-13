@@ -346,6 +346,13 @@ export default Vue.extend({
       )[0].scanApiUrl;
       return scanApiUrl;
     },
+    chainId() {
+      const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+      const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+        ? this.$store.state.accounts.chainId
+        : this.$store.state.accounts.chainLabel;
+      return chainId;
+    },
   },
 
   async beforeMount() {
@@ -390,21 +397,16 @@ export default Vue.extend({
     async selectedData() {
       this.sendStatus = await this.getSendStatus(this.selectedData);
     },
-    // txData() {
-    //   console.log(this.txData, 'txData');
-    // },
-    // data() {
-    //   console.log(this.data, 'data?');
-    // },
   },
 
   methods: {
     bigIntToString(bigInt, decimals) {
       return bigIntToString(bigInt, decimals);
     },
+
     async aergoStaking(): Promise<void> {
       const staking = await this.$background.getStaking({
-        chainId: this.$store.state.accounts.chainId,
+        chainId: this.chainId,
         address: this.$store.state.accounts.address,
       });
 
@@ -444,7 +446,6 @@ export default Vue.extend({
 
     async getStakingAergoInfo(staking: any) {
       await this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
-        // console.log(staking);
         this.stakingPrice = staking * priceInfo.price;
       });
     },
@@ -458,7 +459,6 @@ export default Vue.extend({
     },
 
     async refreshClick() {
-      // console.log('refresh');
       this.isLoading = true;
       await this.getTokenHistory();
       await this.getAergoInfo();
@@ -468,15 +468,13 @@ export default Vue.extend({
 
     async getTokenHistory(): Promise<void> {
       if (!this.getScanApi) {
-        // console.log('here have to get History');
         const accountTx = await this.$background.getAccountTx({
           address: this.$store.state.accounts.address,
-          chainId: this.$store.state.accounts.chainId,
+          chainId: this.chainId,
         });
 
         //transaction Receipt and Make Data Type
         accountTx.map(async (txData) => {
-          // console.log(txData, 'txData');
           const hash = txData.data.hash;
           const data = {
             hash,
@@ -519,7 +517,7 @@ export default Vue.extend({
           this.allData = response.hits;
           if (this.$store.state.accounts.lastestSendHash === this.data[0][`hash`]) {
             const result = await this.$background.getTransactionReceipt(
-              this.$store.state.accounts.chainId,
+              this.chainId,
               this.data[0][`hash`],
             );
             if (result[`status`] !== 'SUCCESS') {
@@ -554,7 +552,6 @@ export default Vue.extend({
     },
     async handleViewReceipt(item) {
       this.selectedData = item;
-      // console.log(item, 'item');
       // this.sendStatus = await this.getSendStatus(item);
       this.receiptModal = true;
     },
@@ -567,8 +564,6 @@ export default Vue.extend({
     },
     getTokenType(item) {
       if (!item.meta.category && !item.meta.method && item.meta.type) {
-        // console.log(TxTypes, 'txTypes');
-
         return `Type : ${TxTypes[item.meta.type].toUpperCase()}`;
       } else if (!item.meta.category && !item.meta.method && !item.meta.type) {
         return `Type : CALL`;
@@ -583,10 +578,7 @@ export default Vue.extend({
       return Number(balance).toFixed(3);
     },
     async getSendStatus(data) {
-      return await this.$background.getTransactionReceipt(
-        this.$store.state.accounts.chainId,
-        data[`hash`],
-      );
+      return await this.$background.getTransactionReceipt(this.chainId, data[`hash`]);
     },
     // async getSendTransaction() {
     //   return await this.$background.getTransaction(
@@ -596,7 +588,7 @@ export default Vue.extend({
     // },
     async getAccountTx() {
       return await this.$background.getAccountTx({
-        chainId: this.$store.state.accounts.chainId,
+        chainId: this.chainId,
         address: this.$store.state.accounts.address,
       });
     },

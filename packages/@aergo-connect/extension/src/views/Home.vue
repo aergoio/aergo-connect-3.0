@@ -2,7 +2,7 @@
   <ScrollView>
     <Header
       button="hamburger"
-      :title="networkName"
+      :title="$store.state.accounts.chainLabel"
       refresh
       network
       @hamburgerClick="hamburgerClick"
@@ -212,7 +212,7 @@
             </ul>
           </li>
 
-          <div v-if="nftCountNum === 0 && !isLoading" class="nftNothing">
+          <div v-if="getNftList.length === 0 && !isLoading" class="nftNothing">
             <Icon :name="`nothing`" />
             <div class="text">No NFT</div>
           </div>
@@ -236,21 +236,20 @@
 <script lang="ts">
 import Vue from 'vue';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
-import { Header } from '@aergo-connect/lib-ui/src/layouts';
 import List from './List.vue';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
-import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
-import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
 import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailModal.vue';
-import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import ErrorModal from '@aergo-connect/lib-ui/src/modal/ErrorModal.vue';
+// @ts-ignore
+import AergoClient, { GrpcWebProvider } from '@herajs/client';
+
 export default Vue.extend({
   components: {
     NoAccountModal,
@@ -258,14 +257,10 @@ export default Vue.extend({
     PasswordModal,
     AccountDetailModal,
     Icon,
-    Heading,
     Identicon,
-    Button,
     ButtonGroup,
     List,
-    Header,
     ScrollView,
-    Appear,
     LoadingIndicator,
     Notification,
     ErrorModal,
@@ -284,7 +279,6 @@ export default Vue.extend({
       address: this.$store?.state?.accounts?.address,
       tab: 'token',
       tokensCount: 0,
-      nftCountNum: 0,
       editNick: false,
       nick: this.$store.state.accounts.nick,
       isLoading: false,
@@ -327,21 +321,28 @@ export default Vue.extend({
     },
     getScanApi() {
       const scanApiUrl = this.$store.state.accounts.networksPath.filter(
-        (network) => network.chainId === this.$store.state.accounts.chainId,
-      )[0].scanApiUrl;
+        (network) => network.label === this.$store.state.accounts.chainLabel,
+      )[0]?.scanApiUrl;
       return scanApiUrl;
     },
-    getChainId() {
-      const chainId = this.$store.state.accounts.networksPath.filter(
-        (network) => network.chainId === this.$store.state.accounts.chainId,
-      )[0].scanApiUrl;
-      return chainId;
+    getNodeUrl() {
+      const nodeUrl = this.$store.state.accounts.networksPath.filter(
+        (network) => network.label === this.$store.state.accounts.chainLabel,
+      )[0]?.nodeUrl;
+      return nodeUrl;
     },
-    networkName() {
-      const networkLabel = this.$store.state.accounts.networksPath.filter(
-        (network) => network.chainId === this.$store.state.accounts.chainId,
-      )[0].label;
-      return networkLabel;
+    getNetwork() {
+      const network = this.$store.state.accounts.networksPath.filter(
+        (network) => network.label === this.$store.state.accounts.chainLabel,
+      )[0];
+      return network;
+    },
+    getNftList() {
+      return Object.values(this.$store.getters[`accounts/getTokens`]).filter((data: any) => {
+        if (data?.nftWallet?.length > 0) {
+          return data.nftWallet;
+        }
+      });
     },
   },
 
@@ -358,7 +359,6 @@ export default Vue.extend({
         this.notificationText = `Nickname must be less than 12`;
       }
     },
-
     handleEdit() {
       this.editNick = true;
     },
@@ -366,18 +366,15 @@ export default Vue.extend({
     async initAccount() {
       try {
         this.isLoading = true;
-        this.tokensCount = 0;
-        this.nftCountNum = 0;
         if (this.$store.state.accounts.address) {
           await this.$store.dispatch('accounts/initState');
           this.nick = await this.$store.state.accounts.nick;
-          await this.myNFTList();
           await this.checkIsUpdateNft();
+          await this.myTokenCount();
           await this.$forceUpdate();
           this.errorMessage = '';
           this.isLoading = false;
         } else {
-          console.log('Other Account Loading ..');
           const succ = await this.$store.dispatch('accounts/loadAccount');
           this.errorMessage = '';
           if (!succ) {
@@ -401,13 +398,9 @@ export default Vue.extend({
         await this.initAccount();
         await this.checkIsUpdateNft();
         this.$forceUpdate();
-        // console.log('here 2?');
-        // this.errorModal = false;
-        // this.errorMessage = '';
       } catch (e: any) {
         console.error(e, 'error');
         this.errorModal = true;
-        // this.errorMessage = 'ERR_INTERNET_DISCONNECTED';
         this.errorMessage = e;
       } finally {
         this.isLoading = false;
@@ -510,26 +503,14 @@ export default Vue.extend({
       }
       return Number(balance).toFixed(3);
     },
-    // getNftDataInLocalStorage() {
-    //   const myWalletAddress = this.$store.state.accounts.address;
-    //   const myWalletChainId = this.$store.state.accounts.chainId;
-    //   const myTokenList =
-    //     this.$store.state.accounts.accounts[myWalletAddress].token[myWalletChainId];
-    //   const myTokenListKeys = Object.keys(myTokenList);
-    //   myTokenListKeys.map((myTokenKey) => {
-    //     const getMyNftWalletLocalStorage = JSON.parse(
-    //       localStorage.getItem(`${myWalletAddress}_${myWalletChainId}_${myTokenKey}`) || '[]',
-    //     );
-    //     if (getMyNftWalletLocalStorage.length > 0) {
-    //       this.$store.commit('accounts/setNftWallet', {
-    //         nftWallet: getMyNftWalletLocalStorage,
-    //         hash: myTokenKey,
-    //       });
-    //     } else {
-    //       this.$store.commit('accounts/setNftWallet', { nftWallet: [], hash: myTokenKey });
-    //     }
-    //   });
-    // },
+    myTokenCount() {
+      const tokens = Object.values(this.getTokens);
+      tokens.map((token: any) => {
+        if (token.meta.type === 'ARC1') {
+          this.tokensCount++;
+        }
+      });
+    },
     myNFTCount(hash: any) {
       if (!this.getTokens[hash].nftWallet) {
         return null;
@@ -537,54 +518,66 @@ export default Vue.extend({
         return this.getTokens[hash].nftWallet.length;
       }
     },
-    myNFTList() {
-      Object.values(this.getTokens).map((token: any) => {
-        if (token?.nftWallet) {
-          console.log('here', token.nftWallet);
-          this.nftCountNum++;
-        }
-      });
-    },
+
     handleGoNftInventory(nft: any) {
       this.$store.commit('accounts/setSelectedToken', nft.token.hash);
       this.$router.push({ name: 'nft-detail', params: { id: nft.meta.token_id } }).catch(() => {});
     },
 
-    checkIsUpdateNft() {
-      const tokens = Object.values(this.getTokens);
+    async checkIsUpdateNft() {
+      const tokens = await Object.values(this.getTokens);
       tokens.map((token: any) => {
         if (token?.nftWallet) {
           token.nftWallet.map(async (nft: any) => {
             try {
-              if (nft.meta.token_uri && nft.meta.image_url) {
-                const tokenUri = nft.meta.token_uri;
-                const fetchData = await fetch(tokenUri);
-                const jsonData = await fetchData.json();
-                console.log(jsonData, 'jsonData');
-                const imageUrl = jsonData.image_url;
-                console.log(imageUrl, 'imageUrl');
-                if (imageUrl !== nft.meta.image_url) {
-                  console.log(nft, 'nft???');
-                  // const localStorageNftData = await this.$store.getters.getNftInLocalStorage({
-                  //   account: nft.meta.account,
-                  //   chainId: this.$store.state.accounts.chainId,
-                  //   contractAddress: nft.meta.address,
-                  // });
+              //1. 서버에서 nft를 찾을수 없는 경우.
+              const getTokenBalanceUrl = `${this.getScanApi}/tokenBalance?q=${this.$store.state.accounts.address}&size=10000`;
+              const resp = await fetch(getTokenBalanceUrl);
+              const response = await resp.json();
 
-                  const localStorageNftData = this.getTokens[nft.meta.address];
-
-                  console.log(localStorageNftData, 'localStorageNftData');
-
-                  localStorageNftData.map((userNft: any) => {
-                    if (nft.hash === userNft.hash) {
-                      userNft.meta['img_url'] = imageUrl;
-                    }
-                  });
-                  console.log(localStorageNftData, 'updatedUserNftDataInLocalStorage');
-                  // this.$store.commit('accounts/updateNftInLocalstorage', localStorageNftData);
-                  console.log('end To Change WalletData');
+              const filteredARC2 = response.hits.filter((tokenData) => {
+                return (
+                  tokenData.token.meta.type === 'ARC2' && tokenData.token.hash === nft.token.hash
+                );
+              });
+              filteredARC2.map(async (tokenData) => {
+                if (tokenData.token.meta.type === 'ARC2') {
+                  const checkNftHash = tokenData.token.hash;
+                  const getNftDataUrl = `${this.getScanApi}/nftInventory?q=address:${checkNftHash} AND (account:${this.$store.state.accounts.address})&sort=blockno:desc&from=0&size=100`;
+                  const resp = await fetch(getNftDataUrl);
+                  const response = await resp.json();
+                  const isFindNft = response.hits.find((nftData) => nftData.hash === nft.hash);
+                  if (!isFindNft) {
+                    await this.$store.commit('accounts/deleteNftInLocalStorage', nft);
+                    await this.$forceUpdate();
+                  }
                 }
-              }
+              });
+
+              // 2. 서버에서 가져온 이미지가 바뀔 경우
+              // if (nft.meta.token_uri && nft.meta.image_url) {
+              //   const tokenUri = nft.meta.token_uri;
+              //   const fetchData = await fetch(tokenUri);
+              //   const jsonData = await fetchData.json();
+              //   const imageUrl = jsonData.image_url;
+              //   if (imageUrl !== nft.meta.image_url) {
+              //     // const localStorageNftData = await this.$store.getters.getNftInLocalStorage({
+              //     //   account: nft.meta.account,
+              //     //   chainId: this.$store.state.accounts.chainId,
+              //     //   contractAddress: nft.meta.address,
+              //     // });
+              //     const localStorageNftData = this.getTokens[nft.meta.address];
+              //     console.log(localStorageNftData, 'localStorageNftData');
+              //     localStorageNftData.map((userNft: any) => {
+              //       if (nft.hash === userNft.hash) {
+              //         userNft.meta['img_url'] = imageUrl;
+              //       }
+              //     });
+              //     console.log(localStorageNftData, 'updatedUserNftDataInLocalStorage');
+              //     // this.$store.commit('accounts/updateNftInLocalstorage', localStorageNftData);
+              //     console.log('end To Change WalletData');
+              //   }
+              // }
             } catch (e: any) {
               console.error(e, 'checkIsupdateNft Error');
               // this.errorModal = true;
@@ -593,6 +586,38 @@ export default Vue.extend({
           });
         }
       });
+    },
+
+    async testNodeConnection() {
+      const aergo = new AergoClient({}, new GrpcWebProvider({ url: this.getNodeUrl }));
+      try {
+        const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+        const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId);
+        console.log(chainId);
+        await aergo.blockchain();
+        const chainIdInfo = await aergo.getChainInfo();
+        const chainIdMagic = chainIdInfo.chainid.magic;
+        console.log(this.getNodeUrl, 'getNodeUrl');
+        console.log(chainIdMagic, 'chainIdMagic');
+        console.log(this.$store.state.accounts.chainId, 'this.$store.state.accounts.chainId');
+        if (chainIdMagic !== this.$store.state.accounts.chainId) {
+          console.log(
+            this.getNetwork,
+            `need to change ChainId ${this.$store.state.accounts.chainId} -> ${chainIdMagic}`,
+          );
+          const newChainId = { chainId: chainIdMagic };
+          const networkPath = {
+            ...this.getNetwork,
+            ...newChainId,
+          };
+          console.log(networkPath, 'networkPath');
+          // await this.$background.addNetwork(networkPath);
+          console.log('changed ChainId', this.getNetwork.chainId);
+        }
+      } catch (e) {
+        console.log(e);
+        // this.nodeUrlError = `${e}`;
+      }
     },
   },
 });

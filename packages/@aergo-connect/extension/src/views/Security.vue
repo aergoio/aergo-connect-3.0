@@ -56,19 +56,13 @@
 
 <script>
 import Vue from 'vue';
-import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
-import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
-import PasswordStrengthField from '@aergo-connect/lib-ui/src/forms/PasswordStrengthField.vue';
 import RemoveAccountModal from '@aergo-connect/lib-ui/src/modal/RemoveAccountModal.vue';
 import NotificationModal from '@aergo-connect/lib-ui/src/modal/NotificationModal.vue';
 
 export default Vue.extend({
   components: {
-    Header,
     ScrollView,
-    Button,
-    PasswordStrengthField,
     RemoveAccountModal,
     NotificationModal,
   },
@@ -84,7 +78,6 @@ export default Vue.extend({
     handleIdleTimeout() {
       this.$store.commit('ui/setIdleTimeout', this.idleTimeout);
       chrome.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
-      console.log('SET_IDLE_TIME', this.$store.state.ui.idleTimeout);
     },
     handleBack() {
       this.$router
@@ -114,12 +107,9 @@ export default Vue.extend({
     },
     handleRemoveModal() {
       this.removeAccountModal = true;
-      // this.$emit('removeModalClick');
     },
     handleAlert() {
       this.notificationModal = true;
-      // console.log('notification');
-      // this.$emit('notificationModalClick');
     },
     handleCancel(modalEvent) {
       if (modalEvent === 'removeAccountModal') {

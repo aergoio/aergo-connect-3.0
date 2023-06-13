@@ -49,27 +49,24 @@ class BackgroundController extends EventEmitter {
       appName: 'aergo-browser-wallet',
       instanceId: this.id,
     });
-    console.log(this.wallet, 'wallet');
     this.wallet.use(AergoscanTransactionScanner as any);
     this.wallet.useStorage(store).then(async () => {
       if (!this.wallet.datastore) throw new Error('wallet failed to initiate storage');
+      this.firstLoad();
 
-      // this.firstLoad();
-      //temp
       // Load custom defined chains
       try {
         const customChains = await this.wallet.datastore.getIndex('settings').get('customChains');
         if (customChains && customChains.data) {
-          for (const chainId of Object.keys(customChains.data)) {
+          for (const label of Object.keys(customChains.data)) {
             this.wallet.useChain({
-              chainId,
+              chainId: label,
               // @ts-ignore
-              nodeUrl: customChains.data[chainId]?.nodeUrl,
+              nodeUrl: customChains.data[label]?.nodeUrl,
             });
           }
         }
       } catch (e) {
-        console.log('not Found');
         // not found
       }
     });
@@ -79,11 +76,9 @@ class BackgroundController extends EventEmitter {
 
     this.wallet.keyManager.on('lock', () => {
       this.emit('update', { unlocked: false });
-      console.log('[lock] locked');
     });
     this.wallet.keyManager.on('unlock', () => {
       this.emit('update', { unlocked: true });
-      console.log('[lock] unlocked');
     });
 
     this.wallet.accountManager.on('remove', (accountSpec) => {
@@ -96,12 +91,12 @@ class BackgroundController extends EventEmitter {
     // On idle (60s after UI becoming inactive)
     this.state.on('idle', () => {
       this.lock();
-      console.log('[state] idle, pausing trackers');
+      // console.log('[state] idle, pausing trackers');
       this.wallet.accountManager.pause();
       this.wallet.transactionManager.pause();
     });
     this.state.on('active', () => {
-      console.log('[state] active, resuming trackers');
+      // console.log('[state] active, resuming trackers');
       this.wallet.accountManager.resume();
       this.wallet.transactionManager.resume();
     });
@@ -233,7 +228,7 @@ class BackgroundController extends EventEmitter {
       tx.txBody.hash = await hashTransaction(txBody, 'base58');
     }
     const txTracker = await this.wallet.sendTransaction(accountSpec, tx);
-    console.log(txTracker, txTracker.transaction.txBody);
+    // console.log(txTracker, txTracker.transaction.txBody);
     txTracker.getReceipt().then((receipt) => {
       if (receipt.status === 'SUCCESS') {
         this.handleConfirmedTx(txTracker.transaction);

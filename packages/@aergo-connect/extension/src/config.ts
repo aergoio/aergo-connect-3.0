@@ -46,14 +46,14 @@ export const PublicChainData: Record<
   mainnet: {
     label: 'mainnet',
     chainId: 'aergo.io',
-    scanApiUrl: 'https://api.aergoscan.io/mainnet/v2',
+    scanApiUrl: 'https://api2-mainnet.aergoscan.io/v2',
     scanExplorerUrl: 'https://mainnet.aergoscan.io',
     nodeUrl: 'https://mainnet-api-http.aergo.io',
   },
   testnet: {
     label: 'testnet',
     chainId: 'testnet.aergo.io',
-    scanApiUrl: 'https://api.aergoscan.io/testnet/v2',
+    scanApiUrl: 'https://api2-testnet.aergoscan.io/v2',
     scanExplorerUrl: 'https://testnet.aergoscan.io',
     nodeUrl: 'https://testnet-api-http.aergo.io',
   },

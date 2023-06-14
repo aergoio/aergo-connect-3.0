@@ -388,12 +388,11 @@ export default Vue.extend({
       }
     },
     async select(token) {
-      console.log(token, 'token');
       this.token = token;
       this.inputTextField = token.meta.name;
       this.contractAddress = token.hash;
       if (token.meta.type === 'ARC1') {
-        if ([token.hash]?.hash) {
+        if (this.getTokens[token.hash]) {
           this.notification = true;
           this.notificationText = `Already Added ARC1 Token`;
         } else {

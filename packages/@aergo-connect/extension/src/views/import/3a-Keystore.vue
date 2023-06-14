@@ -104,8 +104,10 @@ export default class Keystore extends mixins(PersistInputsMixin) {
       await this.$store.commit('accounts/setBackup', true);
       this.$router.push({ name: 'regist-confirm' });
     } catch (e) {
+      // console.log(e);
       if (`${e}`.match(/invalid mac value/)) {
         this.errors.password = 'Please check the information you entered again.';
+        // this.errors.password = 'Invalid password';
       } else {
         this.errors.password = `${e}`;
       }

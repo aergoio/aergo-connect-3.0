@@ -122,6 +122,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
+import { Button } from '@aergo-connect/lib-ui/src/buttons';
+import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import HeaderVue from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
@@ -133,6 +135,8 @@ import { getScanApiUrl, getScanExplorerUrl } from '../utils/chain-urls';
 export default Vue.extend({
   components: {
     ScrollView,
+    Button,
+    Heading,
     Icon,
     HeaderVue,
     Identicon,

@@ -12,11 +12,23 @@
       @confirm="handlePassword"
     />
     <PasswordModal v-if="passwordModal" @cancel="handleCancel" @confirm="handleConfirm" />
-
+    <!-- <SendFinishModal
+      v-if="sendFinishModal"
+      :asset="asset"
+      :txHash="txHash"
+      :receipt="inputTo"
+      :amount="inputAmount"
+      :symbol="symbol"
+      :tokenType="tokenType"
+      :fee="fee"
+      :userNftData="userNftData"
+      :balance="balance"
+    /> -->
     <Header button="back" title="Send" @backClick="handleBack" />
     <div class="send_content_wrapper">
       <div class="account_detail_wrapper">
         <div class="direction-row">
+          <!-- <div :class="`circle ${$store.state.accounts.chainId}`" /> -->
           <div class="network">
             {{ networkName }}
           </div>
@@ -43,6 +55,10 @@
         </div>
       </div>
       <div :class="[tokenType === 'ARC2' ? `token_content_wrapper nft` : `token_content_wrapper`]">
+        <!-- <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" /> -->
+        <!-- <Icon v-else-if="!icon" :name="`defaultToken`" class="token_icon" /> -->
+        <!-- <img v-else class="token_icon" :src="icon" /> -->
+
         <div v-if="tokenType !== 'ARC2'" class="amount_wrapper">
           <div class="icon_wrapper">
             <Icon v-if="asset === 'AERGO'" class="token_icon" :name="`aergo`" />
@@ -253,11 +269,15 @@
 import Vue from 'vue';
 import ConfirmationModal from '@aergo-connect/lib-ui/src/modal/ConfirmationModal.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
+import SendFinishModal from '@aergo-connect/lib-ui/src/modal/SendFinishModal.vue';
 import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
+import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
+import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import LoadingDialog from '@aergo-connect/lib-ui/src/layouts/LoadingDialog.vue';
 import TextField from '@aergo-connect/lib-ui/src/forms/TextField.vue';
+import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 // for TX
 import { timedAsync } from 'timed-async/index.js';
 import Transport from '@ledgerhq/hw-transport-webusb';
@@ -271,12 +291,16 @@ export default Vue.extend({
     ScrollView,
     ConfirmationModal,
     PasswordModal,
+    SendFinishModal,
+    Header,
     Identicon,
     Icon,
+    Button,
     LoadingDialog,
     Tx,
     TextField,
     Notification,
+    LoadingIndicator,
   },
   data() {
     return {

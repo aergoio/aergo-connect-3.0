@@ -534,7 +534,6 @@ export default Vue.extend({
 
     async checkIsUpdateNft() {
       const tokens = await Object.values(this.getTokens);
-      console.log(tokens, 'tokens');
       tokens.map((token: any) => {
         if (token?.nftWallet) {
           token.nftWallet.map(async (nft: any) => {

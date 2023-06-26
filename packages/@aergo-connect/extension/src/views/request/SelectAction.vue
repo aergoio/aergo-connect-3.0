@@ -23,7 +23,7 @@ export default class RequestSelect extends Vue {
     const routeName = actionToRouteName[action];
     // Check that we're still on the correct route
     if (this.$router.currentRoute.name === 'request-select-action') {
-      this.$router.push({ name: routeName }).catch(() => {});
+      this.$router.push({ name: routeName });
     }
   }
 }

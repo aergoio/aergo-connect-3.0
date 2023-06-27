@@ -10,12 +10,13 @@ $lineHeight: 20px;
 
 .key-value-table {
   display: grid;
-  margin: 0;
+  margin: 20px;
   grid-template-columns: auto auto;
 
-  font-size: (13/16)*1rem;
+  font-size: (calc(13 / 16)) * 1rem;
 
-  dt, dd {
+  dt,
+  dd {
     padding: $padding 0;
     margin: 0;
     box-sizing: border-box;
@@ -41,7 +42,8 @@ $lineHeight: 20px;
   }
 }
 .inverted-colors .key-value-table {
-  dt, dd {
+  dt,
+  dd {
     box-shadow: inset 0 -1px 0 0 rgba(255, 255, 255, 0.1);
   }
   dt {

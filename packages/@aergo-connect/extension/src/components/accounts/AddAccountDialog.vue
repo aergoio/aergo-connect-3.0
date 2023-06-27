@@ -3,31 +3,31 @@
     <div class="dialog-options" @click.capture="$emit('close')">
       <router-link :to="{ name: 'account-create' }">
         <span>
-          <Icon name="account-create" :size="36" />
+          <Icon :name="`account-create`" :size="36" />
           Create Account
         </span>
       </router-link>
       <router-link :to="{ name: 'account-import' }">
         <span>
-          <Icon name="account-import" :size="36" />
+          <Icon :name="`account-import`" :size="36" />
           Import Account
         </span>
       </router-link>
       <span @click="onChangeIdleTimeout(20)">
         <span>
-          <Icon name="account-import" :size="36" />
+          <Icon :name="`account-import`" :size="36" />
           Idle Timeout Setting(20s) test
         </span>
       </span>
       <span @click="onChangeIdleTimeout(60)">
         <span>
-          <Icon name="account-import" :size="36" />
+          <Icon :name="`account-import`" :size="36" />
           Idle Timeout Setting(60s) test
         </span>
       </span>
       <span @click="openConnectHardwareWalletTab" v-if="isHardwareWalletEnabled">
-        <span >
-          <Icon name="account-connect" :size="36" />
+        <span>
+          <Icon :name="`account-connect`" :size="36" />
           Connect Hardware Wallet
         </span>
       </span>
@@ -36,8 +36,6 @@
 </template>
 
 <script lang="ts">
-import extension from 'extensionizer';
-
 import { ModalDialog } from '@aergo-connect/lib-ui/src/layouts';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
 
@@ -61,13 +59,13 @@ export default class AddAccountDialog extends Vue {
   openConnectHardwareWalletTab() {
     const name = (this.$root as any).name;
     if (name === 'popup') {
-      extension.tabs.create({url: "index.html#/accounts/connect-hw"});
+      chrome.tabs.create({ url: 'index.html#/accounts/connect-hw' });
     } else {
       this.$router.push({ name: 'account-connect-hw' });
     }
   }
-  onChangeIdleTimeout(seconds?: number) {
-    extension.idle.setDetectionInterval(seconds);
+  onChangeIdleTimeout(seconds: number) {
+    chrome.idle.setDetectionInterval(seconds);
     this.$store.commit('ui/setIdleTimeout', seconds);
   }
 }

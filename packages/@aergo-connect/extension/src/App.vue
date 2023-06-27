@@ -1,29 +1,33 @@
 <template>
   <div id="app" :class="`page-${$router.currentRoute.name}`">
+    <!-- <router-view /> -->
     <RouteTransition>
       <router-view />
     </RouteTransition>
   </div>
 </template>
+
 <script lang="ts">
-import Vue from "vue";
-import RouteTransition from "@aergo-connect/lib-ui/src/nav/RouteTransition.vue";
+import Vue from 'vue';
+import LoadingDialog from '@aergo-connect/lib-ui/src/layouts/LoadingDialog.vue';
+import RouteTransition from '@aergo-connect/lib-ui/src/nav/RouteTransition.vue';
 
 export default Vue.extend({
   components: {
     RouteTransition,
+    LoadingDialog,
   },
+
   async mounted() {
-    // Upon App launch, get initial state for 'unlocked'
+    // const peformAuthCheck = !(
+    //   this.$router.currentRoute.meta && this.$router.currentRoute.meta.noAuthCheck
+    // );
     const unlocked = await this.$background.isUnlocked();
-    this.$store.commit("ui/setUnlocked", unlocked);
-    console.log(this.$router, "router!!!!!");
-    const peformAuthCheck = !(
-      this.$router.currentRoute.meta &&
-      this.$router.currentRoute.meta.noAuthCheck
-    );
-    if (!unlocked && peformAuthCheck) {
-      this.$router.push({ name: "lockscreen" });
+    this.$store.commit('ui/setUnlocked', unlocked);
+
+    if (!unlocked) {
+      // Upon App launch, get initial state for 'unlocked'
+      this.$router.push({ name: 'lockscreen' }).catch(() => {});
     }
   },
 });
@@ -33,17 +37,17 @@ export default Vue.extend({
 body {
   margin: 0;
   font-size: 100%;
-  font-family: "Outfit";
 }
 
 #app {
   max-width: 375px;
-  max-height: 100vh;
+  /* max-height: 100vh; */
   height: 600px;
   margin: 0 auto;
   background-color: #fff;
   position: relative;
   overflow: hidden;
+  font-family: 'Outfit';
 }
 
 body.fullpage {

@@ -15,15 +15,16 @@
     <slot></slot>
     <LoadingIndicator v-if="state === 'loading'" />
     <img src="" alt="" />
-    <Icon name="checkmark" :size="24" v-if="state === 'valid'" />
+    <Icon :name="`checkmark`" :size="24" v-if="state === 'valid'" />
+    <Icon :name="`x`" :size="24" v-if="state === 'invalid'" :style="{ marginRight: '10px' }" />
   </div>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
-import { InputVariant, InputVariants, InputStates, InputState } from "./types";
-import LoadingIndicator from "../icons/LoadingIndicator.vue";
-import Icon from "../icons/Icon.vue";
+import Vue, { PropType } from 'vue';
+import { InputVariant, InputVariants, InputStates, InputState } from './types';
+import LoadingIndicator from '../icons/LoadingIndicator.vue';
+import Icon from '../icons/Icon.vue';
 
 export default Vue.extend({
   components: {
@@ -45,7 +46,7 @@ export default Vue.extend({
     },
     error: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   data() {
@@ -58,9 +59,9 @@ export default Vue.extend({
       return [
         `variant-${this.variant}`,
         `state-${this.state}`,
-        this.disabled ? "is-disabled" : "",
-        this.error ? "has-error" : "",
-        this.focused ? "is-focused" : "",
+        this.disabled ? 'is-disabled' : '',
+        this.error ? 'has-error' : '',
+        this.focused ? 'is-focused' : '',
       ];
     },
   },
@@ -68,15 +69,16 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import "../styles/variables";
+@import '../styles/variables';
 
 .input-field {
+  display: flex;
   box-sizing: border-box;
   height: 48px;
-  width: 327px;
-  display: flex;
+  /* width: 327px; */
   align-items: center;
   transition: box-shadow 0.1s;
+  margin-top: 10px;
 
   &.variant-default {
     // box-shadow: inset 0 0 0 2px $Grey05;
@@ -84,21 +86,26 @@ export default Vue.extend({
     // background-image: linear-gradient(white, white);
     border: 2px solid transparent;
     border-radius: 3px;
-    background-image: linear-gradient(white, white),
-      linear-gradient(to right, $Grey04, $Grey04);
+    background-image: linear-gradient(white, white), linear-gradient(to right, $Grey04, $Grey04);
     background-origin: border-box;
     background-clip: content-box, border-box;
 
     &.is-focused {
-      outline: none;
-      background-image: linear-gradient(white, white),
-        linear-gradient(to right, $Grey07, $Grey07);
-      // box-shadow: inset 0 0 0 2px $Grey07;
+      box-shadow: none;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      background-image: linear-gradient(white, white), linear-gradient(to right, #279ecc, #a13e99);
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+      /* outline: none;
+      background-image: linear-gradient(white, white), linear-gradient(to right, $Grey07, $Grey07);
+      // box-shadow: inset 0 0 0 2px $Grey07; */
     }
 
     &.is-disabled {
-      background-color: rgba(0, 0, 0, 0.05);
-      box-shadow: inset 0 0 0 2px $Grey04;
+      border: 1px solid transparent;
+      background: rgba(0, 0, 0, 0.05);
+      box-shadow: inset 0 0 0 1px $Grey04;
     }
   }
 
@@ -110,8 +117,7 @@ export default Vue.extend({
   &.variant-secondary {
     border: 2px solid transparent;
     border-radius: 3px;
-    background-image: linear-gradient(white, white),
-      linear-gradient(to right, #9a449c, #e30a7d);
+    background-image: linear-gradient(white, white), linear-gradient(to right, #9a449c, #e30a7d);
     background-origin: border-box;
     background-clip: content-box, border-box;
   }
@@ -124,8 +130,7 @@ export default Vue.extend({
       box-shadow: none;
       border: 2px solid transparent;
       border-radius: 4px;
-      background-image: linear-gradient(white, white),
-        linear-gradient(to right, #9a449c, #e30a7d);
+      background-image: linear-gradient(white, white), linear-gradient(to right, #9a449c, #e30a7d);
       background-origin: border-box;
       background-clip: content-box, border-box;
     }
@@ -134,8 +139,7 @@ export default Vue.extend({
       box-shadow: none;
       border: 2px solid transparent;
       border-radius: 4px;
-      background-image: linear-gradient(white, white),
-        linear-gradient(to right, #279ecc, #a13e99);
+      background-image: linear-gradient(white, white), linear-gradient(to right, #279ecc, #a13e99);
       background-origin: border-box;
       background-clip: content-box, border-box;
     }
@@ -147,7 +151,7 @@ export default Vue.extend({
   }
 }
 .input-label {
-  font-size: (13/16) * 1rem;
+  font-size: (calc(13 / 16)) * 1rem;
   font-weight: 500;
   letter-spacing: -0.16px;
   color: rgba(34, 34, 34, 0.65);
@@ -155,15 +159,15 @@ export default Vue.extend({
   margin-bottom: 0.5em;
 }
 .input-error-text {
-  max-width: 327px;
+  max-width: 300px;
   height: 36px;
-  font-size: (14/16) * 1rem;
+  font-size: 14px;
   color: $Pink01;
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   margin-bottom: 12px;
   word-wrap: break-word;
-  margin-top: 14px;
+  margin-top: 8px;
   .icon {
     margin-left: 2px;
     margin-right: 2px;

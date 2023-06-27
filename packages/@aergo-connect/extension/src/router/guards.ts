@@ -14,42 +14,46 @@ export const allowedToExitLockscreen: NavigationGuard = (to, from, next) => {
     }
   }
   return next();
-}
+};
 
 /**
  * Load persisted route on initial load
  * or whenever selecting an account during permission request
  */
 export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
-  const isStartTransition = from.fullPath === '/' && from.name === null && to.name === 'accounts-list';
+  const isStartTransition =
+    from.fullPath === '/' && from.name === null && to.name === 'accounts-list';
   if (isStartTransition) {
-      const persistedPath = store.state.ui.route.currentPath;
-      const exclude = ['', '/', '/welcome', to.fullPath];
-      if (persistedPath && exclude.indexOf(persistedPath) === -1) {
-        return next(persistedPath);
-      }
+    const persistedPath = store.state.ui.route.currentPath;
+    const exclude = ['', '/', '/welcome', to.fullPath];
+    if (persistedPath && exclude.indexOf(persistedPath) === -1) {
+      return next(persistedPath);
+    }
   }
   return next();
-}
+};
 
 /**
  * Persist next route to store
  */
 export const persistRoute: NavigationGuard = (to, _from, next) => {
-  if (!(to.meta && to.meta.noTracking === true || to.fullPath.match(/request/))) {
+  if (!((to.meta && to.meta.noTracking === true) || to.fullPath.match(/request/))) {
     store.commit('ui/setCurrentRoute', to);
+    // store.commit('ui/setCurrentPage', to.name);
+    // if (_from.name != 'lockscreen') store.commit('ui/setPreviousPage', _from.name);
   }
   return next();
-}
+};
 
 /**
  * afterEach hook to update document title
  */
 export const updateTitle = (to: Route): void => {
   setTimeout(() => {
-    document.title = to.meta && to.meta.title || capitalizeFirstLetter(to.name || '') + ' - Aergo Connect';
+    document.title =
+      (to.meta && to.meta.title) || capitalizeFirstLetter(to.name || '') + ' - Aergo Connect';
   });
-}
+};
 
 /**
  * This guard is added if we are in request mode.
@@ -60,4 +64,4 @@ export const enforceRequest: NavigationGuard = (to, _from, next) => {
     return next({ name: 'request-select-account' });
   }
   return next();
-}
+};

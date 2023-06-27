@@ -6,7 +6,7 @@ Chrome browser extension built using Vue + Typescript
 
 ### Release version
 
-- [Install Aergo Connect from the Chrome web store](https://chrome.google.com/webstore/detail/aergo-connect/iopigoikekfcpcapjlkcdlokheickhpc)
+- [Install Aergo Connect from the Chrome web store](https://chrome.google.com/webstore/detail/aergo-connect-30/mcijhnoalllmbiehiebonblllpimlnle)
 
 ### Beta version
 

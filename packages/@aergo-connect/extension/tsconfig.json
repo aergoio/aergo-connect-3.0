@@ -1,7 +1,8 @@
 {
   "extends": "../../../tsconfig.base.json",
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/background"],
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "strictNullChecks": true
   }
 }

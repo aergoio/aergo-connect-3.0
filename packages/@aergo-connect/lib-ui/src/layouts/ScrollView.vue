@@ -1,8 +1,8 @@
 <template>
   <section class="scroll-view">
-    <header v-if="$slots.header">
+    <!-- <header v-if="$slots.header">
       <slot name="header"></slot>
-    </header>
+    </header> -->
     <main>
       <slot></slot>
     </main>
@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from 'vue';
 
 /**
  * A nestable scroll view, with optional header and footer.
@@ -34,8 +34,9 @@ export default Vue.extend({});
   flex-direction: column;
 
   > main {
-    // flex: 1;
-    overflow: hidden;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
   }
 }
@@ -46,7 +47,7 @@ export default Vue.extend({});
   */
 $scrollBarSize: 6px;
 $trackSize: 20px;
-$margin: ($trackSize - $scrollBarSize)/2;
+$margin: calc(($trackSize - $scrollBarSize) / 2);
 .scroll-view main {
   &::-webkit-scrollbar {
     width: $trackSize;

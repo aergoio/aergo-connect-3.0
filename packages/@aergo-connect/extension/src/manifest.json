@@ -1,23 +1,25 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "{{prop-loader?title!../package.json}}",
   "version": "{{prop-loader?version!../package.json}}",
   "version_name": "{{prop-loader?version_name!../package.json}}",
   "description": "{{prop-loader?description!../package.json}}",
   "author": "{{prop-loader?author!../package.json}}",
   "homepage_url": "{{prop-loader?homepage!../package.json}}",
-  "minimum_chrome_version": "73",
+  "minimum_chrome_version": "92",
 
-  "content_security_policy": "script-src 'self' 'unsafe-eval' http://localhost:8098; object-src 'self'",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
 
   "icons": {
     "17": "{{./assets/img/icon-17.png}}",
-    "102": "{{./assets/img/icon-102.png}}"
+    "102": "{{./assets/img/icon-102.png}}",
+    "128": "{{./assets/img/icon-128.png}}"
   },
 
   "background": {
-    "page": "background.html",
-    "persistent": true
+    "service_worker": "js/service-worker.js"
   },
 
   "content_scripts": [
@@ -27,21 +29,14 @@
     }
   ],
 
-  "browser_action": {
+  "action": {
     "default_icon": {
       "17": "{{./assets/img/icon-17.png}}",
       "34": "{{./assets/img/icon-34.png}}"
     },
-    "default_title": "Aergo Connect",
+    "default_title": "Aergo Connect 3.0",
     "default_popup": "popup.html"
   },
 
-  "permissions": [
-    "activeTab",
-    "unlimitedStorage",
-    "clipboardWrite",
-    "contextMenus",
-    "idle",
-    "system.display"
-  ]
+  "permissions": ["activeTab", "unlimitedStorage", "clipboardWrite", "contextMenus", "idle"]
 }

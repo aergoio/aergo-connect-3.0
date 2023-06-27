@@ -8,7 +8,7 @@
       @enter="enter"
       @afterEnter="afterEnter"
     >
-      <slot/>
+      <slot />
     </transition>
   </div>
 </template>
@@ -47,24 +47,26 @@ export default Vue.extend({
       transitionEnterActiveClass: '',
     };
   },
+
   watch: {
-    '$route'(to: RouteConfig, from: RouteConfig): void {
-      let transitionName = from.meta.transitionName || to.meta.transitionName || this.defaultTransition;
+    $route(to: RouteConfig, from: RouteConfig): void {
+      let transitionName =
+        from.meta.transitionName || to.meta.transitionName || this.defaultTransition;
+
       if (from.meta.transitionName === 'fade' || to.meta.transitionName === 'fade') {
         // If one of them is fade, always use that
         transitionName = 'fade';
-      } else if (transitionName === 'slide') {
-        // For slide, calculate depth difference based on path or meta.index
-        const depthDiff = from.path.split(`/`).length - to.path.split(`/`).length;
-        const indexDiff = (from.meta.index && to.meta.index) && (from.meta.index - to.meta.index);
-        transitionName = (indexDiff > 0 || depthDiff > 0) ? `slide-right` : `slide-left`;
+      } else {
+        const indexDiff = from.meta.index && to.meta.index && from.meta.index - to.meta.index;
+        transitionName = indexDiff > 0 ? `slide-right` : `slide-left`;
       }
+
       this.transitionName = transitionName;
       this.transitionEnterActiveClass = `${transitionName}-enter-active`;
-      // Use out-in mode for fade transitions
       this.transitionMode = transitionName === 'fade' ? 'out-in' : '';
-    }
+    },
   },
+
   methods: {
     beforeLeave(element: HTMLElement): void {
       const style = getComputedStyle(element);
@@ -95,7 +97,7 @@ export default Vue.extend({
 
 .fade-enter-active,
 .fade-leave-active {
-  transition-duration: .4s;
+  transition-duration: 0.4s;
   transition-property: opacity;
   transition-timing-function: ease;
   overflow: hidden;
@@ -109,7 +111,7 @@ export default Vue.extend({
 .slide-left-leave-active,
 .slide-right-enter-active,
 .slide-right-leave-active {
-  transition-duration: .5s;
+  transition-duration: 0.5s;
   transition-property: height, opacity, transform;
   transition-timing-function: cubic-bezier(0.55, 0, 0.1, 1);
   overflow: hidden;

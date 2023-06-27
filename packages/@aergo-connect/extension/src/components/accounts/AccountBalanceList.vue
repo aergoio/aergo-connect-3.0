@@ -1,33 +1,51 @@
 <template>
   <ul class="account-list">
     <li :key="'coinId'" v-if="balanceOfCoin">
-      <router-link :to="{ name: accountRoute, params: {address: accountSpec.address, chainId: accountSpec.chainId, from:'coin', contract: balanceOfCoin.address} }">
+      <router-link
+        :to="{
+          name: accountRoute,
+          params: {
+            address: accountSpec.address,
+            chainId: accountSpec.chainId,
+            from: 'coin',
+            contract: balanceOfCoin.address,
+          },
+        }"
+      >
         <div class="account-group">
           <div style="display: flex; flex-direction: row">
             <div style="display: flex">
-            <span class="account-icon">
-              <Icon :name="'logo'" :size="36"/>
-            </span>
+              <span class="account-icon">
+                <Icon :name="'logo'" :size="36" />
+              </span>
             </div>
-<!--            <div style="display: flex; flex-direction: column">-->
-<!--              &lt;!&ndash;            <span class="account-balance-amount">115.00571 AERGO</span>&ndash;&gt;-->
-<!--&lt;!&ndash;              <FormattedToken class="account-balance" :value="balanceOfCoin.meta.balance"/>&ndash;&gt;-->
-<!--&lt;!&ndash;              <span style="display: block; padding-bottom: 0px; margin-top: -10px">$35.2</span>&ndash;&gt;-->
-<!--            </div>-->
-            <FormattedToken class="account-balance" :value="balanceOfCoin.meta.balance"/>
+            <FormattedToken class="account-balance" :value="balanceOfCoin.meta.balance" />
           </div>
         </div>
       </router-link>
     </li>
     <li :key="object.token.contract" v-for="object in balanceOfGem">
-      <router-link :to="{ name: accountRoute, params: {address: accountSpec.address, chainId: accountSpec.chainId, from:'arg', contract: contractAddress} }">
-      <div class="account-group">
-        <span class="account-icon">
-          <Icon :name="'aergo-gem'" :size="36"/>
-        </span>
-          <!--        <span class="account-balance-amount">200,000.00 GEM</span>-->
-          <FormattedToken class="account-balance" :value="object.token.meta.balance+ ' aer'" :forcedUnit="'ARG'"/>
-      </div>
+      <router-link
+        :to="{
+          name: accountRoute,
+          params: {
+            address: accountSpec.address,
+            chainId: accountSpec.chainId,
+            from: 'arg',
+            contract: contractAddress,
+          },
+        }"
+      >
+        <div class="account-group">
+          <span class="account-icon">
+            <Icon :name="'aergo-gem'" :size="36" />
+          </span>
+          <FormattedToken
+            class="account-balance"
+            :value="object.token.meta.balance + ' aer'"
+            :forcedUnit="'ARG'"
+          />
+        </div>
       </router-link>
     </li>
   </ul>
@@ -36,9 +54,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import {Prop} from 'vue-property-decorator';
+import { Prop } from 'vue-property-decorator';
 import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
-import {FormattedToken, Identicon} from '@aergo-connect/lib-ui/src/content';
+import { FormattedToken, Identicon } from '@aergo-connect/lib-ui/src/content';
 
 @Component({
   components: {
@@ -48,12 +66,11 @@ import {FormattedToken, Identicon} from '@aergo-connect/lib-ui/src/content';
   },
 })
 export default class AccountBalanceList extends Vue {
-  @Prop({type: String, default: 'account-details'}) readonly accountRoute!: string;
-  @Prop({type: Boolean, default: false}) readonly canDelete!: boolean;
+  @Prop({ type: String, default: 'account-details' }) readonly accountRoute!: string;
+  @Prop({ type: Boolean, default: false }) readonly canDelete!: boolean;
 
   mounted() {
-    //this.activeAccount = await this.$background.getActiveAccount();
-    this.$store.dispatch('accounts/fetchAccountBalances', {...this.accountSpec})
+    this.$store.dispatch('accounts/fetchAccountBalances', { ...this.accountSpec });
   }
 
   get balances(): any {
@@ -64,12 +81,10 @@ export default class AccountBalanceList extends Vue {
   }
 
   get balanceOfCoin() {
-    console.log("balanceOfCoin")
     return this.balances?.coin;
   }
 
   get balanceOfGem() {
-    console.log("balanceOfGem")
     return this.balances?.objects;
   }
 
@@ -78,25 +93,31 @@ export default class AccountBalanceList extends Vue {
   }
 
   get accountSpec() {
+    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+      ? this.$store.state.accounts.chainId
+      : this.$store.state.accounts.chainLabel;
     return {
       address: this.$route.params.address,
-      chainId: this.$route.params.chainId,
+      chainId,
     };
   }
 }
 </script>
 
 <style lang="scss">
-.account-list, .account-list ul {
+.account-list,
+.account-list ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .account-list {
-  font-size: (13/16)*1rem;
+  font-size: (calc(13 / 16)) * 1rem;
 
-  .account-balance-amount, .account-address {
+  .account-balance-amount,
+  .account-address {
     font-weight: 500;
   }
 
@@ -114,7 +135,8 @@ export default class AccountBalanceList extends Vue {
     border-top: 1px solid #f0f0f0;
   }
 
-  .account-group, .account-item {
+  .account-group,
+  .account-item {
     padding: 16px 20px;
   }
 
@@ -124,7 +146,7 @@ export default class AccountBalanceList extends Vue {
 
     &.active {
       border: 1px solid rgba(#ff4f9f, 1);
-      animation: activeFaceOut .4s 2 forwards ease-in-out;
+      animation: activeFaceOut 0.4s 2 forwards ease-in-out;
     }
   }
 
@@ -135,7 +157,7 @@ export default class AccountBalanceList extends Vue {
     border-bottom: 1px solid #f0f0f0;
     padding: 3px 0 10px;
     margin-left: 14px;
-    font-size: (12/16)*1rem;
+    font-size: (calc(12 / 16)) * 1rem;
   }
 
   .account-item-li:last-child .account-address-balance {
@@ -193,13 +215,13 @@ export default class AccountBalanceList extends Vue {
 
   .account-label-new {
     background-color: #ff4f9f;
-    font-size: (8/16)*1rem;
+    font-size: (calc(8 / 16)) * 1rem;
     text-transform: uppercase;
     color: #fff;
   }
 
   .account-label-usb {
-    background-color: #6F6F6F;
+    background-color: #6f6f6f;
 
     .icon {
       line-height: 10px;

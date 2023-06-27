@@ -1,10 +1,9 @@
-import { storiesOf } from '@storybook/vue';
-import Appear from './Appear.vue';
+import { storiesOf } from "@storybook/vue";
+import Appear from "./Appear.vue";
 
-storiesOf('Animations/Appear', module)
-  .add('with options', () => ({
-    components: { Appear },
-    template: `
+storiesOf("Animations/Appear", module).add("with options", () => ({
+  components: { Appear },
+  template: `
     <div>
       <Appear>
         Content shown immediately
@@ -25,5 +24,9 @@ storiesOf('Animations/Appear', module)
       <Appear :delay="2">
         Content shown after 2s
       </Appear>
+
+      <Appear :delay="3">
+      Content shown after 3s
+    </Appear>
     </div>`,
-  }));
+}));

@@ -1,12 +1,11 @@
-import { storiesOf } from '@storybook/vue';
-import Button from './Button.vue';
-import ButtonGroup from './ButtonGroup.vue';
-import { select } from '@storybook/addon-knobs';
+import { storiesOf } from "@storybook/vue";
+import Button from "./Button.vue";
+import ButtonGroup from "./ButtonGroup.vue";
+import { select } from "@storybook/addon-knobs";
 
-storiesOf('Buttons/ButtonGroup', module)
-  .add('with options', () => ({
-    components: { Button, ButtonGroup },
-    template: `
+storiesOf("Buttons/ButtonGroup", module).add("with options", () => ({
+  components: { Button, ButtonGroup },
+  template: `
       <div style="width: 300px">
         <ButtonGroup :horizontal="this.align==='horizontal'" :vertical="this.align==='vertical'">
           <Button type="primary">Continue</Button>
@@ -14,10 +13,10 @@ storiesOf('Buttons/ButtonGroup', module)
         </ButtonGroup>
       </div>
     `,
-    props: {
-      align: {
-        type: String,
-        default: select('Alignment', ['vertical', 'horizontal'], 'vertical'),
-      },
-    }
-  }));
+  props: {
+    align: {
+      type: String,
+      default: select("Alignment", ["vertical", "horizontal"], "vertical"),
+    },
+  },
+}));

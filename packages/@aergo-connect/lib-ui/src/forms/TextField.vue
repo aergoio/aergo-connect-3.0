@@ -1,39 +1,59 @@
 <template>
   <div>
     <label>
-      <span class="input-label" v-if="label">{{label}}</span>
-      <InputContainer :disabled="disabled" :variant="variant" :state="state" :error="error" :class="classes">
+      <span class="input-label" v-if="label">{{ label }}</span>
+      <InputContainer
+        :disabled="disabled"
+        :variant="variant"
+        :state="state"
+        :error="error"
+        :class="classes"
+      >
         <input
           :value="value"
           :type="type"
           :disabled="disabled"
+          :placeholder="placeholder"
           :autoComplete="autoComplete"
           @input="handleInput"
           @change="handleFileInput"
           @blur="handleBlur"
           @keyup.enter="handleEnter"
           accept=".txt"
-          ref="inputElement" />
+          ref="inputElement"
+        />
         <slot></slot>
       </InputContainer>
-      <span class="input-error-text" :class="errorType" v-if="error">{{error}} <Icon name="danger" :size="16" /></span>
+      <div class="input-error-text" :class="errorType" v-if="error">
+        <Icon name="danger" :size="16" />
+        <span>{{ error }}</span>
+      </div>
     </label>
   </div>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
-import { InputVariant, InputVariants, InputType, InputTypes, InputStates, InputState } from './types';
-import InputContainer from './InputContainer.vue';
-import Icon from '../icons/Icon.vue';
+import Vue, { PropType } from "vue";
+import {
+  InputVariant,
+  InputVariants,
+  InputType,
+  InputTypes,
+  InputStates,
+  InputState,
+} from "./types";
+import InputContainer from "./InputContainer.vue";
+import Icon from "../icons/Icon.vue";
 
 export default Vue.extend({
   components: {
     InputContainer,
     Icon,
   },
+
   props: {
     value: [String, Number],
+    placeholder: String,
     label: String,
     type: {
       type: String as PropType<InputType>,
@@ -51,21 +71,19 @@ export default Vue.extend({
     },
     error: {
       type: String,
-      default: '',
+      default: "",
     },
     errorType: {
-      type: String as PropType<'error' | 'warning'>,
-      default: 'error',
+      type: String as PropType<"error" | "warning">,
+      default: "error",
     },
     autoComplete: String,
   },
+
   computed: {
     classes(): string[] {
-      return [
-        'text-field',
-        `type-${this.type}`,
-      ];
-    }
+      return ["text-field", `type-${this.type}`];
+    },
   },
   mounted() {
     if (this.autofocus) {
@@ -74,13 +92,13 @@ export default Vue.extend({
   },
   methods: {
     handleInput(event: InputEvent): void {
-      this.$emit('input', (event.target as HTMLFormElement).value);
+      this.$emit("input", (event.target as HTMLFormElement).value);
     },
     handleBlur(event: FocusEvent): void {
-      this.$emit('blur', (event.target as HTMLFormElement).value);
+      this.$emit("blur", (event.target as HTMLFormElement).value);
     },
     handleEnter(event: KeyboardEvent): void {
-      this.$emit('submit', (event.target as HTMLFormElement).value);
+      this.$emit("submit", (event.target as HTMLFormElement).value);
     },
     handleFileInput(): void {
       const $elem = this.$refs.inputElement as HTMLInputElement;
@@ -88,12 +106,12 @@ export default Vue.extend({
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target) {
-          this.$emit('file', e.target.result);
+          this.$emit("file", e.target.result);
         }
       };
       reader.readAsText($elem.files[0]);
-    }
-  }
+    },
+  },
 });
 </script>
 
@@ -111,7 +129,7 @@ export default Vue.extend({
 
   &.variant-default {
     input {
-      font-size: (14/16)*1rem;
+      font-size: (14/16) * 1rem;
       border-radius: 3px;
     }
   }

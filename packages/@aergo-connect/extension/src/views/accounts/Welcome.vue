@@ -2,7 +2,19 @@
   <ScrollView class="page">
     <div class="welcome-content">
       <Appear>
-        <Heading class="big-title">Welcome to Aergo Connect</Heading>
+        <Heading class="big-title">Welcome to</Heading>
+        <div class="aergoMainLogo">
+          <Icon name="aergoMainLogo" :size="150" />
+          <div class="welcome-message-1-group">
+            <span class="welcome-message-1">
+              AERGO Connect is the official wallet of
+            </span>
+            <span class="welcome-message-1">AERGO Blockchain.</span>
+          </div>
+          <span class="welcome-message-2">
+            The Blockchain For the WORLD.
+          </span>
+        </div>
       </Appear>
     </div>
 
@@ -10,8 +22,12 @@
       <div class="content">
         <Appear :delay="0.6">
           <ButtonGroup vertical>
-            <Button type="primary" :to="{ name: 'setup', params: { next: 'account-create' } }">Create new wallet</Button>
-            <Button type="secondary" :to="{ name: 'setup', params: { next: 'account-import' } }">Import your wallet</Button>
+            <Button
+              type="primary"
+              :to="{ name: 'setup', params: { next: 'account-register' } }"
+              hover="true"
+              >Get Started</Button
+            >
           </ButtonGroup>
         </Appear>
       </div>
@@ -20,11 +36,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
-import { Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
-import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
+import Vue from "vue";
+import { ScrollView } from "@aergo-connect/lib-ui/src/layouts";
+import { Button, ButtonGroup } from "@aergo-connect/lib-ui/src/buttons";
+import Heading from "@aergo-connect/lib-ui/src/content/Heading.vue";
+import Appear from "@aergo-connect/lib-ui/src/animations/Appear.vue";
+import Icon from "@aergo-connect/lib-ui/src/icons/Icon.vue";
 
 export default Vue.extend({
   components: {
@@ -33,17 +50,49 @@ export default Vue.extend({
     ButtonGroup,
     Heading,
     Appear,
+    Icon,
   },
 });
 </script>
 
 <style lang="scss">
 .welcome-content {
-  margin-top: 100px;
-  padding: 20px;
+  margin-top: 90px;
+}
+.aergoMainLogo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 30px;
+  margin-top: 20px;
+
+  .welcome-message-1-group {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+    font-family: "Outfit";
+    .welcome-message-1 {
+      font-weight: 400;
+      font-size: 1em;
+    }
+  }
+
+  .welcome-message-2 {
+    font-family: "Outfit";
+    margin-top: 20px;
+    font-weight: 500;
+    font-size: 1em;
+  }
 }
 #app.page-welcome {
-  background: url(../../assets/img/welcome-bg.jpg) 0 0 no-repeat;
-  background-size: cover;
+  background: linear-gradient(
+    0deg,
+    #ffffff -10.1%,
+    #ecf8fd 58.85%,
+    #fff1f9 139.14%
+  );
 }
 </style>

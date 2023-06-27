@@ -1,4 +1,4 @@
-import { IndexedDbStorage } from "@herajs/wallet";
+import { IndexedDbStorage } from '@herajs/wallet';
 
 const VERSION = 3;
 const store = new IndexedDbStorage('data', VERSION);

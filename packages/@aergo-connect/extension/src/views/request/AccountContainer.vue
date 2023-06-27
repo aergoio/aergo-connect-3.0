@@ -14,10 +14,8 @@ import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import RouteTransition from '@aergo-connect/lib-ui/src/nav/RouteTransition.vue';
 import AccountHeader from '../../components/AccountHeader.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-
 import Vue from 'vue';
-import Component from 'vue-class-component'
-
+import Component from 'vue-class-component';
 @Component({
   components: {
     ScrollView,
@@ -26,9 +24,7 @@ import Component from 'vue-class-component'
     RouteTransition,
   },
 })
-export default class AccountFrame extends Vue {
-}
+export default class AccountFrame extends Vue {}
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

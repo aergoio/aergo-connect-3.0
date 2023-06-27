@@ -1,6 +1,84 @@
+// flex
 @mixin flex__column__center {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+@mixin flex__row__center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex__start {
+  display: flex;
+  justify-content: flex-start;
+}
+
+//font
+
+@mixin header__title {
+  width: 269px;
+  height: 25px;
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 25px;
+  text-align: center;
+  letter-spacing: -0.333333px;
+
+  /* Grey/08 */
+
+  color: #231f20;
+}
+
+@mixin network__active__state {
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(133.72deg, #9a449c 0%, #e30a7d 100%);
+  border-radius: 50%;
+  margin-right: 2px;
+}
+
+@mixin network__text {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 16px;
+  text-align: right;
+  letter-spacing: -0.333333px;
+
+  /* Grey/06 */
+
+  color: #686767;
+}
+
+@mixin title__font {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 19px;
+  /* identical to box height */
+
+  /* Grey/07 */
+
+  color: #454344;
+}
+
+@mixin content__font {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 16px;
+  letter-spacing: -0.333333px;
+
+  /* Grey/06 */
+
+  color: #686767;
 }

@@ -9,6 +9,7 @@
         :error="error"
         :class="classes"
       >
+        <Identicon v-if="identicon" :text="value" :style="{ marginLeft: '8px' }" />
         <input
           :value="value"
           :type="type"
@@ -19,21 +20,22 @@
           @change="handleFileInput"
           @blur="handleBlur"
           @keyup.enter="handleEnter"
+          @focus="handleFocusOn"
           accept=".txt"
           ref="inputElement"
         />
         <slot></slot>
       </InputContainer>
       <div class="input-error-text" :class="errorType" v-if="error">
-        <Icon name="danger" :size="16" />
-        <span>{{ error }}</span>
+        <Icon :name="`danger`" :size="16" />
+        <span :style="{ maxWidth: '300px' }">{{ error }}</span>
       </div>
     </label>
   </div>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
+import Vue, { PropType } from 'vue';
 import {
   InputVariant,
   InputVariants,
@@ -41,14 +43,16 @@ import {
   InputTypes,
   InputStates,
   InputState,
-} from "./types";
-import InputContainer from "./InputContainer.vue";
-import Icon from "../icons/Icon.vue";
+} from './types';
+import InputContainer from './InputContainer.vue';
+import Icon from '../icons/Icon.vue';
+import { Identicon } from '../content';
 
 export default Vue.extend({
   components: {
     InputContainer,
     Icon,
+    Identicon,
   },
 
   props: {
@@ -71,34 +75,35 @@ export default Vue.extend({
     },
     error: {
       type: String,
-      default: "",
+      default: '',
     },
     errorType: {
-      type: String as PropType<"error" | "warning">,
-      default: "error",
+      type: String as PropType<'error' | 'warning'>,
+      default: 'error',
     },
     autoComplete: String,
+    identicon: Boolean,
   },
 
   computed: {
     classes(): string[] {
-      return ["text-field", `type-${this.type}`];
+      return ['text-field', `type-${this.type}`];
     },
   },
   mounted() {
     if (this.autofocus) {
-      (this.$refs.inputElement as HTMLFormElement).focus();
+      (this.$refs.inputElement as HTMLFormElement).focus({ preventScroll: true });
     }
   },
   methods: {
     handleInput(event: InputEvent): void {
-      this.$emit("input", (event.target as HTMLFormElement).value);
+      this.$emit('input', (event.target as HTMLFormElement).value);
     },
     handleBlur(event: FocusEvent): void {
-      this.$emit("blur", (event.target as HTMLFormElement).value);
+      this.$emit('blur', (event.target as HTMLFormElement).value);
     },
     handleEnter(event: KeyboardEvent): void {
-      this.$emit("submit", (event.target as HTMLFormElement).value);
+      this.$emit('submit', (event.target as HTMLFormElement).value);
     },
     handleFileInput(): void {
       const $elem = this.$refs.inputElement as HTMLInputElement;
@@ -106,10 +111,14 @@ export default Vue.extend({
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target) {
-          this.$emit("file", e.target.result);
+          this.$emit('file', e.target.result);
         }
       };
       reader.readAsText($elem.files[0]);
+    },
+    handleFocusOn(event: any) {
+      event.target.select();
+      this.$emit('focus');
     },
   },
 });
@@ -120,7 +129,7 @@ export default Vue.extend({
   input {
     border: 0;
     flex: 1;
-    padding: 15px;
+    padding: 12px;
     outline: none;
     background-color: transparent;
     width: 100px;
@@ -129,19 +138,19 @@ export default Vue.extend({
 
   &.variant-default {
     input {
-      font-size: (14/16) * 1rem;
+      font-size: (calc(14 / 16)) * 1rem;
       border-radius: 3px;
     }
   }
 
   &.variant-main {
     input {
-      font-size: (20/16) * 1rem;
+      font-size: (calc(20 / 16)) * 1rem;
       font-weight: 500;
       padding-left: 4px;
     }
     &.type-password input {
-      font-size: (36/16) * 1rem;
+      font-size: (calc(6 / 16)) * 1rem;
       padding-top: 7px;
       padding-bottom: 7px;
       overflow: hidden;

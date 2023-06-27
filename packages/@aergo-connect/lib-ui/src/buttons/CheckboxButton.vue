@@ -1,23 +1,36 @@
 <template>
-  <input type="checkbox" class="checkbox" :disabled="disabled" />
+  <input
+    type="checkbox"
+    class="checkbox"
+    :checked="checked"
+    @click="checkboxFunc"
+    @keyup.enter="enterKeyup"
+  />
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from 'vue';
 export default Vue.extend({
   props: {
-    disabled: {
+    checked: {
       type: Boolean,
       default: false,
     },
   },
   computed: {},
-  methods: {},
+  methods: {
+    checkboxFunc() {
+      this.$emit('check', !this.checked);
+    },
+    enterKeyup() {
+      this.$emit('enterKeyup');
+    },
+  },
 });
 </script>
 
 <style lang="scss">
-@import "../styles/variables";
+@import '../styles/variables';
 
 .checkbox {
   display: inline-block;

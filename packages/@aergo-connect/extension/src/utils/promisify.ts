@@ -3,7 +3,10 @@ const kCustomPromisifiedSymbol = Symbol('util.promisify.custom');
 /**
  * This is util.promisify for functions with a callback signature of simply (result) => void;
  */
-export function promisifySimple<Ret = any>(original: Function, context: any): ((...args: any[]) => Promise<Ret>) {
+export function promisifySimple<Ret = any>(
+  original: Function,
+  context: any,
+): (...args: any[]) => Promise<Ret> {
   if (typeof context === 'undefined') {
     context = {};
   }
@@ -22,15 +25,18 @@ export function promisifySimple<Ret = any>(original: Function, context: any): ((
             resolve(value);
           }
         });
-      } catch(e) {
+      } catch (e) {
         reject(e);
       }
     });
   }
-  
+
   Object.setPrototypeOf(fn, Object.getPrototypeOf(original));
   Object.defineProperty(fn, kCustomPromisifiedSymbol, {
-    value: fn, enumerable: false, writable: false, configurable: true
+    value: fn,
+    enumerable: false,
+    writable: false,
+    configurable: true,
   });
   return Object.defineProperties(fn, Object.getOwnPropertyDescriptors(original));
 }

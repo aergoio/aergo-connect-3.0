@@ -1,6 +1,8 @@
 <template>
   <div>
+    <span class="field-title" v-if="label">{{ label }}</span>
     <TextField
+      class="simple-center"
       :type="revealPassword ? 'text' : 'password'"
       :variant="variant"
       :value="value"
@@ -23,27 +25,25 @@
         />
       </div>
     </TextField>
-    <div class="password-strength" v-if="setting">
-      <span
-        class="input-error-text password-weak"
-        v-if="value && passwordStrength.score < 3"
-        >Strength : Weak
+    <div v-if="setting" class="password-strength">
+      <span class="input-error-text password-weak" v-if="value && passwordStrength.score < 3">
+        Strength: Week
       </span>
-      <span
-        class="input-error-text password-good"
-        v-if="value && passwordStrength.score >= 3"
-        >Strength : Good
+      <span class="input-error-text password-good" v-else-if="value && passwordStrength.score >= 3"> 
+        Strength: Good
       </span>
+      <span v-else class="input-error-text password-good"> </span>
+    </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
-import Icon from "../icons/Icon.vue";
-import TextField from "./TextField.vue";
-import { InputVariant, InputVariants, InputStates, InputState } from "./types";
-import zxcvbn, { ZXCVBNResult } from "zxcvbn";
+import Vue, { PropType } from 'vue';
+import Icon from '../icons/Icon.vue';
+import TextField from './TextField.vue';
+import { InputVariant, InputVariants, InputStates, InputState } from './types';
+import zxcvbn, { ZXCVBNResult } from 'zxcvbn';
 
 export default Vue.extend({
   components: {
@@ -53,6 +53,7 @@ export default Vue.extend({
   props: {
     value: String,
     label: String,
+    initPassword: String,
     variant: {
       type: String as PropType<InputVariant>,
       default: InputVariants[0],
@@ -69,7 +70,7 @@ export default Vue.extend({
     },
     error: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   data() {
@@ -79,9 +80,8 @@ export default Vue.extend({
   },
   computed: {
     passwordError(): string {
-      if (this.value && this.passwordStrength.score < 3)
-        return "Weak passphrase";
-      return "";
+      if (this.value && this.passwordStrength.score < 3) return 'Weak passphrase';
+      return '';
     },
     passwordStrength(): ZXCVBNResult {
       return zxcvbn(this.value);
@@ -89,13 +89,13 @@ export default Vue.extend({
   },
   methods: {
     handleInput(value: string): void {
-      this.$emit("input", value);
+      this.$emit('input', value);
     },
     handleBlur(value: string): void {
-      this.$emit("blur", value);
+      this.$emit('blur', value);
     },
     handleEnter(value: string): void {
-      this.$emit("submit", value);
+      this.$emit('submit', value);
     },
     toggleReveal(): void {
       this.revealPassword = !this.revealPassword;
@@ -106,16 +106,17 @@ export default Vue.extend({
 
 <style lang="scss">
 .password-strength {
-  margin-top: 10px;
+  margin-top: 0px;
+  margin-left: 28px;
 }
 .password-advice {
   color: #666;
-  font-size: (14/16) * 1rem;
+  font-size: (calc(14 / 16)) * 1rem;
   display: flex;
 }
 .password-good {
   color: #279ecc;
-  font-size: (14/16) * 1rem;
+  font-size: (calc(14 / 16)) * 1rem;
   .adjustable-stroke {
     stroke: #00c789;
   }
@@ -127,8 +128,7 @@ export default Vue.extend({
 
 .icon__wrapper {
   &.invalid {
-    filter: invert(17%) sepia(86%) saturate(6083%) hue-rotate(319deg)
-      brightness(90%) contrast(99%);
+    filter: invert(17%) sepia(86%) saturate(6083%) hue-rotate(319deg) brightness(90%) contrast(99%);
   }
 }
 </style>

@@ -36,10 +36,10 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 yarn global add @vue/devtools
 ```
 
-2. 빌드된 상태의 크롬익스텐션 아르고커넥트 실행
-
-3. devtools 실행
+2. devtools 실행
 
 ```
 vue-devtools
 ```
+
+3. 빌드된 상태의 크롬익스텐션 아르고커넥트 실행

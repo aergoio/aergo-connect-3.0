@@ -1,6 +1,12 @@
 <template>
   <div class="inputContainer" :class="[`state-${state}`]">
-       <textarea class="textarea"></textarea>
+       <textarea v-if="readonly" class="textarea" readonly :placeholder="placeholder">
+       </textarea>
+       <textarea v-else class="textarea" :placeholder="placeholder" @input="handleInput"
+          @change="handleFileInput"
+          @blur="handleBlur"
+          @keyup.enter="handleEnter">
+       </textarea>
      </div>
    </label>
  </template>
@@ -16,10 +22,34 @@
      state: {
        type: String as PropType<InputState>,
        default: InputStates[0],
+     }, 
+     placeholder: {
+      type: String,
+      default: ""
      },
+     readonly: false,
    },
    computed: {},
-   methods: {},
+   methods: {handleInput(event: InputEvent): void {
+      this.$emit("input", (event.target as HTMLFormElement).value);
+    },
+    handleBlur(event: FocusEvent): void {
+      this.$emit("blur", (event.target as HTMLFormElement).value);
+    },
+    handleEnter(event: KeyboardEvent): void {
+      this.$emit("submit", (event.target as HTMLFormElement).value);
+    },
+    handleFileInput(): void {
+      const $elem = this.$refs.inputElement as HTMLInputElement;
+      if (!$elem || !$elem.files || $elem.files.length === 0) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target) {
+          this.$emit("file", e.target.result);
+        }
+      };
+      reader.readAsText($elem.files[0]);
+    },},
  });
  </script>
  
@@ -66,11 +96,20 @@
    outline: none;
    resize: none;
    background-color: transparent;
- 
+   
+   padding: 10px;
    font-weight: 500;
    font-size: 16px;
    line-height: 25px;
    letter-spacing: -0.333333px;
+
+   &::placeholder {
+    color: blue;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -0.333333px;
+    color: #9C9A9A;
+    }
  }
  
  </style>

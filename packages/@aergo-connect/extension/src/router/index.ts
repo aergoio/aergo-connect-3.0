@@ -70,7 +70,7 @@ const routes: RouteConfig[] = [
       withMeta(
         1,
         { path: '/locked', name: 'lockscreen', component: Lockscreen },
-        R.NoAuthCheck | R.NoTracking,
+        // R.NoAuthCheck | R.NoTracking,
       ),
 
       withMeta(1, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),

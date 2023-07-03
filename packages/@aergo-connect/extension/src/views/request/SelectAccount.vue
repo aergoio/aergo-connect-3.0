@@ -14,22 +14,27 @@ export default class RequestSelectAccount extends Vue {
 
   async redirectToRequest() {
     const activeAccount = await this.$background.getActiveAccount();
+    console.log(activeAccount, 'activeAccount');
     if (!activeAccount) {
-      return this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
+      const address = this.$store.state.accounts.address;
+      const chainId = this.$store.state.accounts.chainId;
+      if (address && chainId) {
+        return this.$router.push({
+          name: 'request-select-action',
+          params: { address, chainId },
+        });
+      } else {
+        return this.$router.push({ name: 'request-accounts-list' });
+      }
     }
-    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
-      ? this.$store.state.accounts.chainId
-      : this.$store.state.accounts.chainLabel;
-    this.$router
-      .push({
-        name: 'request-select-action',
-        params: {
-          chainId,
-          address: activeAccount.data.spec.address,
-        },
-      })
-      .catch(() => {});
+    // const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+    // const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+    //   ? this.$store.state.accounts.chainId
+    //   : this.$store.state.accounts.chainLabel;
+    this.$router.push({
+      name: 'request-select-action',
+      params: activeAccount.data.spec,
+    });
   }
 }
 </script>

@@ -231,7 +231,7 @@ export default Vue.extend({
     },
     goToLatestTransactionHash() {
       const scanExplorerUrl = getScanExplorerUrl(this.$store.state.accounts);
-      window.open(`${scanExplorerUrl}/transaction/${this.latestTransactionHash}`, '_blank');
+      window.open(`${scanExplorerUrl}/transaction/${this.latestTransactionHash}?tx=nft`, '_blank');
     },
     async refreshClick() {
       this.isLoading = true;

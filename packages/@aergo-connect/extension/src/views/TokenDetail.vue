@@ -11,7 +11,7 @@
     <SendFinishModal
       v-if="receiptModal"
       :asset="$store.state.accounts.selectedToken"
-      :txHash="selectedData[`hash`]"
+      :txHash="selectedData[`hash`].split('-0')[0]"
       :receipt="selectedData[`meta`][`to`]"
       :amount="amount"
       :symbol="token.meta.symbol"
@@ -426,6 +426,7 @@ export default Vue.extend({
       window.open('https://voting.aergo.io/about', '_blank');
     },
     gotoScanTx(hash: string) {
+      console.log(hash, 'hash');
       const scanExplorerUrl = getScanExplorerUrl(this.$store.state.accounts);
       const url = `${scanExplorerUrl}/transaction/${hash.split('-')[0]}/`;
       window.open(url, '_blank');

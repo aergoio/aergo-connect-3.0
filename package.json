@@ -1,11 +1,7 @@
 {
   "name": "aergo-connect",
   "private": true,
-<<<<<<< HEAD
-  "version": "3.0.2",
-=======
-  "version": "3.0.0",
->>>>>>> main
+  "version": "3.0.3",
   "main": "index.js",
   "license": "MIT",
   "workspaces": [

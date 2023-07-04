@@ -11,7 +11,7 @@
     <SendFinishModal
       v-if="receiptModal"
       :asset="$store.state.accounts.selectedToken"
-      :txHash="selectedData[`hash`]"
+      :txHash="selectedData[`hash`].split('-0')[0]"
       :receipt="selectedData[`meta`][`to`]"
       :amount="amount"
       :symbol="token.meta.symbol"
@@ -57,17 +57,22 @@
       </div>
       <div v-if="token.meta.symbol === 'aergo'" class="token_detail aergo">
         <div class="flex-row">
-          <Icon class="icon" :name="'aergo'" />
-          <div class="balance_wrapper">
-            <div class="balance">
+          <div :style="{ display: 'flex', marginLeft: '10px' }">
+            <Icon class="icon" :name="'aergo'" />
+            <div class="balance_wrapper">
+              <div class="balance">AERGO</div>
+            </div>
+          </div>
+          <div :style="{ display: 'flex', flexDirection: 'column' }">
+            <div class="token_symbol">
               {{ token.balance ? formatBalance(token.balance) : 0 }}
+              {{ token.meta.symbol }}
             </div>
             <div class="dollor">
               <span>$ </span>
               <span>{{ aergoPrice ? formatBalance(aergoPrice) : 0 }} </span>
             </div>
           </div>
-          <div class="token_symbol">{{ token.meta.symbol }}</div>
         </div>
         <div class="line" />
         <div class="detail_wrapper">
@@ -421,6 +426,7 @@ export default Vue.extend({
       window.open('https://voting.aergo.io/about', '_blank');
     },
     gotoScanTx(hash: string) {
+      console.log(hash, 'hash');
       const scanExplorerUrl = getScanExplorerUrl(this.$store.state.accounts);
       const url = `${scanExplorerUrl}/transaction/${hash.split('-')[0]}/`;
       window.open(url, '_blank');
@@ -728,7 +734,7 @@ export default Vue.extend({
     }
     &.others {
       flex-direction: row;
-      justify-content: space-evenly;
+      justify-content: space-between;
       .icon {
         margin-top: 0;
       }
@@ -737,7 +743,7 @@ export default Vue.extend({
     .flex-row {
       margin: 10px;
       display: flex;
-      justify-content: space-evenly;
+      justify-content: space-between;
       width: 100%;
       align-items: center;
       .token_symbol {
@@ -821,6 +827,7 @@ export default Vue.extend({
       }
     }
     .icon {
+      margin-right: 10px;
       border: 1px solid #d8d8d8;
       width: 46px;
       height: 46px;
@@ -830,34 +837,15 @@ export default Vue.extend({
       border-radius: 50%;
     }
     .balance_wrapper {
-      word-break: break-all;
-      margin-right: 50px;
-      .dollor {
-        /* Caption/C3 */
-        font-family: 'Outfit';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 18px;
-        /* identical to box height */
-
-        letter-spacing: -0.333333px;
-
-        /* Grey/04 */
-
-        color: #9c9a9a;
-        /* margin-left: 15px; */
-        word-break: break-all;
-      }
+      display: flex;
+      align-items: center;
     }
     .balance {
-      height: 25px;
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 600;
-      font-size: 17px;
+      font-size: 16px;
       line-height: 25px;
-      letter-spacing: -0.333333px;
       word-break: break-all;
       text-overflow: ellipsis;
       &.sent {
@@ -866,6 +854,23 @@ export default Vue.extend({
       &.received {
         color: #279ecc;
       }
+    }
+    .dollor {
+      /* Caption/C3 */
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 18px;
+      /* identical to box height */
+
+      letter-spacing: -0.333333px;
+
+      /* Grey/04 */
+
+      color: #9c9a9a;
+      /* margin-left: 15px; */
+      word-break: break-all;
     }
     .token_name {
       /* Subtitle/S3 */

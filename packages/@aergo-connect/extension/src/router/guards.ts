@@ -60,8 +60,6 @@ export const updateTitle = (to: Route): void => {
  * It overrides all other guards and redirects to 'request-select' if not in a request route.
  */
 export const enforceRequest: NavigationGuard = (to, _from, next) => {
-  console.log(to, 'to');
-  console.log(_from, '_from');
   if (!to.fullPath.match(/request/) && to.fullPath !== '/locked') {
     return next({ name: 'request-select-account' });
   }

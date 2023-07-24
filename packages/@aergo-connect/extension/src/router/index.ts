@@ -4,6 +4,7 @@ import { loadPersistedRoute, allowedToExitLockscreen, persistRoute, updateTitle 
 
 import AccountsContainer from '../views/Container.vue';
 import Lockscreen from '../views/Lockscreen.vue';
+// import Settings from '../views/Settings.vue';
 import Welcome from '../views/Welcome.vue';
 import Register from '../views/Register.vue';
 import Password from '../views/Password.vue';
@@ -68,28 +69,27 @@ const routes: RouteConfig[] = [
     children: [
       { path: '', redirect: '/home' },
       withMeta(
-        1,
+        0,
         { path: '/locked', name: 'lockscreen', component: Lockscreen },
         R.NoAuthCheck | R.NoTracking,
       ),
-
-      withMeta(1, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
+      withMeta(0, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
       withMeta(
-        2,
+        1,
         { path: '/password', name: 'password', component: Password },
         R.NoAuthCheck | R.NoTracking,
       ),
-      withMeta(2, {
+      withMeta(2, { path: '/home', name: 'accounts-list', component: Home }),
+      withMeta(3, {
         path: '/register',
         name: 'register',
         component: Register,
       }),
-      withMeta(6, { path: '/register/confirm', name: 'regist-confirm', component: RegistConfirm }),
+      withMeta(4, { path: '/register/confirm', name: 'regist-confirm', component: RegistConfirm }),
 
-      withMeta(2, { path: '/home', name: 'accounts-list', component: Home }),
       withMeta(3, { path: '/home/tokendetail', name: 'token-detail', component: TokenDetail }),
       withMeta(3, { path: '/home/nftdetail/:id', name: 'nft-detail', component: NftDetail }),
-      withMeta(4, {
+      withMeta(3, {
         path: '/home/importasset/:option',
         name: 'import-asset',
         component: ImportAsset,

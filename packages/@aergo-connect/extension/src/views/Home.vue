@@ -384,8 +384,9 @@ export default Vue.extend({
           this.isLoading = false;
         } else {
           const succ = await this.$store.dispatch('accounts/loadAccount');
+          console.log(succ, 'succ');
           this.errorMessage = '';
-          if (!succ) {
+          if (!succ || !this.getTokens) {
             this.noAccountModal = true;
           }
           //  else {
@@ -393,8 +394,12 @@ export default Vue.extend({
           // }
         }
       } catch (e) {
-        this.errorModal = true;
-        this.errorMessage = `CONNECTION_TIMED_OUT: ${e}`;
+        if (!this.getTokens) {
+          this.noAccountModal = true;
+        } else {
+          this.errorModal = true;
+          this.errorMessage = `CONNECTION_TIMED_OUT: ${e}`;
+        }
       } finally {
         this.isLoading = false;
       }

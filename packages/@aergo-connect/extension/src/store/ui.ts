@@ -11,7 +11,8 @@ interface InputData {
 
 const defaultSettings = {
   features: {
-    enableHardwareWallet: false,
+    enableHardwareWallet: true,
+    enableSignMessage: true,
   },
 };
 

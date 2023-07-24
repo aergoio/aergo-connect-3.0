@@ -117,7 +117,7 @@ export default class RequestSign extends mixins() {
       }, 2000);
     }
   }
-  /*
+
   async signWithLedger(message: Buffer, displayAsHex = false) {
     this.setStatus('loading', 'Connecting to Ledger device...');
     const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -127,8 +127,8 @@ export default class RequestSign extends mixins() {
       await app.getWalletAddress(this.account.data.derivationPath);
       const result = await app.signMessage(message, displayAsHex);
       return encodeBuffer(Buffer.from(result.signature, 'base64'), 'hex');
-      const result = await app.signMessage(message, displayAsHex);
-      return encodeBuffer(Buffer.from(result.signature, 'base64'), 'hex');
+    } catch (e) {
+      if (`${e}`.match(/0x6982/)) {
         throw new Error('Message was rejected.');
       } else if (`${e}`.match(/No device selected/)) {
         throw new Error("You didn't select a compatible USB device.");
@@ -139,7 +139,7 @@ export default class RequestSign extends mixins() {
       }
     }
   }
-*/
+
   checked() {
     this.isHashed = !this.isHashed;
   }
@@ -179,16 +179,17 @@ export default class RequestSign extends mixins() {
       }
     }
 
-    /*
-    const account = await this.account ;
-
-    if (account.data.type && account.data.type === 'ledger') {
-      if (this.isHashed) { }
+    if (this.account.data.type === 'ledger') {
+      if (this.isHashed) {
+        throw new Error(
+          'The Ledger app does not support pre-hashed messages for security reasons. Please enter the original message instead.',
+        );
+      }
       this.signature = await timedAsync(this.signWithLedger(buf, displayAsHex));
-      return
+      console.log(this.signature, 'signature in SignMessage');
+      return;
     }
 
-*/
     const { address, chainId } = this.accountSpec;
 
     const callData: {

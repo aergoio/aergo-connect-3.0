@@ -27,7 +27,7 @@
 <script lang="ts">
 import { ScrollView, Header } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
-import AccountList from '../../components/accounts/AccountList.vue';
+import AccountList from '../../components/accounts/AccountList2.vue';
 import { Button } from '@aergo-connect/lib-ui/src/buttons';
 import HeaderLogo from '@aergo-connect/lib-ui/src/icons/HeaderLogo.vue';
 import NetworkHeader from '@aergo-connect/lib-ui/src/layouts/NetworkHeader.vue';

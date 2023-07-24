@@ -28,9 +28,10 @@
             <Button type="primary" size="large" hover @click="handleCreate"> Create </Button>
             <Button
               type="primary"
-              disabled
               size="large"
-              :to="{ name: 'account-connect-hw-accounts', params: { next: '' } }"
+              :disabled="!isHardwareWalletEnabled"
+              @click="openConnectHardwareWalletTab"
+              hover
             >
               Connect Ledger
             </Button>
@@ -59,6 +60,10 @@ import { PersistInputsMixin } from '../store/ui';
   },
 })
 export default class Register extends mixins(PersistInputsMixin) {
+  get isHardwareWalletEnabled(): boolean {
+    return this.$store.getters['ui/getSetting']('features.enableHardwareWallet');
+  }
+
   async handleCreate() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: 'aergo.io',
@@ -74,6 +79,14 @@ export default class Register extends mixins(PersistInputsMixin) {
   }
   handleBack() {
     this.$router.push({ name: 'accounts-list' });
+  }
+  openConnectHardwareWalletTab() {
+    const name = (this.$root as any).name;
+    if (name === 'popup') {
+      chrome.tabs.create({ url: 'index.html#/connect-hw/accounts' });
+    } else {
+      this.$router.push({ name: 'account-connect-hw-accounts' });
+    }
   }
 }
 </script>

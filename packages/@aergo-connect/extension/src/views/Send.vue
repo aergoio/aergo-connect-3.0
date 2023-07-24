@@ -370,7 +370,12 @@ export default Vue.extend({
     },
   },
   async beforeMount() {
-    this.account = await this.$background.getActiveAccount();
+    const address = this.$store.state.accounts.address;
+    const chainId = this.$store.state.accounts.chainId;
+    this.account =
+      (await this.$background.getActiveAccount()) ||
+      (await this.$background.setActiveAccount({ address, chainId }));
+
     if (this.$store.state.accounts.selectedToken) {
       this.asset = await this.$store.state.accounts.selectedToken;
     } else {
@@ -398,6 +403,10 @@ export default Vue.extend({
     if (this.$store.state.ui.input['send']['txType']) {
       this.txType = this.$store.state.ui.input['send']['txType'];
     }
+  },
+  created() {
+    console.log(this.accountSpec, 'this.accountSpec');
+    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
   },
   updated() {
     this.$store.commit('ui/setInputs', {
@@ -547,7 +556,12 @@ export default Vue.extend({
         }
       }
     },
-    handleSendClick() {
+    async handleSendClick() {
+      if (!this.account) {
+        // This shouldn't happen normally
+        this.notification = true;
+        this.notificationText = 'Could not load account, please reload page and try again.';
+      }
       if (+this.inputAmount > +this.balance) {
         this.notification = true;
         this.notificationText = 'Not Enough Balance.';
@@ -563,6 +577,15 @@ export default Vue.extend({
         this.notificationText = 'Please Check your Address.';
         return;
       }
+
+      if (this.txBody.payload) {
+        const payload = JSON.parse(this.txBody.payload);
+        this.txBody.payload = JSON.stringify(payload, null, 2);
+      }
+      if (this.txBody.type) {
+        this.txBody.type = Tx.Type[this.txType];
+      }
+
       if (this.tokenType == 'AERGO') {
         this.txBody.to = this.inputTo;
         this.txBody.amount = `${this.inputAmount} ${this.txBody.unit}`;
@@ -592,16 +615,17 @@ export default Vue.extend({
           (nft) => nft.meta.token_id === this.inputAmount,
         )[0];
       }
+
       // TODO: try catch
       try {
-        if (this.txBody.payload) {
-          const payload = JSON.parse(this.txBody.payload);
-          this.txBody.payload = JSON.stringify(payload, null, 2);
+        if (this.account.data.type === 'ledger') {
+          this.txBody = await this.signWithLedger(this.txBody);
+          this.handleConfirm();
+        } else {
+          this.confirmationModal = true;
         }
         // eslint-disable-next-line no-empty
       } catch (e) {}
-      this.txBody.type = Tx.Type[this.txType];
-      this.confirmationModal = true;
     },
     handleCancel() {
       this.confirmationModal = false;
@@ -622,18 +646,16 @@ export default Vue.extend({
         //  This shouldn't happen normally
         throw new Error('Could not load account, please reload page and try again.');
       }
-      /*
-      // HW Ledger 사용 시에 ...
-      if (this.account.data.type === 'ledger') {
-            this.txBody = await this.signWithLedger(this.txBody);
-      }
-*/
+
       // send
       try {
+        console.log(this.txBody, 'this.txBody');
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
+        console.log(hash, 'hash');
         this.txHash = hash;
 
         const result = await this.$background.getTransactionReceipt(this.chainId, this.txHash);
+        console.log(result, 'result');
         this.setStatus('success', 'Done');
         if (result.status === 'SUCCESS') {
           if (this.userNftData.hash) {
@@ -672,7 +694,10 @@ export default Vue.extend({
     //   this.sendFinishModal = false;
     // },
     async signWithLedger(txBody) {
+      console.log(txBody, 'txBody 11');
       const { tx } = await this.$background.prepareTransaction(txBody, this.chainId);
+      console.log(txBody, 'txBody');
+      console.log(this.chainId, 'this.chainId');
       tx.payload = txBody.payload;
       this.setStatus('loading', 'Connecting to Ledger device...');
       const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -681,6 +706,7 @@ export default Vue.extend({
       try {
         await app.getWalletAddress(this.account.data.derivationPath);
         const { signature } = await app.signTransaction(tx);
+        console.log(signature, 'signature in Send');
         tx.sign = signature;
         return tx;
       } catch (e) {
@@ -699,6 +725,7 @@ export default Vue.extend({
       this.setStatus('loading', 'Sending to network...');
       try {
         const result = await this.$background.sendTransaction(txBody, this.chainId);
+        console.log(result, 'result');
         if ('tx' in result) {
           this.$store.commit('accounts/getLastestSendHash', result.tx.hash);
           return result.tx.hash;

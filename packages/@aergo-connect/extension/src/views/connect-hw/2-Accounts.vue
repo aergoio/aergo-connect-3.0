@@ -1,20 +1,17 @@
 <template>
   <ScrollView class="page">
-    <template #header>
-      <div class="content">
-        <section class="dialog-header">
-          <BackButton :to="{ name: 'account-list' }" />
-        </section>
-        <Heading animated>Select Account</Heading>
-        <p style="margin-bottom: 0">
-          <span v-if="!accounts.length"
-            >To view accounts stored on your Ledger device, activate the Aergo app on your device
-            and click Connect.</span
-          >
-          <span v-else>Select one account from your device.</span>
-        </p>
-      </div>
-    </template>
+    <!-- <template #header> -->
+    <div class="content">
+      <Header button="back" title="Add Account by Ledger" :to="{ name: `register` }" />
+      <p style="margin-bottom: 0">
+        <span v-if="!accounts.length"
+          >To view accounts stored on your Ledger device, activate the Aergo app on your device and
+          click Connect.</span
+        >
+        <span v-else>Select one account from your device.</span>
+      </p>
+    </div>
+    <!-- </template> -->
 
     <div class="ledger-account-list-wrap">
       <AccountList
@@ -27,22 +24,22 @@
       />
     </div>
 
-    <template #footer>
-      <div class="content" v-if="!accounts.length">
-        <ButtonGroup vertical>
-          <Button type="primary" @click="connect">Connect Ledger</Button>
-        </ButtonGroup>
-      </div>
-      <LoadingDialog
-        :visible="connectDialogVisible"
-        @close="connectDialogVisible = false"
-        title="Ledger"
-        :state="dialogState"
-      >
-        <p v-if="dialogState !== 'error'">{{ connectStatus }}</p>
-        <p v-else class="error">{{ error }}</p>
-      </LoadingDialog>
-    </template>
+    <!-- <template #footer> -->
+    <div class="content" v-if="!accounts.length">
+      <ButtonGroup vertical>
+        <Button type="primary" size="large" @click="connect" hover>Connect Ledger</Button>
+      </ButtonGroup>
+    </div>
+    <LoadingDialog
+      :visible="connectDialogVisible"
+      @close="connectDialogVisible = false"
+      title="Ledger"
+      :state="dialogState"
+    >
+      <p v-if="dialogState !== 'error'">{{ connectStatus }}</p>
+      <p v-else class="error">{{ error }}</p>
+    </LoadingDialog>
+    <!-- </template> -->
   </ScrollView>
 </template>
 
@@ -50,10 +47,11 @@
 import { BackButton, ContinueButton, Button, ButtonGroup } from '@aergo-connect/lib-ui/src/buttons';
 import { ScrollView, LoadingDialog } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
+import { Header } from '@aergo-connect/lib-ui/src/layouts';
 import SelectField from '@aergo-connect/lib-ui/src/forms/SelectField.vue';
 import { PersistInputsMixin } from '../../store/ui';
 import AccountList from '../../components/accounts/AccountList.vue';
-
+import SelectNetwork from '../../components/accounts/SelectNetwork.vue';
 import Component, { mixins } from 'vue-class-component';
 import { timedAsync } from 'timed-async/index.js';
 import { Account, serializeAccountSpec } from '@herajs/wallet';
@@ -63,6 +61,7 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 
 @Component({
   components: {
+    Header,
     ScrollView,
     BackButton,
     Heading,
@@ -72,10 +71,10 @@ import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
     ButtonGroup,
     LoadingDialog,
     AccountList,
+    SelectNetwork,
   },
 })
 export default class Import extends mixins(PersistInputsMixin) {
-  chainId = 'aergo.io';
   persistFields = ['chainId'];
   persistFieldsKey = 'account-connect-hw';
 
@@ -142,6 +141,7 @@ export default class Import extends mixins(PersistInputsMixin) {
           account.data.balance = `${state.balance}`;
         }),
       );
+      console.log(statePromises, 'statePromises');
     }
     // Wait for remaining state promises to resolve
     await Promise.all(statePromises);
@@ -149,7 +149,14 @@ export default class Import extends mixins(PersistInputsMixin) {
   }
 
   async selectAccount(account: Account): Promise<void> {
-    await this.$background.addAccount(account.data);
+    try {
+      await this.$background.addAccount(account.data);
+      await this.$store.dispatch('accounts/addAccount', account.data.spec.address);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.$router.push('/home');
+    }
   }
 }
 </script>

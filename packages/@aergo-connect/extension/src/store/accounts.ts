@@ -56,8 +56,12 @@ const storeModule: Module<AccountsState, RootState> = {
 
   getters: {
     getTokens: (state) => {
-      if (state.accounts[state.address][`tokens`]) {
-        return state.accounts[state.address][`tokens`][state.chainLabel];
+      if (Object.keys(state.accounts).length > 0) {
+        if (state.accounts[state.address][`tokens`]) {
+          return state.accounts[state.address][`tokens`][state.chainLabel];
+        }
+      } else {
+        return false;
       }
     },
   },
@@ -91,9 +95,8 @@ const storeModule: Module<AccountsState, RootState> = {
 
     async updateAccount({ commit }, { address, chainId }) {
       const vue = getVueInstance(this);
-      vue.$background.setActiveAccount({ address, chainId });
+      await vue.$background.setActiveAccount({ address, chainId });
       const account = await vue.$background.syncAccountState({ address, chainId });
-      console.log(account, 'updatedAccount');
     },
 
     async loadAccount({ state, commit }) {

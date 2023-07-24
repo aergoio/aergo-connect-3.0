@@ -48,3 +48,19 @@ chrome.idle.onStateChanged.addListener((newState) => {
     controller.lock();
   }
 });
+
+// chrome.contextMenus.create(
+//   {
+//     id: 'fullPage',
+//     title: 'Open Full Page',
+//     contexts: ['action'],
+//   },
+//   () => chrome.runtime.lastError,
+// );
+
+// chrome.contextMenus.onClicked.addListener(function (info, tab) {
+//   const { menuItemId } = info;
+//   if (menuItemId === 'fullPage') {
+//     chrome.tabs.create({ url: 'index.html#' });
+//   }
+// });

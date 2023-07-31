@@ -1,3 +1,4 @@
+import store from '../store';
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import { loadPersistedRoute, allowedToExitLockscreen, persistRoute, updateTitle } from './guards';
@@ -37,6 +38,7 @@ import RequestAddress from '../views/request/Address.vue';
 import RequestSign from '../views/request/Sign.vue';
 import RequestSendTx from '../views/request/Send.vue';
 import RequestSignTx from '../views/request/SignTx.vue';
+import RequestAddNetwork from '../views/request/AddNetwork.vue';
 
 import ConnectHw from '../views/connect-hw/1-Network.vue';
 import ConnectHwAccounts from '../views/connect-hw/2-Accounts.vue';
@@ -68,33 +70,34 @@ const routes: RouteConfig[] = [
     component: AccountsContainer,
     children: [
       { path: '', redirect: '/home' },
+      withMeta(0, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
       withMeta(
-        0,
+        1,
         { path: '/locked', name: 'lockscreen', component: Lockscreen },
         R.NoAuthCheck | R.NoTracking,
       ),
-      withMeta(0, { path: '/welcome', name: 'welcome', component: Welcome }, R.NoAuthCheck),
+
       withMeta(
         1,
         { path: '/password', name: 'password', component: Password },
         R.NoAuthCheck | R.NoTracking,
       ),
-      withMeta(2, { path: '/home', name: 'accounts-list', component: Home }),
-      withMeta(3, {
+      withMeta(1, { path: '/home', name: 'accounts-list', component: Home }),
+      withMeta(2, {
         path: '/register',
         name: 'register',
         component: Register,
       }),
-      withMeta(4, { path: '/register/confirm', name: 'regist-confirm', component: RegistConfirm }),
+      withMeta(3, { path: '/register/confirm', name: 'regist-confirm', component: RegistConfirm }),
 
-      withMeta(3, { path: '/home/tokendetail', name: 'token-detail', component: TokenDetail }),
-      withMeta(3, { path: '/home/nftdetail/:id', name: 'nft-detail', component: NftDetail }),
-      withMeta(3, {
+      withMeta(2, { path: '/home/tokendetail', name: 'token-detail', component: TokenDetail }),
+      withMeta(2, { path: '/home/nftdetail/:id', name: 'nft-detail', component: NftDetail }),
+      withMeta(2, {
         path: '/home/importasset/:option',
         name: 'import-asset',
         component: ImportAsset,
       }),
-      withMeta(4, { path: '/home/send/:id', name: 'send', component: Send }),
+      withMeta(3, { path: '/home/send/:id', name: 'send', component: Send }),
       withMeta(3, { path: '/home/receive', name: 'receive', component: Receive }),
       withMeta(3, { path: '/home/signmessage', name: 'sign-message', component: SignMessage }),
       withMeta(3, { path: '/home/version', name: 'version', component: Version }),
@@ -156,7 +159,7 @@ const routes: RouteConfig[] = [
         component: RequestAccountList,
       },
       {
-        path: 'account/testnet.aergo.io/',
+        path: `account/${store.state.accounts.chainId}/`,
         component: RequestAccountContainer,
         children: [
           {
@@ -176,6 +179,11 @@ const routes: RouteConfig[] = [
             component: RequestSignTx,
           },
           { path: 'send', name: 'request-send', component: RequestSendTx },
+          {
+            path: 'addNetworks',
+            name: 'request-add-network',
+            component: RequestAddNetwork,
+          },
         ],
       },
     ],
@@ -187,6 +195,11 @@ Vue.use(VueRouter);
 const router = new VueRouter({
   routes,
 });
+
+// router.beforeEach(function (to, from, next) {
+//   console.log('from', from.name, 'to', to.name);
+//   next();
+// });
 
 router.beforeEach(allowedToExitLockscreen);
 router.beforeEach(loadPersistedRoute);

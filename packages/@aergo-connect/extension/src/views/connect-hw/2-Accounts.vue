@@ -2,13 +2,30 @@
   <ScrollView class="page">
     <!-- <template #header> -->
     <div class="content">
-      <Header button="back" title="Add Account by Ledger" :to="{ name: `register` }" />
-      <p style="margin-bottom: 0">
-        <span v-if="!accounts.length"
-          >To view accounts stored on your Ledger device, activate the Aergo app on your device and
-          click Connect.</span
-        >
+      <Header button="back" title="Connect Ledger" :to="{ name: `register` }" />
+      <p style="margin-bottom: 0; display: flex; justify-content: center">
+        <div v-if="!accounts.length" class="ledger-description">
+        <ol>
+          <li>Connect your wallet directly to your computer.</li>
+          <div class="img">
+            <img :style="{width:'207px', height:'59px'}":src="ledger1" alt="ledger1"/>
+          </div>
+
+          <li>Enter PIN on your ledger and press the two buttons on the top together.</li>
+          <div class="img">
+            <img :style="{width:'218px', height:'44px'}" :src="ledger2" alt="ledger2"/>
+          </div>
+
+          <li class="third">Select the ‘Aergo App’, and then press the buttons in the pending status.</li>
+          <li>You can continue if this phrase appears.</li>
+          <div class="img">
+            <img :style="{width:'114px', height:'42px'}" :src="ledger3" alt="ledger3"/>
+          </div>
+        </ol>
+
+        </div>
         <span v-else>Select one account from your device.</span>
+        <Button :style="{marginLeft:'24px'}" type="primary" size="large" @click="connect" hover>Continue</Button>
       </p>
     </div>
     <!-- </template> -->
@@ -25,11 +42,9 @@
     </div>
 
     <!-- <template #footer> -->
-    <div class="content" v-if="!accounts.length">
-      <ButtonGroup vertical>
-        <Button type="primary" size="large" @click="connect" hover>Connect Ledger</Button>
-      </ButtonGroup>
-    </div>
+    <!-- <div class="content" v-if="!accounts.length"> -->
+        
+    <!-- </div> -->
     <LoadingDialog
       :visible="connectDialogVisible"
       @close="connectDialogVisible = false"
@@ -55,7 +70,6 @@ import SelectNetwork from '../../components/accounts/SelectNetwork.vue';
 import Component, { mixins } from 'vue-class-component';
 import { timedAsync } from 'timed-async/index.js';
 import { Account, serializeAccountSpec } from '@herajs/wallet';
-
 import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 
@@ -85,6 +99,10 @@ export default class Import extends mixins(PersistInputsMixin) {
   connectDialogVisible = false;
   dialogState: 'loading' | 'success' | 'error' = 'loading';
 
+  ledger1 = require('@/assets/img/ledger1.png')
+  ledger2 = require('@/assets/img/ledger2.png')
+  ledger3 = require('@/assets/img/ledger3.png')
+
   async connect() {
     this.connectDialogVisible = true;
     this.dialogState = 'loading';
@@ -95,6 +113,7 @@ export default class Import extends mixins(PersistInputsMixin) {
       const app = new LedgerAppAergo(transport);
       this.connectStatus = 'Loading accounts...';
       const accounts = await this.loadAccounts(app, 0, 5);
+      console.log(accounts, 'accounts updated');
       this.accounts.push(...accounts);
       this.dialogState = 'success';
       this.connectStatus = 'Done!';
@@ -120,12 +139,12 @@ export default class Import extends mixins(PersistInputsMixin) {
       const path = "m/44'/441'/0'/0/" + i;
       const address = await app.getWalletAddress(path);
       const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-      const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
-        ? this.$store.state.accounts.chainId
-        : this.$store.state.accounts.chainLabel;
+      // const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+      //   ? this.$store.state.accounts.chainId
+      //   : this.$store.state.accounts.chainLabel;
       const spec = {
         address: `${address}`,
-        chainId,
+        chainId: this.$store.state.accounts.chainId,
       };
       const account = new Account(
         serializeAccountSpec(spec),
@@ -152,10 +171,11 @@ export default class Import extends mixins(PersistInputsMixin) {
     try {
       await this.$background.addAccount(account.data);
       await this.$store.dispatch('accounts/addAccount', account.data.spec.address);
+      alert('Account added success!');
     } catch (e) {
-      console.error(e);
+      alert(e);
     } finally {
-      this.$router.push('/home');
+      await window.close();
     }
   }
 }
@@ -186,4 +206,49 @@ export default class Import extends mixins(PersistInputsMixin) {
   box-shadow: 0 12px 20px 0 rgba(34, 34, 34, 0.08);
   margin: 0 10px 25px 20px;
 }
+
+  .ledger-description{
+    margin-left:30px;
+    margin-right:30px;
+
+
+  >ol {
+    counter-reset: item; /* 카운터 초기화 */
+    list-style-type: none; /* 기본 리스트 마커 숨김 */
+    padding-left: 1em; /* 왼쪽 여백을 주어 마커와 아이템 간의 공간을 만듦 */
+    display: flex;
+    flex-direction: column;
+    li{
+      counter-increment: item; /* 카운터를 1씩 증가시킴 */
+      position: relative; /* 부모 요소를 기준으로 카운터 위치 지정 */
+      padding-left: 1.5em; /* 아이템의 왼쪽 여백을 줘서 마커를 표시할 공간 확보 */
+      color: var(--grey-06, #686767);
+      font-family: Outfit;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      letter-spacing: -0.333px;
+      margin-bottom:12px;
+    }
+    li:before{
+      content: counter(item) ". "; /* 카운터 값을 표시함 */
+      position: absolute; /* 절대 위치로 지정하여 아이템 텍스트와 겹치지 않도록 함 */
+      left: 0; /* 아이템 왼쪽에 위치 */
+      color: var(--grey-06, #686767);
+    }
+    li.third{
+      margin-bottom:26px;
+    }
+    .img{
+      text-align: right;
+      img{
+        
+        flex-shrink: 0;
+        margin-bottom:16px;
+      }
+    }
+  }
+}
+
 </style>

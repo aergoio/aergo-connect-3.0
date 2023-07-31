@@ -86,15 +86,11 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 export default class RequestAddress extends mixins(RequestMixin) {
   async confirmHandler() {
     const address = this.$store.state.accounts.address;
-    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
-      ? this.$store.state.accounts.chainId
-      : this.$store.state.accounts.chainLabel;
 
     return {
       account: {
         address,
-        chainId,
+        chainId: this.$store.state.accounts.chainId,
       },
     };
   }

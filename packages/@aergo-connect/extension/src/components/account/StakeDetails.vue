@@ -51,13 +51,9 @@ export default class StakeDetails extends Vue {
   }
 
   get accountSpec() {
-    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
-      ? this.$store.state.accounts.chainId
-      : this.$store.state.accounts.chainLabel;
     return {
       address: this.$route.params.address,
-      chainId,
+      chainId: this.$store.state.accounts.chainId,
     };
   }
 

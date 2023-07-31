@@ -66,13 +66,9 @@ export default Vue.extend({
   methods: {
     async selectAccount(account: any) {
       await this.$store.commit('accounts/setActiveAccount', account.address);
-      const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-      const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
-        ? this.$store.state.accounts.chainId
-        : this.$store.state.accounts.chainLabel;
       await this.$background.setActiveAccount({
-        chainId,
         address: account.address,
+        chainId: this.$store.state.accounts.chainId,
       });
       if (this.$store.state.request.currentRequest.action === 'SIGN') {
         this.$router.push({ name: 'request-sign' }).catch(() => {});
@@ -80,6 +76,8 @@ export default Vue.extend({
         this.$router.push({ name: 'request-send' }).catch(() => {});
       } else if (this.$store.state.request.currentRequest.action === 'SIGN_TX') {
         this.$router.push({ name: 'request-sign-tx' }).catch(() => {});
+      } else if (this.$store.state.request.currentRequest.action === 'ADD_NETWORK') {
+        this.$router.push({ name: 'request-add-network' }).catch(() => {});
       } else {
         this.$router.push({ name: 'request-address' }).catch(() => {});
       }

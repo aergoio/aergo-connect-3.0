@@ -151,7 +151,7 @@ export default Vue.extend({
 
 <style lang="scss">
 .nav-account-list {
-  max-height: 160px;
+  max-height: 200px;
   overflow-x: hidden;
   .nav-account-item {
     .active {

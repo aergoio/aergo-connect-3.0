@@ -79,13 +79,14 @@ export default Vue.extend({
   align-items: center;
   transition: box-shadow 0.1s;
   margin-top: 10px;
+  border-radius: 8px;
 
   &.variant-default {
     // box-shadow: inset 0 0 0 2px $Grey05;
     // border-radius: 3px;
     // background-image: linear-gradient(white, white);
     border: 2px solid transparent;
-    border-radius: 3px;
+    border-radius: 8px;
     background-image: linear-gradient(white, white), linear-gradient(to right, $Grey04, $Grey04);
     background-origin: border-box;
     background-clip: content-box, border-box;
@@ -93,7 +94,7 @@ export default Vue.extend({
     &.is-focused {
       box-shadow: none;
       border: 2px solid transparent;
-      border-radius: 4px;
+      border-radius: 8px;
       background-image: linear-gradient(white, white), linear-gradient(to right, #279ecc, #a13e99);
       background-origin: border-box;
       background-clip: content-box, border-box;
@@ -111,12 +112,12 @@ export default Vue.extend({
 
   &.variant-primary {
     box-shadow: inset 0 0 0 2px $Blue01;
-    border-radius: 3px;
+    border-radius: 8px;
   }
 
   &.variant-secondary {
     border: 2px solid transparent;
-    border-radius: 3px;
+    border-radius: 8px;
     background-image: linear-gradient(white, white), linear-gradient(to right, #9a449c, #e30a7d);
     background-origin: border-box;
     background-clip: content-box, border-box;
@@ -129,7 +130,7 @@ export default Vue.extend({
     &.state-invalid {
       box-shadow: none;
       border: 2px solid transparent;
-      border-radius: 4px;
+      border-radius: 8px;
       background-image: linear-gradient(white, white), linear-gradient(to right, #9a449c, #e30a7d);
       background-origin: border-box;
       background-clip: content-box, border-box;
@@ -138,7 +139,7 @@ export default Vue.extend({
     &.state-valid {
       box-shadow: none;
       border: 2px solid transparent;
-      border-radius: 4px;
+      border-radius: 8px;
       background-image: linear-gradient(white, white), linear-gradient(to right, #279ecc, #a13e99);
       background-origin: border-box;
       background-clip: content-box, border-box;

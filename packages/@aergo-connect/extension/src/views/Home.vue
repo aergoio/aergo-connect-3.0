@@ -35,7 +35,13 @@
         @securityClick="handleSecurity"
       />
       <div class="account_info_wrapper">
-        <Identicon :text="$store?.state?.accounts?.address" class="account_info_img" />
+        <span>
+          <!-- <Identicon :text="account.data.spec.address" class="circle" /> -->
+          <Identicon :text="$store?.state?.accounts?.address" class="account_info_img" />
+
+          <!-- <span v-else-if="isNew(account)" class="account-label account-label-new">new</span> -->
+        </span>
+
         <Notification
           v-if="notification"
           :title="notificationText"
@@ -44,24 +50,14 @@
         />
         <div class="account_info_content_wrapper">
           <div class="account_info_nickname_wrapper">
-            <div v-if="!editNick" class="account_info_nickname_text">
+            <div class="account_info_nickname_text">
               {{ $store?.state?.accounts?.nick }}
             </div>
-            <input
-              v-if="editNick"
-              class="account_info_nickname_input"
-              v-model="nick"
-              autofocus
-              @blur="changeNick"
-              @keyup.enter="changeNick"
-            />
-            <Icon
-              v-if="!editNick"
-              class="account_info_nickname_button"
-              :name="`edit`"
-              :size="50"
-              @click="handleEdit"
-            />
+            <div :style="{ display: 'flex' }">
+              <span v-if="account?.data?.type === 'ledger'" class="account-label account-label-usb"
+                ><Icon name="usb" :size="17"
+              /></span>
+            </div>
           </div>
           <div class="account_info_address_wrapper" @click="handleDetailAddress">
             <span class="account_info_address_text">{{
@@ -238,6 +234,7 @@ import Vue from 'vue';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import { Header } from '@aergo-connect/lib-ui/src/layouts';
 import List from './List.vue';
+import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import ButtonGroup from '@aergo-connect/lib-ui/src/buttons/ButtonGroup.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
@@ -267,6 +264,7 @@ export default Vue.extend({
     ButtonGroup,
     List,
     Header,
+    Icon,
     ScrollView,
     Appear,
     LoadingIndicator,
@@ -288,13 +286,17 @@ export default Vue.extend({
       tab: 'token',
       tokensCount: 0,
       editNick: false,
-      nick: this.$store.state.accounts.nick,
       isLoading: false,
       tokens: [],
       errorModal: false,
       errorMessage: '',
       isAddedNft: false,
+      account: {},
     };
+  },
+
+  created() {
+    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
   },
 
   async beforeMount() {
@@ -352,31 +354,25 @@ export default Vue.extend({
         }
       });
     },
+    accountSpec() {
+      // const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+      // const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
+      //   ? this.$store.state.accounts.chainId
+      //   : this.$store.state.accounts.chainLabel;
+      return {
+        address: this.$store.state.accounts.address,
+        chainId: this.$store.state.accounts.chainId,
+      };
+    },
   },
 
   methods: {
-    async changeNick() {
-      if (this.nick.length < 12 && this.nick.length !== 0) {
-        this.$store.commit('accounts/setNick', this.nick);
-        this.editNick = false;
-      } else if (this.nick.length < 1) {
-        this.notification = true;
-        this.notificationText = `Nickname must be at least 1 `;
-      } else {
-        this.notification = true;
-        this.notificationText = `Nickname must be less than 12`;
-      }
-    },
-    handleEdit() {
-      this.editNick = true;
-    },
-
     async initAccount() {
       try {
+        this.account = await this.$background.getActiveAccount();
         this.isLoading = true;
         if (this.$store.state.accounts.address) {
           await this.$store.dispatch('accounts/initState');
-          this.nick = await this.$store.state.accounts.nick;
           await this.checkIsUpdateNft();
           await this.myTokenCount();
           await this.$forceUpdate();
@@ -673,6 +669,7 @@ export default Vue.extend({
         height: 44px;
       }
     }
+
     .account_info_content_wrapper {
       display: flex;
       flex-direction: column;
@@ -686,15 +683,37 @@ export default Vue.extend({
         font-size: 18px;
         line-height: 24px;
         margin-bottom: 8px;
-        margin-left: 10px;
+        margin-left: 14px;
         /* width: 191px; */
         .account_info_nickname_text {
           margin-right: 5px;
           word-break: break-all;
         }
+      }
+      .account-label {
+        margin-top: 10px;
+        display: block;
+        border-radius: 10px;
+        width: 36px;
+        line-height: 20px;
+        text-align: center;
+        transform: translateY(-5px);
+      }
 
-        .account_info_nickname_button {
-          cursor: pointer;
+      .account-label-new {
+        background-color: #ff4f9f;
+        font-size: (calc(8 / 16)) * 1rem;
+        text-transform: uppercase;
+        color: #fff;
+      }
+
+      .account-label-usb {
+        background-color: #6f6f6f;
+
+        .icon {
+          line-height: 14px;
+          height: 16px;
+          transform: translateY(-1px);
         }
       }
       .account_info_address_wrapper {

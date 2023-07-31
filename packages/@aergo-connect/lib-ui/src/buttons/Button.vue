@@ -109,6 +109,7 @@ export default Vue.extend({
   border: 0;
   /* border-radius: 3px; */
   background-color: transparent;
+  border-radius: 8px;
   /* border-radius: 4px; */
   /* Content alignment */
   display: flex;
@@ -235,6 +236,17 @@ export default Vue.extend({
       fill: #fff;
       -webkit-text-fill-color: #fff;
     }
+  }
+  &.button-type-next {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 18px 8px 24px;
+    background-color: #eff5f6;
+    color: #1085b2;
+  }
+  &.button-type-next:hover {
+    background-color: #d9e9ef;
   }
   &.button-type-icon,
   &.button-type-primary-icon {

@@ -141,11 +141,7 @@ export default Vue.extend({
     .network_modal_wrapper {
       max-width: fit-content;
       position: fixed;
-      bottom: 0;
-      top: auto;
-      /* top: 100%; */
-      left: 0;
-      right: 0;
+      bottom: 0%;
       background: #ffffff;
       box-shadow: 0px -6px 12px rgba(0, 0, 0, 0.1);
       border-top-left-radius: 20px;

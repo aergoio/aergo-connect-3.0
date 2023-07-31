@@ -1,13 +1,10 @@
 <template>
   <ScrollView class="page">
-    <!-- <Header :title="$store.state.accounts.chainId" network /> -->
     <div class="account_info_wrapper">
-      <Icon :name="`back`" @click="handleGoBack" />
       <Identicon :text="$store.state.accounts.address" class="account_info_img" />
       <div class="account_info_content_wrapper address">
         <div class="account_info_nickname_wrapper address">
           <div class="account_info_network_wrapper">
-            <!-- <div :class="`account_info_network_circle ${$store.state.accounts.chainId}`" /> -->
             <div class="account_info_network">
               {{ `${$store.state.accounts.chainId.toUpperCase()}` }}
             </div>
@@ -26,14 +23,22 @@
       </div>
     </div>
     <div class="request_content">
-      <div class="icon-header">
-        <Icon :name="`title-request`" :size="36" />
-        <div class="title">Access public address</div>
+      <div class="header">
+        <div class="title">Do you want to allow custom network?</div>
       </div>
-      <div class="description">
-        The website at {{ request?.origin }} wants to receive your active account's public address
-        and chain ID.
-      </div>
+
+      <dl class="request_description">
+        <dt>Network name</dt>
+        <dd>{{ request?.data?.networkName }}</dd>
+        <dt>Node Url</dt>
+        <dd>{{ request?.data?.nodeUrl }}</dd>
+        <dt>Chain ID</dt>
+        <dd>{{ request?.data?.chainId }}</dd>
+        <dt>Scan API Url</dt>
+        <dd>{{ request?.data?.scanApiUrl }}</dd>
+        <dt>Scan Explorer Url</dt>
+        <dd>{{ request?.data?.scanExplorerUrl }}</dd>
+      </dl>
     </div>
 
     <template #footer>
@@ -84,18 +89,38 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
   },
 })
 export default class RequestAddress extends mixins(RequestMixin) {
-  async confirmHandler() {
-    const address = this.$store.state.accounts.address;
-
+  data() {
     return {
-      account: {
-        address,
-        chainId: this.$store.state.accounts.chainId,
-      },
+      request: this.$store.state.request.currentRequest,
+      networks: {},
+      isAddedNetwork: false,
     };
   }
-  handleGoBack() {
-    this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
+
+  async mounted() {
+    this.networks = await this.$background.getNetworks();
+    this.isAddedNetwork = !!Object.values(this.networks).find(
+      (network) => network.chainId === this.request?.data.chainId,
+    );
+  }
+
+  async confirmHandler() {
+    const networkPath = {
+      label: this.request?.data.networkName,
+      chainId: this.request?.data.chainId,
+      nodeUrl: this.request?.data.nodeUrl,
+      scanApiUrl: this.request?.data.scanApiUrl,
+      scanExplorerUrl: this.request?.data.scanExplorerUrl,
+    };
+
+    try {
+      if (!this.isAddedNetwork) {
+        await this.$background.addNetwork(networkPath);
+        this.$store.commit('accounts/setNetworkPath', networkPath);
+      }
+    } catch (e) {
+      console.error(e, 'error');
+    }
   }
 }
 </script>
@@ -106,41 +131,38 @@ export default class RequestAddress extends mixins(RequestMixin) {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  .icon-header {
+
+  .header {
     display: flex;
-    align-items: center;
+    height: 100%;
+    flex-direction: column;
+    text-align: center;
+    color: #24272a;
+    .title {
+      /* font-size: 0.75rem; */
+    }
+    .title2 {
+      /* font-size: 0.75rem; */
+      line-height: 140%;
+    }
   }
-  .title {
-    margin-top: 8px;
-    margin-left: 10px;
-    /* Headline/H3 */
-    font-family: 'Outfit';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 25px;
-    letter-spacing: -0.333333px;
-    margin-bottom: 10px;
-
-    /* Grey/08 */
-
-    color: #231f20;
-  }
-  .description {
-    margin-left: 24px;
-    margin-right: 24px;
-    /* Subtitle/S3 */
-
-    font-family: 'Outfit';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 18px;
-    letter-spacing: -0.333333px;
-
-    /* Grey/06 */
-
-    color: #686767;
+  .request_description {
+    width: 70%;
+    border: solid 1px #d6d9dc;
+    border-radius: 8px;
+    padding: 20px;
+    dt {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    dd {
+      margin: 0;
+      font-weight: normal;
+      overflow-wrap: break-word;
+      line-height: 140%;
+      color: #535a61;
+      margin-bottom: 5px;
+    }
   }
 }
 .account_info_wrapper {

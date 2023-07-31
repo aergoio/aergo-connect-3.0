@@ -18,21 +18,27 @@
           <ButtonGroup vertical class="button_group_wrapper">
             <Button
               class="button_outline"
-              type="primary-outline"
+              type="next"
               size="large"
               hover
               :to="{ name: 'account-import' }"
             >
               <span>Import</span>
+              <Icon :style="{ display: 'flex' }" name="arrow_right_blue" />
             </Button>
-            <Button type="primary" size="large" hover @click="handleCreate"> Create </Button>
+            <Button type="next" size="large" hover @click="handleCreate">
+              <span> Create </span>
+              <Icon :style="{ display: 'flex' }" name="arrow_right_blue" />
+            </Button>
             <Button
-              type="primary"
-              disabled
+              type="next"
               size="large"
-              :to="{ name: 'account-connect-hw-accounts', params: { next: '' } }"
+              :disabled="!isHardwareWalletEnabled"
+              @click="openConnectHardwareWalletTab"
+              hover
             >
-              Connect Ledger
+              <span> Connect Ledger </span>
+              <Icon :style="{ display: 'flex' }" name="arrow_right_blue" />
             </Button>
           </ButtonGroup>
         </Appear>
@@ -48,6 +54,7 @@ import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Component, { mixins } from 'vue-class-component';
 import { PersistInputsMixin } from '../store/ui';
+import { Icon } from '@aergo-connect/lib-ui/src/icons';
 @Component({
   components: {
     ScrollView,
@@ -56,9 +63,14 @@ import { PersistInputsMixin } from '../store/ui';
     Heading,
     Appear,
     Header,
+    Icon,
   },
 })
 export default class Register extends mixins(PersistInputsMixin) {
+  get isHardwareWalletEnabled(): boolean {
+    return this.$store.getters['ui/getSetting']('features.enableHardwareWallet');
+  }
+
   async handleCreate() {
     const { account, mnemonic } = await this.$background.createAccountWithMnemonic({
       chainId: 'aergo.io',
@@ -75,6 +87,14 @@ export default class Register extends mixins(PersistInputsMixin) {
   handleBack() {
     this.$router.push({ name: 'accounts-list' });
   }
+  openConnectHardwareWalletTab() {
+    const name = (this.$root as any).name;
+    if (name === 'popup') {
+      chrome.tabs.create({ url: 'index.html#/connect-hw/accounts' });
+    } else {
+      this.$router.push({ name: 'account-connect-hw-accounts' });
+    }
+  }
 }
 </script>
 
@@ -85,7 +105,7 @@ export default class Register extends mixins(PersistInputsMixin) {
   justify-content: center;
   align-items: center;
   margin-top: 32px;
-  margin-bottom: 70px;
+  margin-bottom: 50px;
   .pre-header {
     font-size: 16px;
     line-height: 20px;

@@ -73,9 +73,9 @@ import { Identicon } from '@aergo-connect/lib-ui/src/content';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { RequestMixin } from './mixin';
 import { timedAsync } from 'timed-async/index.js';
-// import { encodeBuffer } from '@herajs/common';
-// import Transport from '@ledgerhq/hw-transport-webusb';
-// import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
+import { encodeBuffer } from '@herajs/common';
+import Transport from '@ledgerhq/hw-transport-webusb';
+import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 
 @Component({
@@ -98,20 +98,16 @@ export default class RequestSign extends mixins(RequestMixin) {
   }
 
   get accountSpec() {
-    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
-      ? this.$store.state.accounts.chainId
-      : this.$store.state.accounts.chainLabel;
     return {
       address: this.$store.state.accounts.address,
-      chainId,
+      chainId: this.$store.state.accounts.chainId,
     };
   }
 
   created() {
     this.$store.dispatch('accounts/updateAccount', this.accountSpec);
   }
-  /*
+
   async signWithLedger(message: Buffer, displayAsHex = false) {
     this.setStatus('loading', 'Connecting to Ledger device...');
     const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -133,7 +129,7 @@ export default class RequestSign extends mixins(RequestMixin) {
       }
     }
   }
-*/
+
   get msgToSign() {
     // if (!this.request) return '';
     return this.request.data.message || this.request.data.hash;
@@ -171,15 +167,14 @@ export default class RequestSign extends mixins(RequestMixin) {
         throw new Error(`Failed to parse message: ${e}`);
       }
     }
-    /*
     if (this.account.data.type === 'ledger') {
       const signature = await timedAsync(this.signWithLedger(buf, displayAsHex));
+      console.log(signature, 'signature In Sign');
       return {
         account,
         signature,
       };
     }
-*/
     const { address, chainId } = this.accountSpec;
     const callData: {
       address: string;

@@ -10,6 +10,7 @@ export const iconNames = tuple(
   'aergoMainLogo',
   'arrow-down',
   'arrow-right',
+  'arrow_right_blue',
   'arrow-up',
   'back',
   'checkmark',
@@ -74,4 +75,4 @@ export const iconNames = tuple(
   'dropdownblue',
   'dropupblue',
 );
-export type IconName = typeof iconNames[number];
+export type IconName = (typeof iconNames)[number];

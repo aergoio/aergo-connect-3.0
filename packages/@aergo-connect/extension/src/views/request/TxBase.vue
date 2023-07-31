@@ -97,13 +97,9 @@ export default class TxBase extends mixins(RequestMixin) {
     this.account = await this.$background.getActiveAccount();
   }
   get accountSpec() {
-    const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-    const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
-      ? this.$store.state.accounts.chainId
-      : this.$store.state.accounts.chainLabel;
     return {
       address: this.$store.state.accounts.address,
-      chainId,
+      chainId: this.$store.state.accounts.chainId,
     };
   }
 

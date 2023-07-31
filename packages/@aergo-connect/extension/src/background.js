@@ -16,6 +16,7 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
     }
   }
   function forceReconnect(port) {
+    // console.log(port, 'port');
     controller.setupCommunication(port);
     deleteTimer(port);
     port.disconnect();
@@ -48,3 +49,19 @@ chrome.idle.onStateChanged.addListener((newState) => {
     controller.lock();
   }
 });
+
+// chrome.contextMenus.create(
+//   {
+//     id: 'fullPage',
+//     title: 'Open Full Page',
+//     contexts: ['action'],
+//   },
+//   () => chrome.runtime.lastError,
+// );
+
+// chrome.contextMenus.onClicked.addListener(function (info, tab) {
+//   const { menuItemId } = info;
+//   if (menuItemId === 'fullPage') {
+//     chrome.tabs.create({ url: 'index.html#' });
+//   }
+// });

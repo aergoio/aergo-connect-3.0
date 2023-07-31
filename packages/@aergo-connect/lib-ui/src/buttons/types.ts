@@ -8,11 +8,12 @@ export const ButtonTypes = tuple(
   'secondary-outline',
   'gradation',
   'font-gradation',
+  'next',
 );
-export type ButtonType = typeof ButtonTypes[number];
+export type ButtonType = (typeof ButtonTypes)[number];
 
 export const ButtonSizes = tuple('default', 'small', 'medium', 'large');
-export type ButtonSize = typeof ButtonSizes[number];
+export type ButtonSize = (typeof ButtonSizes)[number];
 
 export interface ButtonProps {
   type?: ButtonType;

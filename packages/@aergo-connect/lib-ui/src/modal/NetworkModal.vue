@@ -44,6 +44,8 @@ import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import Button from '../buttons/Button.vue';
 import { ChainConfigs } from '@aergo-connect/extension/src/config';
+import { Account, serializeAccountSpec } from '@herajs/wallet';
+
 export default Vue.extend({
   components: {
     Icon,
@@ -67,26 +69,42 @@ export default Vue.extend({
     },
 
     async setChainId(chain) {
+      const activeAccount = await this.$background.getActiveAccount();
+      const accounts = await this.$background.getAccounts();
       await this.$store.commit('accounts/setChain', {
         chainId: chain.chainId,
         chainLabel: chain.label,
       });
-      await this.$store.commit('accounts/setActiveAccount', this.$store.state.accounts.address);
-      this.$emit('networkModalClick');
 
-      if (this.$route.name === 'request-accounts-list') {
-        return;
+      if (activeAccount?.data.type === 'ledger') {
+        // const path = "m/44'/441'/0'/0/" + 1;
+        const spec = {
+          address: `${activeAccount.data.spec.address}`,
+          chainId: chain.chainId,
+        };
+        const ledgerAccount = new Account(
+          serializeAccountSpec(spec),
+          Account.getDefaultData({
+            spec,
+            type: 'ledger',
+            derivationPath: activeAccount.data.derivationPath,
+          }),
+        );
+
+        const checkAlreadyAddedAccounts = accounts.filter(
+          (account) => account.key === `${chain.chainId}/${activeAccount.data.spec.address}`,
+        );
+        console.log(checkAlreadyAddedAccounts, 'checkAlreadyAddedAccounts');
+        console.log(ledgerAccount, 'ledgerAccount');
+        if (checkAlreadyAddedAccounts.length === 0) {
+          await this.$background.addAccount(ledgerAccount.data);
+          await this.$store.dispatch('accounts/addAccount', ledgerAccount.data.spec.address);
+        }
       } else {
-        // reset account_data
-        await this.$router
-          .push({
-            name: 'accounts-list',
-            params: {
-              address: this.$store.state.accounts.address,
-            },
-          })
-          .catch(() => {});
+        await this.$store.commit('accounts/setActiveAccount', this.$store.state.accounts.address);
       }
+
+      this.$emit('networkModalClick');
     },
 
     addNetworkClick() {
@@ -121,12 +139,9 @@ export default Vue.extend({
   .relative {
     position: relative;
     .network_modal_wrapper {
+      max-width: fit-content;
       position: fixed;
-      bottom: 0;
-      top: auto;
-      /* top: 100%; */
-      left: 0;
-      right: 0;
+      bottom: 0%;
       background: #ffffff;
       box-shadow: 0px -6px 12px rgba(0, 0, 0, 0.1);
       border-top-left-radius: 20px;

@@ -29,7 +29,12 @@
       <div class="security2_backup_wrapper">
         <div class="title">Backup Private Key</div>
         <div class="description">Protect your accounts by saving your private key.</div>
-        <Button type="primary" size="large" @click="handleBackupPrivateKey" hover
+        <Button
+          type="primary"
+          size="large"
+          @click="handleBackupPrivateKey"
+          :hover="!account?.data?.type === 'ledger'"
+          :disabled="account?.data?.type === 'ledger'"
           >Backup Private Key</Button
         >
       </div>
@@ -41,7 +46,8 @@
           size="large"
           @click="
             [
-              $store.state.accounts.accounts[$store.state.accounts.address].backup
+              $store.state.accounts.accounts[$store.state.accounts.address].backup ||
+              account?.data.type === 'ledger'
                 ? handleRemoveModal()
                 : handleAlert(),
             ]
@@ -77,7 +83,25 @@ export default Vue.extend({
       idleTimeout: this.$store.state.ui.idleTimeout,
       removeAccountModal: false,
       notificationModal: false,
+      account: {},
     };
+  },
+  created() {
+    console.log(this.accountSpec, 'this.accountSpec');
+    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
+  },
+  async beforeMount() {
+    this.account = await this.$background.getActiveAccount();
+    console.log(this.account, 'this.account');
+  },
+
+  computed: {
+    accountSpec() {
+      return {
+        address: this.$store.state.accounts.address,
+        chainId: this.$store.state.accounts.chainId,
+      };
+    },
   },
 
   methods: {

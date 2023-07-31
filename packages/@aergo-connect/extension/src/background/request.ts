@@ -2,13 +2,14 @@
  * Handle external requests
  */
 
-const Actions = ['ACTIVE_ACCOUNT', 'SIGN', 'SIGN_TX', 'SEND_TX'] as const;
-type Action = typeof Actions[number];
+const Actions = ['ACTIVE_ACCOUNT', 'SIGN', 'SIGN_TX', 'SEND_TX', 'ADD_NETWORK'] as const;
+type Action = (typeof Actions)[number];
 const ActionsToEventName: Record<Action, string> = {
   ACTIVE_ACCOUNT: 'AERGO_ACTIVE_ACCOUNT',
   SIGN: 'AERGO_SIGN_RESULT',
   SIGN_TX: 'AERGO_SIGN_TX_RESULT',
   SEND_TX: 'AERGO_SEND_TX_RESULT',
+  ADD_NETWORK: 'ADD_NETWORK_RESULT',
 };
 
 enum MsgType {

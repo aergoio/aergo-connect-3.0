@@ -575,6 +575,9 @@ export default Vue.extend({
           border-radius: 50%;
         }
         .list_text {
+          max-width: 220px;
+          overflow: hidden;
+          text-overflow: ellipsis;
           display: flex;
           /* Subtitle/S3 */
 

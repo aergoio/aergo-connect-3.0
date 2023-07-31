@@ -18,6 +18,7 @@ export default class RequestSelect extends Vue {
       SIGN: 'request-sign',
       SIGN_TX: 'request-sign-tx',
       SEND_TX: 'request-send',
+      ADD_NETWORK: 'request-add-network',
     };
 
     const routeName = actionToRouteName[action];

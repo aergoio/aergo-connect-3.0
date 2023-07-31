@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts">
-import AccountList from '../components/accounts/AccountList.vue';
+import AccountList from '../components/accounts/AccountList2.vue';
 import { SideNavButton } from '@aergo-connect/lib-ui/src/buttons';
 import Vue from 'vue';
 

@@ -1,10 +1,8 @@
 <template>
   <ScrollView class="page">
     <div class="content">
-      <section class="dialog-header">
-        <BackButton :to="{ name: 'accounts-list' }" />
-      </section>
-      <Heading animated>Connect Hardware Wallet</Heading>
+      <Header button="back" title="Connect Hardware Wallet" :to="{ name: `register` }" />
+      <!-- <Heading animated>Connect Hardware Wallet</Heading> -->
       <p>
         Please select the network for which you want to import an account from a connected Ledger
         Nano S.
@@ -23,6 +21,7 @@
 import { BackButton, ContinueButton } from '@aergo-connect/lib-ui/src/buttons';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
+import { Header } from '@aergo-connect/lib-ui/src/layouts';
 import SelectNetwork from '../../components/accounts/SelectNetwork.vue';
 import { PersistInputsMixin } from '../../store/ui';
 import { PublicChainIds, PublicChainData } from '../../config';
@@ -36,6 +35,7 @@ const publicChainOptions = PublicChainIds.map((chainId) => [
 
 @Component({
   components: {
+    Header,
     ScrollView,
     BackButton,
     Heading,

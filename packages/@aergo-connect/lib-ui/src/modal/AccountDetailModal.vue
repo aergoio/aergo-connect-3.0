@@ -3,8 +3,33 @@
     <div class="account_detail_wrapper">
       <div class="title">Account Address</div>
       <div class="flex-row">
-        <Identicon :text="$store.state.accounts.address" />
-        <div class="nick">{{ $store.state.accounts.nick }}</div>
+        <div :style="{ display: 'flex', alignItems: 'center', minWidth: '120px' }">
+          <Identicon :text="$store.state.accounts.address" />
+          <div class="account_info_nickname_text" v-if="!editNick">
+            {{ $store.state.accounts.nick }}
+          </div>
+          <input
+            v-if="editNick"
+            class="account_info_nickname_input"
+            v-model="nick"
+            autofocus
+            @keyup.enter="changeNick"
+          />
+        </div>
+        <Icon
+          v-if="!editNick"
+          class="account_info_nickname_button"
+          :name="`edit`"
+          :size="50"
+          @click="handleEdit"
+        />
+        <Icon
+          v-if="editNick"
+          class="account_info_nickname_button"
+          :name="`checkmark`"
+          :size="50"
+          @click="changeNick"
+        />
       </div>
       <VueQRCodeComponent :text="$store.state.accounts.address" :size="123"></VueQRCodeComponent>
       <div class="address_wrapper">
@@ -17,6 +42,7 @@
       </ButtonGroup>
     </div>
     <Notification v-if="clipboardNotification" :title="`Copied!`" :icon="`check`" />
+    <Notification v-if="notification" :title="notificationText" :size="300" :icon="`warning2`" />
   </div>
 </template>
 
@@ -27,13 +53,20 @@ import Notification from './Notification.vue';
 import Identicon from '../content/Identicon.vue';
 import Button from '../buttons/Button.vue';
 import ButtonGroup from '../buttons/ButtonGroup.vue';
+import Icon from '../icons/Icon.vue';
+
 export default Vue.extend({
-  components: { Identicon, ButtonGroup, Button, VueQRCodeComponent, Notification },
+  components: { Identicon, ButtonGroup, Button, VueQRCodeComponent, Notification, Icon },
   data() {
     return {
       clipboardNotification: false,
+      notification: false,
+      notificationText: '',
+      editNick: false,
+      nick: this.$store.state.accounts.nick,
     };
   },
+
   watch: {
     clipboardNotification(state) {
       if (state) {
@@ -61,6 +94,21 @@ export default Vue.extend({
     copyToClipboard(text) {
       navigator.clipboard.writeText(text);
       this.clipboardNotification = true;
+    },
+    async changeNick() {
+      if (this.nick.length < 12 && this.nick.length !== 0) {
+        this.$store.commit('accounts/setNick', this.nick);
+        this.editNick = false;
+      } else if (this.nick.length < 1) {
+        this.notification = true;
+        this.notificationText = `Nickname must be at least 1 `;
+      } else {
+        this.notification = true;
+        this.notificationText = `Nickname must be less than 12`;
+      }
+    },
+    handleEdit() {
+      this.editNick = true;
     },
   },
 });
@@ -105,10 +153,23 @@ export default Vue.extend({
       margin-top: 25px;
       margin-bottom: 15px;
       align-items: center;
-      max-width: 270px;
-      .nick {
+
+      .account_info_nickname_text {
         margin-left: 5px;
         word-break: break-all;
+      }
+      .account_info_nickname_input {
+        border-width: 0.1px;
+        padding: 4px;
+        width: 110px;
+        border-radius: 4px;
+      }
+      .account_info_nickname_input:focus {
+        border-width: 1px;
+      }
+      .account_info_nickname_button {
+        margin-left: 4px;
+        cursor: pointer;
       }
     }
     .address_wrapper {

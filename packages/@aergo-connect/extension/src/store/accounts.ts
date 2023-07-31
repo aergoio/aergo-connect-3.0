@@ -56,8 +56,12 @@ const storeModule: Module<AccountsState, RootState> = {
 
   getters: {
     getTokens: (state) => {
-      if (state.accounts[state.address][`tokens`]) {
-        return state.accounts[state.address][`tokens`][state.chainLabel];
+      if (Object.keys(state.accounts).length > 0) {
+        if (state.accounts[state.address][`tokens`]) {
+          return state.accounts[state.address][`tokens`][state.chainLabel];
+        }
+      } else {
+        return false;
       }
     },
   },
@@ -68,7 +72,7 @@ const storeModule: Module<AccountsState, RootState> = {
       const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
       const accountState = await vue.$background.getAccountState({
         address: state.address,
-        chainId: aergoChainIds.includes(state.chainId) ? state.chainId : state.chainLabel,
+        chainId: state.chainId,
       });
       const aergoBalance = await new Amount(accountState.balance).formatNumber('aergo');
       const isScanApiUrl = state.networksPath.filter(
@@ -91,15 +95,17 @@ const storeModule: Module<AccountsState, RootState> = {
 
     async updateAccount({ commit }, { address, chainId }) {
       const vue = getVueInstance(this);
-      vue.$background.setActiveAccount({ address, chainId });
-      const account = await vue.$background.syncAccountState({ address, chainId });
-      console.log(account, 'updatedAccount');
+      if (address && chainId) {
+        await vue.$background.setActiveAccount({ address, chainId });
+        const account = await vue.$background.syncAccountState({ address, chainId });
+        console.log(account, 'account?');
+      }
     },
 
     async loadAccount({ state, commit }) {
       const vue = getVueInstance(this);
       const accounts = await vue.$background.getAccounts();
-
+      console.log(accounts, 'accounts');
       if (accounts.length !== 0) {
         commit('setActiveAccount', accounts[0]?.data.spec.address);
         return true;

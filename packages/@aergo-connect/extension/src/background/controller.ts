@@ -58,11 +58,11 @@ class BackgroundController extends EventEmitter {
       try {
         const customChains = await this.wallet.datastore.getIndex('settings').get('customChains');
         if (customChains && customChains.data) {
-          for (const label of Object.keys(customChains.data)) {
+          for (const chainId of Object.keys(customChains.data)) {
             this.wallet.useChain({
-              chainId: label,
+              chainId,
               // @ts-ignore
-              nodeUrl: customChains.data[label]?.nodeUrl,
+              nodeUrl: customChains.data[chainId].nodeUrl,
             });
           }
         }
@@ -187,6 +187,7 @@ class BackgroundController extends EventEmitter {
 
   respondToPermissionRequest(requestId: string, result: any, respondCancel = false) {
     const request = this.requests[requestId];
+    console.log(request, 'request');
     if (!request) return;
     if (respondCancel) {
       request.sendCancel({

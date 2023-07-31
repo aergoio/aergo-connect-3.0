@@ -105,7 +105,7 @@ export default Vue.extend({
   justify-content: center;
   height: 54px;
   background: #ffffff;
-  /* box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05); */
+  box-shadow: 0px 5px 12px 0px rgba(0, 0, 0, 0.05);
   position: relative;
   z-index: 1;
   h3 {

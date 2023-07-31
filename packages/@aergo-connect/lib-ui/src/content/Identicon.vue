@@ -43,6 +43,7 @@ export default Vue.extend({
   data() {
     return {};
   },
+
   watch: {
     text() {
       this.load();

@@ -7,12 +7,12 @@
           type="primary"
           size="large"
           :disabled="!$store.state.accounts.lastSeedPhrase"
+          :hover="$store.state.accounts.lastSeedPhrase ? true : false"
           :to="
             $route.params.from
               ? { name: 'account-backup-mnemonic', params: { from: $route.params.from } }
               : { name: 'account-backup-mnemonic' }
           "
-          hover
         >
           Mnemonic Seed Phrase
         </Button>

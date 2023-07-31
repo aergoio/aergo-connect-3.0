@@ -362,11 +362,7 @@ export default Vue.extend({
       }
     },
     chainId() {
-      const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-      const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
-        ? this.$store.state.accounts.chainId
-        : this.$store.state.accounts.chainLabel;
-      return chainId;
+      return this.$store.state.accounts.chainId;
     },
   },
   async beforeMount() {

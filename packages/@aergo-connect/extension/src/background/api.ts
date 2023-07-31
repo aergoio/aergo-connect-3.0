@@ -73,7 +73,7 @@ export class Api {
   }
 
   async addNetwork({ label, chainId, nodeUrl, scanApiUrl, scanExplorerUrl }: ChainConfig) {
-    this.controller.wallet.useChain({ chainId: label, nodeUrl });
+    this.controller.wallet.useChain({ chainId, nodeUrl });
     let chains: Record<string, ChainConfig> = {};
     if (!this.controller.wallet.datastore) throw new Error('cannot open datastore');
     try {
@@ -82,7 +82,7 @@ export class Api {
     } catch (e) {
       // not found
     }
-    chains[label] = { label, chainId, nodeUrl, scanApiUrl, scanExplorerUrl };
+    chains[chainId] = { label, chainId, nodeUrl, scanApiUrl, scanExplorerUrl };
     await this.controller.wallet.datastore.getIndex('settings').put({
       key: 'customChains',
       data: chains as any,

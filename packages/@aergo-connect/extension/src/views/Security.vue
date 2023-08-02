@@ -33,7 +33,7 @@
           type="primary"
           size="large"
           @click="handleBackupPrivateKey"
-          :hover="!account?.data?.type === 'ledger'"
+          :hover="account?.data?.type === ''"
           :disabled="account?.data?.type === 'ledger'"
           >Backup Private Key</Button
         >

@@ -208,7 +208,7 @@ export default class NetworkUpdate extends Vue {
       this.chainId = this.$route.params.chainId;
       this.nodeUrl = 'Loading...';
       const chains = await this.$background.getNetworks();
-      const chain = chains[this.networkName] as any;
+      const chain = chains[this.chainId] as any;
       this.nodeUrl = chain['nodeUrl'];
       this.scanApiUrl = chain['scanApiUrl'];
       this.scanExplorerUrl = chain['scanExplorerUrl'];

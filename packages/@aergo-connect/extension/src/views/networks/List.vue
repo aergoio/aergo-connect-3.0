@@ -176,4 +176,7 @@ export default class AccountsList extends Vue {
     }
   }
 }
+.networks-list:hover {
+  background: #f6f6f6;
+}
 </style>

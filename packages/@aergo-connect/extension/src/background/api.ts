@@ -177,9 +177,21 @@ export class Api {
     });
     return true;
   }
-  // async removeWallet({ address }) {
-  //   await this.controller.wallet.accountManager.removeAccount({ address });
-  // }
+
+  async removeAccounts({ address }) {
+    const accounts = await this.controller.getAccounts();
+    const chains = [];
+    Object.values(accounts).map((accountData) => {
+      if (accountData.data.spec.address === address) {
+        chains.push(accountData.data.spec.chainId);
+      }
+    });
+    chains.map(
+      async (chainId) =>
+        await this.controller.wallet.accountManager.removeAccount({ address, chainId }),
+    );
+  }
+
   async setActiveAccount({ chainId, address }: AccountSpec) {
     await this.controller.setActiveAccount({ chainId, address });
     return true;

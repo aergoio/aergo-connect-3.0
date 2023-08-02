@@ -56,12 +56,8 @@ const storeModule: Module<AccountsState, RootState> = {
 
   getters: {
     getTokens: (state) => {
-      if (Object.keys(state.accounts).length > 0) {
-        if (state.accounts[state.address][`tokens`]) {
-          return state.accounts[state.address][`tokens`][state.chainLabel];
-        }
-      } else {
-        return false;
+      if (state.accounts[state.address][`tokens`]) {
+        return state.accounts[state.address][`tokens`][state.chainLabel];
       }
     },
   },
@@ -80,9 +76,11 @@ const storeModule: Module<AccountsState, RootState> = {
       )[0].scanApiUrl;
 
       if (!aergoChainIds.includes(state.chainId) && !isScanApiUrl) {
+        console.log('here1');
         const balances = { aergo: aergoBalance, others: [] };
         await commit('setTokenBalance', balances);
       } else {
+        console.log('here2');
         const scanApiUrl = getScanApiUrl(state);
         const getTokenBalanceUrl = `${scanApiUrl}/tokenBalance?q=${state.address}&size=10000`;
         const resp = await fetch(getTokenBalanceUrl);
@@ -116,7 +114,8 @@ const storeModule: Module<AccountsState, RootState> = {
 
     async removeAccount({ state, commit }, address: string) {
       const vue = getVueInstance(this);
-      await vue.$background.removeAccount({ address: state.address, chainId: state.chainId });
+      // await vue.$background.removeAccount({ address: state.address, chainId: state.chainId });
+      await vue.$background.removeAccounts({ address });
       commit('removeAccount');
 
       const accounts = await vue.$background.getAccounts();

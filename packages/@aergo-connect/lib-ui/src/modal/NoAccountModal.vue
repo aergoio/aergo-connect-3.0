@@ -10,9 +10,9 @@
         <ButtonVue type="secondary" hover size="medium" :to="{ name: 'register' }"
           >Add Account</ButtonVue
         >
-        <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
+        <!-- <ButtonVue type="secondary-outline" hover size="medium-outline" @click="handleCancel"
           >Cancel</ButtonVue
-        >
+        > -->
       </ButtonGroup>
     </div>
   </div>

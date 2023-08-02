@@ -111,6 +111,11 @@ class BackgroundController extends EventEmitter {
     }
   }
 
+  async getAccounts() {
+    const accounts = await this.wallet.accountManager.getAccounts();
+    return accounts;
+  }
+
   lock() {
     this.wallet.lock();
   }

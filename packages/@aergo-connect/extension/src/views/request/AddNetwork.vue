@@ -139,6 +139,7 @@ export default class RequestAddress extends mixins(RequestMixin) {
     text-align: center;
     color: #24272a;
     .title {
+      font-weight: 500;
       /* font-size: 0.75rem; */
     }
     .title2 {

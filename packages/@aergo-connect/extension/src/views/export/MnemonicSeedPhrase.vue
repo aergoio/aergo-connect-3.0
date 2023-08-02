@@ -36,7 +36,7 @@
       </div>
     </div>
     <template #footer>
-      <Button type="gradation" size="large" :to="{ name: 'account-backup' }"> OK </Button>
+      <Button type="primary" size="large" :to="{ name: 'account-backup' }" hover> OK </Button>
     </template>
   </ScrollView>
 </template>

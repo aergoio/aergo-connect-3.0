@@ -8,7 +8,7 @@
         <div class="title">Auto Lock Timeout</div>
         <div class="flex-row">
           <div class="description">Set the amount of time before the screen locks.</div>
-          <select class="select" @change="handleIdleTimeout()" v-model="idleTimeout">
+          <select class="select" @change="handleIdleTimeout" v-model="idleTimeout">
             <option :value="30">30 seconds</option>
             <option :value="60">60 seconds</option>
             <option :value="300">5 minutes</option>
@@ -87,12 +87,10 @@ export default Vue.extend({
     };
   },
   created() {
-    console.log(this.accountSpec, 'this.accountSpec');
     this.$store.dispatch('accounts/updateAccount', this.accountSpec);
   },
   async beforeMount() {
     this.account = await this.$background.getActiveAccount();
-    console.log(this.account, 'this.account');
   },
 
   computed: {
@@ -107,7 +105,7 @@ export default Vue.extend({
   methods: {
     handleIdleTimeout() {
       this.$store.commit('ui/setIdleTimeout', this.idleTimeout);
-      chrome.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
+      chrome.idle.setDetectionInterval(this.idleTimeout);
     },
     handleBack() {
       this.$router

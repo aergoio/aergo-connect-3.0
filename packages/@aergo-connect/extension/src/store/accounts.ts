@@ -76,11 +76,9 @@ const storeModule: Module<AccountsState, RootState> = {
       )[0].scanApiUrl;
 
       if (!aergoChainIds.includes(state.chainId) && !isScanApiUrl) {
-        console.log('here1');
         const balances = { aergo: aergoBalance, others: [] };
         await commit('setTokenBalance', balances);
       } else {
-        console.log('here2');
         const scanApiUrl = getScanApiUrl(state);
         const getTokenBalanceUrl = `${scanApiUrl}/tokenBalance?q=${state.address}&size=10000`;
         const resp = await fetch(getTokenBalanceUrl);
@@ -95,8 +93,7 @@ const storeModule: Module<AccountsState, RootState> = {
       const vue = getVueInstance(this);
       if (address && chainId) {
         await vue.$background.setActiveAccount({ address, chainId });
-        const account = await vue.$background.syncAccountState({ address, chainId });
-        console.log(account, 'account?');
+        await vue.$background.syncAccountState({ address, chainId });
       }
     },
 

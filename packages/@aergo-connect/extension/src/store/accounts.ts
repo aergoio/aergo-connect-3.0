@@ -76,11 +76,9 @@ const storeModule: Module<AccountsState, RootState> = {
       )[0].scanApiUrl;
 
       if (!aergoChainIds.includes(state.chainId) && !isScanApiUrl) {
-        console.log('here1');
         const balances = { aergo: aergoBalance, others: [] };
         await commit('setTokenBalance', balances);
       } else {
-        console.log('here2');
         const scanApiUrl = getScanApiUrl(state);
         const getTokenBalanceUrl = `${scanApiUrl}/tokenBalance?q=${state.address}&size=10000`;
         const resp = await fetch(getTokenBalanceUrl);

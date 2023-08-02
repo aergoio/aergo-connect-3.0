@@ -308,7 +308,6 @@ export default Vue.extend({
     '$store.state.accounts.chainId': function () {
       this.initAccount();
     },
-
     '$store.state.accounts.address': function () {
       this.initAccount();
     },

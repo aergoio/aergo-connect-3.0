@@ -23,9 +23,7 @@
       </div>
     </div>
     <div class="request_content">
-      <div class="header">
-        <div class="title">Do you want to allow custom network?</div>
-      </div>
+      <div class="request_header title">Switch to {{ request?.data?.networkName }} Network?</div>
 
       <dl class="request_description">
         <dt>Network name</dt>
@@ -74,6 +72,8 @@ import { RequestMixin } from './mixin';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import { Header } from '@aergo-connect/lib-ui/src/layouts';
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
+import { Account, serializeAccountSpec } from '@herajs/wallet';
+
 @Component({
   components: {
     ScrollView,
@@ -118,8 +118,45 @@ export default class RequestAddress extends mixins(RequestMixin) {
         await this.$background.addNetwork(networkPath);
         this.$store.commit('accounts/setNetworkPath', networkPath);
       }
+      this.setChainId(networkPath);
     } catch (e) {
       console.error(e, 'error');
+    }
+  }
+
+  async setChainId(chain) {
+    const activeAccount = await this.$background.getActiveAccount();
+    console.log(activeAccount, 'activeAccount');
+    const accounts = await this.$background.getAccounts();
+    await this.$store.commit('accounts/setChain', {
+      chainId: chain.chainId,
+      chainLabel: chain.label,
+    });
+
+    if (activeAccount?.data.type === 'ledger') {
+      // const path = "m/44'/441'/0'/0/" + 1;
+      const spec = {
+        address: `${activeAccount.data.spec.address}`,
+        chainId: chain.chainId,
+      };
+      const ledgerAccount = new Account(
+        serializeAccountSpec(spec),
+        Account.getDefaultData({
+          spec,
+          type: 'ledger',
+          derivationPath: activeAccount.data.derivationPath,
+        }),
+      );
+
+      const checkAlreadyAddedAccounts = accounts.filter(
+        (account) => account.key === `${chain.chainId}/${activeAccount.data.spec.address}`,
+      );
+      if (checkAlreadyAddedAccounts.length === 0) {
+        await this.$background.addAccount(ledgerAccount.data);
+        await this.$store.dispatch('accounts/addAccount', ledgerAccount.data.spec.address);
+      }
+    } else {
+      await this.$store.commit('accounts/setActiveAccount', this.$store.state.accounts.address);
     }
   }
 }
@@ -132,19 +169,15 @@ export default class RequestAddress extends mixins(RequestMixin) {
   justify-content: center;
   flex-direction: column;
 
-  .header {
+  .request_header {
     display: flex;
     height: 100%;
     flex-direction: column;
     text-align: center;
     color: #24272a;
-    .title {
+    &.title {
+      margin-top: 24px;
       font-weight: 500;
-      /* font-size: 0.75rem; */
-    }
-    .title2 {
-      /* font-size: 0.75rem; */
-      line-height: 140%;
     }
   }
   .request_description {

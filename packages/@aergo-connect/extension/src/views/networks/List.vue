@@ -91,7 +91,7 @@ export default class AccountsList extends Vue {
     if (!confirm(`Are you sure you want to remove the custom network ${label}?`)) {
       return;
     }
-    await this.$background.removeNetwork({ label });
+    await this.$background.removeNetwork({ chainId });
     this.$store.commit('accounts/removeNetwork');
     this.$store.commit('accounts/removeNetworkPath', { chainId, label });
     this.fetchNetworks();

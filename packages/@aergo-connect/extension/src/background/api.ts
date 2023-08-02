@@ -90,12 +90,12 @@ export class Api {
     return true;
   }
 
-  async removeNetwork({ label }: { label: string }) {
+  async removeNetwork({ chainId }: { chainId: string }) {
     let chains: Record<string, ChainConfig> = {};
     if (!this.controller.wallet.datastore) throw new Error('cannot open datastore');
     const index = this.controller.wallet.datastore.getIndex('settings');
     chains = (await index.get('customChains')).data as any;
-    delete chains[label];
+    delete chains[chainId];
     await index.put({
       key: 'customChains',
       data: chains as any,

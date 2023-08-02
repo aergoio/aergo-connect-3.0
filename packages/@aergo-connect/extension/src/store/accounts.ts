@@ -93,8 +93,7 @@ const storeModule: Module<AccountsState, RootState> = {
       const vue = getVueInstance(this);
       if (address && chainId) {
         await vue.$background.setActiveAccount({ address, chainId });
-        const account = await vue.$background.syncAccountState({ address, chainId });
-        console.log(account, 'account?');
+        await vue.$background.syncAccountState({ address, chainId });
       }
     },
 

@@ -401,7 +401,6 @@ export default Vue.extend({
     }
   },
   created() {
-    console.log(this.accountSpec, 'this.accountSpec');
     this.$store.dispatch('accounts/updateAccount', this.accountSpec);
   },
   updated() {

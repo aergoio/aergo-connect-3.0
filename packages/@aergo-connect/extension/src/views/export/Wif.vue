@@ -25,7 +25,6 @@
             @click="copyToClipBoard()"
             :type="copy === 'Copy' ? 'primary-outline' : 'primary'"
             size="medium"
-            hover
           >
             <img v-if="copy === 'Copy'" src="@aergo-connect/lib-ui/src/icons/img/copy.svg" />
             <img v-if="copy === 'Copied'" src="@aergo-connect/lib-ui/src/icons/img/copied.svg" />
@@ -48,11 +47,12 @@
         :disabled="isBtnDisabled"
         @click="createWif"
         :loading="loading"
+        hover
       >
         Show
       </Button>
       <div v-else>
-        <Button type="gradation" size="large" :to="{ name: 'account-backup' }"> OK </Button>
+        <Button type="primary" size="large" :to="{ name: 'account-backup' }" hover> OK </Button>
       </div>
     </template>
   </ScrollView>
@@ -98,6 +98,7 @@ export default class AccountExportWif extends Vue {
     this.copy = 'Copied';
     this.imageName = '@aergo-connect/lib-ui/src/icons/img/copy.svg';
     this.$store.commit('accounts/setBackup', true);
+    // setTimeout(() => (this.copy = 'Copy'), 3000);
   }
 
   async createWif() {

@@ -11,9 +11,17 @@
             v-bind:key="chain.label"
             @click="setChainId(chain)"
           >
-            <div class="flex-row">
+            <div
+              :class="
+                $store.state.accounts.chainLabel === chain.label ? `flex-row selected` : `flex-row`
+              "
+            >
               <div :style="{ display: 'flex', alignItems: 'center' }">
-                <Icon class="network-icon" :name="idx < 3 ? `aergo` : `network-other`" :size="36" />
+                <Icon
+                  :class="idx !== 0 ? `network-icon opacity` : `network-icon`"
+                  :name="idx < 3 ? `aergo` : `network-other`"
+                  :size="36"
+                />
                 <span>{{
                   idx < 3
                     ? `AERGO ${chain.label.toLocaleUpperCase()}`
@@ -22,11 +30,11 @@
 
                 <span v-if="idx > 2" class="custom-tag">CUSTOM CHAIN</span>
               </div>
-              <Icon
+              <!-- <Icon
                 v-if="$store.state.accounts.chainLabel === chain.label"
                 class="checkmark-icon"
                 name="checkmark"
-              />
+              /> -->
             </div>
             <div class="list_line" />
           </li>
@@ -199,6 +207,10 @@ export default Vue.extend({
             display: flex;
             align-items: center;
             justify-content: space-between;
+
+            &.selected {
+              background: var(--primary-lightsky, #eff5f6);
+            }
             .custom-tag {
               margin-left: 5px;
               display: inline-block;
@@ -213,6 +225,13 @@ export default Vue.extend({
             .network-icon {
               margin-left: 22px;
               margin-right: 10px;
+
+              &.opacity {
+                opacity: 0.7;
+              }
+            }
+            .icon--network-other {
+              opacity: 1 !important;
             }
 
             .checkmark-icon {

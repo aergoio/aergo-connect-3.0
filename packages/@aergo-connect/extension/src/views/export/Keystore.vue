@@ -36,21 +36,22 @@
       </div>
     </div>
     <template #footer>
-      <ButtonGroup vertical>
-        <Button
-          v-if="!keystore"
-          type="primary"
-          @click="createKeystore"
-          :loading="loading"
-          size="large"
-          >Save</Button
+      <!-- <ButtonGroup vertical> -->
+      <Button
+        v-if="!keystore"
+        type="primary"
+        @click="createKeystore"
+        :loading="loading"
+        size="large"
+        hover
+        >Save</Button
+      >
+      <Button v-else type="primary" size="large">
+        <a :href="encodedKeystoreUrl" target="_blank" :download="fileName" ref="downloadButton"
+          >Save</a
         >
-        <Button v-else type="primary" size="large">
-          <a :href="encodedKeystoreUrl" target="_blank" :download="fileName" ref="downloadButton"
-            >Save</a
-          >
-        </Button>
-      </ButtonGroup>
+      </Button>
+      <!-- </ButtonGroup> -->
     </template>
   </ScrollView>
 </template>

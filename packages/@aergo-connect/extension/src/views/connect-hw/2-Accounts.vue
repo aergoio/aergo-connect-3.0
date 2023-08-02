@@ -2,13 +2,13 @@
   <ScrollView class="page">
     <!-- <template #header> -->
     <div class="content">
-      <Header button="back" title="Connect Ledger" :to="{ name: `register` }" />
+      <Header title="Connect Ledger"/>
       <p style="margin-bottom: 0; display: flex; justify-content: center">
         <div v-if="!accounts.length" class="ledger-description">
         <ol>
           <li>Connect your wallet directly to your computer.</li>
           <div class="img">
-            <img :style="{width:'207px', height:'59px'}":src="ledger1" alt="ledger1"/>
+            <img :style="{width:'207px', height:'59px'}" :src="ledger1" alt="ledger1"/>
           </div>
 
           <li>Enter PIN on your ledger and press the two buttons on the top together.</li>
@@ -22,10 +22,9 @@
             <img :style="{width:'114px', height:'42px'}" :src="ledger3" alt="ledger3"/>
           </div>
         </ol>
-
+        <Button :style="{marginLeft:'-6px'}" type="primary" size="large" @click="connect" hover>Continue</Button>
         </div>
-        <span v-else>Select one account from your device.</span>
-        <Button :style="{marginLeft:'24px'}" type="primary" size="large" @click="connect" hover>Continue</Button>
+        <span :style="{marginLeft:'50px',fontWeight:'500', position:'relative', top:'10px'}" v-else>Select one account from your device.</span>
       </p>
     </div>
     <!-- </template> -->
@@ -97,11 +96,22 @@ export default class Import extends mixins(PersistInputsMixin) {
   error = '';
   connectStatus = '';
   connectDialogVisible = false;
+
+  // transport: Transport | null = null;
+  // app: LedgerAppAergo | null = null;
+  // connectAergoAppStatus = false;
+  // timeoutId: number | null = null;
+
   dialogState: 'loading' | 'success' | 'error' = 'loading';
 
   ledger1 = require('@/assets/img/ledger1.png')
   ledger2 = require('@/assets/img/ledger2.png')
   ledger3 = require('@/assets/img/ledger3.png')
+
+  // async mounted() {
+  //   await this.checkUSBConnection();
+  // }
+
 
   async connect() {
     this.connectDialogVisible = true;
@@ -109,12 +119,10 @@ export default class Import extends mixins(PersistInputsMixin) {
     this.error = '';
     this.connectStatus = 'Connecting to Ledger device...';
     try {
-      const transport = await timedAsync(Transport.create(), { fastTime: 1000 });
+      const transport = await timedAsync(Transport.create(), { fastTime: 1000 })
       const app = new LedgerAppAergo(transport);
       this.connectStatus = 'Loading accounts...';
-      const accounts = await this.loadAccounts(app, 0, 5);
-      console.log(accounts, 'accounts updated');
-      this.accounts.push(...accounts);
+      this.accounts.push(...await this.loadAccounts(app, 0, 5));
       this.dialogState = 'success';
       this.connectStatus = 'Done!';
       setTimeout(() => {
@@ -138,10 +146,6 @@ export default class Import extends mixins(PersistInputsMixin) {
     for (let i = from; i < to; i++) {
       const path = "m/44'/441'/0'/0/" + i;
       const address = await app.getWalletAddress(path);
-      const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-      // const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
-      //   ? this.$store.state.accounts.chainId
-      //   : this.$store.state.accounts.chainLabel;
       const spec = {
         address: `${address}`,
         chainId: this.$store.state.accounts.chainId,
@@ -160,12 +164,28 @@ export default class Import extends mixins(PersistInputsMixin) {
           account.data.balance = `${state.balance}`;
         }),
       );
-      console.log(statePromises, 'statePromises');
     }
     // Wait for remaining state promises to resolve
     await Promise.all(statePromises);
     return accounts;
   }
+
+  // async checkUSBConnection(){
+  //   try {
+  //     if(this.app){
+  //       const getVersion = await this.app.getVersion()
+
+  //       if(getVersion.major){
+  //       console.log(getVersion.major,'.getVersion.major')
+  //       this.connectAergoAppStatus = true; // 연결 상태를 true로 설정합니다.
+  //       }
+  //     }
+  //   } catch (e) {
+  //     const error = e as Error
+  //     this.error = error.message
+  //     this.connectAergoAppStatus = false; // 연결 상태를 false로 설정합니다.
+  //   }
+  // }
 
   async selectAccount(account: Account): Promise<void> {
     try {
@@ -249,6 +269,9 @@ export default class Import extends mixins(PersistInputsMixin) {
       }
     }
   }
+}
+.content{
+  /* text-align: center; */
 }
 
 </style>

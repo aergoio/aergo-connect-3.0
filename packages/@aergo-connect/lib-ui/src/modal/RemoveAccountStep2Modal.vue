@@ -48,7 +48,7 @@ export default Vue.extend({
     },
 
     async handleDeleteAccount() {
-      await this.$store.dispatch('accounts/removeAccount');
+      await this.$store.dispatch('accounts/removeAccount', this.$store.state.accounts.address);
       this.$router.push({ name: 'accounts-list' });
     },
   },

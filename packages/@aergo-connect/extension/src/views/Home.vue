@@ -355,10 +355,6 @@ export default Vue.extend({
       });
     },
     accountSpec() {
-      // const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-      // const chainId = aergoChainIds.includes(this.$store.state.accounts.chainId)
-      //   ? this.$store.state.accounts.chainId
-      //   : this.$store.state.accounts.chainLabel;
       return {
         address: this.$store.state.accounts.address,
         chainId: this.$store.state.accounts.chainId,
@@ -380,22 +376,14 @@ export default Vue.extend({
           this.isLoading = false;
         } else {
           const succ = await this.$store.dispatch('accounts/loadAccount');
-          console.log(succ, 'succ');
           this.errorMessage = '';
           if (!succ || !this.getTokens) {
             this.noAccountModal = true;
           }
-          //  else {
-          //   await this.$store.dispatch('accounts/initState');
-          // }
         }
       } catch (e) {
-        if (!this.getTokens) {
-          this.noAccountModal = true;
-        } else {
-          this.errorModal = true;
-          this.errorMessage = `CONNECTION_TIMED_OUT: ${e}`;
-        }
+        this.errorMessage = `CONNECTION_TIMED_OUT: ${e}`;
+        this.errorModal = true;
       } finally {
         this.isLoading = false;
       }
@@ -406,7 +394,7 @@ export default Vue.extend({
       try {
         await this.initAccount();
         await this.checkIsUpdateNft();
-        this.$forceUpdate();
+        await this.$forceUpdate();
       } catch (e: any) {
         console.error(e, 'error');
         this.errorModal = true;

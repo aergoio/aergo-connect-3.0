@@ -50,7 +50,7 @@ Request and response types
 
 | Request message action | Request data            | Response event name  | Response event detail                             |
 |------------------------|-------------------------|----------------------|---------------------------------------------------|
-| ACTIVE_ACCOUNT         | {}                      | AERGO_ACTIVE_ACCOUNT | { account: { address: string, chainId: string } } |
+| ACTIVE_ACCOUNT         | {}                      | AERGO_ACTIVE_ACCOUNT | { account: { address: string, chainId: string,    |
 |                        |                 `customNetwork` -> nodeUrl:string?, scanApiUrl?:string, scanExplorerUrl?:string} } |
 | SIGN (prehashed)       | { hash: hex string }    | AERGO_SIGN_RESULT    | { signature: string }                             |
 | SIGN (unhashed)        | { message: hex string } | AERGO_SIGN_RESULT    | { signature: string }                             |

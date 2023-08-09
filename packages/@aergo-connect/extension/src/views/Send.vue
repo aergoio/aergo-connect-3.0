@@ -52,6 +52,9 @@
               }}
             </div>
           </div>
+          <span v-if="account?.data?.type === 'ledger'" class="account-label account-label-usb"
+            ><Icon name="usb" :size="17"
+          /></span>
         </div>
       </div>
       <div :class="[tokenType === 'ARC2' ? `token_content_wrapper nft` : `token_content_wrapper`]">
@@ -325,15 +328,6 @@ export default Vue.extend({
       searchResult: [],
       searchFocus: false,
       isLoading: false,
-      txBody: {
-        from: this.$store.state.accounts.address,
-        to: '',
-        amount: '0',
-        unit: 'aergo',
-        payload: '',
-        limit: 0,
-        type: 0,
-      },
       // for tx
       account: {},
       statusDialogVisible: false,
@@ -347,7 +341,18 @@ export default Vue.extend({
       inputPayload: '',
       txType: 'TRANSFER',
       select: false,
+      txBody: {
+        from: this.$store.state.accounts.address,
+        to: '',
+        amount: '0 aergo',
+        payload: '',
+        limit: 0,
+        type: Tx.Type['TRANSFER'],
+      },
     };
+  },
+  updated() {
+    console.log(this.txBody, 'txBody');
   },
   computed: {
     getTokens() {
@@ -363,6 +368,12 @@ export default Vue.extend({
     },
     chainId() {
       return this.$store.state.accounts.chainId;
+    },
+    accountSpec() {
+      return {
+        address: this.$store.state.accounts.address,
+        chainId: this.$store.state.accounts.chainId,
+      };
     },
   },
   async beforeMount() {
@@ -463,8 +474,10 @@ export default Vue.extend({
       if (this.txType === 'MULTICALL') {
         this.inputTo = '';
       }
+      this.txBody.type = Tx.Type[this.txType];
     },
   },
+
   methods: {
     async setParams() {
       this.balance = this.getTokens[this.asset]['balance'];
@@ -573,39 +586,52 @@ export default Vue.extend({
         return;
       }
 
-      if (this.txBody.payload) {
-        const payload = JSON.parse(this.txBody.payload);
-        this.txBody.payload = JSON.stringify(payload, null, 2);
-      }
       if (this.txBody.type) {
         this.txBody.type = Tx.Type[this.txType];
       }
 
       if (this.tokenType == 'AERGO') {
         this.txBody.to = this.inputTo;
-        this.txBody.amount = `${this.inputAmount} ${this.txBody.unit}`;
+        this.txBody.amount = `${this.inputAmount} aergo`;
         // this.txBody.type = this.$store.state.ui.txType.indexOf(this.txBody.type);
       } else if (this.tokenType == 'ARC1') {
+        this.txBody.type = 5;
         this.txBody.to = this.getTokens[this.asset].hash;
-        this.txBody.amount = `0 ${this.txBody.unit}`;
+        this.txBody.amount = `0 aergo`;
         const amount =
           Number(this.inputAmount) * Math.pow(10, this.getTokens[this.asset].meta.decimals);
-        // eslint-disable-next-line no-undef
-        this.txBody.payload =
-          '{"Name": "transfer", "Args": ["' +
-          this.inputTo +
-          '", "' +
-          // eslint-disable-next-line no-undef
-          BigInt(amount).toString() +
-          '", ""]}';
-        this.txType = 'CALL';
+        this.txBody.payload = JSON.stringify(
+          {
+            Name: 'transfer',
+            // eslint-disable-next-line no-undef
+            Args: [`${this.inputTo}`, `${BigInt(amount).toString()}`, ``],
+          },
+          null,
+          2,
+        );
+        // // eslint-disable-next-line no-undef
+        // this.txBody.payload =
+        //   '{"Name": "transfer", "Args": ["' +
+        //   this.inputTo +
+        //   '", "' +
+        //   // eslint-disable-next-line no-undef
+        //   BigInt(amount).toString() +
+        //   '", ""]}';
       } else {
         // ARC2
+        this.txBody.type = 5;
         this.txBody.to = this.getTokens[this.asset].hash;
-        this.txBody.amount = `0 ${this.txBody.unit}`;
-        this.txBody.payload =
-          '{"Name": "transfer", "Args": ["' + this.inputTo + '", "' + this.inputAmount + '"]}';
-        this.txType = 'CALL';
+        this.txBody.amount = `0 aergo`;
+        // this.txBody.payload =
+        //   '{"Name": "transfer", "Args": ["' + this.inputTo + '", "' + this.inputAmount + '"]}';
+        this.txBody.payload = JSON.stringify(
+          {
+            Name: 'transfer',
+            Args: [`${this.inputTo}`, `${this.inputAmount}`, ``],
+          },
+          null,
+          2,
+        );
         this.userNftData = this.getTokens[this.asset].nftWallet.filter(
           (nft) => nft.meta.token_id === this.inputAmount,
         )[0];
@@ -615,7 +641,7 @@ export default Vue.extend({
       try {
         if (this.account.data.type === 'ledger') {
           this.txBody = await this.signWithLedger(this.txBody);
-          this.handleConfirm();
+          await this.handleConfirm();
         } else {
           this.confirmationModal = true;
         }
@@ -644,13 +670,11 @@ export default Vue.extend({
 
       // send
       try {
-        console.log(this.txBody, 'this.txBody');
         const hash = await timedAsync(this.sendTransaction(this.txBody), { fastTime: 1000 });
         console.log(hash, 'hash');
         this.txHash = hash;
 
         const result = await this.$background.getTransactionReceipt(this.chainId, this.txHash);
-        console.log(result, 'result');
         this.setStatus('success', 'Done');
         if (result.status === 'SUCCESS') {
           if (this.userNftData.hash) {
@@ -674,8 +698,9 @@ export default Vue.extend({
             }
           }, 1000);
         } else if (result.status === 'ERROR') {
+          console.log(result, 'result?');
           this.statusDialogVisible = false;
-          const errorMsg = `${result.result.split(`${result.contractaddress}:0: `)[1]}`;
+          const errorMsg = `${result.result}`;
           this.setStatus('error', errorMsg);
         }
       } catch (e) {
@@ -689,10 +714,7 @@ export default Vue.extend({
     //   this.sendFinishModal = false;
     // },
     async signWithLedger(txBody) {
-      console.log(txBody, 'txBody 11');
       const { tx } = await this.$background.prepareTransaction(txBody, this.chainId);
-      console.log(txBody, 'txBody');
-      console.log(this.chainId, 'this.chainId');
       tx.payload = txBody.payload;
       this.setStatus('loading', 'Connecting to Ledger device...');
       const transport = await timedAsync(Transport.create(5000), { fastTime: 1000 });
@@ -701,7 +723,7 @@ export default Vue.extend({
       try {
         await app.getWalletAddress(this.account.data.derivationPath);
         const { signature } = await app.signTransaction(tx);
-        console.log(signature, 'signature in Send');
+        console.log(signature, 'signature');
         tx.sign = signature;
         return tx;
       } catch (e) {
@@ -719,8 +741,8 @@ export default Vue.extend({
     async sendTransaction(txBody) {
       this.setStatus('loading', 'Sending to network...');
       try {
+        console.log(txBody, 'send txBody');
         const result = await this.$background.sendTransaction(txBody, this.chainId);
-        console.log(result, 'result');
         if ('tx' in result) {
           this.$store.commit('accounts/getLastestSendHash', result.tx.hash);
           return result.tx.hash;
@@ -774,6 +796,7 @@ export default Vue.extend({
 
     selectTxType(txType) {
       this.txType = txType;
+      this.txBody.type = Tx.Type[txType];
       this.select = false;
     },
     handleSelectTxType() {
@@ -834,7 +857,7 @@ export default Vue.extend({
       align-items: center;
       margin-top: 8px;
       .account_icon {
-        margin-left: 38px;
+        margin-left: 25px;
         width: 20px;
         height: 20px;
       }
@@ -854,7 +877,7 @@ export default Vue.extend({
         display: flex;
         align-items: center;
         margin-left: 10px;
-        width: 120px;
+        /* width: 120px; */
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
@@ -875,9 +898,35 @@ export default Vue.extend({
           color: #279ecc;
         }
       }
+
+      .account-label {
+        margin-top: 10px;
+        display: block;
+        border-radius: 10px;
+        width: 36px;
+        line-height: 20px;
+        text-align: center;
+        transform: translateY(-5px);
+      }
+
+      .account-label-new {
+        background-color: #ff4f9f;
+        font-size: (calc(8 / 16)) * 1rem;
+        text-transform: uppercase;
+        color: #fff;
+      }
+
+      .account-label-usb {
+        background-color: #6f6f6f;
+
+        .icon {
+          line-height: 14px;
+          height: 16px;
+          transform: translateY(-1px);
+        }
+      }
       .account_button {
         cursor: pointer;
-        margin-left: 48px;
       }
     }
   }

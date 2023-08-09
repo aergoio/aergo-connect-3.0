@@ -46,13 +46,17 @@
                 )}...${$store.state.accounts.address.slice(-6)}`
               }}
             </div>
-            <Icon
-              v-if="token.meta.symbol !== 'aergo'"
-              class="account_button"
-              :name="`delete2`"
-              @click="handleDelete(true)"
-            />
+            <Icon />
           </div>
+          <span v-if="account?.data?.type === 'ledger'" class="account-label account-label-usb"
+            ><Icon name="usb" :size="17"
+          /></span>
+          <Icon
+            v-if="token.meta.symbol !== 'aergo'"
+            class="account_button"
+            :name="`delete2`"
+            @click="handleDelete(true)"
+          />
         </div>
       </div>
       <div v-if="token.meta.symbol === 'aergo'" class="token_detail aergo">
@@ -187,6 +191,7 @@
                   class="tx_id"
                   @click="getScanExplorerApi ? gotoScanTx(item.hash) : copyToClipboard(item.hash)"
                 >
+                  <Icon v-if="item.meta.status === 'ERROR'" name="danger" />
                   {{
                     item.hash.split('-0').length === 2
                       ? `TX_ID: ${item.hash.slice(0, 6)}......${item.hash.slice(-6, -2)}`
@@ -315,8 +320,10 @@ export default Vue.extend({
       sendStatus: {},
       selectedData: {},
       lastestTransactionState: 'PENDING',
+      account: {},
     };
   },
+
   computed: {
     getTokens() {
       return this.$store.getters[`accounts/getTokens`];
@@ -357,6 +364,12 @@ export default Vue.extend({
   },
 
   async beforeMount() {
+    // this.account = await this.$background.getActiveAccount();
+    const address = this.$store.state.accounts.address;
+    const chainId = this.$store.state.accounts.chainId;
+    this.account =
+      (await this.$background.getActiveAccount()) ||
+      (await this.$background.setActiveAccount({ address, chainId }));
     this.token = await this.getTokens[this.$store.state.accounts.selectedToken];
     await this.getTokenHistory();
     if (this.token.meta.symbol == 'aergo') {
@@ -399,7 +412,9 @@ export default Vue.extend({
       this.sendStatus = await this.getSendStatus(this.selectedData);
     },
   },
-
+  updated() {
+    console.log(this.lastestTransactionState, 'lastestTransactionState');
+  },
   methods: {
     bigIntToString(bigInt, decimals) {
       return bigIntToString(bigInt, decimals);
@@ -522,8 +537,11 @@ export default Vue.extend({
               this.chainId,
               this.data[0][`hash`],
             );
-            if (result[`status`] !== 'SUCCESS') {
+            console.log(result, 'result?');
+            if (result[`status`] !== 'SUCCESS' && result[`status`] !== 'ERROR') {
               this.lastestTransactionState = 'PENDING';
+            } else if (result[`status`] === 'ERROR') {
+              this.lastestTransactionState = 'ERROR';
             } else {
               this.lastestTransactionState = 'COMPLETE';
               this.$store.commit('accounts/getLastestSendHash', '');
@@ -658,7 +676,7 @@ export default Vue.extend({
       align-items: center;
       margin-top: 8px;
       .account_icon {
-        margin-left: 38px;
+        margin-left: 25px;
 
         width: 20px;
         height: 20px;
@@ -681,7 +699,7 @@ export default Vue.extend({
         align-items: center;
         margin-left: 10px;
 
-        width: 120px;
+        /* width: 120px; */
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
@@ -703,9 +721,35 @@ export default Vue.extend({
           color: #279ecc;
         }
       }
+      .account-label {
+        margin-top: 10px;
+        display: block;
+        border-radius: 10px;
+        width: 36px;
+        line-height: 20px;
+        text-align: center;
+        transform: translateY(-5px);
+      }
+
+      .account-label-new {
+        background-color: #ff4f9f;
+        font-size: (calc(8 / 16)) * 1rem;
+        text-transform: uppercase;
+        color: #fff;
+      }
+
+      .account-label-usb {
+        background-color: #6f6f6f;
+
+        .icon {
+          line-height: 14px;
+          height: 16px;
+          transform: translateY(-1px);
+        }
+      }
       .account_button {
         cursor: pointer;
-        margin-left: 35px;
+        /* margin-left: 35px; */
       }
     }
   }
@@ -1012,6 +1056,8 @@ export default Vue.extend({
             white-space: nowrap;
             vertical-align: middle;
             border-radius: 10px;
+            cursor: default;
+
             &.pending {
               background-color: #5c3ce0;
             }
@@ -1024,6 +1070,7 @@ export default Vue.extend({
         }
 
         .tx_id {
+          display: flex;
           margin-top: 10px;
           margin-bottom: 10px;
           margin-left: 16px;

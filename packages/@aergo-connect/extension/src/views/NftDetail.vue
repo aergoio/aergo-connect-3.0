@@ -37,8 +37,11 @@
                 )}...${$store.state.accounts.address.slice(-6)}`
               }}
             </div>
-            <Icon class="account_button" :name="`delete2`" @click="handleDelete(true)" />
           </div>
+          <span v-if="account?.data?.type === 'ledger'" class="account-label account-label-usb"
+            ><Icon name="usb" :size="17"
+          /></span>
+          <Icon class="account_button" :name="`delete2`" @click="handleDelete(true)" />
         </div>
       </div>
 
@@ -159,8 +162,10 @@ export default Vue.extend({
       winWidth: '',
       nftImgUrl: '',
       latestTransactionHash: '' || null,
+      account: {},
     };
   },
+
   computed: {
     getTokens() {
       return this.$store.getters[`accounts/getTokens`];
@@ -175,7 +180,8 @@ export default Vue.extend({
     },
   },
 
-  beforeMount() {
+  async beforeMount() {
+    this.account = await this.$background.getActiveAccount();
     const nftWallet = this.getTokens[this.$store.state.accounts.selectedToken]['nftWallet'];
     const nft = nftWallet.filter((nft: any) => nft.meta.token_id === this.$route.params.id);
     this.token = nft[0];
@@ -199,6 +205,9 @@ export default Vue.extend({
         }, 2000);
       }
     },
+  },
+  updated() {
+    console.log(this.account, 'account');
   },
   methods: {
     gotoSend(item: object) {
@@ -355,7 +364,7 @@ export default Vue.extend({
       align-items: center;
       margin-top: 8px;
       .account_icon {
-        margin-left: 38px;
+        margin-left: 24px;
 
         width: 20px;
         height: 20px;
@@ -378,7 +387,7 @@ export default Vue.extend({
         align-items: center;
         margin-left: 10px;
 
-        width: 120px;
+        /* width: 120px; */
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
@@ -400,9 +409,34 @@ export default Vue.extend({
           color: #279ecc;
         }
       }
+      .account-label {
+        margin-top: 10px;
+        display: block;
+        border-radius: 10px;
+        width: 36px;
+        line-height: 20px;
+        text-align: center;
+        transform: translateY(-5px);
+      }
+
+      .account-label-new {
+        background-color: #ff4f9f;
+        font-size: (calc(8 / 16)) * 1rem;
+        text-transform: uppercase;
+        color: #fff;
+      }
+
+      .account-label-usb {
+        background-color: #6f6f6f;
+
+        .icon {
+          line-height: 14px;
+          height: 16px;
+          transform: translateY(-1px);
+        }
+      }
       .account_button {
         cursor: pointer;
-        margin-left: 20px;
       }
     }
   }

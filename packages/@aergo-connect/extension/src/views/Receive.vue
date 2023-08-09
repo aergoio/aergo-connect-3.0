@@ -37,6 +37,9 @@
               }}
             </div>
           </div>
+          <span v-if="account?.data?.type === 'ledger'" class="account-label account-label-usb"
+            ><Icon name="usb" :size="17"
+          /></span>
         </div>
       </div>
 
@@ -184,6 +187,11 @@ export default Vue.extend({
     },
   },
   async beforeMount() {
+    const address = this.$store.state.accounts.address;
+    const chainId = this.$store.state.accounts.chainId;
+    this.account =
+      (await this.$background.getActiveAccount()) ||
+      (await this.$background.setActiveAccount({ address, chainId }));
     this.token = await this.getTokens[this.$store.state.accounts.selectedToken];
     this.arc1Tokens = await Object.values(this.getTokens).filter(
       (token) => token.meta.type === 'ARC1' || token.meta.type === 'AERGO',
@@ -349,7 +357,7 @@ export default Vue.extend({
       align-items: center;
       margin-top: 8px;
       .account_icon {
-        margin-left: 38px;
+        margin-left: 25px;
 
         width: 20px;
         height: 20px;
@@ -372,7 +380,7 @@ export default Vue.extend({
         align-items: center;
         margin-left: 10px;
 
-        width: 120px;
+        /* width: 120px; */
         height: 22px;
         background: #eff5f7;
         border-radius: 25px;
@@ -394,9 +402,34 @@ export default Vue.extend({
           color: #279ecc;
         }
       }
+      .account-label {
+        margin-top: 10px;
+        display: block;
+        border-radius: 10px;
+        width: 36px;
+        line-height: 20px;
+        text-align: center;
+        transform: translateY(-5px);
+      }
+
+      .account-label-new {
+        background-color: #ff4f9f;
+        font-size: (calc(8 / 16)) * 1rem;
+        text-transform: uppercase;
+        color: #fff;
+      }
+
+      .account-label-usb {
+        background-color: #6f6f6f;
+
+        .icon {
+          line-height: 14px;
+          height: 16px;
+          transform: translateY(-1px);
+        }
+      }
       .account_button {
         cursor: pointer;
-        margin-left: 35px;
       }
     }
   }

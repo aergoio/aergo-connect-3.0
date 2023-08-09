@@ -94,7 +94,12 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 })
 export default class RequestSign extends mixins(RequestMixin) {
   async beforeMount() {
-    this.account = await this.$background.getActiveAccount();
+    const address = this.$store.state.accounts.address;
+    const chainId = this.$store.state.accounts.chainId;
+    this.account =
+      (await this.$background.getActiveAccount()) ||
+      (await this.$background.setActiveAccount({ address, chainId }));
+    // this.account = await this.$background.getActiveAccount();
   }
 
   get accountSpec() {

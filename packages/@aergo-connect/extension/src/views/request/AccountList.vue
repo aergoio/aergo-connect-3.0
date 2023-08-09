@@ -76,8 +76,6 @@ export default Vue.extend({
         this.$router.push({ name: 'request-send' }).catch(() => {});
       } else if (this.$store.state.request.currentRequest.action === 'SIGN_TX') {
         this.$router.push({ name: 'request-sign-tx' }).catch(() => {});
-      } else if (this.$store.state.request.currentRequest.action === 'ADD_NETWORK') {
-        this.$router.push({ name: 'request-add-network' }).catch(() => {});
       } else {
         this.$router.push({ name: 'request-address' }).catch(() => {});
       }

@@ -31,11 +31,6 @@
                 <span class="account-address">{{ account.data.spec.address }}</span>
                 <span class="balance-actions">
                   <FormattedToken class="account-balance" :value="account.data.balance" />
-                  <router-link
-                    class="delete-button"
-                    :to="{ name: 'account-remove', params: account.data.spec }"
-                    ><Icon name="trash" :size="10"
-                  /></router-link>
                 </span>
               </span>
             </div>
@@ -73,7 +68,12 @@ export default class AccountList extends Vue {
   activeAccount: any = null;
 
   async mounted() {
-    this.activeAccount = await this.$background.getActiveAccount();
+    // this.activeAccount = await this.$background.getActiveAccount();
+    const address = this.$store.state.accounts.address;
+    const chainId = this.$store.state.accounts.chainId;
+    this.activeAccount =
+      (await this.$background.getActiveAccount()) ||
+      (await this.$background.setActiveAccount({ address, chainId }));
     // Scroll the active account into view
     setTimeout(() => {
       const element = this.$el.querySelectorAll('.active')[0];

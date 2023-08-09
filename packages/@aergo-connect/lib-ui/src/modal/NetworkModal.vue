@@ -102,8 +102,6 @@ export default Vue.extend({
         const checkAlreadyAddedAccounts = accounts.filter(
           (account) => account.key === `${chain.chainId}/${activeAccount.data.spec.address}`,
         );
-        console.log(checkAlreadyAddedAccounts, 'checkAlreadyAddedAccounts');
-        console.log(ledgerAccount, 'ledgerAccount');
         if (checkAlreadyAddedAccounts.length === 0) {
           await this.$background.addAccount(ledgerAccount.data);
           await this.$store.dispatch('accounts/addAccount', ledgerAccount.data.spec.address);

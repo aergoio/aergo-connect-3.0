@@ -25,7 +25,7 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
     from.fullPath === '/' && from.name === null && to.name === 'accounts-list';
   if (isStartTransition) {
     const persistedPath = store.state.ui.route.currentPath;
-    const exclude = ['', '/', '/welcome', to.fullPath];
+    const exclude = ['', '/', '/welcome', '/connect-hw/accounts', to.fullPath];
     if (persistedPath && exclude.indexOf(persistedPath) === -1) {
       return next(persistedPath);
     }

@@ -94,7 +94,12 @@ export default class TxBase extends mixins(RequestMixin) {
   actionVerb = 'send';
 
   async beforeMount() {
-    this.account = await this.$background.getActiveAccount();
+    const address = this.$store.state.accounts.address;
+    const chainId = this.$store.state.accounts.chainId;
+    this.account =
+      (await this.$background.getActiveAccount()) ||
+      (await this.$background.setActiveAccount({ address, chainId }));
+    // this.account = await this.$background.getActiveAccount();
   }
   get accountSpec() {
     return {

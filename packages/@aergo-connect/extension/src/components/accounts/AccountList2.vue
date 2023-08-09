@@ -131,7 +131,12 @@ export default Vue.extend({
   },
 
   async mounted() {
-    this.activeAccount = await this.$background.getActiveAccount();
+    const address = this.$store.state.accounts.address;
+    const chainId = this.$store.state.accounts.chainId;
+    this.activeAccount =
+      (await this.$background.getActiveAccount()) ||
+      (await this.$background.setActiveAccount({ address, chainId }));
+    // this.activeAccount = await this.$background.getActiveAccount();
 
     // Scroll the active account into view
     setTimeout(() => {

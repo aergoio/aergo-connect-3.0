@@ -126,7 +126,6 @@ export default class RequestAddress extends mixins(RequestMixin) {
 
   async setChainId(chain) {
     const activeAccount = await this.$background.getActiveAccount();
-    console.log(activeAccount, 'activeAccount');
     const accounts = await this.$background.getAccounts();
     await this.$store.commit('accounts/setChain', {
       chainId: chain.chainId,

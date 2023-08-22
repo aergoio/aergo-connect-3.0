@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { ChainConfigs, ChainConfig } from './../config';
 import { Module } from 'vuex';
 import { RootState } from './index';
@@ -154,7 +155,7 @@ const storeModule: Module<AccountsState, RootState> = {
         meta: {
           name: 'AERGO',
           symbol: 'aergo',
-          image: '',
+          image_url: '',
           type: 'AERGO',
           decimals: 0,
         },
@@ -220,7 +221,7 @@ const storeModule: Module<AccountsState, RootState> = {
               meta: {
                 name: 'AERGO',
                 symbol: 'aergo',
-                image: '',
+                image_url: '',
                 type: 'AERGO',
                 decimals: 0,
               },
@@ -233,7 +234,7 @@ const storeModule: Module<AccountsState, RootState> = {
               meta: {
                 name: 'AERGO',
                 symbol: 'aergo',
-                image: '',
+                image_url: '',
                 type: 'AERGO',
                 decimals: 0,
               },
@@ -246,7 +247,7 @@ const storeModule: Module<AccountsState, RootState> = {
               meta: {
                 name: 'AERGO',
                 symbol: 'aergo',
-                image: '',
+                image_url: '',
                 type: 'AERGO',
                 decimals: 0,
               },
@@ -261,7 +262,7 @@ const storeModule: Module<AccountsState, RootState> = {
           meta: {
             name: 'AERGO',
             symbol: 'aergo',
-            image: '',
+            image_url: '',
             type: 'AERGO',
             decimals: 0,
           },
@@ -297,7 +298,7 @@ const storeModule: Module<AccountsState, RootState> = {
           meta: {
             name: 'AERGO',
             symbol: 'aergo',
-            image: '',
+            image_url: '',
             type: 'AERGO',
             decimals: 0,
           },

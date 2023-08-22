@@ -107,9 +107,9 @@
                   :name="`aergo`"
                 />
                 <img
-                  v-else-if="token?.meta?.image"
+                  v-else-if="token?.meta?.image_url"
                   class="token_list_icon"
-                  :src="token?.meta?.image"
+                  :src="token?.meta?.image_url"
                   alt="404"
                 />
                 <Icon v-else class="token_list_icon" :name="`defaultToken`" />
@@ -157,9 +157,9 @@
             >
               <div class="token_list_row">
                 <img
-                  v-if="token?.meta?.image"
+                  v-if="token?.meta?.image_url"
                   class="token_list_icon"
-                  :src="token?.meta?.image"
+                  :src="token?.meta?.image_url"
                   alt="404"
                 />
                 <Icon v-else class="token_list_icon" :name="`defaultToken`" />

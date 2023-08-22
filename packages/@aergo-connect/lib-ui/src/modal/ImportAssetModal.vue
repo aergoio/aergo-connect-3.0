@@ -5,7 +5,11 @@
         Imported {{ token?.meta?.type === 'ARC1' ? `Asset` : `NFT` }} Successfully!
       </div>
       <div class="import_asset_icon_wrapper">
-        <img v-if="token?.meta?.image" class="import_asset_icon" :src="token?.meta?.image" />
+        <img
+          v-if="token?.meta?.image_url"
+          class="import_asset_icon"
+          :src="token?.meta?.image_url"
+        />
         <Icon v-else :name="`defaultToken`" class="import_asset_icon" />
         <div class="import_asset_title">
           {{ `${token?.meta?.name}` + ' ' + '(' + `${token?.meta?.symbol}` + ')' }}

@@ -67,7 +67,11 @@
                 @click="() => select(result)"
               >
                 <div class="token_list_wrapper">
-                  <img v-if="result.meta.image" class="list_icon" :src="result.meta.image" />
+                  <img
+                    v-if="result.meta.image_url"
+                    class="list_icon"
+                    :src="result.meta.image_url"
+                  />
                   <Icon v-else class="list_icon" :name="`defaultToken`" />
                   <div :style="{ width: '240px', display: 'flex', 'flex-direction': 'column' }">
                     <span class="list_text">

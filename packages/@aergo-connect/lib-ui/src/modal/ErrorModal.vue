@@ -64,7 +64,6 @@ export default Vue.extend({
     align-items: center;
 
     .error-modal_text {
-      width: 259px;
       font-family: 'Outfit';
       font-style: normal;
       font-weight: 600;
@@ -72,7 +71,6 @@ export default Vue.extend({
       line-height: 25px;
       text-align: center;
       letter-spacing: -0.333333px;
-      margin-top: 20px;
 
       .highlight {
         color: #e4097d;
@@ -80,7 +78,7 @@ export default Vue.extend({
     }
 
     .button_wrapper {
-      margin-top: 53px;
+      margin-top: 30px;
       width: 300px;
       .button {
         width: 289px;

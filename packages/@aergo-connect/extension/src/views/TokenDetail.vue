@@ -101,9 +101,9 @@
       </div>
       <div v-else class="token_detail others">
         <div class="flex-row">
-          <img v-if="token?.meta?.image_url" class="icon" :src="token?.meta?.image_url" />
-          <Icon class="icon_center" v-else :name="`defaultToken`" />
           <div class="balance_wrapper">
+            <img v-if="token?.meta?.image_url" class="icon" :src="token?.meta?.image_url" />
+            <Icon class="icon_center" v-else :name="`defaultToken`" />
             <div class="balance">
               {{ token.meta.name }}
             </div>

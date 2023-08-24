@@ -210,7 +210,7 @@ export default Vue.extend({
       this.$store.commit('ui/clearInput', { key: 'receive' });
       this.balance = this.getTokens[this.asset]['balance'];
       this.tokenType = this.getTokens[this.asset]['meta']['type'];
-      this.icon = this.getTokens[this.asset]['meta']['image'];
+      this.icon = this.getTokens[this.asset]['meta']['image_url'];
       this.symbol = this.getTokens[this.asset]['meta']['symbol'];
       this.tokenName = this.getTokens[this.asset]['meta']['name'];
       this.decimals = this.getTokens[this.asset]['meta']['decimals'];

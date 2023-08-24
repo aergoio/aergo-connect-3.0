@@ -117,6 +117,7 @@ export default Vue.extend({
     .import_asset_icon_wrapper {
       @include flex__column__center;
       .import_asset_icon {
+        max-width: 100px;
         margin-top: 21px;
         margin-bottom: 8px;
       }

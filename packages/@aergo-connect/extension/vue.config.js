@@ -6,7 +6,6 @@ module.exports = {
   pages: {
     index: 'src/main.ts',
     popup: 'src/main.ts',
-    // sandbox: 'src/main.ts',
     'popup-request': 'src/main.ts',
     background: 'src/background/main.js',
   },

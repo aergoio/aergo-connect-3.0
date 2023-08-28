@@ -13,18 +13,6 @@
           Import Account
         </span>
       </router-link>
-      <span @click="onChangeIdleTimeout(20)">
-        <span>
-          <Icon :name="`account-import`" :size="36" />
-          Idle Timeout Setting(20s) test
-        </span>
-      </span>
-      <span @click="onChangeIdleTimeout(60)">
-        <span>
-          <Icon :name="`account-import`" :size="36" />
-          Idle Timeout Setting(60s) test
-        </span>
-      </span>
       <span @click="openConnectHardwareWalletTab" v-if="isHardwareWalletEnabled">
         <span>
           <Icon :name="`account-connect`" :size="36" />
@@ -63,10 +51,6 @@ export default class AddAccountDialog extends Vue {
     } else {
       this.$router.push({ name: 'account-connect-hw' });
     }
-  }
-  onChangeIdleTimeout(seconds: number) {
-    chrome.idle.setDetectionInterval(seconds);
-    this.$store.commit('ui/setIdleTimeout', seconds);
   }
 }
 </script>

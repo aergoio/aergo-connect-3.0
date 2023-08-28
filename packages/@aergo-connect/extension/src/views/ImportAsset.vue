@@ -67,7 +67,11 @@
                 @click="() => select(result)"
               >
                 <div class="token_list_wrapper">
-                  <img v-if="result.meta.image" class="list_icon" :src="result.meta.image" />
+                  <img
+                    v-if="result.meta.image_url"
+                    class="list_icon"
+                    :src="result.meta.image_url"
+                  />
                   <Icon v-else class="list_icon" :name="`defaultToken`" />
                   <div :style="{ width: '240px', display: 'flex', 'flex-direction': 'column' }">
                     <span class="list_text">
@@ -241,7 +245,6 @@ import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import { getContractMethodResult } from '../utils/getContractMethodResult';
 import { Identicon } from '@aergo-connect/lib-ui/src/content';
-import { isPublicChainId, PublicChainData } from '../config';
 import { debounce } from 'lodash';
 import { getScanApiUrl } from '../utils/chain-urls';
 
@@ -366,7 +369,7 @@ export default Vue.extend({
     fetchToScan: debounce(function (query, tokenType) {
       this.inputTextField = query;
       const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
-      const searchTokenListUrl = `${scanApiUrl}/token?q=(name_lower:*${query.toLowerCase()}* OR symbol_lower:*${query.toLowerCase()}*) AND type:${tokenType}`;
+      const searchTokenListUrl = `${scanApiUrl}/tokenVerified?q=(name_lower:*${query.toLowerCase()}* OR symbol_lower:*${query.toLowerCase()}*) AND type:${tokenType}`;
 
       fetch(searchTokenListUrl)
         .then((res) => {
@@ -423,7 +426,7 @@ export default Vue.extend({
 
     checkScanApi(tokenType, contractAddress) {
       const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
-      const checkScanApiUrl = `${scanApiUrl}/${tokenType}?q=_id:${contractAddress}`;
+      const checkScanApiUrl = `${scanApiUrl}/tokenVerified?q=_id:${contractAddress}&type:${tokenType}`;
       fetch(checkScanApiUrl)
         .then((res) => {
           return res.json();

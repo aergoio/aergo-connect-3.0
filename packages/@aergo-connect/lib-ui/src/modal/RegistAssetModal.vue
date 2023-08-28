@@ -3,7 +3,7 @@
     <div class="registAsset_modal_wrapper" v-if="!isNext">
       <div class="registAsset_title">Imported Asset Successfully!</div>
       <Identicon :text="result.hash" class="token_icon" />
-      <img v-if="result.meta.image" :src="result.meta.image" />
+      <img v-if="result.meta.image_url" :src="result.meta.image_url" />
       <Icon v-else :name="`defaultToken`" />
       <p>
         {{ $route.params.result.meta.name }}

@@ -5,7 +5,11 @@
         Imported {{ token?.meta?.type === 'ARC1' ? `Asset` : `NFT` }} Successfully!
       </div>
       <div class="import_asset_icon_wrapper">
-        <img v-if="token?.meta?.image" class="import_asset_icon" :src="token?.meta?.image" />
+        <img
+          v-if="token?.meta?.image_url"
+          class="import_asset_icon"
+          :src="token?.meta?.image_url"
+        />
         <Icon v-else :name="`defaultToken`" class="import_asset_icon" />
         <div class="import_asset_title">
           {{ `${token?.meta?.name}` + ' ' + '(' + `${token?.meta?.symbol}` + ')' }}
@@ -113,6 +117,7 @@ export default Vue.extend({
     .import_asset_icon_wrapper {
       @include flex__column__center;
       .import_asset_icon {
+        max-width: 100px;
         margin-top: 21px;
         margin-bottom: 8px;
       }

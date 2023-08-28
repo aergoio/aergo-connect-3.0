@@ -107,7 +107,7 @@
                 :key="token.meta.hash"
                 @click="selectAssetFunc(token.hash)"
               >
-                <img class="img" v-if="token.meta.image" :src="token.meta.image" />
+                <img class="img" v-if="token.meta.image_url" :src="token.meta.image_url" />
                 <Icon class="aergo" v-else-if="token.hash === 'AERGO'" :name="`aergo`" />
                 <Icon v-else :name="`defaultToken`" />
                 {{ token.meta.name }}
@@ -210,7 +210,7 @@ export default Vue.extend({
       this.$store.commit('ui/clearInput', { key: 'receive' });
       this.balance = this.getTokens[this.asset]['balance'];
       this.tokenType = this.getTokens[this.asset]['meta']['type'];
-      this.icon = this.getTokens[this.asset]['meta']['image'];
+      this.icon = this.getTokens[this.asset]['meta']['image_url'];
       this.symbol = this.getTokens[this.asset]['meta']['symbol'];
       this.tokenName = this.getTokens[this.asset]['meta']['name'];
       this.decimals = this.getTokens[this.asset]['meta']['decimals'];

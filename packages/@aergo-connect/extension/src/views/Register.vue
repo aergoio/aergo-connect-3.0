@@ -30,13 +30,7 @@
               <span> Create </span>
               <Icon :style="{ display: 'flex' }" name="arrow_right_blue" />
             </Button>
-            <Button
-              type="next"
-              size="large"
-              :disabled="!isHardwareWalletEnabled"
-              @click="openConnectHardwareWalletTab"
-              hover
-            >
+            <Button type="next" size="large" @click="openConnectHardwareWalletTab" hover>
               <span> Connect Ledger </span>
               <Icon :style="{ display: 'flex' }" name="arrow_right_blue" />
             </Button>

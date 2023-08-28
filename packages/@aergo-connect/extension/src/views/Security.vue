@@ -9,11 +9,11 @@
         <div class="flex-row">
           <div class="description">Set the amount of time before the screen locks.</div>
           <select class="select" @change="handleIdleTimeout" v-model="idleTimeout">
-            <option :value="30">30 seconds</option>
-            <option :value="60">60 seconds</option>
             <option :value="300">5 minutes</option>
             <option :value="600">10 minutes</option>
+            <option :value="900">15 minutes</option>
             <option :value="1800">30 minutes</option>
+            <option :value="3600">60 minutes</option>
           </select>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 
-const IDLE_TIMEOUT = 60 * 1000;
+const IDLE_TIMEOUT = 300 * 1000;
 
 class AppState extends EventEmitter {
   private idleTimeout?: NodeJS.Timeout;

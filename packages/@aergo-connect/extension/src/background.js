@@ -16,7 +16,6 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
     }
   }
   function forceReconnect(port) {
-    // console.log(port, 'port');
     controller.setupCommunication(port);
     deleteTimer(port);
     port.disconnect();
@@ -38,11 +37,11 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
       controller.state.set('inactive');
     });
   }
-  remotePort._timer = setTimeout(forceReconnect, 250e3, remotePort);
+  remotePort._timer = setTimeout(forceReconnect, 5000, remotePort);
 });
 
 // Setup idle detection
-chrome.idle.setDetectionInterval(60);
+chrome.idle.setDetectionInterval(300);
 
 chrome.idle.onStateChanged.addListener((newState) => {
   if (newState === 'idle' || newState === 'locked') {

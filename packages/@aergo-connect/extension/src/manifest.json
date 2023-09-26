@@ -9,8 +9,9 @@
   "minimum_chrome_version": "92",
 
   "content_security_policy": {
-    "extension_pages": "script-src 'self' http://localhost:8098/; object-src 'self'"
+    "extension_pages": "script-src 'self'; object-src 'self'"
   },
+
   "icons": {
     "17": "{{./assets/img/icon-17.png}}",
     "102": "{{./assets/img/icon-102.png}}",
@@ -37,12 +38,5 @@
     "default_popup": "popup.html"
   },
 
-  "permissions": [
-    "activeTab",
-    "unlimitedStorage",
-    "clipboardWrite",
-    "contextMenus",
-    "idle",
-    "http://localhost:8098/*"
-  ]
+  "permissions": ["activeTab", "unlimitedStorage", "clipboardWrite", "contextMenus", "idle"]
 }

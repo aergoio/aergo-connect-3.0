@@ -1,4 +1,4 @@
-<template functional>
+<template>
   <dl class="table key-value-table">
     <slot></slot>
   </dl>
@@ -10,8 +10,8 @@ $lineHeight: 20px;
 
 .key-value-table {
   display: grid;
+  grid-template-columns: auto;
   margin: 20px;
-  grid-template-columns: auto auto;
 
   font-size: (calc(13 / 16)) * 1rem;
 

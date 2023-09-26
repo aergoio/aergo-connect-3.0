@@ -88,11 +88,17 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
     Heading,
     Icon,
     Identicon,
-    account: {},
     Appear,
   },
 })
 export default class RequestSign extends mixins(RequestMixin) {
+  account: any;
+  data() {
+    return {
+      account: {},
+    };
+  }
+
   async beforeMount() {
     const address = this.$store.state.accounts.address;
     const chainId = this.$store.state.accounts.chainId;
@@ -136,7 +142,7 @@ export default class RequestSign extends mixins(RequestMixin) {
   }
 
   get msgToSign() {
-    // if (!this.request) return '';
+    if (!this.request) return '';
     return this.request.data.message || this.request.data.hash;
   }
   get signSource() {

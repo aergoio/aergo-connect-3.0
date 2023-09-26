@@ -7,29 +7,27 @@
         }}</a>
         <span v-else>{{ txBody.hash }}</span>
       </KVTableRow>
-      <KVTableRow label="Recipient"
-        ><span class="empty" v-if="!txBody.to">(Empty)</span
-        ><span v-else-if="isArg">{{ recipientOfArg }}</span
-        ><span v-else>{{ txBody.to }}</span></KVTableRow
-      >
-      <KVTableRow label="Amount" v-if="!keys.length || keys.indexOf('amount') !== -1"
-        ><FormattedToken
-          :value="amountValueOfArg"
-          v-if="isArg"
-          :forced-unit="'ARG'" /><FormattedToken :value="amountValue" v-else
-      /></KVTableRow>
-      <KVTableRow label="Fee" v-if="txBody.fee && (!keys.length || keys.indexOf('fee') !== -1)"
-        ><FormattedToken :value="txBody.fee"
-      /></KVTableRow>
-      <KVTableRow label="Type" v-if="!keys.length || keys.indexOf('type') !== -1">{{
-        typeLabel
-      }}</KVTableRow>
-      <KVTableRow label="Gas limit" v-if="!keys.length || keys.indexOf('limit') !== -1">{{
-        txBody.limit || 0
-      }}</KVTableRow>
-      <KVTableRow label="Payload" v-if="!keys.length || keys.indexOf('payload') !== -1"
-        ><div class="payload" v-html="formattedPayload"></div
-      ></KVTableRow>
+      <KVTableRow label="Recipient">
+        <span class="empty" v-if="!txBody.to">(Empty)</span>
+        <span v-else-if="isArg">{{ recipientOfArg }}</span>
+        <span v-else>{{ txBody.to }}</span>
+      </KVTableRow>
+      <KVTableRow label="Amount" v-if="!keys.length || keys.indexOf('amount') !== -1">
+        <FormattedToken :value="amountValueOfArg" v-if="isArg" :forced-unit="'ARG'" />
+        <FormattedToken :value="amountValue" v-else />
+      </KVTableRow>
+      <KVTableRow label="Fee" v-if="txBody.fee && (!keys.length || keys.indexOf('fee') !== -1)">
+        <FormattedToken :value="txBody.fee" />
+      </KVTableRow>
+      <KVTableRow label="Type" v-if="!keys.length || keys.indexOf('type') !== -1">
+        {{ typeLabel }}
+      </KVTableRow>
+      <KVTableRow label="Gas limit" v-if="!keys.length || keys.indexOf('limit') !== -1">
+        {{ txBody.limit || 0 }}
+      </KVTableRow>
+      <KVTableRow label="Payload" v-if="!keys.length || keys.indexOf('payload') !== -1">
+        <div class="payload" v-html="formattedPayload"></div>
+      </KVTableRow>
     </KVTable>
   </div>
 </template>

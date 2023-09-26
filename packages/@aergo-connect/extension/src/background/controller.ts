@@ -192,7 +192,6 @@ class BackgroundController extends EventEmitter {
 
   respondToPermissionRequest(requestId: string, result: any, respondCancel = false) {
     const request = this.requests[requestId];
-    console.log(request, 'request');
     if (!request) return;
     if (respondCancel) {
       request.sendCancel({
@@ -283,7 +282,6 @@ class BackgroundController extends EventEmitter {
   setupCommunication(outStream: any) {
     const api = getServerApi(this);
     const dnode = Dnode(api);
-
     pump(outStream, dnode, outStream, (err: any) => {
       if (err) console.error(err);
     });

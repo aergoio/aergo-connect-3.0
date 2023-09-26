@@ -153,11 +153,12 @@
                   placeholder="Contract Address"
                   class="asset_type"
                   :value="contractAddress"
+                  @input="handleInput"
                   identicon
                 />
               </div>
               <div v-if="$store.state.accounts.option === 'token'" :style="{ marginTop: '15px' }">
-                <div :style="{ display: 'flex', flexDirection: 'column' }">
+                <div v-if="token" :style="{ display: 'flex', flexDirection: 'column' }">
                   <div>Asset Type</div>
                   <TextField disabled :value="token.meta.type" />
                   <div :style="{ marginTop: '10px' }">Symbol</div>
@@ -421,27 +422,44 @@ export default Vue.extend({
       this.importAssetModal = true;
     },
     handleInput(contractAddress) {
+      this.check = false;
       this.contractAddress = contractAddress;
     },
 
-    checkScanApi(tokenType, contractAddress) {
+    async checkScanApi(contractAddress, tokenType) {
       const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
-      const checkScanApiUrl = `${scanApiUrl}/tokenVerified?q=_id:${contractAddress}&type:${tokenType}`;
-      fetch(checkScanApiUrl)
+      const checkScanApiUrl = `${scanApiUrl}/token?q=_id:${contractAddress}&type:${tokenType}`;
+      const tokenData = fetch(checkScanApiUrl)
         .then((res) => {
           return res.json();
         })
         .then((data) => {
           return data.hits[0];
-        });
+        })
+        .catch((e) => e);
+      return tokenData;
     },
 
     async handleCheck() {
       try {
         if (this.$store.state.accounts.option === 'token') {
-          this.token = await this.checkScanApi(`token`, this.contractAddress);
+          const tokenData = await this.checkScanApi(this.contractAddress, `token`);
+          if (!tokenData) {
+            this.notification = true;
+            this.notificationText = `Please Check Contract Address.`;
+            return;
+          } else {
+            this.token = tokenData;
+          }
         } else {
-          this.token = await this.checkScanApi(`nft`, this.contractAddress);
+          const nftData = await this.checkScanApi(this.contractAddress, `nft`);
+          if (!nftData) {
+            this.notification = true;
+            this.notificationText = `Please Check Contract Address.`;
+            return;
+          } else {
+            this.token = nftData;
+          }
         }
         this.check = true;
       } catch (e) {
@@ -504,7 +522,10 @@ export default Vue.extend({
     },
 
     async importAsset() {
-      if (this.getTokens[this.token.hash]?.hash) {
+      if (!this.token) {
+        this.notification = true;
+        this.notificationText = `Already Added ARC1 Token`;
+      } else if (this.getTokens[this.token.hash]?.hash) {
         this.notification = true;
         this.notificationText = `Already Added ARC1 Token`;
       } else {

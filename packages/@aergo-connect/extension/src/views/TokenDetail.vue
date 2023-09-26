@@ -412,9 +412,7 @@ export default Vue.extend({
       this.sendStatus = await this.getSendStatus(this.selectedData);
     },
   },
-  updated() {
-    console.log(this.lastestTransactionState, 'lastestTransactionState');
-  },
+
   methods: {
     bigIntToString(bigInt, decimals) {
       return bigIntToString(bigInt, decimals);
@@ -537,7 +535,6 @@ export default Vue.extend({
               this.chainId,
               this.data[0][`hash`],
             );
-            console.log(result, 'result?');
             if (result[`status`] !== 'SUCCESS' && result[`status`] !== 'ERROR') {
               this.lastestTransactionState = 'PENDING';
             } else if (result[`status`] === 'ERROR') {

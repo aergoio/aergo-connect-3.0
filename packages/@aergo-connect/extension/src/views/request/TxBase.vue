@@ -28,13 +28,13 @@
         <Icon :name="`title-request`" :size="36" />
         <div class="title">{{ title || 'Send transaction' }}</div>
       </div>
-      <div class="description">
+      <div v-if="request" class="description">
         The website at {{ request.origin }} wants to {{ actionVerb || 'send' }} a transaction using
         your account.
       </div>
     </div>
 
-    <div class="content" style="padding-top: 0">
+    <div v-if="request" class="content" style="padding-top: 0">
       <TxConfirm :txBody="txDataDisplay" />
     </div>
 
@@ -69,7 +69,7 @@ import { Identicon } from '@aergo-connect/lib-ui/src/content';
 import { Icon } from '@aergo-connect/lib-ui/src/icons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import { RequestMixin } from './mixin';
-import TxConfirm from '../../components/account/TxConfirm.vue';
+import TxConfirm from '@/components/account/TxConfirm.vue';
 import { timedAsync } from 'timed-async/index.js';
 import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
@@ -86,13 +86,22 @@ import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
     Heading,
     Icon,
     TxConfirm,
-    account: {},
     Appear,
   },
 })
 export default class TxBase extends mixins(RequestMixin) {
   actionVerb = 'send';
+  account: any;
 
+  data() {
+    return {
+      account: {},
+    };
+  }
+  created() {
+    console.log(this.request, 'this.request');
+    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
+  }
   async beforeMount() {
     const address = this.$store.state.accounts.address;
     const chainId = this.$store.state.accounts.chainId;
@@ -115,6 +124,7 @@ export default class TxBase extends mixins(RequestMixin) {
       payload: this.payloadDisplay,
     };
   }
+
   get payloadParsed() {
     if (!this.request) return Buffer.from([]);
     const txData = this.request.data;
@@ -131,8 +141,11 @@ export default class TxBase extends mixins(RequestMixin) {
     }
     return txData.payload;
   }
-  created() {
-    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
+
+  updated() {
+    console.log(this.request, 'request');
+    console.log(this.txDataDisplay, 'txDataDisplay');
+    console.log(this.account, 'account');
   }
   async signWithLedger(txBody: any) {
     const { tx } = await this.$background.prepareTransaction(txBody, this.accountSpec.chainId);
@@ -161,6 +174,7 @@ export default class TxBase extends mixins(RequestMixin) {
   handleGoBack() {
     this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
   }
+
   async confirmHandler(): Promise<any> {
     if (!this.request) return;
     let txBody = {
@@ -212,3 +226,18 @@ export default class TxBase extends mixins(RequestMixin) {
   }
 }
 </script>
+
+<style lang="scss">
+.description {
+  margin-bottom: 10px;
+}
+.code {
+  position: relative;
+  left: 14px;
+  width: 340px;
+  font-size: smaller;
+  height: max-content;
+  line-height: 1.5;
+  font-family: 'Roboto Mono', monospace;
+}
+</style>

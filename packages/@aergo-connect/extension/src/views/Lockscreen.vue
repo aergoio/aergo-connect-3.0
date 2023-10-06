@@ -75,6 +75,7 @@ export default class Lockscreen extends mixins() {
   async unlock(): Promise<void> {
     try {
       await this.$background.unlock({ password: this.password });
+      chrome.idle.setDetectionInterval(this.$store.state.ui.idleTimeout);
       let nextPath = this.$store.state.ui.route.currentPath;
 
       if (!nextPath || nextPath === '/' || nextPath === '/locked') {

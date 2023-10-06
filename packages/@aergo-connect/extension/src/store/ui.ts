@@ -39,7 +39,7 @@ const storeModule: Module<UiState, RootState> = {
     },
     txTypes: ['TRANSFER', 'CALL', 'FEEDELEGATION', 'MULTICALL', 'GOVERNANCE'],
     initSetupKey: '',
-    idleTimeout: 300,
+    idleTimeout: 60,
     unlocked: false,
     route: {
       currentPath: '',

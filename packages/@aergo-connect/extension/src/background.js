@@ -16,7 +16,7 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
     }
   }
   function forceReconnect(port) {
-    controller.setupCommunication(remotePort);
+    controller.setupCommunication(port);
     deleteTimer(port);
     port.disconnect();
   }
@@ -41,7 +41,7 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
 });
 
 // Setup idle detection
-chrome.idle.setDetectionInterval(300);
+chrome.idle.setDetectionInterval(60);
 
 chrome.idle.onStateChanged.addListener((newState) => {
   if (newState === 'idle' || newState === 'locked') {

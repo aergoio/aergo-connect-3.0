@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 
-const IDLE_TIMEOUT = 300 * 1000;
+const IDLE_TIMEOUT = 60 * 1000;
 
 class AppState extends EventEmitter {
   private idleTimeout?: NodeJS.Timeout;
@@ -26,6 +26,7 @@ class AppState extends EventEmitter {
     }
     if (this.state != nextState && nextState == 'inactive') {
       if (this.idleTimeout) {
+        console.log(this.idleTimeout, 'idleTimeout');
         clearTimeout(this.idleTimeout);
       }
       this.idleTimeout = setTimeout(() => {

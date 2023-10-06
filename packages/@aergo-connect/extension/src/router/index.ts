@@ -133,12 +133,20 @@ const routes: RouteConfig[] = [
         component: ImportSeedphrase,
       }),
 
-      withMeta(4, { path: '/connect-hw', name: 'account-connect-hw', component: ConnectHw }),
-      withMeta(5, {
-        path: '/connect-hw/accounts',
-        name: 'account-connect-hw-accounts',
-        component: ConnectHwAccounts,
-      }),
+      withMeta(
+        4,
+        { path: '/connect-hw', name: 'account-connect-hw', component: ConnectHw },
+        R.NoAuthCheck | R.NoTracking,
+      ),
+      withMeta(
+        5,
+        {
+          path: '/connect-hw/accounts',
+          name: 'account-connect-hw-accounts',
+          component: ConnectHwAccounts,
+        },
+        R.NoAuthCheck | R.NoTracking,
+      ),
       withMeta(5, { path: 'networks', name: 'networks-list', component: NetworksList }),
       withMeta(6, { path: 'networks/create', name: 'networks-create', component: NetworksUpdate }),
       withMeta(6, { path: 'networks/update', name: 'networks-update', component: NetworksUpdate }),

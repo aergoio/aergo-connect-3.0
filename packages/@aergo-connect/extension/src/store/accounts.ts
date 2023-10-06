@@ -57,9 +57,8 @@ const storeModule: Module<AccountsState, RootState> = {
 
   getters: {
     getTokens: (state) => {
-      if (state.accounts[state.address][`tokens`]) {
-        return state.accounts[state.address][`tokens`][state.chainLabel];
-      }
+      const tokens = state?.accounts?.[state?.address]?.tokens?.[state?.chainLabel];
+      return tokens;
     },
   },
 

@@ -49,6 +49,9 @@ class BackgroundController extends EventEmitter {
       appName: 'aergo-browser-wallet',
       instanceId: this.id,
     });
+    console.log(this.state, 'state');
+    console.log(this.wallet, 'wallet');
+    console.log(this._lockTimeout, '_lockTimeout');
     this.wallet.use(AergoscanTransactionScanner as any);
     this.wallet.useStorage(store).then(async () => {
       if (!this.wallet.datastore) throw new Error('wallet failed to initiate storage');
@@ -76,9 +79,11 @@ class BackgroundController extends EventEmitter {
 
     this.wallet.keyManager.on('lock', () => {
       this.emit('update', { unlocked: false });
+      console.log('[lock] locked');
     });
     this.wallet.keyManager.on('unlock', () => {
       this.emit('update', { unlocked: true });
+      console.log('[lock] unlocked');
     });
 
     this.wallet.accountManager.on('remove', (accountSpec) => {
@@ -91,12 +96,12 @@ class BackgroundController extends EventEmitter {
     // On idle (60s after UI becoming inactive)
     this.state.on('idle', () => {
       this.lock();
-      // console.log('[state] idle, pausing trackers');
+      console.log('[state] idle, pausing trackers');
       this.wallet.accountManager.pause();
       this.wallet.transactionManager.pause();
     });
     this.state.on('active', () => {
-      // console.log('[state] active, resuming trackers');
+      console.log('[state] active, resuming trackers');
       this.wallet.accountManager.resume();
       this.wallet.transactionManager.resume();
     });

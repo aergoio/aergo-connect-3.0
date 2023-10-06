@@ -4,7 +4,7 @@
     <NotificationModal v-if="notificationModal" @cancel="handleCancel" />
     <Header button="back" title="Security" @backClick="handleBack" />
     <div class="security2_content">
-      <div class="security2_autolock_wrapper">
+      <!-- <div class="security2_autolock_wrapper">
         <div class="title">Auto Lock Timeout</div>
         <div class="flex-row">
           <div class="description">Set the amount of time before the screen locks.</div>
@@ -16,7 +16,7 @@
             <option :value="3600">60 minutes</option>
           </select>
         </div>
-      </div>
+      </div> -->
       <div class="security2_password_wrapper">
         <div class="title">Password</div>
         <div class="description">

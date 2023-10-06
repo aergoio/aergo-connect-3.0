@@ -9,7 +9,11 @@ import { ExternalRequest } from '../../background/request';
 @Component
 export default class RequestSelect extends Vue {
   mounted() {
-    this.redirectToRequest();
+    if (!this.$store.state.accounts.accounts[this.$store.state.accounts.address]) {
+      console.log('No Account');
+    } else {
+      this.redirectToRequest();
+    }
   }
   async redirectToRequest() {
     const { action } = (await this.$store.dispatch('request/getRequest')) as ExternalRequest;

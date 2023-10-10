@@ -44,8 +44,15 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
 chrome.idle.setDetectionInterval(60);
 
 chrome.idle.onStateChanged.addListener((newState) => {
+  console.log(newState, 'newState');
   if (newState === 'idle' || newState === 'locked') {
     controller.lock();
+  }
+});
+
+chrome.windows.onFocusChanged.addListener(function (windowId) {
+  if (windowId === chrome.windows.WINDOW_ID_NONE) {
+    controller.state.set('inactive');
   }
 });
 

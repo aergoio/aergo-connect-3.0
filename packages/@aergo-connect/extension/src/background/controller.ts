@@ -49,9 +49,6 @@ class BackgroundController extends EventEmitter {
       appName: 'aergo-browser-wallet',
       instanceId: this.id,
     });
-    console.log(this.state, 'state');
-    console.log(this.wallet, 'wallet');
-    console.log(this._lockTimeout, '_lockTimeout');
     this.wallet.use(AergoscanTransactionScanner as any);
     this.wallet.useStorage(store).then(async () => {
       if (!this.wallet.datastore) throw new Error('wallet failed to initiate storage');

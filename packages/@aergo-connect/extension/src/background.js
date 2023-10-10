@@ -16,7 +16,7 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
     }
   }
   function forceReconnect(port) {
-    controller.setupCommunication(port);
+    controller.setupCommunication(remotePort);
     deleteTimer(port);
     port.disconnect();
   }

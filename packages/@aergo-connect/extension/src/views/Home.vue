@@ -110,7 +110,6 @@
                   v-else-if="token?.meta?.image_url"
                   class="token_list_icon"
                   :src="token?.meta?.image_url"
-                  alt="404"
                 />
                 <Icon v-else class="token_list_icon" :name="`defaultToken`" />
                 <div class="token_list_amount">
@@ -160,7 +159,6 @@
                   v-if="token?.meta?.image_url"
                   class="token_list_icon"
                   :src="token?.meta?.image_url"
-                  alt="404"
                 />
                 <Icon v-else class="token_list_icon" :name="`defaultToken`" />
                 <div class="token_list_amount">
@@ -194,7 +192,11 @@
                   @click="handleGoNftInventory(nftWalletItem)"
                 >
                   <div v-if="nftWalletItem?.meta?.img_url" class="nft_img_wrapper">
-                    <img class="img" :src="nftWalletItem?.meta?.img_url" alt="404" />
+                    <img
+                      class="img"
+                      :src="nftWalletItem?.meta?.img_url"
+                      @error="handleImageError"
+                    />
                     <div :style="{ textAlign: 'center' }">
                       {{ `#${nftWalletItem?.meta?.token_id}` }}
                     </div>
@@ -248,6 +250,7 @@ import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailMod
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import ErrorModal from '@aergo-connect/lib-ui/src/modal/ErrorModal.vue';
+import defaultNft from '@/assets/img/defaultNft.svg';
 // @ts-ignore
 import AergoClient, { GrpcWebProvider } from '@herajs/client';
 
@@ -270,6 +273,7 @@ export default Vue.extend({
     LoadingIndicator,
     Notification,
     ErrorModal,
+    defaultNft,
   },
   data() {
     return {
@@ -423,7 +427,6 @@ export default Vue.extend({
           this.errorModal = false;
           break;
         default:
-        // handle default case here
       }
     },
 
@@ -614,6 +617,13 @@ export default Vue.extend({
         console.log(e);
         // this.nodeUrlError = `${e}`;
       }
+    },
+
+    handleImageError(event) {
+      // 이미지 로딩에 에러가 발생했을 때 호출되는 메서드
+      // 에러가 발생하면 기본 이미지로 대체
+      // console.log(event, 'event');
+      event.target.src = defaultNft;
     },
   },
 });
@@ -850,8 +860,8 @@ export default Vue.extend({
               }
             }
             .nft_inventory_list_wrapper_list:hover {
-              transform: scale(1.1);
-              transition: 0.4s;
+              transform: scale(1.01);
+              transition: 0.3s;
             }
           }
         }

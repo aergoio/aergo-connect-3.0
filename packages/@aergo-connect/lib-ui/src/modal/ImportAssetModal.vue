@@ -8,7 +8,8 @@
         <img
           v-if="token?.meta?.image_url"
           class="import_asset_icon"
-          :src="token?.meta?.image_url"
+          :src="token?.meta?.type === 'ARC1' ? token?.meta?.image_url : nftData?.image_url"
+          @error="handleImageError"
         />
         <Icon v-else :name="`defaultToken`" class="import_asset_icon" />
         <div class="import_asset_title">
@@ -60,8 +61,9 @@ import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import Button from '../buttons/Button.vue';
 import Identicon from '../content/Identicon.vue';
+import defaultNft from '@/assets/img/defaultNft.svg';
 export default Vue.extend({
-  components: { Icon, Button, Identicon },
+  components: { Icon, Button, Identicon, defaultNft },
   props: {
     token: {
       type: Object,
@@ -72,12 +74,21 @@ export default Vue.extend({
       default: {},
     },
   },
+  mounted() {
+    console.log(nftData, 'nftData');
+  },
   methods: {
     handleClick() {
       this.$store.commit('ui/clearInput', { key: 'importAsset' });
       this.$router.push({
         name: 'accounts-list',
       });
+    },
+    handleImageError(event) {
+      // 이미지 로딩에 에러가 발생했을 때 호출되는 메서드
+      // 에러가 발생하면 기본 이미지로 대체
+      // console.log(event, 'event');
+      event.target.src = defaultNft;
     },
   },
 });
@@ -99,7 +110,7 @@ export default Vue.extend({
     padding-bottom: 20px;
     position: absolute;
     width: 317px;
-    height: 400px;
+    min-height: 400px;
     left: 29px;
     top: 78px;
     /* Grey/White */

@@ -37,7 +37,7 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
       controller.state.set('inactive');
     });
   }
-  remotePort._timer = setTimeout(forceReconnect, 50000, remotePort);
+  remotePort._timer = setTimeout(forceReconnect, 250e3, remotePort);
 });
 
 // Setup idle detection
@@ -55,6 +55,10 @@ chrome.windows.onFocusChanged.addListener(function (windowId) {
     controller.state.set('inactive');
   }
 });
+
+const keepAlive = () => setInterval(chrome.runtime.getPlatformInfo, 20e3);
+chrome.runtime.onStartup.addListener(keepAlive);
+keepAlive();
 
 // chrome.contextMenus.create(
 //   {

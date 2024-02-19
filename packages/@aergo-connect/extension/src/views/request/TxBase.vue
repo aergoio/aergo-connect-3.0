@@ -142,11 +142,6 @@ export default class TxBase extends mixins(RequestMixin) {
     return txData.payload;
   }
 
-  updated() {
-    console.log(this.request, 'request');
-    console.log(this.txDataDisplay, 'txDataDisplay');
-    console.log(this.account, 'account');
-  }
   async signWithLedger(txBody: any) {
     const { tx } = await this.$background.prepareTransaction(txBody, this.accountSpec.chainId);
     tx.payload = txBody.payload;

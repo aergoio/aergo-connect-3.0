@@ -26,7 +26,6 @@ class AppState extends EventEmitter {
     }
     if (this.state != nextState && nextState == 'inactive') {
       if (this.idleTimeout) {
-        console.log(this.idleTimeout, 'idleTimeout');
         clearTimeout(this.idleTimeout);
       }
       this.idleTimeout = setTimeout(() => {

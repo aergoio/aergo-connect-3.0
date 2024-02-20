@@ -7,8 +7,10 @@
         <div class="sign_message_text">Sign Message</div>
         <TextArea class="textarea_size" v-model="message" />
         <div class="sign_message_confirm">
-          <CheckboxButton @check="checked" />
-          <div class="sign_message_hash_text">This is a message hash</div>
+          <CheckboxButton :checked="isHashed" @check="checkFunc(isHashed)" />
+          <div class="sign_message_hash_text" @click="checkFunc(isHashed)">
+            This is a message hash
+          </div>
           <Button type="primary-outline" class="button_size" @click="confirm">OK</Button>
         </div>
       </div>
@@ -136,8 +138,11 @@ export default class RequestSign extends mixins() {
     }
   }
 
-  checked() {
-    this.isHashed = !this.isHashed;
+  // checked() {
+  //   this.isHashed = !this.isHashed;
+  // }
+  checkFunc(checked: boolean) {
+    this.isHashed = !checked;
   }
 
   async handleBack() {
@@ -346,6 +351,7 @@ export default class RequestSign extends mixins() {
     align-items: center;
     margin-left: 7px;
     .sign_message_hash_text {
+      cursor: pointer;
       margin-left: 5px;
       margin-right: 66px;
       width: 143px;

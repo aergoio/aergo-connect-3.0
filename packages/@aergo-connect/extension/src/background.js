@@ -7,6 +7,7 @@ import { ExternalRequest } from './background/request';
 
 const controller = new BackgroundController();
 
+/** Already use ports   */
 chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
   const processName = remotePort.name;
   function deleteTimer(port) {
@@ -16,7 +17,7 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
     }
   }
   function forceReconnect(port) {
-    controller.setupCommunication(remotePort);
+    // controller.setupCommunication(remotePort);
     deleteTimer(port);
     port.disconnect();
   }
@@ -56,10 +57,12 @@ chrome.windows.onFocusChanged.addListener(function (windowId) {
   }
 });
 
+/** "Persistent" service worker via bug exploit */
 const keepAlive = () => setInterval(chrome.runtime.getPlatformInfo, 20e3);
 chrome.runtime.onStartup.addListener(keepAlive);
 keepAlive();
 
+/** Full Screen Context */
 // chrome.contextMenus.create(
 //   {
 //     id: 'fullPage',

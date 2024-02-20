@@ -59,8 +59,8 @@
           <img
             v-if="token?.meta?.img_url"
             :src="token?.meta?.img_url"
-            alt="img"
             :style="{ height: '100%' }"
+            @error="handleImageError"
           />
           <div
             v-else
@@ -134,6 +134,7 @@ import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import { getScanApiUrl, getScanExplorerUrl } from '../utils/chain-urls';
+import defaultNft from '@/assets/img/defaultNft.svg';
 
 export default Vue.extend({
   components: {
@@ -146,6 +147,7 @@ export default Vue.extend({
     Notification,
     LoadingIndicator,
     RemoveModal,
+    defaultNft,
   },
 
   data() {
@@ -267,6 +269,12 @@ export default Vue.extend({
     },
     handleDelete(state) {
       this.removeModal = state;
+    },
+    handleImageError(event) {
+      // 이미지 로딩에 에러가 발생했을 때 호출되는 메서드
+      // 에러가 발생하면 기본 이미지로 대체
+      console.log(event, 'event');
+      event.target.src = defaultNft;
     },
   },
 });
@@ -654,9 +662,9 @@ export default Vue.extend({
       flex-direction: column;
       border: solid 0.01em #d0d0d0;
       border-radius: 8px;
-      box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.25);
+      /* box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.25);
       -webkit-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.25);
-      -moz-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.25);
+      -moz-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.25); */
       &.scroll {
         overflow-y: scroll;
       }
@@ -718,8 +726,8 @@ export default Vue.extend({
       }
     }
     .nft_info_wrapper:hover {
-      transform: scale(1.05);
-      transition: 0.4s;
+      /* transform: scale(1.05); */
+      /* transition: 0.4s; */
     }
     .nft_detail_wrapper {
       overflow-x: hidden;

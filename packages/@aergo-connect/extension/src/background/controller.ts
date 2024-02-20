@@ -186,9 +186,6 @@ class BackgroundController extends EventEmitter {
         top: window.top,
         left,
       });
-      // chrome.windows.remove({
-      //   url: chrome.runtime.getURL(`popup-request.html?request=${this.lastRequestId}`),
-      // });
     });
   }
 

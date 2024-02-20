@@ -70,7 +70,6 @@ export class AergoscanTransactionScanner {
   fetchAccountTransactions(wallet: Wallet) {
     return () => async (account: Account) => {
       const accountSpec = wallet.accountManager.getCompleteAccountSpec(account.data.spec);
-      console.log(accountSpec, 'accountSpec');
       const { bestHeight } = await wallet.getClient(accountSpec.chainId).blockchain();
       // @ts-ignore
       return this.fetchAccountTransactionsBefore(wallet)(async () => [])({

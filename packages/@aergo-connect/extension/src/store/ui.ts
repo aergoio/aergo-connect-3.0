@@ -28,6 +28,7 @@ export interface UiState {
   route: {
     currentPath: string;
     previousPath: string;
+    lastViewedTime: any;
   };
 }
 
@@ -44,6 +45,7 @@ const storeModule: Module<UiState, RootState> = {
     route: {
       currentPath: '',
       previousPath: '',
+      lastViewedTime: '',
     },
   },
   getters: {
@@ -94,6 +96,9 @@ const storeModule: Module<UiState, RootState> = {
       if (route.fullPath === state.route.currentPath) return;
       state.route.previousPath = state.route.currentPath;
       state.route.currentPath = route.fullPath;
+    },
+    setTime(state, time: any) {
+      state.route.lastViewedTime = time;
     },
   },
   actions: {

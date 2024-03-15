@@ -2,13 +2,19 @@ import { NavigationGuard, Route } from 'vue-router';
 import store from '../store';
 import { capitalizeFirstLetter } from '../utils/strings';
 
+const persistedPath = store.state.ui.route.currentPath;
+const now: any = new Date();
+const lastViewedTime: any = new Date(store.state.ui.route.lastViewedTime);
+const timeDifference = now - lastViewedTime;
+const isInitPage = timeDifference >= 60 * 60 * 1000 ? true : false;
+
 /**
  * If we're coming from the lockscreen, check that app was actually unlocked.
  * Otherwise you can e.g. just 'go back' to show a previous screen (privacy issue).
  */
 export const allowedToExitLockscreen: NavigationGuard = (to, from, next) => {
   if (from.name === 'lockscreen') {
-    const exclude = ['', '/', '/welcome'];
+    const exclude = ['', '/', '/welcome', isInitPage ? persistedPath : null];
     if (!store.state.ui.unlocked && exclude.indexOf(to.fullPath) === -1) {
       return next({ name: 'lockscreen' });
     }
@@ -24,8 +30,14 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
   const isStartTransition =
     from.fullPath === '/' && from.name === null && to.name === 'accounts-list';
   if (isStartTransition) {
-    const persistedPath = store.state.ui.route.currentPath;
-    const exclude = ['', '/', '/welcome', '/connect-hw/accounts', to.fullPath];
+    const exclude = [
+      '',
+      '/',
+      '/welcome',
+      '/connect-hw/accounts',
+      to.fullPath,
+      isInitPage ? persistedPath : null,
+    ];
     if (persistedPath && exclude.indexOf(persistedPath) === -1) {
       return next(persistedPath);
     }
@@ -39,6 +51,7 @@ export const loadPersistedRoute: NavigationGuard = (to, from, next) => {
 export const persistRoute: NavigationGuard = (to, _from, next) => {
   if (!((to.meta && to.meta.noTracking === true) || to.fullPath.match(/request/))) {
     store.commit('ui/setCurrentRoute', to);
+    store.commit('ui/setTime', new Date().toISOString());
     // store.commit('ui/setCurrentPage', to.name);
     // if (_from.name != 'lockscreen') store.commit('ui/setPreviousPage', _from.name);
   }

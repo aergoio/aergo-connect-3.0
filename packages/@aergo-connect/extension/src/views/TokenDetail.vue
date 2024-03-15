@@ -963,7 +963,7 @@ export default Vue.extend({
     flex-direction: column;
     align-items: center;
     &.others {
-      height: 57.8vh;
+      height: 54.9vh;
     }
     .history_list {
       flex-direction: column;

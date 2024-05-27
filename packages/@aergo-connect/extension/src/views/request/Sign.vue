@@ -30,7 +30,7 @@
         <div class="title">Sign message</div>
       </div>
       <div class="description">
-        The website at {{ request.origin }} wants to sign a message using your account.
+        The website at {{ request?.origin }} wants to sign a message using your account.
       </div>
       <p class="unsupported-error" v-if="ledgerSignHashUnsupported">
         For security reasons, signing hashes is not supported on the Ledger app. Use a
@@ -98,7 +98,9 @@ export default class RequestSign extends mixins(RequestMixin) {
       account: {},
     };
   }
-
+  created() {
+    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
+  }
   async beforeMount() {
     const address = this.$store.state.accounts.address;
     const chainId = this.$store.state.accounts.chainId;
@@ -113,10 +115,6 @@ export default class RequestSign extends mixins(RequestMixin) {
       address: this.$store.state.accounts.address,
       chainId: this.$store.state.accounts.chainId,
     };
-  }
-
-  created() {
-    this.$store.dispatch('accounts/updateAccount', this.accountSpec);
   }
 
   async signWithLedger(message: Buffer, displayAsHex = false) {

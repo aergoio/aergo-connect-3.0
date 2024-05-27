@@ -5,4 +5,3 @@ export default class RequestSignTx extends TxBase {
   actionVerb = 'sign';
 }
 </script>
-Footer

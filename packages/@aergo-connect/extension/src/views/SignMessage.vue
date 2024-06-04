@@ -104,6 +104,7 @@ export default class RequestSign extends mixins() {
   get account(): Account {
     return this.$background.getActiveAccount();
   }
+
   @Watch('clipboardNotification')
   clipboardNotificationMethod(state) {
     if (state) {
@@ -138,9 +139,6 @@ export default class RequestSign extends mixins() {
     }
   }
 
-  // checked() {
-  //   this.isHashed = !this.isHashed;
-  // }
   checkFunc(checked: boolean) {
     this.isHashed = !checked;
   }
@@ -153,12 +151,6 @@ export default class RequestSign extends mixins() {
     try {
       await navigator.clipboard.writeText(text);
       this.copyToClipboard(text);
-      // alert('Copied');
-      /*
-      chrome.notifications.create('copy', { type: 'basic',
-        iconUrl: '../img/icon-17.b1b4347e.png',
-        title: 'copied!', message: 'copied!', priority: 1 });
-*/
     } catch ($e) {
       alert('error', $e);
     }
@@ -179,8 +171,9 @@ export default class RequestSign extends mixins() {
         throw new Error(`Failed to parse message: ${e}`);
       }
     }
+    const account = await this.account;
 
-    if (this.account.data.type === 'ledger') {
+    if (account.data.type === 'ledger') {
       if (this.isHashed) {
         throw new Error(
           'The Ledger app does not support pre-hashed messages for security reasons. Please enter the original message instead.',
@@ -395,3 +388,4 @@ export default class RequestSign extends mixins() {
   }
 }
 </style>
+import LoadingIndicatorVue from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';

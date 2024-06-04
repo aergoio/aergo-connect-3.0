@@ -1,7 +1,6 @@
 <template>
   <ScrollView class="page">
     <div class="account_info_wrapper">
-      <Icon :name="`back`" @click="handleGoBack" />
       <Identicon :text="$store.state.accounts.address" class="account_info_img" />
       <div class="account_info_content_wrapper address">
         <div class="account_info_nickname_wrapper address">
@@ -206,9 +205,6 @@ export default class RequestSign extends mixins(RequestMixin) {
       account,
       signature: result.signedMessage,
     };
-  }
-  handleGoBack() {
-    this.$router.push({ name: 'request-accounts-list' }).catch(() => {});
   }
 }
 </script>

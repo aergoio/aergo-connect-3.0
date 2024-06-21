@@ -37,9 +37,10 @@
         Advice for developer: change the API call to pass the original message as `message` instead
         of a precomputed `hash`.
       </p>
-      <div class="sign-message">
+      <pre class="sign-message">
         {{ msgToSign }}
-      </div>
+    </pre
+      >
     </div>
 
     <template #footer>
@@ -219,6 +220,7 @@ export default class RequestSign extends mixins(RequestMixin) {
   font-size: (calc(14 / 16)) * 1rem;
   color: #279ecc;
   word-break: break-all;
+  white-space: pre-line;
   line-height: 1.3;
 }
 .unsupported-error {

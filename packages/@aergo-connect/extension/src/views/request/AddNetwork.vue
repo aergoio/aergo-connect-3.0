@@ -89,18 +89,20 @@ import { Account, serializeAccountSpec } from '@herajs/wallet';
   },
 })
 export default class RequestAddress extends mixins(RequestMixin) {
+  networks: any;
+  isAddedNetwork: boolean | undefined;
   data() {
     return {
-      request: this.$store.state.request.currentRequest,
-      networks: {},
-      isAddedNetwork: false,
+      request: this.$store.state.request.currentRequest as any,
+      networks: {} as any,
+      isAddedNetwork: false as boolean,
     };
   }
 
   async mounted() {
     this.networks = await this.$background.getNetworks();
     this.isAddedNetwork = !!Object.values(this.networks).find(
-      (network) => network.chainId === this.request?.data.chainId,
+      (network: any) => network.chainId === this.request?.data.chainId,
     );
   }
 
@@ -241,9 +243,6 @@ export default class RequestAddress extends mixins(RequestMixin) {
       margin-left: 10px;
     }
     .account_info_nickname_wrapper {
-      &.address {
-        flex-direction: column;
-      }
       display: flex;
       justify-content: space-between;
       font-family: 'Outfit';
@@ -253,6 +252,9 @@ export default class RequestAddress extends mixins(RequestMixin) {
       line-height: 24px;
       margin-left: 10px;
       /* width: 191px; */
+      &.address {
+        flex-direction: column;
+      }
       .account_info_network_wrapper {
         display: flex;
         align-items: center;

@@ -71,6 +71,7 @@ export default Vue.extend({
   },
   watch: {
     accountsCheck() {
+      // @ts-ignore
       return this.accountListCheck();
     },
   },
@@ -105,7 +106,9 @@ export default Vue.extend({
     },
 
     accountsByChainId() {
+      // @ts-ignore
       if (this.groupByChain === false) return [['ALL', this.sortedAccounts]];
+      // @ts-ignore
       const result = groupBy(this.sortedAccounts, (item) => item?.data?.spec?.chainId || '');
       return Array.from(result);
     },
@@ -133,6 +136,7 @@ export default Vue.extend({
   async mounted() {
     const address = this.$store.state.accounts.address;
     const chainId = this.$store.state.accounts.chainId;
+    // @ts-ignore
     this.activeAccount =
       (await this.$background.getActiveAccount()) ||
       (await this.$background.setActiveAccount({ address, chainId }));

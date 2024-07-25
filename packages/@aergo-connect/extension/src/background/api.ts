@@ -183,6 +183,7 @@ export class Api {
     const chains = [];
     Object.values(accounts).map((accountData) => {
       if (accountData.data.spec.address === address) {
+        // @ts-ignore
         chains.push(accountData.data.spec.chainId);
       }
     });

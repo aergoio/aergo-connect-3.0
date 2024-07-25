@@ -97,7 +97,7 @@ export default Vue.extend({
 .button {
   /* Typography */
   font-weight: 500;
-  font-size: (calc(17 / 16)) * 1em;
+  font-size: calc((17 / 16) * 1em);
   /* Sizing */
   box-sizing: border-box;
   min-height: 30px;

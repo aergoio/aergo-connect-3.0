@@ -20,15 +20,15 @@ export default Vue.extend({
 
 <style lang="scss">
 .section-heading {
-  &.is-animated {
-    animation: heading-appear 0.5s forwards 0.3s;
-    opacity: 0;
-  }
-
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+
+  &.is-animated {
+    animation: heading-appear 0.5s forwards 0.3s;
+    opacity: 0;
+  }
 }
 @keyframes heading-appear {
   0% {
@@ -48,7 +48,7 @@ export default Vue.extend({
   justify-content: center;
 }
 .semi-big-title {
-  font-size: calc(2 / 16) * 1rem;
+  font-size: calc((2 / 16) * 1rem);
   font-weight: 600;
 }
 </style>

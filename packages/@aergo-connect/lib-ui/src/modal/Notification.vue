@@ -52,6 +52,7 @@ export default Vue.extend({
   align-items: center;
   justify-content: center;
   text-align: center;
+  animation: fadeIn 0.5s;
   .icon--warning2 {
     padding-top: 10px;
   }
@@ -61,7 +62,7 @@ export default Vue.extend({
     width: 100%;
     padding: 8px;
   }
-  animation: fadeIn 0.5s;
+
   @keyframes fadeIn {
     0% {
       opacity: 0;

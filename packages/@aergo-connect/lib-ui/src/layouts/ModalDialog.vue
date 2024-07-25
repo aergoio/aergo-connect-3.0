@@ -85,7 +85,7 @@ export default Vue.extend({
     }
 
     > * {
-      font-size: (calc(13 / 16)) * 1rem;
+      font-size: calc((13 / 16) * 1rem);
       line-height: 60px;
       font-weight: 500;
       padding: 0 14px 0 24px;

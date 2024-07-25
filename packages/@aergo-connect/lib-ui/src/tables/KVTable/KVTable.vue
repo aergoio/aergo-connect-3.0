@@ -13,7 +13,7 @@ $lineHeight: 20px;
   grid-template-columns: auto;
   margin: 20px;
 
-  font-size: (calc(13 / 16)) * 1rem;
+  font-size: calc((13 / 16) * 1rem);
 
   dt,
   dd {

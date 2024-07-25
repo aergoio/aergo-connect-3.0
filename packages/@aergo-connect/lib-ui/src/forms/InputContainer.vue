@@ -152,7 +152,7 @@ export default Vue.extend({
   }
 }
 .input-label {
-  font-size: (calc(13 / 16)) * 1rem;
+  font-size: calc((13 / 16) * 1rem);
   font-weight: 500;
   letter-spacing: -0.16px;
   color: rgba(34, 34, 34, 0.65);

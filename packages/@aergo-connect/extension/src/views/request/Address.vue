@@ -196,9 +196,6 @@ export default class RequestAddress extends mixins(RequestMixin) {
       margin-left: 10px;
     }
     .account_info_nickname_wrapper {
-      &.address {
-        flex-direction: column;
-      }
       display: flex;
       justify-content: space-between;
       font-family: 'Outfit';
@@ -208,6 +205,9 @@ export default class RequestAddress extends mixins(RequestMixin) {
       line-height: 24px;
       margin-left: 10px;
       /* width: 191px; */
+      &.address {
+        flex-direction: column;
+      }
       .account_info_network_wrapper {
         display: flex;
         align-items: center;

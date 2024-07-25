@@ -114,7 +114,7 @@ export default class AccountsList extends Vue {
   list-style: none;
   margin: 0;
   padding: 0;
-  font-size: (calc(13 / 16)) * 1rem;
+  font-size: calc((13 / 16) * 1rem);
 
   .network-list-item {
     padding: 20px 20px 0 16px;
@@ -147,7 +147,7 @@ export default class AccountsList extends Vue {
     border-bottom: 0;
   }
   .node-url {
-    font-size: (calc(12 / 16)) * 1rem;
+    font-size: calc((12 / 16) * 1rem);
     color: #666;
   }
 

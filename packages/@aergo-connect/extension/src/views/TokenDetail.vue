@@ -325,20 +325,20 @@ export default Vue.extend({
   },
 
   computed: {
-    getTokens() {
+    getTokens(): any {
       return this.$store.getters[`accounts/getTokens`];
     },
-    fee() {
+    fee(): string {
       return this.sendStatus[`fee`]
         ? // eslint-disable-next-line no-undef
           bigIntToString(BigInt(this.sendStatus[`fee`].split(' ')[0]), 18)
         : '0';
     },
-    amount() {
+    amount(): string {
       // eslint-disable-next-line no-undef
       return bigIntToString(BigInt(this.selectedData[`meta`][`amount`]), 18);
     },
-    networkName() {
+    networkName(): string {
       const chainId = this.$store.state.accounts.chainId;
       if (chainId === ('aergo.io' || 'testnet.aergo.io' || 'alpha.aergo.io')) {
         return `AERGO ${chainId.toUpperCase()}`;
@@ -346,19 +346,19 @@ export default Vue.extend({
         return `${chainId.toUpperCase()}`;
       }
     },
-    getScanExplorerApi() {
+    getScanExplorerApi(): string {
       const network = this.$store.state.accounts.networksPath.filter(
         (network) => network.chainId === this.$store.state.accounts.chainId,
       )[0].scanExplorerUrl;
       return network;
     },
-    getScanApi() {
+    getScanApi(): string {
       const scanApiUrl = this.$store.state.accounts.networksPath.filter(
         (network) => network.chainId === this.$store.state.accounts.chainId,
       )[0].scanApiUrl;
       return scanApiUrl;
     },
-    chainId() {
+    chainId(): string {
       return this.$store.state.accounts.chainId;
     },
   },
@@ -395,18 +395,16 @@ export default Vue.extend({
         });
       }
     },
-    clipboardNotification(state) {
+    clipboardNotification(state: boolean) {
       if (state) {
-        setTimeout(() => {
-          const time = (this.clipboardNotification = !state);
-          return () => {
-            clearTimeout(time);
-          };
+        const timeoutId = setTimeout(() => {
+          this.clipboardNotification = !state;
         }, 2000);
+        clearTimeout(timeoutId);
       }
     },
     staking() {
-      this.stakingPrice = this.getStakingAergoInfo(this.staking.split(' ')[0]);
+      this.stakingPrice = this.getStakingAergoInfo(this.staking.split(' ')[0]) as any;
     },
     async selectedData() {
       this.sendStatus = await this.getSendStatus(this.selectedData);
@@ -449,7 +447,13 @@ export default Vue.extend({
 
     async getAergoInfo() {
       await this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
-        this.aergoPrice = this.token.balance * priceInfo.price;
+        if (priceInfo) {
+          const balance = Number(this.token.balance);
+          const price = Number(priceInfo.price);
+          if (!isNaN(balance) && !isNaN(price)) {
+            this.aergoPrice = balance * price;
+          }
+        }
       });
       if (
         this.$store.state.accounts.chainId === 'aergo.io' ||
@@ -461,7 +465,11 @@ export default Vue.extend({
 
     async getStakingAergoInfo(staking: any) {
       await this.$background.getTokenPrice('aergo.io').then((priceInfo) => {
-        this.stakingPrice = staking * priceInfo.price;
+        if (priceInfo && priceInfo.price) {
+          this.stakingPrice = staking * priceInfo.price;
+        } else {
+          this.stakingPrice = 0;
+        }
       });
     },
     getBalance(value: number) {
@@ -491,7 +499,7 @@ export default Vue.extend({
         //transaction Receipt and Make Data Type
         accountTx.map(async (txData) => {
           const hash = txData.data.hash;
-          const data = {
+          const data: any = {
             hash,
             meta: {
               amount: txData.data.amount.split(' ')[0],
@@ -730,7 +738,7 @@ export default Vue.extend({
 
       .account-label-new {
         background-color: #ff4f9f;
-        font-size: (calc(8 / 16)) * 1rem;
+        font-size: calc((8 / 16) * 1rem);
         text-transform: uppercase;
         color: #fff;
       }

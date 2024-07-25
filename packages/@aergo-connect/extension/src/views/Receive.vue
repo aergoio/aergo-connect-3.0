@@ -414,7 +414,7 @@ export default Vue.extend({
 
       .account-label-new {
         background-color: #ff4f9f;
-        font-size: (calc(8 / 16)) * 1rem;
+        font-size: calc((8 / 16) * 1rem);
         text-transform: uppercase;
         color: #fff;
       }

@@ -78,10 +78,11 @@ export default Vue.extend({
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
   &.request {
     justify-content: space-around;
   }
-  cursor: pointer;
+
   &.active {
     background: #eff5f7;
   }

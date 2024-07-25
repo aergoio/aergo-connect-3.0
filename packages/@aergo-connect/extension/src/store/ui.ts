@@ -2,7 +2,6 @@ import { Module } from 'vuex';
 import { Route } from 'vue-router';
 import { RootState } from './index';
 import { Json } from '../types';
-import { Tx } from '@herajs/client';
 
 interface InputData {
   // Values get persisted into localstorage, so only use json-compatible types
@@ -52,7 +51,7 @@ const storeModule: Module<UiState, RootState> = {
     getSetting:
       (state) =>
       (keyPath: string): Json => {
-        function getKey<T extends {}>(obj: T, keyPath: string): Json {
+        function getKey<T extends Record<string, any>>(obj: T, keyPath: string): Json {
           const [key, rest] = keyPath.split('.', 2);
           if (!rest) {
             return obj[key as keyof T] as unknown as Json;
@@ -129,7 +128,7 @@ export class PersistInputsMixin extends Vue {
   persistInitialValues = true;
   persistFieldsKey = '';
   get persistFieldsKeyAuto(): string {
-    return this.persistFieldsKey || `${this.$vnode.key}`;
+    return this.persistFieldsKey || String(this.$vnode.key);
   }
   private restorePersistedValue(field: string) {
     const key = this.persistFieldsKeyAuto;

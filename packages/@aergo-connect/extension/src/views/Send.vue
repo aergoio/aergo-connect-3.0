@@ -911,7 +911,7 @@ export default Vue.extend({
 
       .account-label-new {
         background-color: #ff4f9f;
-        font-size: (calc(8 / 16)) * 1rem;
+        font-size: calc((8 / 16) * 1rem);
         text-transform: uppercase;
         color: #fff;
       }
@@ -1027,9 +1027,6 @@ export default Vue.extend({
     height: 100vh;
     margin-top: 20px;
     .selectbox_asset {
-      &.options {
-        position: sticky;
-      }
       width: 243px;
       /* height: 172px; */
       position: absolute;
@@ -1039,6 +1036,9 @@ export default Vue.extend({
       text-overflow: ellipsis;
       /* overflow-y: scroll; */
       /* overflow-x: hidden; */
+      &.options {
+        position: sticky;
+      }
       .img {
         margin-left: 6px;
         margin-right: 8px;
@@ -1190,6 +1190,26 @@ export default Vue.extend({
         color: #279ecc;
       }
       .text_box {
+        /* Caption/C3 */
+        word-break: break-all;
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 18px;
+        letter-spacing: -0.333333px;
+        /* Grey/07 */
+        color: #454344;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-top: 9px;
+        width: 303px;
+        height: 33px;
+        background: #ffffff;
+        /* Primary/Blue01 */
+        border: 1px solid #279ecc;
+        border-radius: 4px;
+
         &.identicon {
           height: 45px;
           display: flex;
@@ -1215,25 +1235,6 @@ export default Vue.extend({
           /* background: rgba(0, 0, 0, 0.05); */
           /* box-shadow: inset 0 0 0 1px #9c9a9a; */
         }
-        /* Caption/C3 */
-        word-break: break-all;
-        font-family: 'Outfit';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 18px;
-        letter-spacing: -0.333333px;
-        /* Grey/07 */
-        color: #454344;
-        padding-left: 10px;
-        padding-right: 10px;
-        margin-top: 9px;
-        width: 303px;
-        height: 33px;
-        background: #ffffff;
-        /* Primary/Blue01 */
-        border: 1px solid #279ecc;
-        border-radius: 4px;
       }
     }
     .footer {
@@ -1254,9 +1255,6 @@ export default Vue.extend({
 
       .show_option {
         margin-bottom: 20px;
-        &.options {
-          margin-bottom: none;
-        }
         /* Subtitle/S3_line */
         font-family: 'Outfit';
         font-style: normal;
@@ -1274,6 +1272,10 @@ export default Vue.extend({
         -webkit-text-fill-color: transparent;
         background-clip: text;
         cursor: pointer;
+
+        &.options {
+          margin-bottom: none;
+        }
       }
 
       .options_modal_wrapper {

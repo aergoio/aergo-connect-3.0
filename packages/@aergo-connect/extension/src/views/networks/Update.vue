@@ -100,7 +100,7 @@ export default class NetworkUpdate extends Vue {
   scanApiUrlTested = false;
   scanExplorerUrlTested = false;
   availableNetwork = true;
-  chainInfo = ChainInfo;
+  chainInfo: ChainInfo | null | any = null;
   notification = false;
   notificationText = '';
 
@@ -331,14 +331,12 @@ export default class NetworkUpdate extends Vue {
   }
 
   @Watch('notification')
-  notificationMethod(state) {
+  notificationMethod(state: boolean) {
     if (state) {
-      setTimeout(() => {
-        const time = (this.notification = !state);
-        return () => {
-          clearTimeout(time);
-        };
+      const timeoutId = setTimeout(() => {
+        this.notification = !state;
       }, 2000);
+      clearTimeout(timeoutId);
     }
   }
 

@@ -21,13 +21,16 @@
    props: {
      state: {
        type: String as PropType<InputState>,
-       default: InputStates[0],
+       default: InputStates[0] as InputState,
      }, 
      placeholder: {
       type: String,
       default: ""
      },
-     readonly: false,
+     readonly: {
+      type: Boolean,
+      default: false,
+    },
    },
    computed: {},
    methods: {handleInput(event: InputEvent): void {

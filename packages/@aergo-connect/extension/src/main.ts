@@ -11,6 +11,7 @@ import '@aergo-connect/lib-ui/src/styles/base.scss';
 import { enforceRequest } from './router/guards';
 
 Vue.config.productionTip = false;
+// @ts-ignore
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
   history.go(1);

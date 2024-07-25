@@ -110,7 +110,7 @@ export default class AccountBalanceList extends Vue {
 }
 
 .account-list {
-  font-size: (calc(13 / 16)) * 1rem;
+  font-size: calc((13 / 16) * 1rem);
 
   .account-balance-amount,
   .account-address {
@@ -153,7 +153,7 @@ export default class AccountBalanceList extends Vue {
     border-bottom: 1px solid #f0f0f0;
     padding: 3px 0 10px;
     margin-left: 14px;
-    font-size: (calc(12 / 16)) * 1rem;
+    font-size: calc((12 / 16) * 1rem);
   }
 
   .account-item-li:last-child .account-address-balance {
@@ -211,7 +211,7 @@ export default class AccountBalanceList extends Vue {
 
   .account-label-new {
     background-color: #ff4f9f;
-    font-size: (calc(8 / 16)) * 1rem;
+    font-size: calc((8 / 16) * 1rem);
     text-transform: uppercase;
     color: #fff;
   }

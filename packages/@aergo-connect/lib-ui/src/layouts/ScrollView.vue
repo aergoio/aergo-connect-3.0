@@ -23,16 +23,14 @@ export default Vue.extend({});
 
 <style lang="scss">
 .scroll-view {
+  display: flex;
+  flex-direction: column;
   &,
   > main {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
   }
-
-  display: flex;
-  flex-direction: column;
-
   > main {
     flex: 1;
     overflow-y: auto;

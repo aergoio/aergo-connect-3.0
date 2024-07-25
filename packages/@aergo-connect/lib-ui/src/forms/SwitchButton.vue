@@ -45,7 +45,7 @@ export default Vue.extend({
 .component.switch-button {
   display: flex;
   align-items: center;
-  font-size: (calc(13 / 16)) * 1rem;
+  font-size: calc((13 / 16) * 1rem);
   color: #222;
 
   .switch-button-toggle {

@@ -64,7 +64,7 @@ export default class NameDetails extends Vue {
 
 <style lang="scss">
 .name-details {
-  font-size: (calc(12 / 16)) * 1rem;
+  font-size: calc((12 / 16) * 1rem);
   overflow: hidden;
   height: 100%;
 
@@ -84,7 +84,7 @@ export default class NameDetails extends Vue {
   .name-details-header,
   .name-list li {
     font-weight: 500;
-    font-size: (calc(13 / 16)) * 1rem;
+    font-size: calc((13 / 16) * 1rem);
   }
   .name-list-wrap {
     padding: 0 0 8px;

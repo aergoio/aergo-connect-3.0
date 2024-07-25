@@ -124,6 +124,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import { ScrollView } from '@aergo-connect/lib-ui/src/layouts';
 import { Button } from '@aergo-connect/lib-ui/src/buttons';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
@@ -134,6 +135,7 @@ import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
 import RemoveModal from '@aergo-connect/lib-ui/src/modal/RemoveTokenModal.vue';
 import { getScanApiUrl, getScanExplorerUrl } from '../utils/chain-urls';
+// @ts-ignore
 import defaultNft from '@/assets/img/defaultNft.svg';
 
 export default Vue.extend({
@@ -160,18 +162,18 @@ export default Vue.extend({
       allData: [],
       filter: 'All',
       isLoading: false,
-      token: {},
+      token: {} as any,
       winWidth: '',
       nftImgUrl: '',
-      latestTransactionHash: '' || null,
-      account: {},
+      latestTransactionHash: '' as any,
+      account: {} as any,
     };
   },
 
   computed: {
-    getTokens() {
-      return this.$store.getters[`accounts/getTokens`];
-    },
+    ...mapGetters({
+      getTokens: 'getTokens',
+    }),
     networkName() {
       const chainId = this.$store.state.accounts.chainId;
       if (chainId === ('aergo.io' || 'testnet.aergo.io' || 'alpha.aergo.io')) {
@@ -188,23 +190,18 @@ export default Vue.extend({
     const nft = nftWallet.filter((nft: any) => nft.meta.token_id === this.$route.params.id);
     this.token = nft[0];
 
+    // @ts-ignore
     this.getLatestTransactionHash().then((data) => {
-      if (!data) {
-        this.latestTransactionHash = null;
-      } else {
-        this.latestTransactionHash = data;
-      }
+      this.latestTransactionHash = data;
     });
   },
   watch: {
     clipboardNotification(state: boolean) {
       if (state) {
-        setTimeout(() => {
-          const time = (this.clipboardNotification = !state);
-          return () => {
-            clearTimeout(time);
-          };
+        const timeoutId = setTimeout(() => {
+          this.clipboardNotification = !state;
         }, 2000);
+        clearTimeout(timeoutId);
       }
     },
   },
@@ -212,7 +209,7 @@ export default Vue.extend({
     console.log(this.account, 'account');
   },
   methods: {
-    gotoSend(item: object) {
+    gotoSend(item: any) {
       this.$router
         .push({
           name: 'send',
@@ -259,7 +256,7 @@ export default Vue.extend({
       navigator.clipboard.writeText(text);
       this.clipboardNotification = true;
     },
-    async getLatestTransactionHash() {
+    async getLatestTransactionHash(): Promise<string | null> {
       const scanApiUrl = getScanApiUrl(this.$store.state.accounts);
       const getNftTransferUrl = `${scanApiUrl}/nftTransfers?q=address:${this.token?.meta?.address} AND token_id:${this.token?.meta?.token_id}&sort=ts:desc&from=0&size=1`;
       const fetchUrl = await fetch(getNftTransferUrl);
@@ -429,7 +426,7 @@ export default Vue.extend({
 
       .account-label-new {
         background-color: #ff4f9f;
-        font-size: (calc(8 / 16)) * 1rem;
+        font-size: calc((8 / 16) * 1rem);
         text-transform: uppercase;
         color: #fff;
       }

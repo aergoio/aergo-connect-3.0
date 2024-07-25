@@ -242,7 +242,6 @@ import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
 import Identicon from '@aergo-connect/lib-ui/src/content/Identicon.vue';
 import Heading from '@aergo-connect/lib-ui/src/content/Heading.vue';
 import LoadingIndicator from '@aergo-connect/lib-ui/src/icons/LoadingIndicator.vue';
-import Icon from '@aergo-connect/lib-ui/src/icons/Icon.vue';
 import NoAccountModal from '@aergo-connect/lib-ui/src/modal/NoAccountModal.vue';
 import NetworkModal from '@aergo-connect/lib-ui/src/modal/NetworkModal.vue';
 import PasswordModal from '@aergo-connect/lib-ui/src/modal/PasswordModal.vue';
@@ -250,6 +249,7 @@ import AccountDetailModal from '@aergo-connect/lib-ui/src/modal/AccountDetailMod
 import Appear from '@aergo-connect/lib-ui/src/animations/Appear.vue';
 import Notification from '@aergo-connect/lib-ui/src/modal/Notification.vue';
 import ErrorModal from '@aergo-connect/lib-ui/src/modal/ErrorModal.vue';
+// @ts-ignore
 import defaultNft from '@/assets/img/defaultNft.svg';
 // @ts-ignore
 import AergoClient, { GrpcWebProvider } from '@herajs/client';
@@ -267,7 +267,6 @@ export default Vue.extend({
     ButtonGroup,
     List,
     Header,
-    Icon,
     ScrollView,
     Appear,
     LoadingIndicator,
@@ -277,25 +276,25 @@ export default Vue.extend({
   },
   data() {
     return {
-      hamburgerModal: false,
-      networkModal: false,
-      passwordModal: false,
-      importAssetModal: false,
-      noAccountModal: false,
-      accountDetailModal: false,
-      notification: false,
-      notificationText: '',
-      chainId: this.$store?.state?.accounts?.chainId,
-      address: this.$store?.state?.accounts?.address,
-      tab: 'token',
-      tokensCount: 0,
-      editNick: false,
-      isLoading: false,
-      tokens: [],
-      errorModal: false,
-      errorMessage: '',
-      isAddedNft: false,
-      account: {},
+      hamburgerModal: false as boolean,
+      networkModal: false as boolean,
+      passwordModal: false as boolean,
+      importAssetModal: false as boolean,
+      noAccountModal: false as boolean,
+      accountDetailModal: false as boolean,
+      notification: false as boolean,
+      notificationText: '' as string,
+      chainId: this.$store?.state?.accounts?.chainId as string,
+      address: this.$store?.state?.accounts?.address as string,
+      tab: 'token' as string,
+      tokensCount: 0 as number,
+      editNick: false as boolean,
+      isLoading: false as boolean,
+      tokens: [] as any,
+      errorModal: false as boolean,
+      errorMessage: '' as string,
+      isAddedNft: false as boolean,
+      account: {} as any,
     };
   },
 
@@ -316,48 +315,56 @@ export default Vue.extend({
       this.initAccount();
     },
 
+    // notification(notificationState) {
+    //   if (notificationState) {
+    //     setTimeout(() => {
+    //       const time = (this.notification = !notificationState);
+    //       return () => {
+    //         clearTimeout(time);
+    //       };
+    //     }, 2000);
+    //   }
+    // },
+
     notification(notificationState) {
       if (notificationState) {
         setTimeout(() => {
-          const time = (this.notification = !notificationState);
-          return () => {
-            clearTimeout(time);
-          };
+          this.notification = !notificationState;
         }, 2000);
       }
     },
   },
 
   computed: {
-    getTokens() {
+    getTokens(): any {
       return this.$store.getters[`accounts/getTokens`];
     },
-    getScanApi() {
+    getScanApi(): any {
       const scanApiUrl = this.$store.state.accounts.networksPath.filter(
         (network) => network.label === this.$store.state.accounts.chainLabel,
       )[0]?.scanApiUrl;
       return scanApiUrl;
     },
-    getNodeUrl() {
+    getNodeUrl(): any {
       const nodeUrl = this.$store.state.accounts.networksPath.filter(
         (network) => network.label === this.$store.state.accounts.chainLabel,
       )[0]?.nodeUrl;
       return nodeUrl;
     },
-    getNetwork() {
+    getNetwork(): any {
       const network = this.$store.state.accounts.networksPath.filter(
         (network) => network.label === this.$store.state.accounts.chainLabel,
       )[0];
       return network;
     },
-    getNftList() {
+    getNftList(): any {
       return Object.values(this.$store.getters[`accounts/getTokens`]).filter((data: any) => {
         if (data?.nftWallet?.length > 0) {
           return data.nftWallet;
         }
       });
     },
-    accountSpec() {
+    accountSpec(): any {
       return {
         address: this.$store.state.accounts.address,
         chainId: this.$store.state.accounts.chainId,
@@ -366,7 +373,7 @@ export default Vue.extend({
   },
 
   methods: {
-    async initAccount() {
+    async initAccount(): Promise<void> {
       try {
         this.account = await this.$background.getActiveAccount();
         this.isLoading = true;
@@ -392,26 +399,26 @@ export default Vue.extend({
       }
     },
 
-    async refreshClick() {
+    async refreshClick(): Promise<void> {
       this.isLoading = true;
       try {
         await this.initAccount();
         await this.checkIsUpdateNft();
         await this.$forceUpdate();
-      } catch (e: any) {
+      } catch (e) {
         console.error(e, 'error');
         this.errorModal = true;
-        this.errorMessage = e;
+        this.errorMessage = e as any;
       } finally {
         this.isLoading = false;
       }
     },
 
-    hamburgerClick() {
+    hamburgerClick(): void {
       this.hamburgerModal = !this.hamburgerModal;
     },
 
-    handleCancel(modalEvent: any) {
+    handleCancel(modalEvent: any): void {
       switch (modalEvent) {
         case 'noAccountModal':
           this.$background.lock();
@@ -430,51 +437,51 @@ export default Vue.extend({
       }
     },
 
-    handleRefresh() {
+    handleRefresh(): void {
       this.refreshClick();
     },
-    handleConfirm() {
+    handleConfirm(): void {
       this.passwordModal = false;
       this.hamburgerModal = false;
       this.$router.push({ name: 'security' }).catch(() => {});
     },
 
-    handleRemoveModalClick() {
+    handleRemoveModalClick(): void {
       this.hamburgerModal = false;
     },
-    handleSelect() {
+    handleSelect(): void {
       this.hamburgerModal = false;
     },
-    handleMouseEnter() {
+    handleMouseEnter(): void {
       this.notification = true;
       this.notificationText = this.errorMessage;
     },
-    networkModalClick() {
+    networkModalClick(): void {
       this.networkModal = !this.networkModal;
     },
 
-    handleDetailAddress() {
+    handleDetailAddress(): void {
       this.accountDetailModal = true;
     },
 
-    handleSecurity() {
+    handleSecurity(): void {
       this.hamburgerModal = false;
       this.passwordModal = true;
     },
 
-    handleToken(token: any) {
+    handleToken(token: any): void {
       this.$store.commit('accounts/setSelectedToken', token.hash);
       this.$router.push({ name: 'token-detail' }).catch(() => {});
     },
 
-    handleNft(token) {
+    handleNft(token): void {
       const dropdownState = !this.getTokens[token.hash][`dropdownState`];
       this.$store.commit('accounts/setSelectedToken', token.hash);
       this.$store.commit('accounts/handleDropdownState', { hash: token.hash, dropdownState });
       this.$forceUpdate();
     },
 
-    handleImportAsset(to: string) {
+    handleImportAsset(to: string): void {
       if (to === 'token') {
         this.$store.commit('accounts/setOption', 'token');
         this.$router.push({ name: 'import-asset', params: { option: 'token' } }).catch(() => {});
@@ -485,24 +492,24 @@ export default Vue.extend({
       }
     },
 
-    handleSend(token: any) {
+    handleSend(): void {
       this.$router.push({ name: 'send' }).catch(() => {});
     },
-    handleReceive() {
+    handleReceive(): void {
       this.accountDetailModal = true;
     },
-    handleChangeTab(value: string) {
+    handleChangeTab(value: string): void {
       this.tab = value;
       this.$store.commit('accounts/setOption', value);
     },
 
-    formatBalance(balance) {
+    formatBalance(balance): any {
       if (Number.isInteger(balance)) {
         return balance;
       }
       return Number(balance).toFixed(3);
     },
-    myTokenCount() {
+    myTokenCount(): void {
       const tokens = Object.values(this.getTokens);
       tokens.map((token: any) => {
         if (token.meta.type === 'ARC1') {
@@ -510,7 +517,7 @@ export default Vue.extend({
         }
       });
     },
-    myNFTCount(hash: any) {
+    myNFTCount(hash: any): any {
       if (!this.getTokens[hash].nftWallet) {
         return null;
       } else {
@@ -518,12 +525,12 @@ export default Vue.extend({
       }
     },
 
-    handleGoNftInventory(nft: any) {
+    handleGoNftInventory(nft: any): void {
       this.$store.commit('accounts/setSelectedToken', nft.token.hash);
       this.$router.push({ name: 'nft-detail', params: { id: nft.meta.token_id } }).catch(() => {});
     },
 
-    async checkIsUpdateNft() {
+    async checkIsUpdateNft(): Promise<void> {
       const tokens = await Object.values(this.getTokens);
       tokens.map((token: any) => {
         if (token?.nftWallet) {
@@ -577,7 +584,7 @@ export default Vue.extend({
               //     console.log('end To Change WalletData');
               //   }
               // }
-            } catch (e: any) {
+            } catch (e) {
               console.error(e, 'checkIsupdateNft Error');
               // this.errorModal = true;
               // this.errorMessage = e;
@@ -587,7 +594,7 @@ export default Vue.extend({
       });
     },
 
-    async testNodeConnection() {
+    async testNodeConnection(): Promise<void> {
       const aergo = new AergoClient({}, new GrpcWebProvider({ url: this.getNodeUrl }));
       try {
         const aergoChainIds = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
@@ -619,7 +626,7 @@ export default Vue.extend({
       }
     },
 
-    handleImageError(event) {
+    handleImageError(event): void {
       // 이미지 로딩에 에러가 발생했을 때 호출되는 메서드
       // 에러가 발생하면 기본 이미지로 대체
       // console.log(event, 'event');
@@ -699,7 +706,7 @@ export default Vue.extend({
 
       .account-label-new {
         background-color: #ff4f9f;
-        font-size: (calc(8 / 16)) * 1rem;
+        font-size: calc((8 / 16) * 1rem);
         text-transform: uppercase;
         color: #fff;
       }
@@ -840,11 +847,11 @@ export default Vue.extend({
                 -moz-box-shadow: 7px 5px 6px 1px rgba(0, 0, 0, 0.19);
                 .nft_id {
                   margin: 4px;
-                  font-size: calc(14 / 16) * 1rem;
+                  font-size: calc((14 / 16) * 1rem);
                   word-break: break-all;
                 }
                 .token_name {
-                  font-size: calc(12 / 16) * 1rem;
+                  font-size: calc((12 / 16) * 1rem);
                   word-break: break-all;
                 }
               }

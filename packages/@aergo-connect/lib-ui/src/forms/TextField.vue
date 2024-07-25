@@ -138,19 +138,19 @@ export default Vue.extend({
 
   &.variant-default {
     input {
-      font-size: (calc(14 / 16)) * 1rem;
+      font-size: calc((14 / 16) * 1rem);
       border-radius: 3px;
     }
   }
 
   &.variant-main {
     input {
-      font-size: (calc(20 / 16)) * 1rem;
+      font-size: calc((20 / 16) * 1rem);
       font-weight: 500;
       padding-left: 4px;
     }
     &.type-password input {
-      font-size: (calc(6 / 16)) * 1rem;
+      font-size: calc((6 / 16) * 1rem);
       padding-top: 7px;
       padding-bottom: 7px;
       overflow: hidden;

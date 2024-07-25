@@ -18,9 +18,10 @@ import { Prop } from 'vue-property-decorator';
 import Component, { mixins } from 'vue-class-component';
 import { isPublicChainId, PublicChainData } from '../../config';
 
-export function keys<O>(o: O): (keyof O)[] {
+export function keys<O extends Record<string, any>>(o: O): (keyof O)[] {
   return Object.keys(o) as (keyof O)[];
 }
+
 const DEFAULT_OPTIONS = keys(PublicChainData).map((key) => [key, PublicChainData[key].label]);
 
 @Component({
@@ -62,7 +63,7 @@ export default class Create extends mixins() {
 
 <style lang="scss">
 .button-configure-networks {
-  font-size: (calc(13 / 16)) * 1rem;
+  font-size: calc((13 / 16) * 1rem);
   color: #666;
   cursor: pointer;
 }

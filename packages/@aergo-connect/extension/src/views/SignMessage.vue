@@ -48,9 +48,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import Header from '@aergo-connect/lib-ui/src/layouts/Header.vue';
-import ScrollView from '@aergo-connect/lib-ui/src/layouts/ScrollView.vue';
 import TextArea from '@aergo-connect/lib-ui/src/forms/TextArea.vue';
 import CheckboxButton from '@aergo-connect/lib-ui/src/buttons/CheckboxButton.vue';
 import Button from '@aergo-connect/lib-ui/src/buttons/Button.vue';
@@ -64,7 +62,6 @@ import Transport from '@ledgerhq/hw-transport-webusb';
 import LedgerAppAergo from '@herajs/ledger-hw-app-aergo';
 import { ScrollView, LoadingDialog } from '@aergo-connect/lib-ui/src/layouts';
 import { Watch } from 'vue-property-decorator';
-import { signMessage } from '@herajs/crypto';
 @Component({
   components: {
     Header,
@@ -79,8 +76,6 @@ import { signMessage } from '@herajs/crypto';
 })
 export default class RequestSign extends mixins() {
   message = '';
-  signature = '';
-  statusText = '';
   signature = '';
   statusText = '';
   statusDialogVisible = false;
@@ -101,19 +96,17 @@ export default class RequestSign extends mixins() {
     };
   }
 
-  get account(): Account {
+  get account(): Account | any {
     return this.$background.getActiveAccount();
   }
 
   @Watch('clipboardNotification')
-  clipboardNotificationMethod(state) {
+  clipboardNotificationMethod(state: boolean) {
     if (state) {
-      setTimeout(() => {
-        const time = (this.clipboardNotification = !state);
-        return () => {
-          clearTimeout(time);
-        };
+      const timeoutId = setTimeout(() => {
+        this.clipboardNotification = !state;
       }, 2000);
+      clearTimeout(timeoutId);
     }
   }
 
@@ -147,13 +140,9 @@ export default class RequestSign extends mixins() {
     this.$router.push({ name: 'accounts-list' });
   }
 
-  async copyText(text) {
-    try {
-      await navigator.clipboard.writeText(text);
-      this.copyToClipboard(text);
-    } catch ($e) {
-      alert('error', $e);
-    }
+  copyText(text: string) {
+    navigator.clipboard.writeText(text);
+    this.copyToClipboard(text);
   }
 
   async confirmHandler() {

@@ -14,7 +14,7 @@ export function promisifySimple<Ret = any>(
     throw new Error('original should be a function');
   }
 
-  function fn(...args: any[]) {
+  function fn(...args: any[]): Promise<Ret> {
     return new Promise((resolve, reject) => {
       try {
         original.call(context, ...args, (value: Ret) => {
@@ -22,7 +22,7 @@ export function promisifySimple<Ret = any>(
             // @ts-ignore
             reject(`${value.error}`);
           } else {
-            resolve(value);
+            resolve(value as Ret);
           }
         });
       } catch (e) {

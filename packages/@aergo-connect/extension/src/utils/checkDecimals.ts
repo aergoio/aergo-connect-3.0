@@ -32,13 +32,13 @@ function printParsed(input: string, decimals: number) {
   const vals = parseToBigInt(input, decimals);
   //   global.console.log(`${input}(${decimals}):=>  ${vals}`);
 }
-
+// @ts-ignore
 Number.prototype.countDecimals = function () {
   if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
 
   return this.toString().countDecimals();
 };
-
+// @ts-ignore
 String.prototype.countDecimals = function () {
   if (this.indexOf('.') !== -1 && this.indexOf('-') !== -1) {
     return this.split('-')[1] || 0;
@@ -54,6 +54,7 @@ function Swapper(userRatioX: string, userRatioY: string, decimalsX: number, deci
   // ? 환전할때, 사용 할 것 같음. contract payload
   const digitRX = userRatioX.countDecimals();
   const digitRY = userRatioY.countDecimals();
+  // @ts-ignore
   const minimumScale = Math.max(digitRX, digitRY);
   const smallerDecimals = Math.min(decimalsX, decimalsY);
   // 사용자 입력에 포함된 소숫점을 올리기 위한 최소 수준
@@ -78,10 +79,12 @@ function Swapper(userRatioX: string, userRatioY: string, decimalsX: number, deci
     magnitudeY: BigInt(10) ** BigInt(decimalsY),
     // Y를 넣었을 때 받게되는 X의 예상 수량
     getAmountX(amountY: bigint) {
+      // @ts-ignore
       return (amountY * ratioX) / ratioY;
     },
     // X를 넣었을 때 받게되는 Y의 예상 수량
     getAmountY(amountX: bigint) {
+      // @ts-ignore
       return (amountX * ratioY) / ratioX;
     },
     toChainAmountX(userAmount: number) {
@@ -92,7 +95,9 @@ function Swapper(userRatioX: string, userRatioY: string, decimalsX: number, deci
     },
     normalizedRatioY() {
       return (
+        // @ts-ignore
         Number.parseFloat(bigIntToString(this.ratioY, this.decimalsY)) /
+        // @ts-ignore
         Number.parseFloat(bigIntToString(this.ratioX, this.decimalsX))
       );
     },

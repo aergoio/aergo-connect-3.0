@@ -61,7 +61,9 @@ import Vue from 'vue';
 import Icon from '../icons/Icon.vue';
 import Button from '../buttons/Button.vue';
 import Identicon from '../content/Identicon.vue';
+// @ts-ignore
 import defaultNft from '@/assets/img/defaultNft.svg';
+
 export default Vue.extend({
   components: { Icon, Button, Identicon, defaultNft },
   props: {

@@ -44,7 +44,7 @@ export default class Import extends mixins(PersistInputsMixin) {
 
 <style lang="scss">
 .settings-group {
-  font-size: (13/16) * 1rem;
+  font-size: calc((13 / 16) * 1rem);
   font-weight: 500;
   color: #666;
   margin-bottom: 0.5em;

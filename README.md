@@ -24,10 +24,6 @@ For security related reports, please contact us at security@aergo.io
 
 ## Development
 
-### Stable Version
-
-- node : v16.14.0
-
 **Install dependencies**
 
     yarn

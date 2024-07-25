@@ -160,6 +160,7 @@ export default class Import extends mixins(PersistInputsMixin) {
       );
       accounts.push(account);
       statePromises.push(
+        // @ts-ignore
         this.$background.getAccountState(spec).then((state) => {
           account.data.balance = `${state.balance}`;
         }),
@@ -213,7 +214,7 @@ export default class Import extends mixins(PersistInputsMixin) {
     margin-bottom: 15px;
   }
   p {
-    font-size: (calc(13 / 16)) * 1rem;
+    font-size: calc((13 / 16) * 1rem);
     max-width: 260px;
   }
   p.error {

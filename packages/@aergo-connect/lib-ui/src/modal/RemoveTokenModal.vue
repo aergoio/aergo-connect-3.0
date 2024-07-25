@@ -32,7 +32,7 @@ export default Vue.extend({
     return {};
   },
   computed: {
-    getTokens() {
+    getTokens(): any {
       return this.$store.getters[`accounts/getTokens`];
     },
   },

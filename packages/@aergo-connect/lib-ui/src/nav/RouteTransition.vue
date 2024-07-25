@@ -51,13 +51,14 @@ export default Vue.extend({
   watch: {
     $route(to: RouteConfig, from: RouteConfig): void {
       let transitionName =
-        from.meta.transitionName || to.meta.transitionName || this.defaultTransition;
+        from?.meta?.transitionName || to?.meta?.transitionName || this.defaultTransition;
 
-      if (from.meta.transitionName === 'fade' || to.meta.transitionName === 'fade') {
+      if (from?.meta?.transitionName === 'fade' || to?.meta?.transitionName === 'fade') {
         // If one of them is fade, always use that
         transitionName = 'fade';
       } else {
-        const indexDiff = from.meta.index && to.meta.index && from.meta.index - to.meta.index;
+        const indexDiff =
+          from?.meta?.index && to?.meta?.index && from?.meta?.index - to?.meta?.index;
         transitionName = indexDiff > 0 ? `slide-right` : `slide-left`;
       }
 

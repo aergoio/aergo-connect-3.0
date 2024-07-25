@@ -205,7 +205,7 @@ export default Vue.extend({
   }
   &.variant-main {
     .current-value {
-      font-size: (calc(20 / 16)) * 1rem;
+      font-size: calc((20 / 16) * 1rem);
       font-weight: 500;
     }
   }
@@ -244,7 +244,7 @@ export default Vue.extend({
   }
   .dialog-options {
     .dialog-option {
-      font-size: (calc(13 / 16)) * 1rem;
+      font-size: calc((13 / 16) * 1rem);
       font-weight: 500;
       padding: 0 14px 0 24px;
       display: flex;

@@ -64,7 +64,7 @@ select {
 .simple-phrase {
   @extend .simple-left;
   margin-top: 32px;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 }
 
 .field-title {
@@ -75,6 +75,7 @@ select {
   font-size: 16px;
   letter-spacing: -0.333333px;
   color: #454344;
+  margin-top: 16px;
 }
 
 ul {

@@ -7,7 +7,7 @@
       :to="{ name: 'accounts-list' }"
       @refreshClick="refreshClick"
     />
-    <!-- <LoadingIndicator v-if="isLoading" /> -->
+    <LoadingIndicator v-if="isLoading" />
     <SendFinishModal
       v-if="receiptModal"
       :asset="$store.state.accounts.selectedToken"
@@ -222,7 +222,7 @@
             <div class="nothing_text">No Transaction Details.</div>
           </div>
         </ul>
-        <div v-if="!isLoading" class="footer">
+        <div class="footer">
           <ButtonGroup>
             <div :style="{ background: '#fff', width: '157px', borderRadius: '4px' }">
               <Button class="button" type="font-gradation" size="small" @click="handleSend"
@@ -483,10 +483,14 @@ export default Vue.extend({
 
     async refreshClick() {
       this.isLoading = true;
-      await this.getTokenHistory();
-      await this.getAergoInfo();
-      await this.$forceUpdate();
-      this.isLoading = false;
+      try {
+        await this.getTokenHistory();
+        await this.getAergoInfo();
+      } catch (e) {
+        console.error('refresh Error:', e);
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     async getTokenHistory(): Promise<void> {
@@ -562,10 +566,10 @@ export default Vue.extend({
     },
 
     handleSend() {
-      this.$router.push({ name: 'send', params: { id: 'ARC1' } }).catch(() => {});
+      this.$router.push({ name: 'send', params: { id: 'ARC1' } });
     },
     handleReceive() {
-      this.$router.push({ name: 'receive' }).catch(() => {});
+      this.$router.push({ name: 'receive' });
     },
     handleDetailAddress() {
       this.accountDetailModal = true;

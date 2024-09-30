@@ -348,6 +348,7 @@ export default Vue.extend({
         payload: '',
         limit: 0,
         type: Tx.Type['TRANSFER'],
+        chainIdHash: '',
       },
     };
   },
@@ -508,11 +509,9 @@ export default Vue.extend({
 
     handleBack() {
       this.$store.commit('ui/clearInput', { key: 'send' });
-      this.$router
-        .push({
-          name: this.$store.state.ui.route.previousPage ?? 'accounts-list',
-        })
-        .catch(() => {});
+      this.$router.push({
+        name: this.$store.state.ui.route.previousPage ?? 'accounts-list',
+      });
     },
     handleOptionsDropbox() {
       this.optionsDropbox = !this.optionsDropbox;
@@ -565,6 +564,15 @@ export default Vue.extend({
       }
     },
     async handleSendClick() {
+      const chainIdHash = await this.$background.getChainIdHash(this.chainId);
+      const chainInfo = await this.$background.getChainInfo(this.chainId);
+      if (chainIdHash) {
+        console.log('chainIdHash:', chainIdHash);
+        this.txBody.chainIdHash = chainIdHash;
+      }
+      if (chainInfo) {
+        console.log('chainInfo:', chainInfo);
+      }
       if (!this.account) {
         // This shouldn't happen normally
         this.notification = true;
@@ -662,6 +670,8 @@ export default Vue.extend({
       this.statusDialogVisible = true;
     },
     async handleConfirm() {
+      const chainId = this.$store.state.accounts.chainId;
+      console.log('chainId', chainId);
       this.passwordModal = false;
       if (!this.txBody.from) {
         //  This shouldn't happen normally
@@ -674,7 +684,7 @@ export default Vue.extend({
         console.log(hash, 'hash');
         this.txHash = hash;
 
-        const result = await this.$background.getTransactionReceipt(this.chainId, this.txHash);
+        const result = await this.$background.getTransactionReceipt(chainId, this.txHash);
         this.setStatus('success', 'Done');
         if (result.status === 'SUCCESS') {
           if (this.userNftData.hash) {
@@ -684,7 +694,7 @@ export default Vue.extend({
           this.fee = bigIntToString(BigInt(result.fee.split(' ')[0]), 18) || 0;
           this.$store.dispatch('accounts/updateAccount', {
             address: this.$store.state.accounts.address,
-            chainId: this.chainId,
+            chainId,
           });
           await this.$store.dispatch('accounts/initState');
           // this.balance = await this.getTokens[this.asset].balance;
@@ -694,7 +704,7 @@ export default Vue.extend({
             if (this.$store.state.accounts.option === 'nft') {
               this.$router.push({ name: 'accounts-list' });
             } else {
-              this.$router.push({ name: 'token-detail' }).catch(() => {});
+              this.$router.push({ name: 'token-detail' });
             }
           }, 1000);
         } else if (result.status === 'ERROR') {

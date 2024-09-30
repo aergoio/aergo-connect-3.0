@@ -1,78 +1,81 @@
 require('../manifest.json');
-
 import 'regenerator-runtime/runtime';
 
-import extension from 'extensionizer';
 import endOfStream from 'end-of-stream';
 import PortStream from 'extension-port-stream';
-
 import BackgroundController from './controller';
 import { ExternalRequest } from './request';
 
-async function setupController() {
-  const controller = new BackgroundController();
+const controller = new BackgroundController();
 
-  function connectRemote(remotePort) {
-    const processName = remotePort.name;
-    // console.log('Establishing connection with', processName);
-
-    if (processName === 'external') {
-      remotePort.onMessage.addListener((msg, port) => {
-        const request = ExternalRequest.fromPortMessage(port, msg);
-        controller.permissionRequest(request);
-      });
-    } else {
-      const portStream = new PortStream(remotePort);
-      controller.state.set('active');
-      controller.setupCommunication(portStream);
-      controller.uiState.popupOpen = true;
-      // console.log(remotePort, 'port');
-      endOfStream(portStream, () => {
-        controller.uiState.popupOpen = false;
-        // console.log('Closed connection with', processName);
-        controller.state.set('inactive');
-      });
+/** Already use ports   */
+chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
+  const processName = remotePort.name;
+  function deleteTimer(port) {
+    if (port._timer) {
+      clearTimeout(port._timer);
+      delete port._timer;
     }
   }
+  function forceReconnect(port) {
+    // controller.setupCommunication(remotePort);
+    deleteTimer(port);
+    port.disconnect();
+  }
 
-  extension.runtime.onConnect.addListener(connectRemote);
-  // Setup idle detection
-  extension.idle.setDetectionInterval(60);
+  if (processName === 'external') {
+    remotePort.onMessage.addListener((msg, port) => {
+      const request = ExternalRequest.fromPortMessage(port, msg);
+      controller.permissionRequest(request);
+    });
+  } else {
+    const portStream = new PortStream(remotePort);
+    controller.state.set('active');
+    controller.setupCommunication(portStream);
+    controller.uiState.popupOpen = true;
 
-  extension.idle.onStateChanged.addListener((newState) => {
-    // console.log('idle onStateChanged : ' + newState);
-    if (newState === 'idle' || newState === 'locked') {
-      controller.lock();
-    }
-  });
-}
+    endOfStream(portStream, () => {
+      controller.uiState.popupOpen = false;
+      controller.state.set('inactive');
+    });
+  }
+  remotePort._timer = setTimeout(forceReconnect, 250e3, remotePort);
+});
 
-// console.log('AERGO Wallet Background Script');
-// console.log('Extension ID', extension.runtime.id);
+// Setup idle detection
+chrome.idle.setDetectionInterval(60);
 
-if (!extension.runtime.id) {
-  console.error('Script needs run in extension context. Aborting');
-} else {
-  setupController();
+chrome.idle.onStateChanged.addListener((newState) => {
+  console.log(newState, 'newState');
+  if (newState === 'idle' || newState === 'locked') {
+    controller.lock();
+  }
+});
 
-  extension.contextMenus.removeAll();
-  extension.contextMenus.create({
-    title: 'Open full page',
-    contexts: ['browser_action'],
-    onclick: function () {
-      extension.tabs.create({ url: 'index.html' });
-    },
-  });
-  // extension.contextMenus.create({
-  //   title: 'Settings',
-  //   contexts: ['browser_action'],
-  //   onclick: function () {
-  //     extension.tabs.create({ url: 'index.html#/settings' });
-  //   },
-  // });
+chrome.windows.onFocusChanged.addListener(function (windowId) {
+  if (windowId === chrome.windows.WINDOW_ID_NONE) {
+    controller.state.set('inactive');
+  }
+});
 
-  // //? In dev, open a new tab for easier debugging
-  // if (process.env.NODE_ENV === 'development') {
-  //   extension.tabs.create({ url: 'index.html' });
-  // }
-}
+/** "Persistent" service worker via bug exploit */
+const keepAlive = () => setInterval(chrome.runtime.getPlatformInfo, 20e3);
+chrome.runtime.onStartup.addListener(keepAlive);
+keepAlive();
+
+/** Full Screen Context */
+// chrome.contextMenus.create(
+//   {
+//     id: 'fullPage',
+//     title: 'Open Full Page',
+//     contexts: ['action'],
+//   },
+//   () => chrome.runtime.lastError,
+// );
+
+// chrome.contextMenus.onClicked.addListener(function (info, tab) {
+//   const { menuItemId } = info;
+//   if (menuItemId === 'fullPage') {
+//     chrome.tabs.create({ url: 'index.html#' });
+//   }
+// });

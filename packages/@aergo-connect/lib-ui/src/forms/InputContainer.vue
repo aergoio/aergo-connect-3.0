@@ -160,7 +160,7 @@ export default Vue.extend({
   margin-bottom: 0.5em;
 }
 .input-error-text {
-  max-width: 300px;
+  /* max-width: 300px; */
   height: 36px;
   font-size: 14px;
   color: $Pink01;

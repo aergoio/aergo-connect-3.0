@@ -273,16 +273,24 @@ class BackgroundController extends EventEmitter {
 
   async connectLedger(): Promise<void> {
     if (this.wallet.ledger) return;
-    console.log('Connecting Ledger...');
-    const transport = await Transport.create(30000, 1500);
-    this.wallet.connectLedger(transport);
+
+    try {
+      console.log('Connecting Ledger...');
+      const transport = await Transport.create(30000, 1500); // 타임아웃 설정
+      this.wallet.connectLedger(transport);
+    } catch (error) {
+      console.error('Failed to connect to Ledger:', error);
+    }
   }
 
   setupCommunication(outStream: any) {
     const api = getServerApi(this);
     const dnode = Dnode(api);
     pump(outStream, dnode, outStream, (err: any) => {
-      if (err) console.error(err);
+      if (err) console.error('Communication error:', err);
+      setTimeout(() => {
+        this.setupCommunication(outStream);
+      }, 1000); // 1s after reconnection
     });
 
     dnode.on('remote', (remote: any) => {

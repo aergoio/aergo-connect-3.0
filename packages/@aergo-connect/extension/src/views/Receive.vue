@@ -226,6 +226,7 @@ export default Vue.extend({
       }
     },
     balance() {
+      // TODO: Need to bug test
       this.$forceUpdate();
     },
     tokenType() {

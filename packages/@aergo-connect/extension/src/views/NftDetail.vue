@@ -243,9 +243,14 @@ export default Vue.extend({
     },
     async refreshClick() {
       this.isLoading = true;
-      // if (this.tabState === 'inventory') await this.getNftInventory();
-      // else await this.getNftHistory();
-      this.isLoading = false;
+      try {
+        // if (this.tabState === 'inventory') await this.getNftInventory();
+        // else await this.getNftHistory();
+      } catch (e) {
+        console.error('Refresh Error', e);
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     handleSend() {

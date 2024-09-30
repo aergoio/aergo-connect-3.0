@@ -361,7 +361,8 @@ export default class NetworkUpdate extends Vue {
         networkPath: networkPath,
       };
       await this.$background.addNetwork(networkPath);
-      await this.$forceUpdate();
+      // TODO: need to Bug Test
+      // await this.$forceUpdate();
       this.$store.commit('accounts/updateNetworkPath', updateObject);
     } else {
       // add network

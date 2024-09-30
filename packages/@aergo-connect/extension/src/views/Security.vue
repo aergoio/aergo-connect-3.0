@@ -4,11 +4,12 @@
     <NotificationModal v-if="notificationModal" @cancel="handleCancel" />
     <Header button="back" title="Security" @backClick="handleBack" />
     <div class="security2_content">
-      <!-- <div class="security2_autolock_wrapper">
+      <div class="security2_autolock_wrapper">
         <div class="title">Auto Lock Timeout</div>
         <div class="flex-row">
           <div class="description">Set the amount of time before the screen locks.</div>
           <select class="select" @change="handleIdleTimeout" v-model="idleTimeout">
+            <option :value="60">1 minutes</option>
             <option :value="300">5 minutes</option>
             <option :value="600">10 minutes</option>
             <option :value="900">15 minutes</option>
@@ -16,7 +17,7 @@
             <option :value="3600">60 minutes</option>
           </select>
         </div>
-      </div> -->
+      </div>
       <div class="security2_password_wrapper">
         <div class="title">Password</div>
         <div class="description">
@@ -113,19 +114,15 @@ export default Vue.extend({
       chrome.idle.setDetectionInterval(this.idleTimeout);
     },
     handleBack() {
-      this.$router
-        .push({
-          name: 'accounts-list',
-        })
-        .catch(() => {});
+      this.$router.push({
+        name: 'accounts-list',
+      });
     },
 
     handleGoStep2() {
-      this.$router
-        .push({
-          name: 'security',
-        })
-        .catch(() => {});
+      this.$router.push({
+        name: 'security',
+      });
     },
 
     handleChangePassword() {

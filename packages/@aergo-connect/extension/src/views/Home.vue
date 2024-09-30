@@ -315,17 +315,6 @@ export default Vue.extend({
       this.initAccount();
     },
 
-    // notification(notificationState) {
-    //   if (notificationState) {
-    //     setTimeout(() => {
-    //       const time = (this.notification = !notificationState);
-    //       return () => {
-    //         clearTimeout(time);
-    //       };
-    //     }, 2000);
-    //   }
-    // },
-
     notification(notificationState) {
       if (notificationState) {
         setTimeout(() => {
@@ -381,7 +370,7 @@ export default Vue.extend({
           await this.$store.dispatch('accounts/initState');
           await this.checkIsUpdateNft();
           await this.myTokenCount();
-          await this.$forceUpdate();
+          // await this.$forceUpdate();
           this.errorMessage = '';
           this.isLoading = false;
         } else {
@@ -404,7 +393,7 @@ export default Vue.extend({
       try {
         await this.initAccount();
         await this.checkIsUpdateNft();
-        await this.$forceUpdate();
+        // await this.$forceUpdate();
       } catch (e) {
         console.error(e, 'error');
         this.errorModal = true;
@@ -443,7 +432,7 @@ export default Vue.extend({
     handleConfirm(): void {
       this.passwordModal = false;
       this.hamburgerModal = false;
-      this.$router.push({ name: 'security' }).catch(() => {});
+      this.$router.push({ name: 'security' });
     },
 
     handleRemoveModalClick(): void {
@@ -471,29 +460,30 @@ export default Vue.extend({
 
     handleToken(token: any): void {
       this.$store.commit('accounts/setSelectedToken', token.hash);
-      this.$router.push({ name: 'token-detail' }).catch(() => {});
+      this.$router.push({ name: 'token-detail' });
     },
 
     handleNft(token): void {
       const dropdownState = !this.getTokens[token.hash][`dropdownState`];
       this.$store.commit('accounts/setSelectedToken', token.hash);
       this.$store.commit('accounts/handleDropdownState', { hash: token.hash, dropdownState });
+      // TODO: Need to bug test
       this.$forceUpdate();
     },
 
     handleImportAsset(to: string): void {
       if (to === 'token') {
         this.$store.commit('accounts/setOption', 'token');
-        this.$router.push({ name: 'import-asset', params: { option: 'token' } }).catch(() => {});
+        this.$router.push({ name: 'import-asset', params: { option: 'token' } });
       }
       if (to === 'nft') {
         this.$store.commit('accounts/setOption', 'nft');
-        this.$router.push({ name: 'import-asset', params: { option: 'nft' } }).catch(() => {});
+        this.$router.push({ name: 'import-asset', params: { option: 'nft' } });
       }
     },
 
     handleSend(): void {
-      this.$router.push({ name: 'send' }).catch(() => {});
+      this.$router.push({ name: 'send' });
     },
     handleReceive(): void {
       this.accountDetailModal = true;
@@ -527,7 +517,7 @@ export default Vue.extend({
 
     handleGoNftInventory(nft: any): void {
       this.$store.commit('accounts/setSelectedToken', nft.token.hash);
-      this.$router.push({ name: 'nft-detail', params: { id: nft.meta.token_id } }).catch(() => {});
+      this.$router.push({ name: 'nft-detail', params: { id: nft.meta.token_id } });
     },
 
     async checkIsUpdateNft(): Promise<void> {
@@ -555,7 +545,7 @@ export default Vue.extend({
                   const isFindNft = response.hits.find((nftData) => nftData.hash === nft.hash);
                   if (!isFindNft) {
                     await this.$store.commit('accounts/deleteNftInLocalStorage', nft);
-                    await this.$forceUpdate();
+                    // await this.$forceUpdate();
                   }
                 }
               });

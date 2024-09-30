@@ -123,6 +123,13 @@ export class Api {
     return await this.controller.wallet.nameManager.getNames(accountSpec);
   }
 
+  async getChainIdHash(chainId: string) {
+    const chainIdHash = (await this.controller.wallet.getClient(chainId).blockchain())
+      .bestChainIdHash;
+
+    return chainIdHash;
+  }
+
   async addName(accountSpec: AccountSpec, name: string) {
     let wasAdded = false;
     try {

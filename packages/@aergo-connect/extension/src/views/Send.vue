@@ -518,7 +518,7 @@ export default Vue.extend({
     },
     validateAddress(address) {
       try {
-        const aergoGovernance = ['aergo.system', 'aergo.name', 'aergo.enterprise'];
+        const aergoGovernance = ['aergo.system', 'aergo.name', 'aergo.enterprise', 'aergo.vault'];
 
         const validateAddressValue = new Address(address);
         if (aergoGovernance.includes(address)) {

@@ -111,7 +111,7 @@ export default Vue.extend({
   methods: {
     handleIdleTimeout() {
       this.$store.commit('ui/setIdleTimeout', this.idleTimeout);
-      chrome.idle.setDetectionInterval(this.idleTimeout);
+      this.$background.setIdleTimeout(this.idleTimeout);
     },
     handleBack() {
       this.$router.push({

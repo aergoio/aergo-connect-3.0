@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { EventEmitter } from 'events';
 import pump from 'pump';
 import Dnode from 'dnode/browser.js';
@@ -16,9 +17,9 @@ import { ExternalRequest } from './request';
 import { Buffer } from 'buffer';
 import { hashTransaction, hash } from '@herajs/crypto';
 import { TxTypes } from '@herajs/common';
-import { BasicType, Data } from '@herajs/wallet/dist/types/models/record';
+// import { BasicType, Data } from '@herajs/wallet/dist/types/models/record';
 
-type NodeURLType = string | number | boolean | Data | BasicType[] | Data[];
+// type NodeURLType = string | number | boolean | Data | BasicType[] | Data[];
 
 class BackgroundController extends EventEmitter {
   wallet: Wallet;
@@ -26,7 +27,7 @@ class BackgroundController extends EventEmitter {
   requests: Record<string, ExternalRequest>;
   lastRequestId: number;
   state: AppState;
-  _lockTimeout?: NodeJS.Timeout;
+  idleTimeout?: number;
   uiState: {
     popupOpen: boolean;
   };
@@ -43,7 +44,8 @@ class BackgroundController extends EventEmitter {
     this.uiState = {
       popupOpen: false,
     };
-    this.state = new AppState();
+    this.idleTimeout = 60;
+    this.state = new AppState(this.idleTimeout * 1000);
 
     this.wallet = new Wallet({
       appName: 'aergo-browser-wallet',
@@ -301,6 +303,13 @@ class BackgroundController extends EventEmitter {
     this.state.on('change', (state: string) => {
       this.emit('update', { state });
     });
+  }
+
+  async setIdleTimeout(newTimeout: number): Promise<void> {
+    this.idleTimeout = newTimeout;
+    chrome.idle.setDetectionInterval(this.idleTimeout);
+    this.state.updateIdleTimeout(this.idleTimeout * 1000);
+    console.log(`Idle timeout updated to ${this.idleTimeout} seconds`);
   }
 }
 

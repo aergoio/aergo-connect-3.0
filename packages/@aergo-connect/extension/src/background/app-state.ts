@@ -1,13 +1,13 @@
 import { EventEmitter } from 'events';
 
-const IDLE_TIMEOUT = 60 * 1000;
-
 class AppState extends EventEmitter {
-  private idleTimeout?: NodeJS.Timeout;
+  private idleTimeoutHandle?: NodeJS.Timeout;
   public state = '';
+  private idleTimeout: number;
 
-  constructor() {
+  constructor(initialTimeout = 60 * 1000) {
     super();
+    this.idleTimeout = initialTimeout;
     this.set('initial');
   }
 
@@ -19,25 +19,38 @@ class AppState extends EventEmitter {
    */
 
   set(nextState: string): void {
-    if (nextState != 'inactive') {
-      if (this.idleTimeout) {
-        clearTimeout(this.idleTimeout);
+    if (nextState !== 'inactive') {
+      if (this.idleTimeoutHandle) {
+        clearTimeout(this.idleTimeoutHandle);
       }
     }
-    if (this.state != nextState && nextState == 'inactive') {
-      if (this.idleTimeout) {
-        clearTimeout(this.idleTimeout);
+    if (this.state !== nextState && nextState === 'inactive') {
+      if (this.idleTimeoutHandle) {
+        clearTimeout(this.idleTimeoutHandle);
       }
-      this.idleTimeout = setTimeout(() => {
+      this.idleTimeoutHandle = setTimeout(() => {
         this.set('idle');
-      }, IDLE_TIMEOUT);
+      }, this.idleTimeout);
     }
-    if (this.state != nextState) {
+    if (this.state !== nextState) {
       console.log(`[state] ${this.state} -> ${nextState}`);
     }
     this.state = nextState;
     this.emit('change', nextState);
     this.emit(nextState);
+  }
+
+  updateIdleTimeout(newTimeout: number): void {
+    this.idleTimeout = newTimeout;
+
+    if (this.state === 'inactive') {
+      if (this.idleTimeoutHandle) {
+        clearTimeout(this.idleTimeoutHandle);
+      }
+      this.idleTimeoutHandle = setTimeout(() => {
+        this.set('idle');
+      }, this.idleTimeout);
+    }
   }
 }
 

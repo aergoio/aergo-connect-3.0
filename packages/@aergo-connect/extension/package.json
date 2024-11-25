@@ -1,7 +1,7 @@
 {
   "name": "@aergo-connect/extension",
-  "version": "3.3.6",
-  "version_name": "3.3.6",
+  "version": "3.3.7",
+  "version_name": "3.3.7",
   "title": "Aergo Connect 3.0",
   "description": "Wallet for Aergo Mainnet, Testnet, and private networks",
   "author": "Aergo team and contributors",

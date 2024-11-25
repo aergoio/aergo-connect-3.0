@@ -35,6 +35,10 @@ export class Api {
     this.controller = controller;
   }
 
+  async setIdleTimeout(newTimeout: number) {
+    await this.controller.setIdleTimeout(newTimeout);
+  }
+
   async unlock({ password }: { password: string }) {
     await this.controller.unlock(password);
     return true;

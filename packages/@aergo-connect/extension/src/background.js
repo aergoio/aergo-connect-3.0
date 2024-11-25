@@ -10,17 +10,6 @@ const controller = new BackgroundController();
 /** Already use ports   */
 chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
   const processName = remotePort.name;
-  function deleteTimer(port) {
-    if (port._timer) {
-      clearTimeout(port._timer);
-      delete port._timer;
-    }
-  }
-  function forceReconnect(port) {
-    // controller.setupCommunication(remotePort);
-    deleteTimer(port);
-    port.disconnect();
-  }
 
   if (processName === 'external') {
     remotePort.onMessage.addListener((msg, port) => {
@@ -38,7 +27,6 @@ chrome.runtime.onConnect.addListener(function connectRemote(remotePort) {
       controller.state.set('inactive');
     });
   }
-  remotePort._timer = setTimeout(forceReconnect, 250e3, remotePort);
 });
 
 // Setup idle detection

@@ -160,13 +160,74 @@ export default Vue.extend({
       background: $gradation04;
     }
   }
+
+  .button-type-primary-outline {
+    position: relative;
+    color: $Blue01;
+    border: 2px solid transparent; // 기본 보더를 투명하게 설정
+    border-radius: 8px;
+    background-color: transparent;
+    overflow: hidden;
+    cursor: pointer;
+
+    // 그라데이션 보더 구현을 위한 ::before 가상 요소
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
+      z-index: -2;
+      border-radius: inherit;
+    }
+
+    // 버튼 내부 배경을 위한 ::after 가상 요소
+    &::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      right: 2px;
+      bottom: 2px;
+      background-color: #fff; // 버튼 내부 색상
+      z-index: -1;
+      border-radius: 6px; // 보더 두께를 뺀 값
+      transition: background-color 0.3s;
+    }
+
+    // 텍스트 스타일
+    span {
+      position: relative;
+      z-index: 1;
+      color: $Blue01;
+    }
+
+    // 호버 시 효과
+    &:hover {
+      &::after {
+        background-color: transparent; // 내부 배경을 투명하게
+      }
+
+      span {
+        background: linear-gradient(124.51deg, #279ecc, #a13e99);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+  }
+
   &.button-type-primary-outline {
     color: $Blue01;
-    border: 2px solid $Blue01;
+    border-radius: 8px;
+    background: linear-gradient(#fff, #fff) padding-box,
+      linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%) border-box;
+    border: 2px solid transparent;
+    background-origin: padding-box, border-box;
+    background-clip: padding-box, border-box;
+
     &.hover:hover {
-      border: 2px solid transparent;
-      border-image: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
-      border-image-slice: 1;
       span {
         background: linear-gradient(124.51deg, #279ecc -11.51%, #a13e99 107.83%);
         -webkit-background-clip: text;
@@ -174,6 +235,7 @@ export default Vue.extend({
       }
     }
   }
+
   &.button-type-secondary {
     background-color: $Pink01;
     color: #fff;

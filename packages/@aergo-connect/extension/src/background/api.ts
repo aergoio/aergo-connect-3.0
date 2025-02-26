@@ -79,18 +79,30 @@ export class Api {
   async addNetwork({ label, chainId, nodeUrl, scanApiUrl, scanExplorerUrl }: ChainConfig) {
     this.controller.wallet.useChain({ chainId, nodeUrl });
     let chains: Record<string, ChainConfig> = {};
+
     if (!this.controller.wallet.datastore) throw new Error('cannot open datastore');
+
     try {
       chains = (await this.controller.wallet.datastore.getIndex('settings').get('customChains'))
         .data as any;
     } catch (e) {
-      // not found
+      // No existing data
     }
+
+    // If an existing chainId is different, delete it
+    const existingChain = Object.keys(chains).find((key) => chains[key].label === label);
+    if (existingChain && existingChain !== chainId) {
+      delete chains[existingChain]; // 기존 chainId 삭제
+    }
+
+    // Add the new chainId
     chains[chainId] = { label, chainId, nodeUrl, scanApiUrl, scanExplorerUrl };
+
     await this.controller.wallet.datastore.getIndex('settings').put({
       key: 'customChains',
       data: chains as any,
     });
+
     return true;
   }
 

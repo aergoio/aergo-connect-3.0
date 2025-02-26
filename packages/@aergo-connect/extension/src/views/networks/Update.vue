@@ -11,7 +11,6 @@
           label="Network Name"
           v-model="networkName"
           :state="availableNetwork && networkName ? 'valid' : !networkName ? 'initial' : 'invalid'"
-          :disabled="chainIdReadonly"
         />
         <TextField
           label="Node URL (http://... or https://...)"
@@ -342,7 +341,7 @@ export default class NetworkUpdate extends Vue {
 
   async save() {
     if (!this.nodeUrlValid || !this.chainIdValid || !this.availableNetwork) {
-      return; // 필수 조건을 만족하지 않으면 실행하지 않음
+      return;
     }
 
     const networkPath = {
@@ -352,43 +351,81 @@ export default class NetworkUpdate extends Vue {
       scanApiUrl: this.scanApiUrl,
       scanExplorerUrl: this.scanExplorerUrl,
     };
-    const publicChains = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
 
-    if (this.chainIdReadonly) {
-      // update network
-      const updateObject = {
-        updateNetworkName: this.paramsName,
-        networkPath: networkPath,
-      };
-      await this.$background.addNetwork(networkPath);
-      // TODO: need to Bug Test
-      // await this.$forceUpdate();
-      this.$store.commit('accounts/updateNetworkPath', updateObject);
-    } else {
-      // add network
-      const alreadyAddedNetwork = this.$store.state.accounts.networksPath.filter((network) => {
-        if (network.label === this.networkName) {
-          return network;
-        }
-      });
-      if (alreadyAddedNetwork.length > 0) {
-        this.notification = true;
-        this.notificationText = `This Network is already added. [${this.networkName}]`;
-        return;
-      } else {
-        await this.$background.addNetwork(networkPath);
-        this.$store.commit('accounts/setNetworkPath', networkPath);
+    const existingNetwork = this.$store.state.accounts.networksPath.find(
+      (network) => network.label === this.networkName,
+    );
+
+    if (existingNetwork) {
+      if (existingNetwork.chainId !== this.chainId) {
+        // If the existing chainId is different, delete the network and then add a new one
+        await this.$background.removeNetwork({ chainId: existingNetwork.chainId });
+        this.$store.commit('accounts/removeNetworkPath', { chainId: existingNetwork.chainId });
       }
     }
 
+    await this.$background.addNetwork(networkPath);
+    this.$store.commit('accounts/setNetworkPath', networkPath);
+
     this.$store.commit('ui/clearInput', { key: 'networks' });
     this.$router.push({ name: 'networks-list' });
+
     await this.$store.commit('accounts/setActiveAccount', this.$store.state.accounts.address);
     await this.$store.commit('accounts/setChain', {
       chainId: this.chainId,
       chainLabel: this.networkName,
     });
   }
+
+  // async save() {
+  //   if (!this.nodeUrlValid || !this.chainIdValid || !this.availableNetwork) {
+  //     return; // 필수 조건을 만족하지 않으면 실행하지 않음
+  //   }
+
+  //   const networkPath = {
+  //     label: this.networkName,
+  //     chainId: this.chainId,
+  //     nodeUrl: this.nodeUrl,
+  //     scanApiUrl: this.scanApiUrl,
+  //     scanExplorerUrl: this.scanExplorerUrl,
+  //   };
+  //   const publicChains = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
+
+  //   if (this.chainIdReadonly) {
+  //     // update network
+  //     const updateObject = {
+  //       updateNetworkName: this.paramsName,
+  //       networkPath: networkPath,
+  //     };
+  //     await this.$background.addNetwork(networkPath);
+  //     // TODO: need to Bug Test
+  //     // await this.$forceUpdate();
+  //     this.$store.commit('accounts/updateNetworkPath', updateObject);
+  //   } else {
+  //     // add network
+  //     const alreadyAddedNetwork = this.$store.state.accounts.networksPath.filter((network) => {
+  //       if (network.label === this.networkName) {
+  //         return network;
+  //       }
+  //     });
+  //     if (alreadyAddedNetwork.length > 0) {
+  //       this.notification = true;
+  //       this.notificationText = `This Network is already added. [${this.networkName}]`;
+  //       return;
+  //     } else {
+  //       await this.$background.addNetwork(networkPath);
+  //       this.$store.commit('accounts/setNetworkPath', networkPath);
+  //     }
+  //   }
+
+  //   this.$store.commit('ui/clearInput', { key: 'networks' });
+  //   this.$router.push({ name: 'networks-list' });
+  //   await this.$store.commit('accounts/setActiveAccount', this.$store.state.accounts.address);
+  //   await this.$store.commit('accounts/setChain', {
+  //     chainId: this.chainId,
+  //     chainLabel: this.networkName,
+  //   });
+  // }
 
   backClick() {
     this.$store.commit('ui/clearInput', { key: 'networks' });

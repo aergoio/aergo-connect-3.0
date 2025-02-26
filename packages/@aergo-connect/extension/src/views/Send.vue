@@ -563,15 +563,28 @@ export default Vue.extend({
         }
       }
     },
+    async updateNonce() {
+      try {
+        const state = await this.$background.getAccountState({
+          chainId: this.chainId,
+          address: this.txBody.from,
+        });
+
+        if (state && state.nonce !== undefined) {
+          this.txBody.nonce = state.nonce + 1; // latest nonce
+        }
+      } catch (error) {
+        console.error('Failed to fetch nonce:', error);
+        this.notification = true;
+        this.notificationText = 'Failed to fetch nonce. Please try again.';
+      }
+    },
     async handleSendClick() {
+      await this.updateNonce();
       const chainIdHash = await this.$background.getChainIdHash(this.chainId);
-      const chainInfo = await this.$background.getChainInfo(this.chainId);
       if (chainIdHash) {
         console.log('chainIdHash:', chainIdHash);
         this.txBody.chainIdHash = chainIdHash;
-      }
-      if (chainInfo) {
-        console.log('chainInfo:', chainInfo);
       }
       if (!this.account) {
         // This shouldn't happen normally
@@ -750,6 +763,7 @@ export default Vue.extend({
     },
     async sendTransaction(txBody) {
       this.setStatus('loading', 'Sending to network...');
+
       try {
         console.log(txBody, 'send txBody');
         const result = await this.$background.sendTransaction(txBody, this.chainId);

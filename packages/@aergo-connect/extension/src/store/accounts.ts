@@ -365,20 +365,10 @@ const storeModule: Module<AccountsState, RootState> = {
     },
 
     updateNetworkPath(state, { updateNetworkName, networkPath }) {
-      // Find the existing network and check if the chainId has changed
-      const existingNetwork = state.networksPath.find(
-        (network) => network.label === updateNetworkName,
+      const removedNetworkPath = state.networksPath.filter(
+        (network) => network.label !== updateNetworkName,
       );
-
-      if (existingNetwork && existingNetwork.chainId !== networkPath.chainId) {
-        // Delete the existing network if the chainId has changed
-        state.networksPath = state.networksPath.filter(
-          (network) => network.chainId !== existingNetwork.chainId,
-        );
-      }
-
-      // Add the new network
-      state.networksPath = [...state.networksPath, networkPath];
+      state.networksPath = [...removedNetworkPath, networkPath];
     },
 
     removeNetworkPath(state, { chainId, label }) {

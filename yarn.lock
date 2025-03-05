@@ -1465,33 +1465,33 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@herajs/client@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@herajs/client/-/client-2.1.0.tgz#e1cfe9ded4cac5b3e4034499e2e8c64126d99ec2"
-  integrity sha512-0uRe+9W5ED1bZLcN9PGsD3qMj0Pw7Qi9EL5ShNz4/VT5txYiCZ2VEBW/3W3ZYKYex1mpTSTo4V/SwcwOidyQ7g==
+"@herajs/client@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@herajs/client/-/client-2.1.2.tgz#90e5b41d3d50442c7e38cd643d759b4d4632e975"
+  integrity sha512-yoCGw8BpgpkFQUNvRvpaZEW9u7UMOFHo9yxwWg0oamB3epQQlc00hoK9YsiyP5JM1mwfF8hKvhhRiVQwAtgBlg==
   dependencies:
     "@grpc/grpc-js" "^1.11.1"
-    "@herajs/common" "^2.1.0"
+    "@herajs/common" "^2.1.2"
     "@improbable-eng/grpc-web" "^0.9.1"
     "@types/google-protobuf" "^3.2.7"
     google-protobuf "^3.21.2"
     hash.js "^1.1.7"
     jsbi "^3.0.0"
 
-"@herajs/common@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@herajs/common/-/common-2.1.0.tgz#f7ca6758138414648aa586f01727af896e8b7502"
-  integrity sha512-r64sNwlYEce2MSAoqhbmh0MBYZsUpIZ7hagB9/LUvl2v7V1TrUJ0t9afPJneXhT7h5YVWLMBE/Gpys0V8pnUoA==
+"@herajs/common@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@herajs/common/-/common-2.1.2.tgz#22adc40df42103bf72ff1095f92b5db5486fa2bd"
+  integrity sha512-MAgpm5r7afCKHnMjB65C5m17xz7vkxNpFWW4uIiVViPcY83oNdukyVqjNZG/1ZrQv6kI+/sU7nELPIhIjIBxWw==
   dependencies:
     create-hash "^1.2.0"
     jsbi "^3.0.0"
 
-"@herajs/crypto@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@herajs/crypto/-/crypto-2.1.0.tgz#cf3162c1013eff4eebfed899399a6baf2b72a076"
-  integrity sha512-nT0V4jDRKyYd7oyEGJ96aaKV/oLoPD682UKmdomcDCD2CRIo5tFpmxXQF1M2xBgWLQs2DKWSVNW3eUbTrp5EBg==
+"@herajs/crypto@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@herajs/crypto/-/crypto-2.1.2.tgz#c28ab666ad4b015438dba871c562d5db0f77722a"
+  integrity sha512-xVp6LkHL/Irpz88YgBneRlff5TG0YCO1OKvksylVeQdxkQjrhevONI6/DcijykLYqAdzxJBG1H5mMZTljK15Hg==
   dependencies:
-    "@herajs/common" "^2.1.0"
+    "@herajs/common" "^2.1.2"
     "@herajs/hdkey" "^11.2.0"
     "@types/elliptic" "^6.4.0"
     aes-js "^3.1.1"
@@ -1511,25 +1511,25 @@
     safe-buffer "^5.1.1"
     secp256k1 "^3.0.1"
 
-"@herajs/ledger-hw-app-aergo@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@herajs/ledger-hw-app-aergo/-/ledger-hw-app-aergo-2.1.0.tgz#b4dc46c9f3c1e2974251902f81b4b9f7f1be221f"
-  integrity sha512-FzhqgDwxUP2dMqPUkUDOExLL8s4EuJ/63ZEraI3gHNKJQCmBSsQHMGbte1DZJT/sgD4lDIjOEgZLqlBJt0JoFQ==
+"@herajs/ledger-hw-app-aergo@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@herajs/ledger-hw-app-aergo/-/ledger-hw-app-aergo-2.1.2.tgz#1aa18c21a2f133c8eaaa924bde462511e70e150f"
+  integrity sha512-CI1mdqtQFiSVRW8bwlWiX4QvDMLZ5Fqp0fTnLzHgaWmf+FMRt3BJAQx9N4vYEyk+C1TrKQdm7J0vrOpx+7gpyQ==
   dependencies:
-    "@herajs/client" "^2.1.0"
-    "@herajs/common" "^2.1.0"
-    "@herajs/crypto" "^2.1.0"
+    "@herajs/client" "^2.1.2"
+    "@herajs/common" "^2.1.2"
+    "@herajs/crypto" "^2.1.2"
 
-"@herajs/wallet@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@herajs/wallet/-/wallet-2.1.0.tgz#b0d38f81ee7884ae44fe2307648e20a278de304d"
-  integrity sha512-14WYp1kesq3gyXUtm7qd+dGh1xxf9UG/3HMBi86j67DnVQr82Vpex3kXzbP7rkLsyDghYGHm5y6oXpLXseu7YA==
+"@herajs/wallet@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@herajs/wallet/-/wallet-2.1.2.tgz#f049f7711bde09f0a2a82aeb49b8fff1b0915bc9"
+  integrity sha512-W6q6ywHkXKFWIAJxkV2/0W/saulIMoxAMwQck1j7das4meo1K2Ff2tNXHsz9a+FocRjXSfhuqkmpZBpJ9EYgwg==
   dependencies:
     "@elderapo/typed-event-emitter" "^1.4.1"
-    "@herajs/client" "^2.1.0"
-    "@herajs/common" "^2.1.0"
-    "@herajs/crypto" "^2.1.0"
-    "@herajs/ledger-hw-app-aergo" "^2.1.0"
+    "@herajs/client" "^2.1.2"
+    "@herajs/common" "^2.1.2"
+    "@herajs/crypto" "^2.1.2"
+    "@herajs/ledger-hw-app-aergo" "^2.1.2"
     "@types/google-protobuf" "^3.2.7"
     "@types/hashmap" "^2.0.29"
     "@types/leveldown" "^4.0.0"
@@ -12169,11 +12169,6 @@ schema-utils@^4.0.0:
     ajv-formats "^2.1.1"
     ajv-keywords "^5.1.0"
 
-scrollparent@^2.0.1:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/scrollparent/-/scrollparent-2.1.0.tgz#6cae915c953835886a6ba0d77fdc2bb1ed09076d"
-  integrity sha512-bnnvJL28/Rtz/kz2+4wpBjHzWoEzXhVg/TE8BeVGJHUqE8THNIRnDxDWMktwM+qahvlRdvlLdsQfYe+cuqfZeA==
-
 scrypt-async-modern@^3.0.12:
   version "3.0.12"
   resolved "https://registry.yarnpkg.com/scrypt-async-modern/-/scrypt-async-modern-3.0.12.tgz#2da4239053c57d042b4b76412ef691c06bfecbf2"
@@ -14026,11 +14021,6 @@ vue-loader@^15.8.3, vue-loader@^15.9.1:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
-vue-observe-visibility@^0.4.4:
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/vue-observe-visibility/-/vue-observe-visibility-0.4.6.tgz#878cb8ebcf3078e40807af29774e97105ebd519e"
-  integrity sha512-xo0CEVdkjSjhJoDdLSvoZoQrw/H2BlzB5jrCBKGZNXN2zdZgMuZ9BKrxXDjNP2AxlcCoKc8OahI3F3r3JGLv2Q==
-
 vue-property-decorator@^8.3.0:
   version "8.5.1"
   resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-8.5.1.tgz#571a91cf8d2b507f537d79bf8275af3184572fff"
@@ -14045,11 +14035,6 @@ vue-qrcode-component@^2.1.1:
   dependencies:
     qrcode-js-package "^1.0.4"
     vue "^2.0.1"
-
-vue-resize@^0.4.5:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/vue-resize/-/vue-resize-0.4.5.tgz#4777a23042e3c05620d9cbda01c0b3cc5e32dcea"
-  integrity sha512-bhP7MlgJQ8TIkZJXAfDf78uJO+mEI3CaLABLjv0WNzr4CcGRGPIAItyWYnP6LsPA4Oq0WE+suidNs6dgpO4RHg==
 
 vue-router@^3.1.5:
   version "3.6.5"
@@ -14102,15 +14087,6 @@ vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
-
-vue-virtual-scroller@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/vue-virtual-scroller/-/vue-virtual-scroller-1.1.2.tgz#b8a6362f177abf3f2149ce1eac18013c71fe353b"
-  integrity sha512-SkUyc7QHCJFB5h1Fya7LxVizlVzOZZuFVipBGHYoTK8dwLs08bIz/tclvRApYhksaJIm/nn51inzO2UjpGJPMQ==
-  dependencies:
-    scrollparent "^2.0.1"
-    vue-observe-visibility "^0.4.4"
-    vue-resize "^0.4.5"
 
 vue@2.6.11:
   version "2.6.11"

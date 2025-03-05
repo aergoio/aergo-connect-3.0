@@ -352,19 +352,20 @@ export default class NetworkUpdate extends Vue {
       scanApiUrl: this.scanApiUrl,
       scanExplorerUrl: this.scanExplorerUrl,
     };
-    const publicChains = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
 
     if (this.chainIdReadonly) {
       // update network
+      // 업데이트 전에 기존 체인을 삭제한다.
       const updateObject = {
         updateNetworkName: this.paramsName,
         networkPath: networkPath,
       };
-      await this.$background.removeNetwork({ chainId: this.chainId });
-      this.$store.commit('accounts/removeNetworkPath', {
-        chainId: this.chainId,
-        label: this.networkName,
-      });
+      const chains = await this.$background.getNetworks();
+      const removeChain: any = Object.values(chains).find(
+        (chain: any) => chain.label === this.paramsName,
+      );
+      await this.$background.removeNetwork({ chainId: removeChain?.chainId });
+      this.$store.commit('accounts/removeNetworkPath', { label: this.networkName });
       await this.$background.addNetwork(networkPath);
       this.$store.commit('accounts/updateNetworkPath', updateObject);
     } else {

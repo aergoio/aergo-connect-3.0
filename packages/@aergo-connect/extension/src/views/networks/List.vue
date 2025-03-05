@@ -92,8 +92,8 @@ export default class AccountsList extends Vue {
       return;
     }
     await this.$background.removeNetwork({ chainId });
-    this.$store.commit('accounts/removeNetwork');
-    this.$store.commit('accounts/removeNetworkPath', { chainId, label });
+    this.$store.commit('accounts/resetToMainnet');
+    this.$store.commit('accounts/removeNetworkPath', { label });
     this.fetchNetworks();
   }
 }
@@ -120,6 +120,11 @@ export default class AccountsList extends Vue {
     padding: 20px 20px 0 16px;
     display: flex;
     cursor: pointer;
+    transition: background 0.2s ease-in-out;
+
+    &:hover {
+      background: #f6f6f6;
+    }
   }
   .chain-id {
     font-weight: 500;
@@ -175,8 +180,5 @@ export default class AccountsList extends Vue {
       background-color: #d9d9d9;
     }
   }
-}
-.networks-list:hover {
-  background: #f6f6f6;
 }
 </style>

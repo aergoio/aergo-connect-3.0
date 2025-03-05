@@ -369,20 +369,11 @@ const storeModule: Module<AccountsState, RootState> = {
       );
       state.networksPath = [...removedNetworkPath, networkPath];
     },
-    removeNetworkPath(state, { chainId, label }) {
-      const publicChains = ['aergo.io', 'testnet.aergo.io', 'alpha.aergo.io'];
-      if (!publicChains.includes(chainId)) {
-        delete state.accounts[state.address].tokens[chainId];
-        const removedNetworkPath = state.networksPath.filter(
-          (network) => network.chainId !== chainId,
-        );
-        state.networksPath = [...removedNetworkPath];
-      } else {
-        const removedNetworkPath = state.networksPath.filter((network) => network.label !== label);
-        state.networksPath = [...removedNetworkPath];
-      }
+    removeNetworkPath(state, { label }) {
+      const removedNetworkPath = state.networksPath.filter((network) => network.label !== label);
+      state.networksPath = [...removedNetworkPath];
     },
-    removeNetwork(state) {
+    resetToMainnet(state) {
       state.chainId = state.networksPath[0].chainId;
       state.chainLabel = state.networksPath[0].label;
     },

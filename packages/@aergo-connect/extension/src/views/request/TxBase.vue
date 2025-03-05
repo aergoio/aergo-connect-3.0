@@ -167,9 +167,11 @@ export default class TxBase extends mixins(RequestMixin) {
   }
 
   async confirmHandler(): Promise<any> {
+    const chainIdHash = await this.$background.getChainIdHash(this.accountSpec.chainId);
     if (!this.request) return;
     let txBody = {
       ...this.request.data,
+      chainIdHash,
       payload: Array.from(this.payloadParsed),
       from: this.$store.state.accounts.address,
     };

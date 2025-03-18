@@ -45,3 +45,10 @@ Add the `dist-dev` folder as an "unpacked extension" to Chrome.
     cd packages/@aergo-connect/extension && yarn package
 
 Find the zip in the release folder.
+
+**How to check if it is installed or not?**
+```js
+fetch(`chrome-extension://mcijhnoalllmbiehiebonblllpimlnle/index.html`)
+        .then(() => setIsInstall(false))
+        .catch(() => setIsInstall(true));
+```

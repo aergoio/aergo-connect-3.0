@@ -8,6 +8,13 @@ Chrome browser extension built using Vue + Typescript
 
 - [Install Aergo Connect from the Chrome web store](https://chrome.google.com/webstore/detail/aergo-connect-30/mcijhnoalllmbiehiebonblllpimlnle)
 
+**How to check if it is installed or not?**
+```js
+fetch(`chrome-extension://mcijhnoalllmbiehiebonblllpimlnle/index.html`)
+        .then(() => setIsInstall(false))
+        .catch(() => setIsInstall(true));
+```
+
 ### Beta version
 
 - Build from source or download [latest release](https://github.com/aergoio/aergo-connect/releases) package
@@ -46,9 +53,3 @@ Add the `dist-dev` folder as an "unpacked extension" to Chrome.
 
 Find the zip in the release folder.
 
-**How to check if it is installed or not?**
-```js
-fetch(`chrome-extension://mcijhnoalllmbiehiebonblllpimlnle/index.html`)
-        .then(() => setIsInstall(false))
-        .catch(() => setIsInstall(true));
-```

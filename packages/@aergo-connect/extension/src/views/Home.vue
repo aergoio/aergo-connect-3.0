@@ -493,11 +493,13 @@ export default Vue.extend({
       this.$store.commit('accounts/setOption', value);
     },
 
-    formatBalance(balance): any {
+    formatBalance(balance: number): string {
       if (Number.isInteger(balance)) {
-        return balance;
+        return balance.toString();
       }
-      return Number(balance).toFixed(3);
+      // 소수점 3자리 이후 버림 처리
+      const truncated = Math.floor(balance * 1000) / 1000;
+      return truncated.toString();
     },
     myTokenCount(): void {
       const tokens = Object.values(this.getTokens);

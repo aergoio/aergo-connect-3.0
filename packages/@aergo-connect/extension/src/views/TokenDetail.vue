@@ -600,11 +600,13 @@ export default Vue.extend({
         return `Type: ${item.meta.category.toUpperCase()}`;
       }
     },
-    formatBalance(balance) {
+    formatBalance(balance: number): string {
       if (Number.isInteger(balance)) {
-        return balance;
+        return balance.toString();
       }
-      return Number(balance).toFixed(3);
+      // 소수점 3자리 이후 버림 처리
+      const truncated = Math.floor(balance * 1000) / 1000;
+      return truncated.toString();
     },
     async getSendStatus(data) {
       return await this.$background.getTransactionReceipt(this.chainId, data[`hash`]);

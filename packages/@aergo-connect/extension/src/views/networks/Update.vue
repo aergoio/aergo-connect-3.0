@@ -364,7 +364,10 @@ export default class NetworkUpdate extends Vue {
       const removeChain: any = Object.values(chains).find(
         (chain: any) => chain.label === this.paramsName,
       );
-      await this.$background.removeNetwork({ chainId: removeChain?.chainId });
+      await this.$background.removeNetwork({
+        label: removeChain?.label,
+        chainId: removeChain?.chainId,
+      });
       this.$store.commit('accounts/removeNetworkPath', { label: this.networkName });
       await this.$background.addNetwork(networkPath);
       this.$store.commit('accounts/updateNetworkPath', updateObject);

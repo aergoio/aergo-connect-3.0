@@ -86,7 +86,15 @@ export class Api {
     } catch (e) {
       // not found
     }
-    chains[chainId] = { label, chainId, nodeUrl, scanApiUrl, scanExplorerUrl };
+    let newChainId = chainId.toString();
+    let counter = 1;
+
+    while (chains[newChainId]) {
+      newChainId = `${chainId}-${counter}`;
+      counter++;
+    }
+
+    chains[newChainId] = { label, chainId, nodeUrl, scanApiUrl, scanExplorerUrl };
     await this.controller.wallet.datastore.getIndex('settings').put({
       key: 'customChains',
       data: chains as any,
@@ -94,17 +102,27 @@ export class Api {
     return true;
   }
 
-  async removeNetwork({ chainId }: { chainId: string }) {
+  async removeNetwork({ label, chainId }: { label: string; chainId: string }) {
     let chains: Record<string, ChainConfig> = {};
     if (!this.controller.wallet.datastore) throw new Error('cannot open datastore');
+
     const index = this.controller.wallet.datastore.getIndex('settings');
     chains = (await index.get('customChains')).data as any;
-    delete chains[chainId];
-    await index.put({
-      key: 'customChains',
-      data: chains as any,
-    });
-    return true;
+
+    const chain = Object.keys(chains).find(
+      (key) => chains[key].chainId === chainId && chains[key].label === label,
+    );
+
+    if (chain) {
+      delete chains[chain];
+      await index.put({
+        key: 'customChains',
+        data: chains as any,
+      });
+      return true;
+    } else {
+      throw new Error(`Network with label "${label}" and chainId "${chainId}" not found`);
+    }
   }
 
   async getBlockchainStatus({ chainId }: { chainId: string }) {
